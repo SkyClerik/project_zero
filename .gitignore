@@ -1,0 +1,62 @@
+# ==================================
+# Unity Generated Files
+# ==================================
+/Project zero/[Ll]ibrary/
+/Project zero/[Tt]emp/
+/Project zero/[Oo]bj/
+/Project zero/[Bb]uild/
+/Project zero/[Bb]uilds/
+/Project zero/[Ll]ogs/
+/Project zero/[Uu]ser[Ss]ettings/
+
+# ==================================
+# Visual Studio / Rider / VS Code
+# ==================================
+/Project zero/.vs/
+/Project zero/.vscode/
+/Project zero/*.csproj
+/Project zero/*.sln
+/Project zero/*.suo
+/Project zero/*.userprefs
+/Project zero/.idea/
+
+# ==================================
+# Other auto-generated files
+# ==================================
+/Project zero/*.pidb
+/Project zero/*.pidb.meta
+/Project zero/*.pdb
+/Project zero/*.pdb.meta
+/Project zero/sysinfo.txt
+/Project zero/.vsconfig
+
+# ==================================
+# Builds
+# ==================================
+/Project zero/*.apk
+/Project zero/*.aab
+/Project zero/*.unitypackage
+
+# ==============================================================================
+# FMOD Unity Integration
+# ==============================================================================
+# Never ignore DLLs in the FMOD subfolder, so make sure that the FMOD-folder is in the correct path.
+!/Project zero/[Aa]ssets/Plugins/FMOD/**/*.dll
+
+# Don't ignore images and gizmos used by FMOD in the Unity Editor
+!/Project zero/[Aa]ssets/Gizmos/FMOD/*
+!/Project zero/[Aa]ssets/Editor Default Resources/FMOD/*
+
+# Ignore the Cache-file since it is updated locally either way
+/Project zero/[Aa]ssets/**/FMODStudioCache.asset
+/Project zero/[Aa]ssets/**/FMODStudioCache.asset.meta
+/Project zero/[Aa]ssets/Plugins/FMOD/Cache.meta
+/Project zero/[Aa]ssets/Plugins/FMOD/Cache/Editor.meta
+
+# Log-files
+/Project zero/fmod.log
+/Project zero/fmod_editor.log
+
+# FMOD 1.10.x (Legacy)
+/Project zero/Assets/FMODAssets/*
+/Project zero/Assets/FMODStudioCache.meta
