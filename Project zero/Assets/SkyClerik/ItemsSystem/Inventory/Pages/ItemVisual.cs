@@ -16,12 +16,11 @@ namespace Gameplay.Inventory
         private bool _isDragging;
         private Rect _rect;
         private PlacementResults _placementResults;
-        private VisualElement _intermediate;
         private VisualElement _icon;
         private Label _pcsText;
 
-        private const string _intermediateName = "Intermediate";
         private const string _iconName = "Icon";
+        private const int IconPadding = 5;
         //private const string _visualIconContainerName = "visual-icon-container";
         //private const string _visualIconName = "visual-icon";
 
@@ -35,24 +34,11 @@ namespace Gameplay.Inventory
             _rect = rect;
 
             name = _itemDefinition.DefinitionName;
-            style.alignItems = Align.Center;
-            style.justifyContent = Justify.Center;
+            // Стили самого контейнера (ItemVisual)
             style.position = Position.Absolute;
-            style.width = _itemDefinition.Dimensions.DefaultWidth * rect.width;
-            style.height = _itemDefinition.Dimensions.DefaultHeight * rect.height;
+            this.SetPadding(IconPadding);
 
-            _intermediate = new VisualElement
-            {
-                style =
-                {
-                    width = _itemDefinition.Dimensions.DefaultWidth * rect.width,
-                    height = _itemDefinition.Dimensions.DefaultHeight * rect.height,
-                    rotate = new Rotate(_itemDefinition.Dimensions.DefaultAngle),
-                },
-                name = _intermediateName
-            };
-            _intermediate.SetPadding(5);
-
+            // Сбрасываем состояние размеров и поворота при создании
             _itemDefinition.Dimensions.CurrentAngle = _itemDefinition.Dimensions.DefaultAngle;
             _itemDefinition.Dimensions.CurrentWidth = _itemDefinition.Dimensions.DefaultWidth;
             _itemDefinition.Dimensions.CurrentHeight = _itemDefinition.Dimensions.DefaultHeight;
@@ -62,14 +48,17 @@ namespace Gameplay.Inventory
 
             _icon = new VisualElement
             {
+                name = _iconName,
                 style =
                 {
                     backgroundImage = new StyleBackground(_itemDefinition.Icon),
-                    width = _itemDefinition.Dimensions.DefaultWidth * rect.width,
-                    height = _itemDefinition.Dimensions.DefaultHeight * rect.height,
-                },
-                name = _iconName,
+                    rotate = new Rotate(_itemDefinition.Dimensions.CurrentAngle),
+                    position = Position.Absolute,
+                }
             };
+            
+            // Теперь, когда _icon создан, мы можем вызывать SetSize
+            SetSize();
 
             if (_itemDefinition.Stackable)
             {
@@ -92,8 +81,7 @@ namespace Gameplay.Inventory
                 _icon.Add(_pcsText);
             }
 
-            Add(_intermediate);
-            _intermediate.Add(_icon);
+            Add(_icon);
 
             RegisterCallback<MouseUpEvent>(OnMouseUp);
             RegisterCallback<MouseDownEvent>(OnMouseDown);
@@ -127,15 +115,33 @@ namespace Gameplay.Inventory
 
         private void SetSize()
         {
-            var width = _itemDefinition.Dimensions.CurrentWidth * _rect.width;
-            var height = _itemDefinition.Dimensions.CurrentHeight * _rect.height;
+            // Контейнер 'this' всегда имеет РЕЗУЛЬТИРУЮЩИЙ размер (с учетом поворота)
+            this.style.width = _itemDefinition.Dimensions.CurrentWidth * _rect.width;
+            this.style.height = _itemDefinition.Dimensions.CurrentHeight * _rect.height;
 
-            this.style.width = width;
-            this.style.height = height;
-            _intermediate.style.width = width;
-            _intermediate.style.height = height;
-            _icon.style.width = width-5;
-            _icon.style.height = height-5;
+            // Обновляем позицию и размер иконки, чтобы она была по центру
+            UpdateIconLayout();
+        }
+
+        /// <summary>
+        /// Устанавливает размер иконки в ее исходное состояние и центрирует ее внутри родителя.
+        /// </summary>
+        private void UpdateIconLayout()
+        {
+            // Размеры родительского контейнера
+            var parentWidth = this.style.width.value.value;
+            var parentHeight = this.style.height.value.value;
+
+            // Исходные размеры самой иконки
+            var iconWidth = _itemDefinition.Dimensions.DefaultWidth * _rect.width;
+            var iconHeight = _itemDefinition.Dimensions.DefaultHeight * _rect.height;
+
+            _icon.style.width = iconWidth;
+            _icon.style.height = iconHeight;
+
+            // Ручной расчет для идеального центрирования
+            _icon.style.left = (parentWidth - iconWidth) / 2;
+            _icon.style.top = (parentHeight - iconHeight) / 2;
         }
 
         private void RotateIconRight()
@@ -145,11 +151,11 @@ namespace Gameplay.Inventory
             if (angle >= 360)
                 angle = 0;
 
-            RotateIntermediate(angle);
+            RotateIcon(angle);
             SaveCurrentAngle(angle);
         }
 
-        private void RotateIntermediate(float angle) => _intermediate.style.rotate = new Rotate(angle);
+        private void RotateIcon(float angle) => _icon.style.rotate = new Rotate(angle);
 
         private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.CurrentAngle = angle;
 
@@ -160,7 +166,7 @@ namespace Gameplay.Inventory
             _itemDefinition.Dimensions.CurrentHeight = _itemDefinition.Dimensions.DefaultHeight;
 
             SetSize();
-            RotateIntermediate(_originalRotate);
+            RotateIcon(_originalRotate);
             SaveCurrentAngle(_originalRotate);
         }
 
