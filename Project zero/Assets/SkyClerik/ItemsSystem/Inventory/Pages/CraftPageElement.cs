@@ -14,7 +14,7 @@ namespace Gameplay.Inventory
         private UIDocument _document;
         private VisualElement _root;
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
-        private ItemContainer _itemContainer;
+        private CraftItemsContainer _itemContainer;
         private MonoBehaviour _coroutineRunner;
         private ItemsPage _itemsPage;
 
@@ -35,7 +35,7 @@ namespace Gameplay.Inventory
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
 
-        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, ItemContainer itemContainer)
+        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, CraftItemsContainer itemContainer)
         {
             _itemsPage = itemsPage;
             _document = document;
@@ -143,7 +143,7 @@ namespace Gameplay.Inventory
         {
             _inventoryGrid.Remove(item);
         }
-        
+
         private static void SetItemPosition(VisualElement element, Vector2 vector)
         {
             element.style.left = vector.x;

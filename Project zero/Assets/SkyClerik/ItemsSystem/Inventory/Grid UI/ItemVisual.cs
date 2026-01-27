@@ -35,14 +35,11 @@ namespace Gameplay.Inventory
             _rect = rect;
 
             name = _itemDefinition.DefinitionName;
-            //style.visibility = Visibility.Hidden;
             style.alignItems = Align.Center;
             style.justifyContent = Justify.Center;
             style.position = Position.Absolute;
             style.width = _itemDefinition.Dimensions.DefaultWidth * rect.width;
             style.height = _itemDefinition.Dimensions.DefaultHeight * rect.height;
-            //AddToClassList(_visualIconContainerName);
-            //SetSize();
 
             _intermediate = new VisualElement
             {
@@ -74,7 +71,6 @@ namespace Gameplay.Inventory
                 name = _iconName,
             };
 
-            //_icon.AddToClassList(_visualIconName);
             if (_itemDefinition.Stackable)
             {
                 _pcsText = new Label
@@ -138,8 +134,8 @@ namespace Gameplay.Inventory
             this.style.height = height;
             _intermediate.style.width = width;
             _intermediate.style.height = height;
-            _icon.style.width = width;
-            _icon.style.height = height;
+            _icon.style.width = width-5;
+            _icon.style.height = height-5;
         }
 
         private void RotateIconRight()
@@ -178,36 +174,38 @@ namespace Gameplay.Inventory
                 _isDragging = false;
                 style.opacity = 1f;
                 ItemsPage.CurrentDraggedItem = null;
-                //_ownerInventory.GetDocument.sortingOrder = 0;
-
                 _placementResults = _characterPages.HandleItemPlacement(this);
 
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
-                        // Конфликтов нет, можно разместить
-                        // Удаляем предмет из старого инвентаря
-                        _ownerInventory.RemoveStoredItem(this);
-                        // Вызываем Drop у целевого инвентаря (он сам добавит, установит позицию и поменяет владельца)
-                        _placementResults.TargetInventory.Drop(this, _placementResults.Position);
-                        // _ownerInventory уже обновился внутри Drop целевого инвентаря
+                        Placement();
                         break;
-
                     case ReasonConflict.beyondTheGridBoundary:
                         TryDropBack();
                         break;
-
                     case ReasonConflict.intersectsObjects:
                         TryDropBack();
                         break;
-
                     case ReasonConflict.invalidSlotType:
                         TryDropBack();
                         return;
+                    default:
+                        break;
                 }
 
                 _characterPages.FinalizeDragOfItem(this);
             }
+        }
+
+        private void Placement()
+        {
+            // Конфликтов нет, можно разместить
+            // Удаляем предмет из старого инвентаря
+            _ownerInventory.RemoveStoredItem(this);
+            // Вызываем Drop у целевого инвентаря (он сам добавит, установит позицию и поменяет владельца)
+            _placementResults.TargetInventory.Drop(this, _placementResults.Position);
+            // _ownerInventory уже обновился внутри Drop целевого инвентаря
         }
 
         public void UpdatePcs()

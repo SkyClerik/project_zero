@@ -1,17 +1,21 @@
 using System;
+using Newtonsoft.Json;
 
 namespace UnityEngine.DataEditor
 {
     /// <summary>
     /// Абстрактный базовый класс для всех предметов.
     /// </summary>
+    [JsonObject(MemberSerialization.Fields)]
     public abstract class ItemBaseDefinition : BaseDefinition
     {
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Цена предмета в магазинах.")]
         private int _price;
         public int Price => _price;
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Текущее кол-во")]
         private int _curStack;
@@ -60,15 +64,18 @@ namespace UnityEngine.DataEditor
             return amount;
         }
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Максимальное кол-во")]
         private int _maxStack;
         public int MaxStack => _maxStack;
 
+        [JsonProperty]
         [SerializeField]
         private bool _stackable = true;
         public bool Stackable => _stackable;
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Размер и поворот предмета")]
         private ItemDimensions _dimensions;
@@ -76,18 +83,25 @@ namespace UnityEngine.DataEditor
     }
 
     [Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public class ItemDimensions
     {
+        [JsonProperty]
         [SerializeField]
         private int defaultWidth = 1;
+        [JsonProperty]
         [SerializeField]
         private int defaultHeight = 1;
+        [JsonProperty]
         [SerializeField]
         private float defaultAngle = 0;
+        [JsonProperty]
         [SerializeField]
         private int currentHeight = 1;
+        [JsonProperty]
         [SerializeField]
         private int currentWidth = 1;
+        [JsonProperty]
         [SerializeField]
         private float currentAngle = 0;
 

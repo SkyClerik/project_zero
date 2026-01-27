@@ -14,9 +14,9 @@ namespace Gameplay.Inventory
         private static ItemVisual _currentDraggedItem = null;
 
         [SerializeField]
-        private ItemContainer _mainItemContainer;
+        private InventoryItemContainer _inventoryItemContainer;
         [SerializeField]
-        private ItemContainer _craftItemContainer;
+        private CraftItemsContainer _craftItemContainer;
 
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
@@ -29,7 +29,7 @@ namespace Gameplay.Inventory
                 itemsPage: this,
                 document: _document,
                 inventoryPageRoot: out _inventoryPageRoot,
-                itemContainer: _mainItemContainer);
+                itemContainer: _inventoryItemContainer);
 
             _craftPage = new CraftPageElement(
                 itemsPage: this,

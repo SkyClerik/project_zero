@@ -13,7 +13,7 @@ namespace Gameplay.Inventory
     {
         [SerializeField]
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
-        private ItemContainer _itemContainer;
+        private InventoryItemContainer _itemContainer;
 
         private UIDocument _document;
         private VisualElement _root;
@@ -36,7 +36,7 @@ namespace Gameplay.Inventory
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
 
-        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryPageRoot, ItemContainer itemContainer)
+        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryPageRoot, InventoryItemContainer itemContainer)
         {
             _itemsPage = itemsPage;
             _document = document;
@@ -142,7 +142,7 @@ namespace Gameplay.Inventory
         {
             _inventoryGrid.Remove(item);
         }
-        
+
         private static void SetItemPosition(VisualElement element, Vector2 vector)
         {
             element.style.left = vector.x;
