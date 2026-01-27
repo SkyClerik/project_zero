@@ -20,7 +20,7 @@ namespace Gameplay.Inventory
         private const string _inventoryRootID = "inventory_root";
 
         private readonly MonoBehaviour _coroutineRunner;
-        private ItemsPage _characterPages;
+        private ItemsPage _itemsPage;
         private VisualElement _inventoryGrid;
         private const string _gridID = "grid";
         private Telegraph _telegraph;
@@ -36,11 +36,11 @@ namespace Gameplay.Inventory
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
 
-        public InventoryPageElement(ItemsPage characterPages, UIDocument document, out VisualElement inventoryPageRoot, ItemContainer itemContainer)
+        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryPageRoot, ItemContainer itemContainer)
         {
-            _characterPages = characterPages;
+            _itemsPage = itemsPage;
             _document = document;
-            _coroutineRunner = characterPages;
+            _coroutineRunner = itemsPage;
             _root = _document.rootVisualElement.Q<VisualElement>(_inventoryRootID);
             inventoryPageRoot = _root;
             _inventoryGrid = _root.Q<VisualElement>(_gridID);
@@ -70,7 +70,7 @@ namespace Gameplay.Inventory
             foreach (var item in _itemContainer.GetItems())
             {
                 ItemVisual inventoryItemVisual = new ItemVisual(
-                    characterPages: _characterPages,
+                    itemsPage: _itemsPage,
                     ownerInventory: this,
                     itemDefinition: item,
                     rect: ConfigureSlotDimensions);

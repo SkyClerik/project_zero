@@ -16,7 +16,7 @@ namespace Gameplay.Inventory
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
         private ItemContainer _itemContainer;
         private MonoBehaviour _coroutineRunner;
-        private ItemsPage _characterPages;
+        private ItemsPage _itemsPage;
 
         private VisualElement _inventoryGrid;
         private Telegraph _telegraph;
@@ -35,11 +35,11 @@ namespace Gameplay.Inventory
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
 
-        public CraftPageElement(ItemsPage characterPages, UIDocument document, out VisualElement inventoryTwoPageRoot, ItemContainer itemContainer)
+        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, ItemContainer itemContainer)
         {
-            _characterPages = characterPages;
+            _itemsPage = itemsPage;
             _document = document;
-            _coroutineRunner = characterPages;
+            _coroutineRunner = itemsPage;
             _itemContainer = itemContainer;
             _root = _document.rootVisualElement.Q<VisualElement>(_craftRootID);
             inventoryTwoPageRoot = _root;
@@ -70,7 +70,7 @@ namespace Gameplay.Inventory
             foreach (var item in _itemContainer.GetItems())
             {
                 ItemVisual inventoryItemVisual = new ItemVisual(
-                    characterPages: _characterPages,
+                    itemsPage: _itemsPage,
                     ownerInventory: this,
                     itemDefinition: item,
                     rect: ConfigureSlotDimensions);

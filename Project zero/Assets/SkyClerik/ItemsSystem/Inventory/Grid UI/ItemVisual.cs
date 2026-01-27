@@ -11,7 +11,7 @@ namespace Gameplay.Inventory
         private IDropTarget _ownerInventory;
         private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
-        private (int, int) _originalScale;
+        //private (int, int) _originalScale;
         private float _originalRotate;
         private bool _isDragging;
         private Rect _rect;
@@ -22,14 +22,14 @@ namespace Gameplay.Inventory
 
         private const string _intermediateName = "Intermediate";
         private const string _iconName = "Icon";
-        private const string _visualIconContainerName = "visual-icon-container";
-        private const string _visualIconName = "visual-icon";
+        //private const string _visualIconContainerName = "visual-icon-container";
+        //private const string _visualIconName = "visual-icon";
 
         public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
-        public ItemVisual(ItemsPage characterPages, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect)
+        public ItemVisual(ItemsPage itemsPage, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect)
         {
-            _characterPages = characterPages;
+            _characterPages = itemsPage;
             _ownerInventory = ownerInventory;
             _itemDefinition = itemDefinition;
             _rect = rect;
@@ -245,7 +245,7 @@ namespace Gameplay.Inventory
             _originalPosition = worldBound.position - parent.worldBound.position;
 
             _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
-            _originalScale = (_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
+            //_originalScale = (_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
 
             this.style.position = Position.Absolute;
             _ownerInventory.GetDocument.rootVisualElement.Add(this);

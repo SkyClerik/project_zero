@@ -26,13 +26,13 @@ namespace Gameplay.Inventory
             _document.enabled = true;
 
             _inventoryPage = new InventoryPageElement(
-                characterPages: this,
+                itemsPage: this,
                 document: _document,
                 inventoryPageRoot: out _inventoryPageRoot,
                 itemContainer: _mainItemContainer);
 
             _craftPage = new CraftPageElement(
-                characterPages: this,
+                itemsPage: this,
                 document: _document,
                 inventoryTwoPageRoot: out _craftPageRoot,
                 itemContainer: _craftItemContainer);
