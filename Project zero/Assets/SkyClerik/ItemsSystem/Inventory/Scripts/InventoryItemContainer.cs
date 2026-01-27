@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using Newtonsoft.Json;
@@ -22,13 +23,16 @@ namespace Gameplay.Inventory
         {
             if (sourceItems == null)
                 return;
+            
+            var itemsToClone = sourceItems.ToList(); // 1. Сначала создаем копию.
+            _items.Clear(); // 2. Потом очищаем основной список.
 
-            foreach (var item in sourceItems)
+            foreach (var item in itemsToClone) // 3. Итерируемся по копии.
             {
                 if (item != null)
                 {
                     var copy = Object.Instantiate(item);
-                    _items.Add(copy);
+                    _items.Add(copy); // 4. Наполняем основной список.
                 }
             }
         }

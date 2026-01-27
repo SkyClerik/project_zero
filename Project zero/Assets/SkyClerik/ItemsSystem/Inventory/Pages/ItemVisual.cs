@@ -11,7 +11,7 @@ namespace Gameplay.Inventory
         private IDropTarget _ownerInventory;
         private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
-        //private (int, int) _originalScale;
+        private Vector2Int _originalScale;
         private float _originalRotate;
         private bool _isDragging;
         private Rect _rect;
@@ -161,13 +161,14 @@ namespace Gameplay.Inventory
 
         private void RestoreSizeAndRotate()
         {
-            _itemDefinition.Dimensions.CurrentAngle = _itemDefinition.Dimensions.DefaultAngle;
-            _itemDefinition.Dimensions.CurrentWidth = _itemDefinition.Dimensions.DefaultWidth;
-            _itemDefinition.Dimensions.CurrentHeight = _itemDefinition.Dimensions.DefaultHeight;
+            // Восстанавливаем данные модели из сохраненных значений
+            _itemDefinition.Dimensions.CurrentAngle = _originalRotate;
+            _itemDefinition.Dimensions.CurrentWidth = _originalScale.x;
+            _itemDefinition.Dimensions.CurrentHeight = _originalScale.y;
 
+            // Обновляем визуальное представление из теперь уже корректной модели данных
             SetSize();
-            RotateIcon(_originalRotate);
-            SaveCurrentAngle(_originalRotate);
+            RotateIcon(_itemDefinition.Dimensions.CurrentAngle);
         }
 
         private void OnMouseUp(MouseUpEvent mouseEvent)
@@ -244,7 +245,7 @@ namespace Gameplay.Inventory
             _originalPosition = worldBound.position - parent.worldBound.position;
 
             _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
-            //_originalScale = (_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
+            _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
 
             this.style.position = Position.Absolute;
             _ownerInventory.GetDocument.rootVisualElement.Add(this);
