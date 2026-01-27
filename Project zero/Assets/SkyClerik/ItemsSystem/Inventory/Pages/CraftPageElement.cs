@@ -15,6 +15,8 @@ namespace Gameplay.Inventory
         private VisualElement _root;
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
         private CraftItemsContainer _itemContainer;
+
+        public CraftItemsContainer ItemContainer => _itemContainer;
         private MonoBehaviour _coroutineRunner;
         private ItemsPage _itemsPage;
 

@@ -200,12 +200,7 @@ namespace Gameplay.Inventory
 
         private void Placement()
         {
-            // Конфликтов нет, можно разместить
-            // Удаляем предмет из старого инвентаря
-            _ownerInventory.RemoveStoredItem(this);
-            // Вызываем Drop у целевого инвентаря (он сам добавит, установит позицию и поменяет владельца)
-            _placementResults.TargetInventory.Drop(this, _placementResults.Position);
-            // _ownerInventory уже обновился внутри Drop целевого инвентаря
+            _characterPages.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, _placementResults.Position);
         }
 
         public void UpdatePcs()

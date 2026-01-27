@@ -11,14 +11,14 @@ namespace Gameplay.Inventory
     public class InventoryItemContainer : MonoBehaviour
     {
         [SerializeField]
-        private List<ItemDefinition> _items = new List<ItemDefinition>();
+        private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
         private void Awake()
         {
             Initialize(_items);
         }
 
-        public void Initialize(List<ItemDefinition> sourceItems)
+        public void Initialize(List<ItemBaseDefinition> sourceItems)
         {
             if (sourceItems == null)
                 return;
@@ -34,7 +34,7 @@ namespace Gameplay.Inventory
         }
 
         // Добавить предмет в инвентарь как копия
-        public void AddItemAsClone(ItemDefinition item)
+        public void AddItemAsClone(ItemBaseDefinition item)
         {
             if (item != null)
             {
@@ -44,7 +44,7 @@ namespace Gameplay.Inventory
         }
 
         // Удалить предмет из инвентаря (по ссылке)
-        public bool RemoveItem(ItemDefinition item)
+        public bool RemoveItem(ItemBaseDefinition item)
         {
             if (item == null)
                 return false;
@@ -57,7 +57,7 @@ namespace Gameplay.Inventory
         }
 
         // Получить список предметов в инвентаре (только для чтения)
-        public IReadOnlyList<ItemDefinition> GetItems()
+        public IReadOnlyList<ItemBaseDefinition> GetItems()
         {
             return _items.AsReadOnly();
         }
@@ -94,7 +94,7 @@ namespace Gameplay.Inventory
         {
             Clear();
 
-            List<ItemDefinition> deserializedItemsData = JsonConvert.DeserializeObject<List<ItemDefinition>>(json, new JsonSerializerSettings
+            List<ItemBaseDefinition> deserializedItemsData = JsonConvert.DeserializeObject<List<ItemBaseDefinition>>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto
             });
@@ -106,7 +106,7 @@ namespace Gameplay.Inventory
             {
                 if (itemData != null)
                 {
-                    ItemDefinition newItemDefinition = ScriptableObject.CreateInstance(itemData.GetType()) as ItemDefinition;
+                    ItemBaseDefinition newItemDefinition = ScriptableObject.CreateInstance(itemData.GetType()) as ItemBaseDefinition;
                     if (newItemDefinition != null)
                     {
                         JsonConvert.PopulateObject(JsonConvert.SerializeObject(itemData), newItemDefinition);

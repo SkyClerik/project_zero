@@ -22,8 +22,8 @@ MonoBehaviour:
   _stackable: 1
   _dimensions:
     defaultWidth: 1
-    defaultHeight: 1
+    defaultHeight: 2
     defaultAngle: 0
-    currentHeight: 0
-    currentWidth: 0
+    currentHeight: 2
+    currentWidth: 1
     currentAngle: 0

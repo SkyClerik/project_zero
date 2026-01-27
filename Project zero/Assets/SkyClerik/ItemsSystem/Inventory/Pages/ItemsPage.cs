@@ -101,5 +101,31 @@ namespace Gameplay.Inventory
             _inventoryPage.FinalizeDrag();
             _craftPage.FinalizeDrag();
         }
+
+        public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2 placementPosition)
+        {
+            // Remove the item from the source container's data list
+            if (sourceInventory is InventoryPageElement sourceInvElement)
+            {
+                sourceInvElement.ItemContainer.RemoveItem(draggedItem.ItemDefinition);
+            }
+            else if (sourceInventory is CraftPageElement sourceCraftElement)
+            {
+                sourceCraftElement.ItemContainer.RemoveItem(draggedItem.ItemDefinition);
+            }
+
+            // Add the item to the target container's data list
+            if (targetInventory is InventoryPageElement targetInvElement)
+            {
+                targetInvElement.ItemContainer.AddItemAsClone(draggedItem.ItemDefinition);
+            }
+            else if (targetInventory is CraftPageElement targetCraftElement)
+            {
+                targetCraftElement.ItemContainer.AddItemAsClone(draggedItem.ItemDefinition);
+            }
+
+            // Update the ItemVisual's owner and position (handled by Drop in IDropTarget)
+            targetInventory.Drop(draggedItem, placementPosition);
+        }
     }
 }

@@ -15,6 +15,8 @@ namespace Gameplay.Inventory
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
         private InventoryItemContainer _itemContainer;
 
+        public InventoryItemContainer ItemContainer => _itemContainer;
+
         private UIDocument _document;
         private VisualElement _root;
         private const string _inventoryRootID = "inventory_root";
