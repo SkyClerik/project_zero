@@ -6,9 +6,9 @@ namespace Gameplay.Inventory
     {
         public ReasonConflict Conflict;
         public Vector2 Position;
-        public StoredItem OverlapItem;
+        public ItemVisual OverlapItem;
 
-        public PlacementResults Init(ReasonConflict conflict, Vector2 position, StoredItem overlapItem)
+        public PlacementResults Init(ReasonConflict conflict, Vector2 position, ItemVisual overlapItem)
         {
             Conflict = conflict;
             Position = position;
@@ -17,7 +17,7 @@ namespace Gameplay.Inventory
             return this;
         }
 
-        public PlacementResults Init(ReasonConflict conflict, StoredItem overlapItem)
+        public PlacementResults Init(ReasonConflict conflict, ItemVisual overlapItem)
         {
             Conflict = conflict;
             Position = Vector2.zero;

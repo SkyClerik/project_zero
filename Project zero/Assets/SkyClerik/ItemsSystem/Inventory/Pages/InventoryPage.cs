@@ -13,7 +13,7 @@ namespace Gameplay.Inventory
     public class InventoryPage : IDropTarget
     {
         [SerializeField]
-        private List<StoredItem> _storedItems = new List<StoredItem>();
+        private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
         private ItemContainer _itemContainer;
 
         private UIDocument _document;
@@ -26,7 +26,7 @@ namespace Gameplay.Inventory
         private Telegraph _telegraph;
 
         private PlacementResults _placementResults;
-        private StoredItem _overlapItem = null;
+        private ItemVisual _overlapItem = null;
 
         private RectangleSize _inventoryDimensions;
         private Rect _cellSize;
@@ -66,27 +66,24 @@ namespace Gameplay.Inventory
 
         private IEnumerator LoadInventory()
         {
-            foreach (ItemDefinition item in _itemContainer.GetItems())
+            foreach (var item in _itemContainer.GetItems())
             {
-                var loadedItem = new StoredItem(item);
                 ItemVisual inventoryItemVisual = new ItemVisual(
                     ownerInventory: this,
-                    ownerStored: loadedItem,
+                    itemDefinition: item,
                     rect: ConfigureSlotDimensions);
 
                 AddItemToInventoryGrid(inventoryItemVisual);
 
                 bool inventoryHasSpace = false;
-                yield return _coroutineRunner.StartCoroutine(GetPositionForItem(inventoryItemVisual, loadedItem, result => inventoryHasSpace = result));
+                yield return _coroutineRunner.StartCoroutine(GetPositionForItem(inventoryItemVisual, result => inventoryHasSpace = result));
 
                 if (!inventoryHasSpace)
                 {
                     Debug.Log("No space - Cannot pick up the item");
-                    //RemoveItemFromInventoryGrid(inventoryItemVisual);
+                    inventoryItemVisual.RemoveFromHierarchy();
                     continue;
                 }
-
-                ConfigureInventoryItem(loadedItem, inventoryItemVisual);
             }
         }
 
@@ -104,9 +101,9 @@ namespace Gameplay.Inventory
         {
             get
             {
-                Debug.Log($"_inventoryGrid.Children().Count(): {_inventoryGrid.Children().Count()}");
+                //Debug.Log($"_inventoryGrid.Children().Count(): {_inventoryGrid.Children().Count()}");
                 VisualElement firstSlot = _inventoryGrid.Children().First();
-                Debug.Log($"firstSlot.worldBound: {firstSlot.worldBound}");
+                //Debug.Log($"firstSlot.worldBound: {firstSlot.worldBound}");
                 return firstSlot.worldBound;
             }
         }
@@ -114,7 +111,7 @@ namespace Gameplay.Inventory
         private void ConfigureInventoryDimensions()
         {
             var children = _inventoryGrid.Children().ToList();
-            Debug.Log($"ConfigureInventoryDimensions - children.Count: {children.Count}");
+            //Debug.Log($"ConfigureInventoryDimensions - children.Count: {children.Count}");
 
             _inventoryDimensions.width = 0;
             _inventoryDimensions.height = 1;
@@ -136,30 +133,28 @@ namespace Gameplay.Inventory
                         _inventoryDimensions.width++;
                 }
             }
-            Debug.Log($"_inventoryDimensions.width: {_inventoryDimensions.width}, _inventoryDimensions.height: {_inventoryDimensions.height}");
+            //Debug.Log($"_inventoryDimensions.width: {_inventoryDimensions.width}, _inventoryDimensions.height: {_inventoryDimensions.height}");
         }
 
         public void AddItemToInventoryGrid(VisualElement item)
         {
-            Debug.Log($"add {item.name} to inventory grid");
+            //Debug.Log($"add {item.name} to inventory grid");
             _inventoryGrid.Add(item);
         }
 
         private void RemoveItemFromInventoryGrid(VisualElement item)
         {
-            Debug.Log($"Remove {item.name} to inventory grid");
+            //Debug.Log($"Remove {item.name} to inventory grid");
             _inventoryGrid.Remove(item);
         }
-
-        private static void ConfigureInventoryItem(StoredItem item, ItemVisual visual) => item.ItemVisual = visual;
-
+        
         private static void SetItemPosition(VisualElement element, Vector2 vector)
         {
             element.style.left = vector.x;
             element.style.top = vector.y;
         }
 
-        private IEnumerator GetPositionForItem(VisualElement newItem, StoredItem storedItem, System.Action<bool> callback)
+        private IEnumerator GetPositionForItem(ItemVisual newItem, System.Action<bool> callback)
         {
             // Проходим по каждой ячейке сетки, чтобы найти свободное место.
             for (int y = 0; y < _inventoryDimensions.height; y++)
@@ -178,18 +173,13 @@ namespace Gameplay.Inventory
                     if (!isInsideGrid) continue; // Если не внутри, пропускаем эту ячейку
 
                     // Ищем, не пересекается ли предмет с другими, уже размещенными предметами.
-                    bool overlapsAnotherItem = _storedItems.Any(itemInGrid =>
-                    {
-                        if (itemInGrid.ItemVisual == null) return false;
-                        bool overlap = itemInGrid.ItemVisual.worldBound.Overlaps(newItem.worldBound);
-                        return overlap;
-                    });
+                    bool overlapsAnotherItem = _itemVisuals.Any(itemInGrid => itemInGrid.worldBound.Overlaps(newItem.worldBound));
 
                     // Если предмет не пересекает другие предметы И находится в границах сетки...
                     if (!overlapsAnotherItem)
                     {
                         // ...то мы нашли подходящее место. Возвращаем true.
-                        AddStoredItem(storedItem); // Добавляем предмет в список, так как место для него найдено
+                        AddStoredItem(newItem); // Добавляем предмет в список, так как место для него найдено
                         callback(true);
                         yield break; // Выходим из корутины.
                     }
@@ -222,15 +212,13 @@ namespace Gameplay.Inventory
         }
 
         //Логика поиска пересекающихся объектов
-        private StoredItem[] FindOverlappingItems(Rect rect)
+        private ItemVisual[] FindOverlappingItems(Rect rect)
         {
-            var overlappingItems = new List<StoredItem>();
-            foreach (var itemInGrid in _storedItems)
+            var overlappingItems = new List<ItemVisual>();
+            foreach (var itemInGrid in _itemVisuals)
             {
-                if (itemInGrid.ItemVisual == null) continue;
-
                 // Используем layout, так как предметы в сетке статичны и их layout надежен
-                bool overlap = itemInGrid.ItemVisual.layout.Overlaps(rect);
+                bool overlap = itemInGrid.layout.Overlaps(rect);
                 if (overlap)
                 {
                     overlappingItems.Add(itemInGrid);
@@ -240,7 +228,7 @@ namespace Gameplay.Inventory
         }
 
         //Логика определения конфликта и формирования результата
-        private PlacementResults DeterminePlacementResult(StoredItem[] overlappingItems, Vector2 position)
+        private PlacementResults DeterminePlacementResult(ItemVisual[] overlappingItems, Vector2 position)
         {
             if (overlappingItems.Length > 0)
             {
@@ -302,31 +290,30 @@ namespace Gameplay.Inventory
             _gridRect.y -= (_cellSize.height / 4);
         }
 
-        public void AddStoredItem(StoredItem storedItem)
+        public void AddStoredItem(ItemVisual storedItem)
         {
-            _storedItems.Add(storedItem);
+            _itemVisuals.Add(storedItem);
         }
 
-        public void RemoveStoredItem(StoredItem storedItem)
+        public void RemoveStoredItem(ItemVisual storedItem)
         {
-            _storedItems.Remove(storedItem);
+            _itemVisuals.Remove(storedItem);
         }
 
-        public void PickUp(StoredItem storedItem)
+        public void PickUp(ItemVisual storedItem)
         {
-            Debug.Log($"Inventory PickUp Item");
             RemoveStoredItem(storedItem);
-            CharacterPages.CurrentDraggedItem.Owner = this;
-            storedItem.ItemVisual.SetOwnerInventory(this);
+            CharacterPages.CurrentDraggedItem = storedItem;
+            storedItem.SetOwnerInventory(this);
         }
 
-        public void Drop(StoredItem storedItem, Vector2 position)
+        public void Drop(ItemVisual storedItem, Vector2 position)
         {
             AddStoredItem(storedItem);
-            AddItemToInventoryGrid(storedItem.ItemVisual);
-            storedItem.ItemVisual.SetPosition(position - storedItem.ItemVisual.parent.worldBound.position);
+            AddItemToInventoryGrid(storedItem);
+            storedItem.SetPosition(position - storedItem.parent.worldBound.position);
 
-            storedItem.ItemVisual.SetOwnerInventory(this);
+            storedItem.SetOwnerInventory(this);
         }
 
         public void FinalizeDrag()

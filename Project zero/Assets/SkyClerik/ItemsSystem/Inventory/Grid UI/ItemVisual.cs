@@ -1,13 +1,14 @@
 ﻿using UnityEngine.Toolbox;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.DataEditor;
 
 namespace Gameplay.Inventory
 {
     public class ItemVisual : VisualElement
     {
         private IDropTarget _ownerInventory;
-        private StoredItem _ownerStored;
+        private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
         private (int, int) _originalScale;
         private float _originalRotate;
@@ -23,21 +24,21 @@ namespace Gameplay.Inventory
         private const string _visualIconContainerName = "visual-icon-container";
         private const string _visualIconName = "visual-icon";
 
-        public StoredItem StoredItem => _ownerStored;
+        public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
-        public ItemVisual(IDropTarget ownerInventory, StoredItem ownerStored, Rect rect)
+        public ItemVisual(IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect)
         {
             _ownerInventory = ownerInventory;
-            _ownerStored = ownerStored;
+            _itemDefinition = itemDefinition;
             _rect = rect;
 
-            name = _ownerStored.ItemDefinition.DefinitionName;
+            name = _itemDefinition.DefinitionName;
             //style.visibility = Visibility.Hidden;
             style.alignItems = Align.Center;
             style.justifyContent = Justify.Center;
             style.position = Position.Absolute;
-            style.width = _ownerStored.ItemDefinition.Dimensions.DefaultWidth * rect.width;
-            style.height = _ownerStored.ItemDefinition.Dimensions.DefaultHeight * rect.height;
+            style.width = _itemDefinition.Dimensions.DefaultWidth * rect.width;
+            style.height = _itemDefinition.Dimensions.DefaultHeight * rect.height;
             //AddToClassList(_visualIconContainerName);
             //SetSize();
 
@@ -45,41 +46,41 @@ namespace Gameplay.Inventory
             {
                 style =
                 {
-                    width = _ownerStored.ItemDefinition.Dimensions.DefaultWidth * rect.width,
-                    height = _ownerStored.ItemDefinition.Dimensions.DefaultHeight * rect.height,
-                    rotate = new Rotate(_ownerStored.ItemDefinition.Dimensions.DefaultAngle),
+                    width = _itemDefinition.Dimensions.DefaultWidth * rect.width,
+                    height = _itemDefinition.Dimensions.DefaultHeight * rect.height,
+                    rotate = new Rotate(_itemDefinition.Dimensions.DefaultAngle),
                 },
                 name = _intermediateName
             };
             _intermediate.SetPadding(5);
 
-            _ownerStored.ItemDefinition.Dimensions.CurrentAngle = _ownerStored.ItemDefinition.Dimensions.DefaultAngle;
-            _ownerStored.ItemDefinition.Dimensions.CurrentWidth = _ownerStored.ItemDefinition.Dimensions.DefaultWidth;
-            _ownerStored.ItemDefinition.Dimensions.CurrentHeight = _ownerStored.ItemDefinition.Dimensions.DefaultHeight;
+            _itemDefinition.Dimensions.CurrentAngle = _itemDefinition.Dimensions.DefaultAngle;
+            _itemDefinition.Dimensions.CurrentWidth = _itemDefinition.Dimensions.DefaultWidth;
+            _itemDefinition.Dimensions.CurrentHeight = _itemDefinition.Dimensions.DefaultHeight;
 
-            if (_ownerStored.ItemDefinition.Icon == null)
-                Debug.LogWarning($"Тут иконка не назначена в предмет {_ownerStored.ItemDefinition.name}");
+            if (_itemDefinition.Icon == null)
+                Debug.LogWarning($"Тут иконка не назначена в предмет {_itemDefinition.name}");
 
             _icon = new VisualElement
             {
                 style =
                 {
-                    backgroundImage = new StyleBackground(_ownerStored.ItemDefinition.Icon),
-                    width = _ownerStored.ItemDefinition.Dimensions.DefaultWidth * rect.width,
-                    height = _ownerStored.ItemDefinition.Dimensions.DefaultHeight * rect.height,
+                    backgroundImage = new StyleBackground(_itemDefinition.Icon),
+                    width = _itemDefinition.Dimensions.DefaultWidth * rect.width,
+                    height = _itemDefinition.Dimensions.DefaultHeight * rect.height,
                 },
                 name = _iconName,
             };
 
             //_icon.AddToClassList(_visualIconName);
-            if (_ownerStored.ItemDefinition.Stackable)
+            if (_itemDefinition.Stackable)
             {
                 _pcsText = new Label
                 {
                     style =
                     {
-                         width = _ownerStored.ItemDefinition.Dimensions.DefaultWidth * rect.width,
-                        height = _ownerStored.ItemDefinition.Dimensions.DefaultHeight * rect.height,
+                         width = _itemDefinition.Dimensions.DefaultWidth * rect.width,
+                        height = _itemDefinition.Dimensions.DefaultHeight * rect.height,
                         fontSize = 20,
                         color = new StyleColor(Color.red),
                         alignItems = Align.FlexStart,
@@ -123,13 +124,13 @@ namespace Gameplay.Inventory
 
         private void SwapOwnerSize()
         {
-            _ownerStored.ItemDefinition.Dimensions.Swap();
+            _itemDefinition.Dimensions.Swap();
         }
 
         private void SetSize()
         {
-            var width = _ownerStored.ItemDefinition.Dimensions.CurrentWidth * _rect.width;
-            var height = _ownerStored.ItemDefinition.Dimensions.CurrentHeight * _rect.height;
+            var width = _itemDefinition.Dimensions.CurrentWidth * _rect.width;
+            var height = _itemDefinition.Dimensions.CurrentHeight * _rect.height;
 
             this.style.width = width;
             this.style.height = height;
@@ -141,7 +142,7 @@ namespace Gameplay.Inventory
 
         private void RotateIconRight()
         {
-            var angle = _ownerStored.ItemDefinition.Dimensions.CurrentAngle + 90;
+            var angle = _itemDefinition.Dimensions.CurrentAngle + 90;
 
             if (angle >= 360)
                 angle = 0;
@@ -152,13 +153,13 @@ namespace Gameplay.Inventory
 
         private void RotateIntermediate(float angle) => _intermediate.style.rotate = new Rotate(angle);
 
-        private void SaveCurrentAngle(float angle) => _ownerStored.ItemDefinition.Dimensions.CurrentAngle = angle;
+        private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.CurrentAngle = angle;
 
         private void RestoreSizeAndRotate()
         {
-            _ownerStored.ItemDefinition.Dimensions.CurrentAngle = _ownerStored.ItemDefinition.Dimensions.DefaultAngle;
-            _ownerStored.ItemDefinition.Dimensions.CurrentWidth = _ownerStored.ItemDefinition.Dimensions.DefaultWidth;
-            _ownerStored.ItemDefinition.Dimensions.CurrentHeight = _ownerStored.ItemDefinition.Dimensions.DefaultHeight;
+            _itemDefinition.Dimensions.CurrentAngle = _itemDefinition.Dimensions.DefaultAngle;
+            _itemDefinition.Dimensions.CurrentWidth = _itemDefinition.Dimensions.DefaultWidth;
+            _itemDefinition.Dimensions.CurrentHeight = _itemDefinition.Dimensions.DefaultHeight;
 
             SetSize();
             RotateIntermediate(_originalRotate);
@@ -184,7 +185,7 @@ namespace Gameplay.Inventory
                     case ReasonConflict.None:
                         // Конфликтов нет, можно разместить
                         Debug.Log($"[OnMouseUp] No conflict. Dropping item at new position.");
-                        _ownerInventory.Drop(_ownerStored, _placementResults.Position);
+                        _ownerInventory.Drop(this, _placementResults.Position);
                         SetPosition(_placementResults.Position - parent.worldBound.position);
                         break;
 
@@ -210,14 +211,14 @@ namespace Gameplay.Inventory
 
         public void UpdatePcs()
         {
-            _pcsText.text = $"{_ownerStored.ItemDefinition.Stack}";
+            _pcsText.text = $"{_itemDefinition.Stack}";
             //MarkDirtyRepaint();
         }
 
         private void TryDropBack()
         {
             Debug.Log($"Возврат предмета");
-            _ownerInventory.AddStoredItem(_ownerStored);
+            _ownerInventory.AddStoredItem(this);
             _ownerInventory.AddItemToInventoryGrid(this);
             SetPosition(_originalPosition);
             RestoreSizeAndRotate();
@@ -227,7 +228,7 @@ namespace Gameplay.Inventory
         {
             if (mouseEvent.button == 0)
             {
-                if (CharacterPages.CurrentDraggedItem != _ownerStored)
+                if (CharacterPages.CurrentDraggedItem != this)
                     PickUp();
             }
         }
@@ -244,14 +245,14 @@ namespace Gameplay.Inventory
 
             _originalPosition = worldBound.position - parent.worldBound.position;
 
-            _originalRotate = _ownerStored.ItemDefinition.Dimensions.CurrentAngle;
-            _originalScale = (_ownerStored.ItemDefinition.Dimensions.CurrentWidth, _ownerStored.ItemDefinition.Dimensions.CurrentHeight);
+            _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
+            _originalScale = (_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
 
             this.style.position = Position.Absolute;
             _ownerInventory.GetDocument.rootVisualElement.Add(this);
-            CharacterPages.CurrentDraggedItem = _ownerStored;
+            CharacterPages.CurrentDraggedItem = this;
 
-            _ownerInventory.PickUp(_ownerStored);
+            _ownerInventory.PickUp(this);
         }
 
         private void OnMouseMove(MouseMoveEvent evt)
@@ -288,27 +289,25 @@ namespace Gameplay.Inventory
             //        }
             //    }
             //    // Размещаем текущий перетаскиваемый предмет в слот
-            //    target.Drop(_ownerStored, _placementResults.Position);
+            //    target.Drop(this, _placementResults.Position);
             //}
             if (target is InventoryPage inventory)
             {
                 Debug.Log($"target {inventory}");
                 // Логика для обычного инвентаря (стэки и т.д.)
-                if (_placementResults.OverlapItem?.ItemDefinition.ID == _ownerStored.ItemDefinition.ID)
+                if (_placementResults.OverlapItem?.ItemDefinition.ID == _itemDefinition.ID)
                 {
-                    if (_ownerStored.ItemDefinition.Stackable)
+                    if (_itemDefinition.Stackable)
                     {
                         Debug.Log($"Stack");
-                        _placementResults.OverlapItem.ItemDefinition.AddStack(_ownerStored.ItemDefinition.Stack, out int remainder);
-                        _placementResults.OverlapItem.ItemVisual.UpdatePcs();
-                        _ownerStored.ItemDefinition.Stack = remainder;
+                        _placementResults.OverlapItem.ItemDefinition.AddStack(_itemDefinition.Stack, out int remainder);
+                        _placementResults.OverlapItem.UpdatePcs();
+                        _itemDefinition.Stack = remainder;
                         UpdatePcs();
 
                         if (remainder == 0)
                         {
-                            _ownerStored.ItemVisual.RemoveFromHierarchy();
-                            _ownerStored.ItemVisual = null;
-                            _ownerStored = null;
+                            this.RemoveFromHierarchy();
                             CharacterPages.CurrentDraggedItem = null;
                         }
                     }

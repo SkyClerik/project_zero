@@ -9,12 +9,12 @@ namespace Gameplay.Inventory
         private InventoryPage _inventoryPage;
         private VisualElement _inventoryPageRoot;
         private Vector2 _mousePositionNormal;
-        private static StoredItem _currentDraggedItem = null;
+        private static ItemVisual _currentDraggedItem = null;
 
         [SerializeField]
         private ItemContainer _playerInventory;
 
-        public static StoredItem CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
+        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
         protected void Start()
         {
@@ -36,13 +36,13 @@ namespace Gameplay.Inventory
             if (!_document.isActiveAndEnabled)
                 return;
 
-            if (_currentDraggedItem == null || _currentDraggedItem.ItemVisual == null)
+            if (_currentDraggedItem == null)
                 return;
 
             _mousePositionNormal = Input.mousePosition;
-            _mousePositionNormal.x = _mousePositionNormal.x - (_currentDraggedItem.ItemVisual.layout.width / 2);
-            _mousePositionNormal.y = (Screen.height - _mousePositionNormal.y) - (_currentDraggedItem.ItemVisual.layout.height / 2);
-            _currentDraggedItem.ItemVisual.SetPosition(_mousePositionNormal);
+            _mousePositionNormal.x = _mousePositionNormal.x - (_currentDraggedItem.layout.width / 2);
+            _mousePositionNormal.y = (Screen.height - _mousePositionNormal.y) - (_currentDraggedItem.layout.height / 2);
+            _currentDraggedItem.SetPosition(_mousePositionNormal);
         }
 
         public void OpenCloseInventory()

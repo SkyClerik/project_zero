@@ -9,11 +9,11 @@ namespace Gameplay.Inventory
         PlacementResults ShowPlacementTarget(ItemVisual itemVisual);
         void FinalizeDrag();
 
-        void AddStoredItem(StoredItem storedItem);
-        void RemoveStoredItem(StoredItem storedItem);
+        void AddStoredItem(ItemVisual storedItem);
+        void RemoveStoredItem(ItemVisual storedItem);
 
-        void PickUp(StoredItem storedItem);
-        void Drop(StoredItem storedItem, Vector2 position);
+        void PickUp(ItemVisual storedItem);
+        void Drop(ItemVisual storedItem, Vector2 position);
 
         void AddItemToInventoryGrid(VisualElement item);
     }
