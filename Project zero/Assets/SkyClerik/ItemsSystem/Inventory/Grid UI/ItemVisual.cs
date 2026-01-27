@@ -7,6 +7,7 @@ namespace Gameplay.Inventory
 {
     public class ItemVisual : VisualElement
     {
+        private ItemsPage _characterPages;
         private IDropTarget _ownerInventory;
         private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
@@ -26,8 +27,9 @@ namespace Gameplay.Inventory
 
         public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
-        public ItemVisual(IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect)
+        public ItemVisual(ItemsPage characterPages, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect)
         {
+            _characterPages = characterPages;
             _ownerInventory = ownerInventory;
             _itemDefinition = itemDefinition;
             _rect = rect;
@@ -175,37 +177,36 @@ namespace Gameplay.Inventory
 
                 _isDragging = false;
                 style.opacity = 1f;
-                CharacterPages.CurrentDraggedItem = null;
+                ItemsPage.CurrentDraggedItem = null;
                 //_ownerInventory.GetDocument.sortingOrder = 0;
 
-                _placementResults = _ownerInventory.ShowPlacementTarget(this);
+                _placementResults = _characterPages.HandleItemPlacement(this);
 
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
                         // Конфликтов нет, можно разместить
-                        Debug.Log($"[OnMouseUp] No conflict. Dropping item at new position.");
-                        _ownerInventory.Drop(this, _placementResults.Position);
-                        SetPosition(_placementResults.Position - parent.worldBound.position);
+                        // Удаляем предмет из старого инвентаря
+                        _ownerInventory.RemoveStoredItem(this);
+                        // Вызываем Drop у целевого инвентаря (он сам добавит, установит позицию и поменяет владельца)
+                        _placementResults.TargetInventory.Drop(this, _placementResults.Position);
+                        // _ownerInventory уже обновился внутри Drop целевого инвентаря
                         break;
 
                     case ReasonConflict.beyondTheGridBoundary:
-                        Debug.Log($"[OnMouseUp] Conflict: Beyond the grid boundary. Dropping back.");
                         TryDropBack();
                         break;
 
                     case ReasonConflict.intersectsObjects:
-                        Debug.Log($"[OnMouseUp] Conflict: Intersects with another object. Dropping back.");
                         TryDropBack();
                         break;
 
                     case ReasonConflict.invalidSlotType:
-                        Debug.Log($"[OnMouseUp] Conflict: Invalid slot type. Dropping back.");
                         TryDropBack();
                         return;
                 }
 
-                _ownerInventory.FinalizeDrag();
+                _characterPages.FinalizeDragOfItem(this);
             }
         }
 
@@ -217,7 +218,6 @@ namespace Gameplay.Inventory
 
         private void TryDropBack()
         {
-            Debug.Log($"Возврат предмета");
             _ownerInventory.AddStoredItem(this);
             _ownerInventory.AddItemToInventoryGrid(this);
             SetPosition(_originalPosition);
@@ -228,7 +228,7 @@ namespace Gameplay.Inventory
         {
             if (mouseEvent.button == 0)
             {
-                if (CharacterPages.CurrentDraggedItem != this)
+                if (ItemsPage.CurrentDraggedItem != this)
                     PickUp();
             }
         }
@@ -236,9 +236,8 @@ namespace Gameplay.Inventory
         public void PickUp()
         {
             // Сразу вызываем проверку потому что обновление происходит только при движении курсора а нам нужно найти место начальное
-            _ownerInventory.ShowPlacementTarget(this);
+            _placementResults = _characterPages.HandleItemPlacement(this);
 
-            Debug.Log($"Визуальный элемент: Поднят предмет");
             _isDragging = true;
             style.left = float.MinValue;
             style.opacity = 0.7f;
@@ -250,7 +249,7 @@ namespace Gameplay.Inventory
 
             this.style.position = Position.Absolute;
             _ownerInventory.GetDocument.rootVisualElement.Add(this);
-            CharacterPages.CurrentDraggedItem = this;
+            ItemsPage.CurrentDraggedItem = this;
 
             _ownerInventory.PickUp(this);
         }
@@ -263,43 +262,41 @@ namespace Gameplay.Inventory
             if (Input.GetMouseButtonDown(1))
                 Rotate();
 
-            _placementResults = _ownerInventory.ShowPlacementTarget(this);
+            _placementResults = _characterPages.HandleItemPlacement(this);
             if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary)
-                Debug.Log($"За пределами всех сеток");
+            { }
             else
-                Debug.Log($"Внутри какой то сетки");
+            { }
         }
 
         private void OnOverlapItem(IDropTarget target)
         {
             //if (target is EquipmentPage equipment)
             //{
-            //    Debug.Log($"target {equipment}");
             //    // Если слот занят, выталкиваем старый предмет и делаем его перетаскиваемым
             //    if (_placementResults.OverlapItem != null)
             //    {
             //        if (_placementResults.OverlapItem.ItemVisual == null)
             //        {
-            //            Debug.Log($"Не понятно как но объект есть а данных нет");
+            //            // Не понятно как но объект есть а данных нет
             //        }
             //        else
             //        {
-            //            Debug.Log($"Поднимаем старый предмет в руку");
-            //            _placementResults.OverlapItem.ItemVisual.PickUp();
+            //            // Поднимаем старый предмет в руку
+            //            _placementResults.OverlapItem.PickUp();
             //        }
             //    }
             //    // Размещаем текущий перетаскиваемый предмет в слот
             //    target.Drop(this, _placementResults.Position);
             //}
-            if (target is InventoryPage inventory)
+            if (target is InventoryPageElement inventory)
             {
-                Debug.Log($"target {inventory}");
                 // Логика для обычного инвентаря (стэки и т.д.)
                 if (_placementResults.OverlapItem?.ItemDefinition.ID == _itemDefinition.ID)
                 {
                     if (_itemDefinition.Stackable)
                     {
-                        Debug.Log($"Stack");
+                        // Stack
                         _placementResults.OverlapItem.ItemDefinition.AddStack(_itemDefinition.Stack, out int remainder);
                         _placementResults.OverlapItem.UpdatePcs();
                         _itemDefinition.Stack = remainder;
@@ -308,7 +305,7 @@ namespace Gameplay.Inventory
                         if (remainder == 0)
                         {
                             this.RemoveFromHierarchy();
-                            CharacterPages.CurrentDraggedItem = null;
+                            ItemsPage.CurrentDraggedItem = null;
                         }
                     }
                 }

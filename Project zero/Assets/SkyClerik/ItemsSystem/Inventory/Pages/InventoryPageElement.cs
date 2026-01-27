@@ -5,12 +5,11 @@ using System.Linq;
 using UnityEngine.Toolbox;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.DataEditor;
 
 namespace Gameplay.Inventory
 {
     [System.Serializable]
-    public class InventoryPage : IDropTarget
+    public class InventoryPageElement : IDropTarget
     {
         [SerializeField]
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
@@ -21,6 +20,7 @@ namespace Gameplay.Inventory
         private const string _inventoryRootID = "inventory_root";
 
         private readonly MonoBehaviour _coroutineRunner;
+        private ItemsPage _characterPages;
         private VisualElement _inventoryGrid;
         private const string _gridID = "grid";
         private Telegraph _telegraph;
@@ -31,15 +31,16 @@ namespace Gameplay.Inventory
         private RectangleSize _inventoryDimensions;
         private Rect _cellSize;
         private Rect _gridRect;
-        private Vector2 _mousePositionNormal;
+        //private Vector2 _mousePositionNormal;
 
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
 
-        public InventoryPage(UIDocument document, MonoBehaviour coroutineRunner, out VisualElement inventoryPageRoot, ItemContainer itemContainer)
+        public InventoryPageElement(ItemsPage characterPages, UIDocument document, out VisualElement inventoryPageRoot, ItemContainer itemContainer)
         {
+            _characterPages = characterPages;
             _document = document;
-            _coroutineRunner = coroutineRunner;
+            _coroutineRunner = characterPages;
             _root = _document.rootVisualElement.Q<VisualElement>(_inventoryRootID);
             inventoryPageRoot = _root;
             _inventoryGrid = _root.Q<VisualElement>(_gridID);
@@ -69,6 +70,7 @@ namespace Gameplay.Inventory
             foreach (var item in _itemContainer.GetItems())
             {
                 ItemVisual inventoryItemVisual = new ItemVisual(
+                    characterPages: _characterPages,
                     ownerInventory: this,
                     itemDefinition: item,
                     rect: ConfigureSlotDimensions);
@@ -80,7 +82,6 @@ namespace Gameplay.Inventory
 
                 if (!inventoryHasSpace)
                 {
-                    Debug.Log("No space - Cannot pick up the item");
                     inventoryItemVisual.RemoveFromHierarchy();
                     continue;
                 }
@@ -101,9 +102,7 @@ namespace Gameplay.Inventory
         {
             get
             {
-                //Debug.Log($"_inventoryGrid.Children().Count(): {_inventoryGrid.Children().Count()}");
                 VisualElement firstSlot = _inventoryGrid.Children().First();
-                //Debug.Log($"firstSlot.worldBound: {firstSlot.worldBound}");
                 return firstSlot.worldBound;
             }
         }
@@ -111,7 +110,6 @@ namespace Gameplay.Inventory
         private void ConfigureInventoryDimensions()
         {
             var children = _inventoryGrid.Children().ToList();
-            //Debug.Log($"ConfigureInventoryDimensions - children.Count: {children.Count}");
 
             _inventoryDimensions.width = 0;
             _inventoryDimensions.height = 1;
@@ -133,18 +131,15 @@ namespace Gameplay.Inventory
                         _inventoryDimensions.width++;
                 }
             }
-            //Debug.Log($"_inventoryDimensions.width: {_inventoryDimensions.width}, _inventoryDimensions.height: {_inventoryDimensions.height}");
         }
 
         public void AddItemToInventoryGrid(VisualElement item)
         {
-            //Debug.Log($"add {item.name} to inventory grid");
             _inventoryGrid.Add(item);
         }
 
         private void RemoveItemFromInventoryGrid(VisualElement item)
         {
-            //Debug.Log($"Remove {item.name} to inventory grid");
             _inventoryGrid.Remove(item);
         }
         
@@ -172,7 +167,7 @@ namespace Gameplay.Inventory
                     bool isInsideGrid = GridRectOverlap(newItem);
                     if (!isInsideGrid) continue; // Если не внутри, пропускаем эту ячейку
 
-                    // Ищем, не пересекается ли предмет с другими, уже размещенными предметами.
+                    // Ищем, не пересекается ли предмет с другими, уже размещенными предметами. Ищем, не пересекается ли предмет с другими, уже размещенными предметами.
                     bool overlapsAnotherItem = _itemVisuals.Any(itemInGrid => itemInGrid.worldBound.Overlaps(newItem.worldBound));
 
                     // Если предмет не пересекает другие предметы И находится в границах сетки...
@@ -233,11 +228,11 @@ namespace Gameplay.Inventory
             if (overlappingItems.Length > 0)
             {
                 _telegraph.SetPlacement(false); // false = invalid = red
-                return _placementResults.Init(conflict: ReasonConflict.intersectsObjects, overlapItem: overlappingItems[0]);
+                return _placementResults.Init(conflict: ReasonConflict.intersectsObjects, overlapItem: overlappingItems[0], targetInventory: this);
             }
 
             _telegraph.SetPlacement(true); // true = valid = green
-            return _placementResults.Init(conflict: ReasonConflict.None, position: position, overlapItem: null);
+            return _placementResults.Init(conflict: ReasonConflict.None, position: position, overlapItem: null, targetInventory: this);
         }
 
         public PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
@@ -248,7 +243,7 @@ namespace Gameplay.Inventory
             if (!IsWithinGridBounds(draggedItem))
             {
                 _telegraph.Hide();
-                return _placementResults.Init(conflict: ReasonConflict.beyondTheGridBoundary, overlapItem: _overlapItem);
+                return _placementResults.Init(conflict: ReasonConflict.beyondTheGridBoundary, overlapItem: _overlapItem, targetInventory: null);
             }
 
             // Находим целевой слот
@@ -256,7 +251,7 @@ namespace Gameplay.Inventory
             if (targetSlot == null)
             {
                 _telegraph.Hide();
-                return _placementResults.Init(conflict: ReasonConflict.beyondTheGridBoundary, overlapItem: _overlapItem);
+                return _placementResults.Init(conflict: ReasonConflict.beyondTheGridBoundary, overlapItem: _overlapItem, targetInventory: null);
             }
 
             // Обновляем позицию телеграфа
@@ -303,7 +298,7 @@ namespace Gameplay.Inventory
         public void PickUp(ItemVisual storedItem)
         {
             RemoveStoredItem(storedItem);
-            CharacterPages.CurrentDraggedItem = storedItem;
+            ItemsPage.CurrentDraggedItem = storedItem;
             storedItem.SetOwnerInventory(this);
         }
 
