@@ -19,6 +19,8 @@ namespace Gameplay.Inventory
         private VisualElement _icon;
         private Label _pcsText;
 
+        private bool _singleRotationMode;
+
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
         //private const string _visualIconContainerName = "visual-icon-container";
@@ -26,12 +28,13 @@ namespace Gameplay.Inventory
 
         public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
-        public ItemVisual(ItemsPage itemsPage, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect)
+        public ItemVisual(ItemsPage itemsPage, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Rect rect, bool singleRotationMode = true)
         {
             _characterPages = itemsPage;
             _ownerInventory = ownerInventory;
             _itemDefinition = itemDefinition;
             _rect = rect;
+            _singleRotationMode = singleRotationMode;
 
             name = _itemDefinition.DefinitionName;
             // Стили самого контейнера (ItemVisual)
@@ -146,10 +149,19 @@ namespace Gameplay.Inventory
 
         private void RotateIconRight()
         {
-            var angle = _itemDefinition.Dimensions.CurrentAngle + 90;
-
-            if (angle >= 360)
-                angle = 0;
+            float angle;
+            if (_singleRotationMode)
+            {
+                // В режиме одной ротации переключаемся между 0 и 90 градусами
+                angle = (_itemDefinition.Dimensions.CurrentAngle == 0) ? 90 : 0;
+            }
+            else
+            {
+                // В обычном режиме делаем полный оборот
+                angle = _itemDefinition.Dimensions.CurrentAngle + 90;
+                if (angle >= 360)
+                    angle = 0;
+            }
 
             RotateIcon(angle);
             SaveCurrentAngle(angle);
