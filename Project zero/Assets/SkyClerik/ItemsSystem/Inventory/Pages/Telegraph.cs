@@ -13,17 +13,21 @@ namespace Gameplay.Inventory
             this.pickingMode = PickingMode.Ignore;
             this.style.position = Position.Absolute;
             this.style.backgroundColor = _validColor;
+            this.style.width = 0;
+            this.style.height = 0;
+            this.name = "telegraph";
+            Hide();
         }
 
         public void SetPlacement(bool isValid)
         {
             style.backgroundColor = isValid ? _validColor : _invalidColor;
-            style.visibility = Visibility.Visible;
+            style.display = DisplayStyle.Flex;
         }
 
         public void Hide()
         {
-            style.visibility = Visibility.Hidden;
+            style.display = DisplayStyle.None;
         }
     }
 }

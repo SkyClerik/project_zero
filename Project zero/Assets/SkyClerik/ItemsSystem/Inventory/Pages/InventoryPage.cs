@@ -55,7 +55,8 @@ namespace Gameplay.Inventory
 
         private IEnumerator Configure()
         {
-            ConfigureInventoryTelegraph();
+            _telegraph = new Telegraph();
+            AddItemToInventoryGrid(_telegraph);
 
             yield return new WaitForEndOfFrame();
 
@@ -97,14 +98,6 @@ namespace Gameplay.Inventory
         public void Hide()
         {
             _root.SetDisplay(false);
-        }
-
-        private void ConfigureInventoryTelegraph()
-        {
-            _telegraph = new Telegraph();
-            _telegraph.name = "telegraph";
-            AddItemToInventoryGrid(_telegraph);
-            Debug.Log($"tel {_telegraph}");
         }
 
         private Rect ConfigureSlotDimensions
@@ -175,31 +168,40 @@ namespace Gameplay.Inventory
                 {
                     // Устанавливаем позицию предмета в текущую проверяемую ячейку.
                     var newPos = new Vector2(_cellSize.width * x, _cellSize.height * y);
-                    Debug.Log($"newPos ({newPos.x},{newPos.y})");
                     SetItemPosition(newItem, newPos);
-                    Debug.Log($"newPos1 ({newItem.style.left},{newItem.style.right})");
+
                     // Ждем конца кадра, чтобы UI успел обновить worldBound предмета после смены позиции.
                     yield return new WaitForEndOfFrame();
 
                     // Проверяем, находится ли предмет полностью в границах сетки.
-                    bool parentOverlapping = GridRectOverlap(newItem);
-                    // Ищем, не пересекается ли предмет с другими, уже размещенными предметами.
-                    StoredItem overlappingItem = _storedItems.FirstOrDefault(s => s.ItemVisual != null && s.ItemVisual.worldBound.Overlaps(newItem.worldBound));
+                    bool isInsideGrid = GridRectOverlap(newItem);
+                    if (!isInsideGrid) continue; // Если не внутри, пропускаем эту ячейку
 
-                    Debug.Log($"Checking slot ({x},{y}). Position: {newPos}. In grid bounds: {parentOverlapping}. Overlapping item: {(overlappingItem != null ? overlappingItem.ItemDefinition.name : "null")}");
+                    // Ищем, не пересекается ли предмет с другими, уже размещенными предметами.
+                    bool overlapsAnotherItem = _storedItems.Any(itemInGrid =>
+                    {
+                        if (itemInGrid.ItemVisual == null) return false;
+                        bool overlap = itemInGrid.ItemVisual.worldBound.Overlaps(newItem.worldBound);
+                        if (overlap)
+                        {
+                            Debug.Log($"[Поиск Места] Обнаружено наложение в ({x},{y}). Границы нового предмета={newItem.worldBound} пересекаются с {itemInGrid.ItemDefinition.name}.Границы={itemInGrid.ItemVisual.worldBound}");
+                        }
+                        return overlap;
+                    });
 
                     // Если предмет не пересекает другие предметы И находится в границах сетки...
-                    if (overlappingItem == null && parentOverlapping)
+                    if (!overlapsAnotherItem)
                     {
-                        Debug.Log($"Found a valid spot at ({x},{y})");
+                        Debug.Log($"[Поиск Места] Найдено свободное место в ({x},{y}) для {storedItem.ItemDefinition.name}.");
                         // ...то мы нашли подходящее место. Возвращаем true.
+                        AddStoredItem(storedItem); // Добавляем предмет в список, так как место для него найдено
                         callback(true);
                         yield break; // Выходим из корутины.
                     }
                 }
             }
 
-            Debug.LogWarning("Could not find any valid spot for the item.");
+            Debug.LogWarning($"[Поиск Места] Не удалось найти свободное место для предмета {storedItem.ItemDefinition.name}.");
             // Если мы прошли весь цикл и не нашли места, возвращаем false.
             callback(false);
         }
@@ -226,30 +228,36 @@ namespace Gameplay.Inventory
         }
 
         //Логика поиска пересекающихся объектов
-        private StoredItem[] FindOverlappingItems()
+        private StoredItem[] FindOverlappingItems(Rect rect)
         {
-            return _storedItems
-                .Where(x => x.ItemVisual != null && x.ItemVisual.worldBound.Overlaps(_telegraph.worldBound))
-                .ToArray();
+            var overlappingItems = new List<StoredItem>();
+            foreach (var itemInGrid in _storedItems)
+            {
+                if (itemInGrid.ItemVisual == null) continue;
+
+                // Используем layout, так как предметы в сетке статичны и их layout надежен
+                bool overlap = itemInGrid.ItemVisual.layout.Overlaps(rect);
+                if (overlap)
+                {
+                    Debug.Log($"[Поиск Пересечений] Обнаружено наложение. Проверяемый Rect={rect} пересекается с {itemInGrid.ItemDefinition.name}.layout={itemInGrid.ItemVisual.layout}");
+                    overlappingItems.Add(itemInGrid);
+                }
+            }
+            return overlappingItems.ToArray();
         }
 
         //Логика определения конфликта и формирования результата
         private PlacementResults DeterminePlacementResult(StoredItem[] overlappingItems, Vector2 position)
         {
-            if (overlappingItems.Length == 1)
+            if (overlappingItems.Length > 0)
             {
-                _overlapItem = overlappingItems[0];
-                _telegraph.SetPlacement(true);
-                return _placementResults.Init(conflict: ReasonConflict.None, position: position, overlapItem: _overlapItem);
-            }
-            else if (overlappingItems.Length > 1)
-            {
-                _telegraph.SetPlacement(false);
-                return _placementResults.Init(conflict: ReasonConflict.intersectsObjects, overlapItem: _overlapItem);
+                Debug.Log($"[Определение Результата] Конфликт с {overlappingItems.Length} предметом(ами). Первый: {overlappingItems[0].ItemDefinition.name}.");
+                _telegraph.SetPlacement(false); // false = invalid = red
+                return _placementResults.Init(conflict: ReasonConflict.intersectsObjects, overlapItem: overlappingItems[0]);
             }
 
-            _telegraph.SetPlacement(true);
-            return _placementResults.Init(conflict: ReasonConflict.None, position: position, overlapItem: _overlapItem);
+            _telegraph.SetPlacement(true); // true = valid = green
+            return _placementResults.Init(conflict: ReasonConflict.None, position: position, overlapItem: null);
         }
 
         public PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
@@ -274,8 +282,11 @@ namespace Gameplay.Inventory
             // Обновляем позицию телеграфа
             UpdateTelegraphPosition(targetSlot, draggedItem);
 
+            // Создаем Rect для проверки пересечений, основанный на компоновке, а не на worldBound
+            var telegraphRect = new Rect(_telegraph.layout.position, new Vector2(_telegraph.layout.width, _telegraph.layout.height));
+
             // Ищем пересекающиеся объекты
-            var overlappingItems = FindOverlappingItems();
+            var overlappingItems = FindOverlappingItems(telegraphRect);
 
             // Определяем результат размещения
             return DeterminePlacementResult(overlappingItems, targetSlot.worldBound.position);
@@ -320,9 +331,9 @@ namespace Gameplay.Inventory
         public void Drop(StoredItem storedItem, Vector2 position)
         {
             AddStoredItem(storedItem);
+            AddItemToInventoryGrid(storedItem.ItemVisual);
             storedItem.ItemVisual.SetPosition(position - storedItem.ItemVisual.parent.worldBound.position);
 
-            AddItemToInventoryGrid(storedItem.ItemVisual);
             storedItem.ItemVisual.SetOwnerInventory(this);
         }
 

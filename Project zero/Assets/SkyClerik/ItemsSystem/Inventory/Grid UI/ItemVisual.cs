@@ -171,48 +171,24 @@ namespace Gameplay.Inventory
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
-
-                        if (_placementResults.OverlapItem != null)
-                        {
-                            if (_placementResults.OverlapItem == _ownerStored)
-                            {
-                                Debug.Log($"Нашли самого себя! Такое по идее не возможно!!!");
-                                TryDropBack();
-                            }
-                            else
-                            {
-                                Debug.Log($"Конфликт с одним предметом - {_placementResults} в {_ownerInventory}");
-                                OnOverlapItem(_ownerInventory);
-                            }
-                        }
-                        else
-                        {
-                            Debug.Log($"Нет конфликтов можно расположить в {_ownerInventory}");
-                            _ownerInventory.Drop(_ownerStored, _placementResults.Position);
-                            SetPosition(_placementResults.Position - parent.worldBound.position);
-                        }
-
-                        return;
+                        // Конфликтов нет, можно разместить
+                        Debug.Log($"[OnMouseUp] No conflict. Dropping item at new position.");
+                        _ownerInventory.Drop(_ownerStored, _placementResults.Position);
+                        SetPosition(_placementResults.Position - parent.worldBound.position);
+                        break;
 
                     case ReasonConflict.beyondTheGridBoundary:
-
-                        //if (_characterPage.Inventories.Count == _howManyInventoryChecked)
-                        //{
-                        Debug.Log($"Получается вот тут все проверил и предмет за пределами всех сеток");
+                        Debug.Log($"[OnMouseUp] Conflict: Beyond the grid boundary. Dropping back.");
                         TryDropBack();
-                        //    return;
-                        //}
-
-                        //continue;
                         break;
 
                     case ReasonConflict.intersectsObjects:
-                        Debug.Log($"Пересекает несколько объектов");
+                        Debug.Log($"[OnMouseUp] Conflict: Intersects with another object. Dropping back.");
                         TryDropBack();
                         break;
 
                     case ReasonConflict.invalidSlotType:
-                        Debug.Log($"Не подходит тип - {_placementResults} в {_ownerInventory}");
+                        Debug.Log($"[OnMouseUp] Conflict: Invalid slot type. Dropping back.");
                         TryDropBack();
                         return;
                 }
@@ -229,11 +205,13 @@ namespace Gameplay.Inventory
 
         private void TryDropBack()
         {
-            Debug.Log($"DropBack");
+            Debug.Log($"Возврат предмета");
             _ownerInventory.AddStoredItem(_ownerStored);
             _ownerInventory.AddItemToInventoryGrid(this);
             SetPosition(_originalPosition);
             RestoreSizeAndRotate();
+
+            Debug.Log($"[Возврат] Предмет возвращен. Позиция после установки: layout.position= {this.layout.position}, worldBound.position= {this.worldBound.position}");
         }
 
         private void OnMouseDown(MouseDownEvent mouseEvent)
@@ -250,12 +228,14 @@ namespace Gameplay.Inventory
             // Сразу вызываем проверку потому что обновление происходит только при движении курсора а нам нужно найти место начальное
             _ownerInventory.ShowPlacementTarget(this);
 
-            Debug.Log($"ItemVisual PickUp Item");
+            Debug.Log($"Визуальный элемент: Поднят предмет");
             _isDragging = true;
             style.left = float.MinValue;
             style.opacity = 0.7f;
 
             _originalPosition = worldBound.position - parent.worldBound.position;
+            Debug.Log($"[Подъём] Расчет позиции: worldBound={worldBound.position}, parent.worldBound={parent.worldBound.position}, результат _originalPosition={_originalPosition}");
+
             _originalRotate = _ownerStored.ItemDefinition.Dimensions.CurrentAngle;
             _originalScale = (_ownerStored.ItemDefinition.Dimensions.CurrentWidth, _ownerStored.ItemDefinition.Dimensions.CurrentHeight);
 
