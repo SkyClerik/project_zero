@@ -6,5 +6,6 @@ namespace Gameplay.Inventory
         beyondTheGridBoundary = 1,
         intersectsObjects = 2,
         invalidSlotType = 3,
+        SwapAvailable = 4,
     }
 }

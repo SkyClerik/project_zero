@@ -7,6 +7,7 @@ namespace Gameplay.Inventory
     {
         private readonly Color _validColor = new Color(0, 1, 0, 0.5f);
         private readonly Color _invalidColor = new Color(1, 0, 0, 0.5f);
+        private readonly Color _swapColor = new Color(1, 0.92f, 0.016f, 0.5f); // Желтый
 
         public Telegraph()
         {
@@ -19,9 +20,21 @@ namespace Gameplay.Inventory
             Hide();
         }
 
-        public void SetPlacement(bool isValid)
+        public void SetPlacement(ReasonConflict conflict)
         {
-            style.backgroundColor = isValid ? _validColor : _invalidColor;
+            switch (conflict)
+            {
+                case ReasonConflict.None:
+                    style.backgroundColor = _validColor;
+                    break;
+                case ReasonConflict.SwapAvailable:
+                    style.backgroundColor = _swapColor;
+                    break;
+                default:
+                    style.backgroundColor = _invalidColor;
+                    break;
+            }
+            
             style.display = DisplayStyle.Flex;
         }
 

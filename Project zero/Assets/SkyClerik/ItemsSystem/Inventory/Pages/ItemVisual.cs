@@ -14,6 +14,7 @@ namespace Gameplay.Inventory
         private Vector2Int _originalScale;
         private float _originalRotate;
         private bool _isDragging;
+        private bool _hasNoHome = false; // Флаг для "бездомного" предмета
         private Rect _rect;
         private PlacementResults _placementResults;
         private VisualElement _icon;
@@ -192,6 +193,7 @@ namespace Gameplay.Inventory
 
                 _isDragging = false;
                 style.opacity = 1f;
+                // Временно обнуляем, чтобы избежать рекурсивных проверок
                 ItemsPage.CurrentDraggedItem = null;
                 _placementResults = _characterPages.HandleItemPlacement(this);
 
@@ -200,12 +202,16 @@ namespace Gameplay.Inventory
                     case ReasonConflict.None:
                         Placement();
                         break;
+                    
+                    case ReasonConflict.SwapAvailable:
+                        // Выполняем обмен
+                        var itemToSwap = _placementResults.OverlapItem;
+                        Placement(); // Кладем текущий предмет
+                        itemToSwap.PickUp(isSwap: true); // Поднимаем старый как "бездомный"
+                        break;
+
                     case ReasonConflict.beyondTheGridBoundary:
-                        TryDropBack();
-                        break;
                     case ReasonConflict.intersectsObjects:
-                        TryDropBack();
-                        break;
                     case ReasonConflict.invalidSlotType:
                         TryDropBack();
                         return;
@@ -230,6 +236,13 @@ namespace Gameplay.Inventory
 
         private void TryDropBack()
         {
+            if (_hasNoHome)
+            {
+                // Если предмет "бездомный", он не возвращается, а снова "прилипает" к курсору
+                PickUp(isSwap: true);
+                return;
+            }
+
             _ownerInventory.AddStoredItem(this);
             _ownerInventory.AddItemToInventoryGrid(this);
             SetPosition(_originalPosition);
@@ -245,8 +258,10 @@ namespace Gameplay.Inventory
             }
         }
 
-        public void PickUp()
+        public void PickUp(bool isSwap = false)
         {
+            _hasNoHome = isSwap;
+
             // Сразу вызываем проверку потому что обновление происходит только при движении курсора а нам нужно найти место начальное
             _placementResults = _characterPages.HandleItemPlacement(this);
 
@@ -254,7 +269,11 @@ namespace Gameplay.Inventory
             style.left = float.MinValue;
             style.opacity = 0.7f;
 
-            _originalPosition = worldBound.position - parent.worldBound.position;
+            if (!_hasNoHome)
+            {
+                // Сохраняем исходную позицию только если это не "бездомный" предмет
+                _originalPosition = worldBound.position - parent.worldBound.position;
+            }
 
             _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);

@@ -227,14 +227,26 @@ namespace Gameplay.Inventory
         //Логика определения конфликта и формирования результата
         private PlacementResults DeterminePlacementResult(ItemVisual[] overlappingItems, Vector2 position)
         {
-            if (overlappingItems.Length > 0)
+            ReasonConflict conflict;
+            ItemVisual overlapItem = null;
+
+            if (overlappingItems.Length == 0)
             {
-                _telegraph.SetPlacement(false); // false = invalid = red
-                return _placementResults.Init(conflict: ReasonConflict.intersectsObjects, overlapItem: overlappingItems[0], targetInventory: this);
+                conflict = ReasonConflict.None;
+            }
+            else if (overlappingItems.Length == 1)
+            {
+                conflict = ReasonConflict.SwapAvailable;
+                overlapItem = overlappingItems[0];
+            }
+            else
+            {
+                conflict = ReasonConflict.intersectsObjects;
+                overlapItem = overlappingItems[0]; // Можно оставить ссылку на первый пересеченный для информации
             }
 
-            _telegraph.SetPlacement(true); // true = valid = green
-            return _placementResults.Init(conflict: ReasonConflict.None, position: position, overlapItem: null, targetInventory: this);
+            _telegraph.SetPlacement(conflict);
+            return _placementResults.Init(conflict: conflict, position: position, overlapItem: overlapItem, targetInventory: this);
         }
 
         public PlacementResults ShowPlacementTarget(ItemVisual draggedItem)

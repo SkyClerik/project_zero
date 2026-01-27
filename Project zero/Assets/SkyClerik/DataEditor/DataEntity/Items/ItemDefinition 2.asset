@@ -15,7 +15,7 @@ MonoBehaviour:
   _id: 88266f4c-80d9-46e2-aa34-da54f25545b4
   _definitionName: ItemDefinition
   _description: 
-  _icon: {fileID: 21300000, guid: dc35734711226214194bd9fb277c3f6e, type: 3}
+  _icon: {fileID: 21300000, guid: f946925a07946fa40a425f1b0198ff5a, type: 3}
   _price: 32
   _curStack: 20
   _maxStack: 100
