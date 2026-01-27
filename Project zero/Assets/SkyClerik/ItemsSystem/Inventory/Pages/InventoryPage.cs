@@ -182,17 +182,12 @@ namespace Gameplay.Inventory
                     {
                         if (itemInGrid.ItemVisual == null) return false;
                         bool overlap = itemInGrid.ItemVisual.worldBound.Overlaps(newItem.worldBound);
-                        if (overlap)
-                        {
-                            Debug.Log($"[Поиск Места] Обнаружено наложение в ({x},{y}). Границы нового предмета={newItem.worldBound} пересекаются с {itemInGrid.ItemDefinition.name}.Границы={itemInGrid.ItemVisual.worldBound}");
-                        }
                         return overlap;
                     });
 
                     // Если предмет не пересекает другие предметы И находится в границах сетки...
                     if (!overlapsAnotherItem)
                     {
-                        Debug.Log($"[Поиск Места] Найдено свободное место в ({x},{y}) для {storedItem.ItemDefinition.name}.");
                         // ...то мы нашли подходящее место. Возвращаем true.
                         AddStoredItem(storedItem); // Добавляем предмет в список, так как место для него найдено
                         callback(true);
@@ -201,7 +196,6 @@ namespace Gameplay.Inventory
                 }
             }
 
-            Debug.LogWarning($"[Поиск Места] Не удалось найти свободное место для предмета {storedItem.ItemDefinition.name}.");
             // Если мы прошли весь цикл и не нашли места, возвращаем false.
             callback(false);
         }
@@ -239,7 +233,6 @@ namespace Gameplay.Inventory
                 bool overlap = itemInGrid.ItemVisual.layout.Overlaps(rect);
                 if (overlap)
                 {
-                    Debug.Log($"[Поиск Пересечений] Обнаружено наложение. Проверяемый Rect={rect} пересекается с {itemInGrid.ItemDefinition.name}.layout={itemInGrid.ItemVisual.layout}");
                     overlappingItems.Add(itemInGrid);
                 }
             }
@@ -251,7 +244,6 @@ namespace Gameplay.Inventory
         {
             if (overlappingItems.Length > 0)
             {
-                Debug.Log($"[Определение Результата] Конфликт с {overlappingItems.Length} предметом(ами). Первый: {overlappingItems[0].ItemDefinition.name}.");
                 _telegraph.SetPlacement(false); // false = invalid = red
                 return _placementResults.Init(conflict: ReasonConflict.intersectsObjects, overlapItem: overlappingItems[0]);
             }

@@ -54,6 +54,8 @@ namespace Gameplay.Inventory
             _intermediate.SetPadding(5);
 
             _ownerStored.ItemDefinition.Dimensions.CurrentAngle = _ownerStored.ItemDefinition.Dimensions.DefaultAngle;
+            _ownerStored.ItemDefinition.Dimensions.CurrentWidth = _ownerStored.ItemDefinition.Dimensions.DefaultWidth;
+            _ownerStored.ItemDefinition.Dimensions.CurrentHeight = _ownerStored.ItemDefinition.Dimensions.DefaultHeight;
 
             if (_ownerStored.ItemDefinition.Icon == null)
                 Debug.LogWarning($"Тут иконка не назначена в предмет {_ownerStored.ItemDefinition.name}");
@@ -115,7 +117,7 @@ namespace Gameplay.Inventory
         private void Rotate()
         {
             SwapOwnerSize();
-            SetSize(this);
+            SetSize();
             RotateIconRight();
         }
 
@@ -124,10 +126,17 @@ namespace Gameplay.Inventory
             _ownerStored.ItemDefinition.Dimensions.Swap();
         }
 
-        private void SetSize(VisualElement visualElement)
+        private void SetSize()
         {
-            visualElement.style.height = _ownerStored.ItemDefinition.Dimensions.CurrentHeight * _rect.height;
-            visualElement.style.width = _ownerStored.ItemDefinition.Dimensions.CurrentWidth * _rect.width;
+            var width = _ownerStored.ItemDefinition.Dimensions.CurrentWidth * _rect.width;
+            var height = _ownerStored.ItemDefinition.Dimensions.CurrentHeight * _rect.height;
+
+            this.style.width = width;
+            this.style.height = height;
+            _intermediate.style.width = width;
+            _intermediate.style.height = height;
+            _icon.style.width = width;
+            _icon.style.height = height;
         }
 
         private void RotateIconRight()
@@ -147,9 +156,11 @@ namespace Gameplay.Inventory
 
         private void RestoreSizeAndRotate()
         {
-            _ownerStored.ItemDefinition.Dimensions.CurrentWidth = _originalScale.Item1;
-            _ownerStored.ItemDefinition.Dimensions.CurrentHeight = _originalScale.Item2;
-            SetSize(this);
+            _ownerStored.ItemDefinition.Dimensions.CurrentAngle = _ownerStored.ItemDefinition.Dimensions.DefaultAngle;
+            _ownerStored.ItemDefinition.Dimensions.CurrentWidth = _ownerStored.ItemDefinition.Dimensions.DefaultWidth;
+            _ownerStored.ItemDefinition.Dimensions.CurrentHeight = _ownerStored.ItemDefinition.Dimensions.DefaultHeight;
+
+            SetSize();
             RotateIntermediate(_originalRotate);
             SaveCurrentAngle(_originalRotate);
         }
@@ -210,8 +221,6 @@ namespace Gameplay.Inventory
             _ownerInventory.AddItemToInventoryGrid(this);
             SetPosition(_originalPosition);
             RestoreSizeAndRotate();
-
-            Debug.Log($"[Возврат] Предмет возвращен. Позиция после установки: layout.position= {this.layout.position}, worldBound.position= {this.worldBound.position}");
         }
 
         private void OnMouseDown(MouseDownEvent mouseEvent)
@@ -234,7 +243,6 @@ namespace Gameplay.Inventory
             style.opacity = 0.7f;
 
             _originalPosition = worldBound.position - parent.worldBound.position;
-            Debug.Log($"[Подъём] Расчет позиции: worldBound={worldBound.position}, parent.worldBound={parent.worldBound.position}, результат _originalPosition={_originalPosition}");
 
             _originalRotate = _ownerStored.ItemDefinition.Dimensions.CurrentAngle;
             _originalScale = (_ownerStored.ItemDefinition.Dimensions.CurrentWidth, _ownerStored.ItemDefinition.Dimensions.CurrentHeight);
