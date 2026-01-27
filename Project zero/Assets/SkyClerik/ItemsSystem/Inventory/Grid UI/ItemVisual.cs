@@ -217,6 +217,7 @@ namespace Gameplay.Inventory
                         return;
                 }
 
+                _ownerInventory.FinalizeDrag();
             }
         }
 
@@ -229,21 +230,10 @@ namespace Gameplay.Inventory
         private void TryDropBack()
         {
             Debug.Log($"DropBack");
-            _placementResults = _ownerInventory.ShowPlacementTarget(this);
-
-            if (_placementResults.Conflict == ReasonConflict.None)
-            {
-                _ownerInventory.AddStoredItem(_ownerStored);
-
-                //TODO надо перенести в контракт и назвать DropBack или просто вызвать Drop
-                _ownerInventory.AddItemToInventoryGrid(this);
-                SetPosition(_originalPosition);
-                RestoreSizeAndRotate();
-            }
-            else
-            {
-                PickUp();
-            }
+            _ownerInventory.AddStoredItem(_ownerStored);
+            _ownerInventory.AddItemToInventoryGrid(this);
+            SetPosition(_originalPosition);
+            RestoreSizeAndRotate();
         }
 
         private void OnMouseDown(MouseDownEvent mouseEvent)

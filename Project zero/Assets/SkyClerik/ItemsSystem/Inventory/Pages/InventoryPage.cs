@@ -325,5 +325,10 @@ namespace Gameplay.Inventory
             AddItemToInventoryGrid(storedItem.ItemVisual);
             storedItem.ItemVisual.SetOwnerInventory(this);
         }
+
+        public void FinalizeDrag()
+        {
+            _telegraph.Hide();
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace Gameplay.Inventory
     {
         UIDocument GetDocument { get; }
         PlacementResults ShowPlacementTarget(ItemVisual itemVisual);
+        void FinalizeDrag();
 
         void AddStoredItem(StoredItem storedItem);
         void RemoveStoredItem(StoredItem storedItem);
