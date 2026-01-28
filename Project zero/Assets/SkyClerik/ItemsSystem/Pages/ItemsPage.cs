@@ -15,11 +15,18 @@ namespace SkyClerik.Inventory
         private bool _craftElementVisible = false;
         private Vector2 _mousePositionNormal;
         private static ItemVisual _currentDraggedItem = null;
+        private PlacementResults _placementResults;
 
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
 
+        [SerializeField]
+        private Vector2 _defaultCellSize = new Vector2(50, 50); // Размер одной ячейки в пикселях
+        [SerializeField]
+        private Vector2Int _inventoryGridSize = new Vector2Int(10, 5); // Ширина и высота инвентаря в ячейках
+        [SerializeField]
+        private Vector2Int _craftGridSize = new Vector2Int(3, 3); // Ширина и высота стола крафта в ячейках
         [SerializeField]
         private ItemContainerBase _inventoryItemContainer;
         [SerializeField]
@@ -69,13 +76,17 @@ namespace SkyClerik.Inventory
                 itemsPage: this,
                 document: _document,
                 inventoryPageRoot: out _,
-                itemContainer: _inventoryItemContainer);
+                itemContainer: _inventoryItemContainer,
+                cellSize: _defaultCellSize,
+                inventoryGridSize: _inventoryGridSize);
 
             _craftPage = new CraftPageElement(
                 itemsPage: this,
                 document: _document,
                 inventoryTwoPageRoot: out _craftPageRoot,
-                itemContainer: _craftItemContainer);
+                itemContainer: _craftItemContainer,
+                cellSize: _defaultCellSize,
+                inventoryGridSize: _craftGridSize);
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
@@ -101,8 +112,8 @@ namespace SkyClerik.Inventory
                 return;
 
             _mousePositionNormal = Input.mousePosition;
-            _mousePositionNormal.x = _mousePositionNormal.x - (_currentDraggedItem.layout.width / 2);
-            _mousePositionNormal.y = (Screen.height - _mousePositionNormal.y) - (_currentDraggedItem.layout.height / 2);
+            _mousePositionNormal.x = _mousePositionNormal.x - (_currentDraggedItem.resolvedStyle.width / 2);
+            _mousePositionNormal.y = (Screen.height - _mousePositionNormal.y) - (_currentDraggedItem.resolvedStyle.height / 2);
             _currentDraggedItem.SetPosition(_mousePositionNormal);
         }
 
@@ -110,26 +121,26 @@ namespace SkyClerik.Inventory
         {
             // Проверяем первый инвентарь
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
-            Debug.Log($"[ItemsPage.HandleItemPlacement] _inventoryPage results: Conflict={resultsPage.Conflict}, Position={resultsPage.Position}, OverlapItem={resultsPage.OverlapItem?.name}");
+            Debug.Log($"[ItemsPage.HandleItemPlacement] _inventoryPage results: Conflict={resultsPage.Conflict}, Position={resultsPage.Position}, OverlapItem={resultsPage.OverlapItem?.name}, SuggestedGridPosition={resultsPage.SuggestedGridPosition}");
             if (resultsPage.Conflict != ReasonConflict.beyondTheGridBoundary)
             {
                 _craftPage.Telegraph.Hide(); // Скрываем телеграф второго инвентаря, если первый активен
-                return resultsPage.Init(resultsPage.Conflict, resultsPage.Position, resultsPage.OverlapItem, _inventoryPage);
+                return resultsPage.Init(resultsPage.Conflict, resultsPage.Position, resultsPage.SuggestedGridPosition, resultsPage.OverlapItem, _inventoryPage);
             }
 
             // Если первый инвентарь не активен, проверяем второй
             PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
-            Debug.Log($"[ItemsPage.HandleItemPlacement] _craftPage results: Conflict={resultsTwo.Conflict}, Position={resultsTwo.Position}, OverlapItem={resultsTwo.OverlapItem?.name}");
+            Debug.Log($"[ItemsPage.HandleItemPlacement] _craftPage results: Conflict={resultsTwo.Conflict}, Position={resultsTwo.Position}, OverlapItem={resultsTwo.OverlapItem?.name}, SuggestedGridPosition={resultsTwo.SuggestedGridPosition}");
             if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
             {
                 _inventoryPage.Telegraph.Hide(); // Скрываем телеграф первого инвентаря, если второй активен
-                return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.OverlapItem, _craftPage);
+                return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
             }
 
             // Если ни один инвентарь не является целью, скрываем оба телеграфа и возвращаем конфликт
             _inventoryPage.Telegraph.Hide();
             _craftPage.Telegraph.Hide();
-            return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, null, null);
+            return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Изменили null на Vector2.zero для position
         }
 
         public void FinalizeDragOfItem(ItemVisual draggedItem)
@@ -138,7 +149,7 @@ namespace SkyClerik.Inventory
             _craftPage.FinalizeDrag();
         }
 
-        public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2 placementPosition)
+        public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2Int gridPosition)
         {
             var itemToMove = draggedItem.ItemDefinition;
 
@@ -154,7 +165,7 @@ namespace SkyClerik.Inventory
             else if (targetInventory is CraftPageElement targetCraftElement)
                 targetCraftElement.ItemContainer.AddItem(itemToMove);
 
-            targetInventory.Drop(draggedItem, placementPosition);
+            targetInventory.Drop(draggedItem, gridPosition);
         }
 
         public void StartTooltipDelay(ItemVisual itemVisual)

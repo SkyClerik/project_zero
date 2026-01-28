@@ -51,10 +51,31 @@ namespace SkyClerik.Inventory
         // Просто добавить существующий предмет в инвентарь
         public void AddItem(ItemBaseDefinition item)
         {
-            if (item != null)
+            if (item == null)
+                return;
+
+            if (item.Stackable)
             {
-                _items.Add(item);
+                // Ищем существующий стакуемый предмет того же типа
+                ItemBaseDefinition existingStack = _items.FirstOrDefault(i => i.DefinitionName == item.DefinitionName && i.Stackable && i.Stack < i.MaxStack);
+
+                if (existingStack != null)
+                {
+                    existingStack.AddStack(item.Stack, out int remainder);
+                    if (remainder == 0)
+                    {
+                        // Весь предмет был добавлен в существующий стак, уничтожаем оригинальный предмет
+                        Object.Destroy(item); 
+                        return;
+                    }
+                    else
+                    {
+                        // Часть предмета осталась, обновляем его количество
+                        item.Stack = remainder;
+                    }
+                }
             }
+            _items.Add(item);
         }
 
         // Удалить предмет из инвентаря (по ссылке)

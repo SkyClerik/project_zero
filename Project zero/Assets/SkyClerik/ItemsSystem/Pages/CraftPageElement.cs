@@ -1,11 +1,12 @@
 using SkyClerik.Data;
+using UnityEngine.DataEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Toolbox;
 using UnityEngine;
 using UnityEngine.UIElements;
-using SkyClerik.CraftingSystem;
+using SkyClerik.CraftingSystem; // Добавляем эту строку
 
 namespace SkyClerik.Inventory
 {
@@ -13,7 +14,9 @@ namespace SkyClerik.Inventory
     public class CraftPageElement : IDropTarget
     {
         private UIDocument _document;
-        private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
+        private Dictionary<ItemVisual, ItemGridData> _placedItemsGridData = new Dictionary<ItemVisual, ItemGridData>();
+        private bool[,] _gridOccupancy;
+        private Dictionary<ItemVisual, ItemGridData> _visualToGridDataMap = new Dictionary<ItemVisual, ItemGridData>();
         private ItemContainerBase _itemContainer;
         private MonoBehaviour _coroutineRunner;
         private ItemsPage _itemsPage;
@@ -41,7 +44,7 @@ namespace SkyClerik.Inventory
         public Telegraph Telegraph => _telegraph;
         public ItemContainerBase ItemContainer => _itemContainer;
 
-        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, ItemContainerBase itemContainer)
+        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, ItemContainerBase itemContainer, Vector2 cellSize, Vector2Int inventoryGridSize)
         {
             _itemsPage = itemsPage;
             _document = document;
@@ -60,6 +63,10 @@ namespace SkyClerik.Inventory
             _title.text = _craftPageTitleText;
             _craftButton.clicked += _craftButton_clicked;
             inventoryTwoPageRoot = _root;
+            _cellSize = new Rect(0, 0, cellSize.x, cellSize.y); // Инициализируем _cellSize переданным значением
+            _inventoryDimensions.width = inventoryGridSize.x;
+            _inventoryDimensions.height = inventoryGridSize.y;
+            _gridOccupancy = new bool[_inventoryDimensions.width, _inventoryDimensions.height]; // Инициализируем массив занятости сетки
             _coroutineRunner.StartCoroutine(Initialize());
         }
 
@@ -73,49 +80,52 @@ namespace SkyClerik.Inventory
             }
 
             // Собираем все предметы, которые сейчас лежат в сетке крафта
-            var itemsInGrid = _itemVisuals.Select(v => v.ItemDefinition).ToList();
+            var itemsInGridDefinitions = _placedItemsGridData.Keys.Select(visual => visual.ItemDefinition).ToList(); // Используем ключи словаря, это ItemBaseDefinition
             
-            if (craftSystem.TryFindRecipe(itemsInGrid, out var foundRecipe))
+            if (craftSystem.TryFindRecipe(itemsInGridDefinitions, out var foundRecipe))
             {
                 Debug.Log($"Найден рецепт! Результат: {foundRecipe.Result.Item.DefinitionName}");
 
-                // 1. Уничтожаем визуальные элементы ингредиентов
-                foreach (var visual in _itemVisuals)
+                // 1. Уничтожаем визуальные элементы ингредиентов и освобождаем ячейки
+                foreach (var entry in _visualToGridDataMap.ToList()) // Копируем список, чтобы избежать изменения коллекции во время итерации
                 {
-                    visual.RemoveFromHierarchy();
+                    UnregisterVisual(entry.Key); // Отменяем регистрацию
+                    OccupyGridCells(entry.Value, false); // Освобождаем ячейки
+                    entry.Key.RemoveFromHierarchy(); // Удаляем из UI
                 }
-                _itemVisuals.Clear();
+                _placedItemsGridData.Clear(); // Очищаем данные о размещенных предметах
+                _itemContainer.Clear(); // Очищаем контейнер данных от ингредиентов
 
-                // 2. Очищаем контейнер данных от ингредиентов
-                _itemContainer.Clear();
-
-                // 3. Создаем результирующий предмет
-                // TODO: Учесть количество из foundRecipe.Result.Quantity
+                // 2. Создаем результирующий предмет
                 var resultItem = _itemContainer.AddItemAsClone(foundRecipe.Result.Item);
                 resultItem.Stack = foundRecipe.Result.Quantity; // Учитываем количество из рецепта
 
                 if (resultItem != null)
                 {
-                    // 4. Создаем и отображаем визуальный элемент для результата
-                    ItemVisual resultVisual = new ItemVisual(
-                        itemsPage: _itemsPage,
-                        ownerInventory: this,
-                        itemDefinition: resultItem,
-                        rect: ConfigureSlotDimensions);
-                    
-                    resultVisual.UpdatePcs(); // Обновляем отображение количества
-                    
-                    AddItemToInventoryGrid(resultVisual);
-                    
-                    // Размещаем его в первой доступной ячейке
-                    _coroutineRunner.StartCoroutine(GetPositionForItem(resultVisual, success =>
+                    // 3. Пытаемся разместить результат в сетке
+                    if (TryFindPlacement(resultItem, out Vector2Int gridPosition))
                     {
-                        if (!success)
-                        {
-                            Debug.LogError("В сетке крафта нет места для результата! Хотя такого не может быть");
-                            resultVisual.RemoveFromHierarchy();
-                        }
-                    }));
+                        ItemGridData newGridData = new ItemGridData(resultItem, gridPosition);
+                        ItemVisual resultVisual = new ItemVisual(
+                            itemsPage: _itemsPage,
+                            ownerInventory: this,
+                            itemDefinition: resultItem,
+                            gridPosition: gridPosition,
+                            gridSize: newGridData.GridSize);
+
+                        _placedItemsGridData.Add(resultVisual, newGridData);
+                        
+                        resultVisual.UpdatePcs(); // Обновляем отображение количества
+                        
+                        AddItemToInventoryGrid(resultVisual); // Добавляем в UI
+                        RegisterVisual(resultVisual, newGridData); // Регистрируем визуальный элемент
+                        resultVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height)); // Устанавливаем визуальную позицию
+                    }
+                    else
+                    {
+                        Debug.LogError("В сетке крафта нет места для результата! Хотя такого не может быть при правильной логике рецептов.");
+                        // Здесь можно обработать ситуацию, когда результат не поместился (например, вернуть ингредиенты)
+                    }
                 }
             }
             else
@@ -143,61 +153,46 @@ namespace SkyClerik.Inventory
 
         private IEnumerator LoadInventory()
         {
-            foreach (var item in _itemContainer.GetItems())
+            if (!_itemContainer.GetItems().Any()) // Проверяем, есть ли вообще предметы
             {
-                ItemVisual inventoryItemVisual = new ItemVisual(
-                    itemsPage: _itemsPage,
-                    ownerInventory: this,
-                    itemDefinition: item,
-                    rect: ConfigureSlotDimensions);
+                yield break; // Если нет, сразу завершаем корутину
+            }
 
-                AddItemToInventoryGrid(inventoryItemVisual);
-
-                bool inventoryHasSpace = false;
-                yield return _coroutineRunner.StartCoroutine(GetPositionForItem(inventoryItemVisual, result => inventoryHasSpace = result));
-
-                if (!inventoryHasSpace)
+            foreach (var itemInContainer in _itemContainer.GetItems().ToList()) // Создаем копию списка
+            {
+                if (TryFindPlacement(itemInContainer, out Vector2Int gridPosition))
                 {
-                    //Debug.Log("Нет места - Невозможно поднять предмет");
-                    inventoryItemVisual.RemoveFromHierarchy();
-                    continue;
+                    ItemGridData newGridData = new ItemGridData(itemInContainer, gridPosition);
+
+                    ItemVisual inventoryItemVisual = new ItemVisual(
+                        itemsPage: _itemsPage,
+                        ownerInventory: this,
+                        itemDefinition: itemInContainer, // Используем уже существующий клон
+                        gridPosition: gridPosition,
+                        gridSize: newGridData.GridSize);
+
+                    _placedItemsGridData.Add(inventoryItemVisual, newGridData);
+                    OccupyGridCells(newGridData, true);
+
+                    AddItemToInventoryGrid(inventoryItemVisual);
+                    RegisterVisual(inventoryItemVisual, newGridData);
+                    inventoryItemVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
+                }
+                else
+                {
+                    Debug.LogWarning($"[CraftPageElement.LoadInventory] Не удалось разместить предмет {itemInContainer.name} в инвентаре. Возможно, нет места.");
+                    _itemContainer.RemoveItem(itemInContainer);
                 }
             }
+            yield break; // LoadInventory больше не использует корутины для позиционирования
         }
 
-        private Rect ConfigureSlotDimensions
-        {
-            get
-            {
-                VisualElement firstSlot = _inventoryGrid.Children().First();
-                return firstSlot.worldBound;
-            }
-        }
+
 
         private void ConfigureInventoryDimensions()
         {
-            var children = _inventoryGrid.Children().ToList();
-
-            _inventoryDimensions.width = 0;
-            _inventoryDimensions.height = 1;
-
-            if (children.Count > 0)
-            {
-                float tempY = children[0].worldBound.y;
-                bool row = false;
-                foreach (VisualElement box in children)
-                {
-                    if (box.worldBound.y > tempY)
-                    {
-                        row = true;
-                        _inventoryDimensions.height++;
-                        tempY = box.worldBound.y;
-                    }
-
-                    if (!row)
-                        _inventoryDimensions.width++;
-                }
-            }
+            // Размеры инвентаря (_inventoryDimensions) и массив занятости сетки (_gridOccupancy)
+            // теперь инициализируются в конструкторе.
         }
 
         public void AddItemToInventoryGrid(VisualElement item)
@@ -216,183 +211,337 @@ namespace SkyClerik.Inventory
             element.style.top = vector.y;
         }
 
-        private IEnumerator GetPositionForItem(ItemVisual newItem, System.Action<bool> callback)
+        private void OccupyGridCells(ItemGridData gridData, bool occupy)
         {
-            // Проходим по каждой ячейке сетки, чтобы найти свободное место.
-            for (int y = 0; y < _inventoryDimensions.height; y++)
+            for (int y = 0; y < gridData.GridSize.y; y++)
             {
-                for (int x = 0; x < _inventoryDimensions.width; x++)
+                for (int x = 0; x < gridData.GridSize.x; x++)
                 {
-                    // Устанавливаем позицию предмета в текущую проверяемую ячейку.
-                    var newPos = new Vector2(_cellSize.width * x, _cellSize.height * y);
-                    SetItemPosition(newItem, newPos);
+                    _gridOccupancy[gridData.GridPosition.x + x, gridData.GridPosition.y + y] = occupy;
+                }
+            }
+        }
 
-                    // Ждем конца кадра, чтобы UI успел обновить worldBound предмета после смены позиции.
-                    yield return new WaitForEndOfFrame();
+        private bool IsGridAreaFree(Vector2Int start, Vector2Int size)
+        {
+            Debug.Log($"[IsGridAreaFree] Start: {start}, Size: {size}, InventoryDimensions: {_inventoryDimensions.width}x{_inventoryDimensions.height}");
+            Debug.Log($"[IsGridAreaFree] GridOccupancy Dimensions: {_gridOccupancy.GetLength(0)}x{_gridOccupancy.GetLength(1)}");
 
-                    // Проверяем, находится ли предмет полностью в границах сетки.
-                    bool isInsideGrid = GridRectOverlap(newItem);
-                    if (!isInsideGrid) continue; // Если не внутри, пропускаем эту ячейку
+            // Проверка на выход за границы инвентаря
+            if (start.x < 0 || start.y < 0 || start.x + size.x > _inventoryDimensions.width || start.y + size.y > _inventoryDimensions.height)
+            {
+                Debug.LogWarning($"[IsGridAreaFree] Out of bounds check failed: Start={start}, Size={size}, Bounds={_inventoryDimensions.width}x{_inventoryDimensions.height}");
+                return false;
+            }
 
-                    // Ищем, не пересекается ли предмет с другими, уже размещенными предметами.
-                    bool overlapsAnotherItem = _itemVisuals.Any(itemInGrid => itemInGrid.worldBound.Overlaps(newItem.worldBound));
-
-                    // Если предмет не пересекает другие предметы И находится в границах сетки...
-                    if (!overlapsAnotherItem)
+            // Проверка на занятость ячеек
+            for (int y = 0; y < size.y; y++)
+            {
+                for (int x = 0; x < size.x; x++)
+                {
+                    int currentX = start.x + x;
+                    int currentY = start.y + y;
+                    Debug.Log($"[IsGridAreaFree] Checking cell: ({currentX}, {currentY})");
+                    if (currentX >= _gridOccupancy.GetLength(0) || currentY >= _gridOccupancy.GetLength(1) || currentX < 0 || currentY < 0)
                     {
-                        // ...то мы нашли подходящее место. Возвращаем true.
-                        AddStoredItem(newItem); // Добавляем предмет в список, так как место для него найдено
-                        callback(true);
-                        yield break; // Выходим из корутины.
+                         Debug.LogError($"[IsGridAreaFree] Accessing out of bounds during check: currentX={currentX}, currentY={currentY}, GridOccupancy Size={_gridOccupancy.GetLength(0)}x{_gridOccupancy.GetLength(1)}");
+                         return false;
+                    }
+                    if (_gridOccupancy[currentX, currentY]) // Исправлено: поменяли x и y местами
+                    {
+                        Debug.Log($"[IsGridAreaFree] Cell ({currentX}, {currentY}) is OCCUPIED.");
+                        return false; // Ячейка занята
+                    }
+                }
+            }
+            Debug.Log($"[IsGridAreaFree] Area from {start} with size {size} is FREE.");
+            return true; // Вся область свободна
+        }
+
+
+
+
+        public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
+        {
+            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight);
+
+            for (int y = 0; y <= _inventoryDimensions.height - itemGridSize.y; y++)
+            {
+                for (int x = 0; x <= _inventoryDimensions.width - itemGridSize.x; x++)
+                {
+                    Vector2Int currentPosition = new Vector2Int(x, y);
+                    if (IsGridAreaFree(currentPosition, itemGridSize))
+                    {
+                        suggestedGridPosition = currentPosition;
+                        return true;
                     }
                 }
             }
 
-            // Если мы прошли весь цикл и не нашли места, возвращаем false.
-            callback(false);
-        }
-
-        //Проверка пересечения с границами сетки
-        private bool IsWithinGridBounds(ItemVisual draggedItem) => GridRectOverlap(draggedItem);
-
-        //Поиск ближайшего слота, который пересекается с перемещаемым элементом
-        private VisualElement FindTargetSlot(ItemVisual draggedItem)
-        {
-            return _inventoryGrid.Children()
-                .Where(x => x.worldBound.Overlaps(draggedItem.worldBound) && x != draggedItem)
-                .OrderBy(x => Vector2.Distance(x.worldBound.position, draggedItem.worldBound.position))
-                .FirstOrDefault();
-        }
-
-        //Логика обновления размера и позиции телеграфа
-        private void UpdateTelegraphPosition(VisualElement targetSlot, ItemVisual draggedItem)
-        {
-            _telegraph.style.width = draggedItem.style.width;
-            _telegraph.style.height = draggedItem.style.height;
-
-            SetItemPosition(_telegraph, new Vector2(targetSlot.layout.position.x, targetSlot.layout.position.y));
-        }
-
-        //Логика поиска пересекающихся объектов
-        private ItemVisual[] FindOverlappingItems(Rect rect)
-        {
-            var overlappingItems = new List<ItemVisual>();
-            foreach (var itemInGrid in _itemVisuals)
-            {
-                // Используем layout, так как предметы в сетке статичны и их layout надежен
-                bool overlap = itemInGrid.layout.Overlaps(rect);
-                if (overlap)
-                {
-                    overlappingItems.Add(itemInGrid);
-                }
-            }
-            return overlappingItems.ToArray();
-        }
-
-        //Логика определения конфликта и формирования результата
-        private PlacementResults DeterminePlacementResult(ItemVisual[] overlappingItems, Vector2 position)
-        {
-            ReasonConflict conflict;
-            ItemVisual overlapItem = null;
-
-            if (overlappingItems.Length == 0)
-            {
-                conflict = ReasonConflict.None;
-            }
-            else if (overlappingItems.Length == 1)
-            {
-                conflict = ReasonConflict.SwapAvailable;
-                overlapItem = overlappingItems[0];
-            }
-            else
-            {
-                conflict = ReasonConflict.intersectsObjects;
-                overlapItem = overlappingItems[0]; // Можно оставить ссылку на первый пересеченный для информации
-            }
-
-            _telegraph.SetPlacement(conflict);
-            return _placementResults.Init(conflict: conflict, position: position, overlapItem: overlapItem, targetInventory: this);
-        }
-
-        public PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
-        {
-            _overlapItem = null;
-
-            // Проверяем, находится ли элемент в пределах сетки
-            if (!IsWithinGridBounds(draggedItem))
-            {
-                _telegraph.Hide();
-                return _placementResults.Init(conflict: ReasonConflict.beyondTheGridBoundary, overlapItem: _overlapItem, targetInventory: null);
-            }
-
-            // Находим целевой слот
-            var targetSlot = FindTargetSlot(draggedItem);
-            if (targetSlot == null)
-            {
-                _telegraph.Hide();
-                return _placementResults.Init(conflict: ReasonConflict.beyondTheGridBoundary, overlapItem: _overlapItem, targetInventory: null);
-            }
-
-            // Обновляем позицию телеграфа
-            UpdateTelegraphPosition(targetSlot, draggedItem);
-
-            // Создаем Rect для проверки пересечений, основанный на компоновке, а не на worldBound
-            var telegraphRect = new Rect(_telegraph.layout.position, new Vector2(_telegraph.layout.width, _telegraph.layout.height));
-
-            // Ищем пересекающиеся объекты
-            var overlappingItems = FindOverlappingItems(telegraphRect);
-
-            // Определяем результат размещения
-            return DeterminePlacementResult(overlappingItems, targetSlot.worldBound.position);
-        }
-
-        private bool GridRectOverlap(VisualElement item)
-        {
-            if (item.worldBound.xMin >= _gridRect.xMin && item.worldBound.yMin >= _gridRect.yMin && item.worldBound.xMax <= _gridRect.xMax && item.worldBound.yMax <= _gridRect.yMax)
-                return true;
-
+            suggestedGridPosition = Vector2Int.zero;
             return false;
         }
 
+
+
+
+
+
+
+
+
+
+
+        public PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
+        {
+            Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
+            Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.CurrentHeight);
+
+            Debug.Log($"[CraftPageElement.ShowPlacementTarget] Start. CurrentHoverGridPosition: {currentHoverGridPosition}, ItemGridSize: {itemGridSize}");
+
+            _placementResults = new PlacementResults();
+            _placementResults.Conflict = ReasonConflict.None;
+            _placementResults.OverlapItem = null;
+            // Сначала проверяем, свободно ли место под курсором
+            if (IsGridAreaFree(currentHoverGridPosition, itemGridSize))
+            {
+                _placementResults.Conflict = ReasonConflict.None; // Место под курсором свободно
+                _placementResults.SuggestedGridPosition = currentHoverGridPosition; // <--- Здесь все хорошо
+                Debug.Log($"[CraftPageElement.ShowPlacementTarget] Place under cursor is FREE. SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
+            }
+            else // Место под курсором не свободно, ищем другие варианты (Swap или другой конфликт)
+            {
+                List<ItemVisual> overlappingItems = FindOverlappingItems(currentHoverGridPosition, itemGridSize, draggedItem);
+                Debug.Log($"[CraftPageElement.ShowPlacementTarget] Overlapping items count: {overlappingItems.Count}");
+
+                if (overlappingItems.Count == 1)
+                {
+                    // Если пересекается только с одним предметом, это потенциальный Swap
+                    ItemVisual overlapItem = overlappingItems[0];
+                    ItemGridData potentialOverlapGridData = _visualToGridDataMap[overlapItem];
+
+                    _placementResults.Conflict = ReasonConflict.SwapAvailable;
+                    _placementResults.OverlapItem = overlapItem;
+                    _placementResults.SuggestedGridPosition = potentialOverlapGridData.GridPosition;
+                    Debug.Log($"[CraftPageElement.ShowPlacementTarget] SwapAvailable detected. OverlapItem: {_placementResults.OverlapItem.name}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
+                }
+                else if (overlappingItems.Count > 1)
+                {
+                    // Если пересекается более чем с одним предметом, это конфликт
+                    _placementResults.Conflict = ReasonConflict.intersectsObjects;
+                    _placementResults.SuggestedGridPosition = currentHoverGridPosition;
+                    Debug.Log($"[CraftPageElement.ShowPlacementTarget] Intersects with multiple items. Conflict: {_placementResults.Conflict}");
+                }
+                else
+                {
+                    // Если overlappingItems.Count == 0, но IsGridAreaFree вернул false,
+                    // это означает, что мы либо за границами, либо пересекаемся с пустыми, но "заблокированными" ячейками
+                    if (currentHoverGridPosition.x < 0 || currentHoverGridPosition.y < 0 ||
+                        currentHoverGridPosition.x + itemGridSize.x > _inventoryDimensions.width ||
+                        currentHoverGridPosition.y + itemGridSize.y > _inventoryDimensions.height)
+                    {
+                        _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
+                        Debug.Log($"[CraftPageElement.ShowPlacementTarget] Beyond the grid boundary. Conflict: {_placementResults.Conflict}");
+                    }
+                    else
+                    {
+                        _placementResults.Conflict = ReasonConflict.intersectsObjects; // Внутри сетки, но занято
+                        _placementResults.SuggestedGridPosition = currentHoverGridPosition;
+                        Debug.Log($"[CraftPageElement.ShowPlacementTarget] Inside grid but occupied (no overlapping items found). Conflict: {_placementResults.Conflict}");
+                    }
+                }
+            }
+
+            // ...
+
+            // Если место найдено или это потенциальный Swap, обновляем телеграф
+            if (_placementResults.Conflict == ReasonConflict.None || _placementResults.Conflict == ReasonConflict.SwapAvailable || _placementResults.Conflict == ReasonConflict.intersectsObjects) // Добавляем intersectsObjects
+            {
+                _telegraph.style.left = _placementResults.SuggestedGridPosition.x * _cellSize.width;
+                _telegraph.style.top = _placementResults.SuggestedGridPosition.y * _cellSize.height;
+                _telegraph.style.width = itemGridSize.x * _cellSize.width;
+                _telegraph.style.height = itemGridSize.y * _cellSize.height;
+            }
+            else // Если beyondTheGridBoundary или какой-то другой, то скрываем
+            {
+                _telegraph.Hide();
+            }
+
+            Debug.Log($"[CraftPageElement.ShowPlacementTarget] End. Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}, OverlapItem: {(_placementResults.OverlapItem != null ? _placementResults.OverlapItem.name : "None")}");
+            Debug.Log($"[CraftPageElement.ShowPlacementTarget] Returning Init with Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}, OverlapItem: {(_placementResults.OverlapItem != null ? _placementResults.OverlapItem.name : "None")}, TargetInventory: {this.GetType().Name}");
+            return _placementResults.Init(conflict: _placementResults.Conflict,
+                                          position: new Vector2(_placementResults.SuggestedGridPosition.x * _cellSize.width, _placementResults.SuggestedGridPosition.y * _cellSize.height),
+                                          suggestedGridPosition: _placementResults.SuggestedGridPosition,
+                                          overlapItem: _placementResults.OverlapItem,
+                                          targetInventory: this);
+        }
+
+
+
         private void CalculateGridRect()
         {
-            _cellSize = ConfigureSlotDimensions;
-            _gridRect = _inventoryGrid.worldBound;
+            _gridRect = _inventoryGrid.worldBound; // Пока оставляем worldBound для _gridRect, если нет другого способа определить общий размер сетки.
             _gridRect.width = (_cellSize.width * _inventoryDimensions.width) + (_cellSize.width / 2);
             _gridRect.height = (_cellSize.height * _inventoryDimensions.height) + (_cellSize.height / 2);
             _gridRect.x -= (_cellSize.width / 4);
             _gridRect.y -= (_cellSize.height / 4);
         }
 
-        public void AddStoredItem(ItemVisual storedItem)
+        private Vector2Int CalculateCurrentHoverGridPosition()
         {
-            _itemVisuals.Add(storedItem);
+            // Получаем позицию мыши в экранных координатах
+            Vector2 mouseScreenPosition = Input.mousePosition;
+            // Преобразуем ее в локальные координаты _inventoryGrid
+            Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(mouseScreenPosition);
+            
+            // Вычисляем позицию в сетке
+            int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
+            int gridY = Mathf.FloorToInt((_inventoryGrid.resolvedStyle.height - mouseLocalPosition.y) / _cellSize.height); // Инвертируем Y-координату
+            
+            Vector2Int currentHoverGridPosition = new Vector2Int(gridX, gridY);
+            Debug.Log($"[CraftPageElement.CalculateCurrentHoverGridPosition] MouseScreenPosition: {mouseScreenPosition}, MouseLocalPosition: {mouseLocalPosition}, ResolvedHeight: {_inventoryGrid.resolvedStyle.height}, CellSize: {_cellSize.width}x{_cellSize.height}, CurrentHoverGridPosition: {currentHoverGridPosition}");
+            
+            return currentHoverGridPosition;
+        }
+
+
+        public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
+        {
+            ItemGridData gridData;
+            if (_placedItemsGridData.TryGetValue(storedItem, out var existingGridData)) // Используем storedItem
+            {
+                gridData = existingGridData;
+                OccupyGridCells(gridData, false); // Сначала освобождаем старое место
+                gridData.GridPosition = gridPosition; // Обновляем позицию
+            }
+            else
+            {
+                gridData = new ItemGridData(storedItem.ItemDefinition, gridPosition);
+                _placedItemsGridData.Add(storedItem, gridData); // Используем storedItem
+            }
+
+            OccupyGridCells(gridData, true); // Помечаем ячейки как занятые
+            RegisterVisual(storedItem, gridData); // Регистрируем визуальный элемент
+            AddItemToInventoryGrid(storedItem); // Добавляем в UI
+            
+            storedItem.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
+            storedItem.SetOwnerInventory(this);
         }
 
         public void RemoveStoredItem(ItemVisual storedItem)
         {
-            _itemVisuals.Remove(storedItem);
+            if (_placedItemsGridData.TryGetValue(storedItem, out ItemGridData gridData)) // Используем storedItem
+            {
+                OccupyGridCells(gridData, false); // Освобождаем ячейки
+                _placedItemsGridData.Remove(storedItem); // Используем storedItem
+                UnregisterVisual(storedItem); // Отменяем регистрацию визуального элемента
+                storedItem.RemoveFromHierarchy(); // Удаляем из UI
+            }
+            else
+            {
+                Debug.LogWarning($"[CraftPageElement] Attempted to remove an item that was not in _placedItemsGridData: {storedItem.name}");
+            }
         }
 
         public void PickUp(ItemVisual storedItem)
         {
-            RemoveStoredItem(storedItem);
+            // Получаем ItemGridData, чтобы освободить ячейки
+            if (_placedItemsGridData.TryGetValue(storedItem, out ItemGridData gridData)) // Используем storedItem
+            {
+                OccupyGridCells(gridData, false); // Освобождаем ячейки
+                _placedItemsGridData.Remove(storedItem); // Используем storedItem
+            }
+            UnregisterVisual(storedItem); // Отменяем регистрацию визуального элемента
+
             ItemsPage.CurrentDraggedItem = storedItem;
             storedItem.SetOwnerInventory(this);
         }
 
-        public void Drop(ItemVisual storedItem, Vector2 position)
+        public void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            AddStoredItem(storedItem);
-            AddItemToInventoryGrid(storedItem);
-            storedItem.SetPosition(position - storedItem.parent.worldBound.position);
-
-            storedItem.SetOwnerInventory(this);
+            AddStoredItem(storedItem, gridPosition);
         }
 
         public void FinalizeDrag()
         {
             _telegraph.Hide();
+        }
+
+        // Explicit implementation for IDropTarget.AddStoredItem
+        void IDropTarget.AddStoredItem(ItemVisual storedItem)
+        {
+            // Здесь должна быть логика по размещению предмета без явной позиции.
+            // Возможно, поиск свободного места или обработка ошибок.
+            // Сейчас оставляем пустым, чтобы компилятор не ругался, и обсудим с тобой, как лучше реализовать.
+            Debug.LogWarning($"[CraftPageElement] IDropTarget.AddStoredItem(ItemVisual) called. " +
+                             $"This method currently does not place the item in a specific grid position. " +
+                             $"Consider calling AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition) instead.");
+        }
+
+        public ItemGridData GetItemGridData(ItemVisual itemVisual) // Изменена сигнатура
+        {
+            if (_placedItemsGridData.TryGetValue(itemVisual, out ItemGridData gridData)) // Используем itemVisual
+            {
+                return gridData;
+            }
+            return null;
+        }
+
+        public Vector2 CellSize => new Vector2(_cellSize.width, _cellSize.height);
+
+        private ItemVisual FindItemAtGridPosition(Vector2Int gridPosition)
+        {
+            foreach (var entry in _visualToGridDataMap)
+            {
+                ItemGridData gridData = entry.Value;
+                Vector2Int itemGridSize = gridData.GridSize;
+                Vector2Int itemGridPos = gridData.GridPosition;
+
+                // Проверяем, находится ли gridPosition внутри области, занимаемой предметом
+                if (gridPosition.x >= itemGridPos.x && gridPosition.x < itemGridPos.x + itemGridSize.x &&
+                    gridPosition.y >= itemGridPos.y && gridPosition.y < itemGridPos.y + itemGridSize.y)
+                {
+                    return entry.Key; // Возвращаем ItemVisual, который занимает эту ячейку
+                }
+            }
+            return null; // Ничего не найдено
+        }
+
+        public void RegisterVisual(ItemVisual visual, ItemGridData gridData)
+        {
+            if (!_visualToGridDataMap.ContainsKey(visual))
+            {
+                _visualToGridDataMap.Add(visual, gridData);
+            }
+        }
+
+        public void UnregisterVisual(ItemVisual visual)
+        {
+            if (_visualToGridDataMap.ContainsKey(visual))
+            {
+                _visualToGridDataMap.Remove(visual);
+            }
+        }
+
+        private List<ItemVisual> FindOverlappingItems(Vector2Int start, Vector2Int size, ItemVisual draggedItem)
+        {
+            List<ItemVisual> overlappingItems = new List<ItemVisual>();
+            RectInt targetRect = new RectInt(start.x, start.y, size.x, size.y);
+
+            foreach (var entry in _visualToGridDataMap)
+            {
+                ItemVisual currentItem = entry.Key;
+                if (currentItem == draggedItem) continue; // Игнорируем сам перетаскиваемый предмет
+
+                ItemGridData gridData = entry.Value;
+                RectInt currentItemRect = new RectInt(gridData.GridPosition.x, gridData.GridPosition.y, gridData.GridSize.x, gridData.GridSize.y);
+
+                if (targetRect.Overlaps(currentItemRect))
+                {
+                    overlappingItems.Add(currentItem);
+                }
+            }
+            return overlappingItems;
         }
     }
 }
