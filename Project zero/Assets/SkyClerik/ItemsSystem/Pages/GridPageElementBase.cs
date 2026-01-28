@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.Toolbox; // Для SetVisibility, если используется
 using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
@@ -27,8 +26,9 @@ namespace SkyClerik.Inventory
         protected ItemContainerBase _itemContainer;
 
         // Общие UI-элементы и логика перетаскивания
-        protected VisualElement _root; // Root VisualElement страницы, инициализируется в наследниках
-        protected VisualElement _inventoryGrid; // Базовый контейнер для сетки
+        protected VisualElement _root;
+        protected VisualElement _inventoryGrid;
+        private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
 
@@ -37,7 +37,7 @@ namespace SkyClerik.Inventory
         public Telegraph Telegraph => _telegraph;
         public ItemContainerBase ItemContainer => _itemContainer;
         public Vector2 CellSize => new Vector2(_cellSize.width, _cellSize.height);
-        public VisualElement Root => _root; // Добавлено публичное свойство Root
+        public VisualElement Root => _root;
 
         // Конструктор базового класса
         protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainerBase itemContainer, Vector2 cellSize, Vector2Int inventoryGridSize, string rootID)
@@ -47,8 +47,8 @@ namespace SkyClerik.Inventory
             _coroutineRunner = itemsPage;
             _itemContainer = itemContainer;
 
-            _root = _document.rootVisualElement.Q<VisualElement>(rootID); // Инициализация корневого элемента по ID
-            _inventoryGrid = _root.Q<VisualElement>("grid"); // Предполагаем, что ID "grid" общий
+            _root = _document.rootVisualElement.Q<VisualElement>(rootID);
+            _inventoryGrid = _root.Q<VisualElement>(_inventoryGridID);
 
             _cellSize = new Rect(0, 0, cellSize.x, cellSize.y);
             _inventoryDimensions.width = inventoryGridSize.x;
@@ -57,8 +57,6 @@ namespace SkyClerik.Inventory
 
             _coroutineRunner.StartCoroutine(Initialize());
         }
-
-        // --- Общие методы ---
 
         protected IEnumerator Initialize()
         {
@@ -152,14 +150,8 @@ namespace SkyClerik.Inventory
 
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
         {
-            Debug.Log($"[{GetType().Name}.IsGridAreaFree] Start: {start}, Size: {size}, InventoryDimensions: {_inventoryDimensions.width}x{_inventoryDimensions.height}");
-            Debug.Log($"[{GetType().Name}.IsGridAreaFree] GridOccupancy Dimensions: {_gridOccupancy.GetLength(0)}x{_gridOccupancy.GetLength(1)}");
-
             if (start.x < 0 || start.y < 0 || start.x + size.x > _inventoryDimensions.width || start.y + size.y > _inventoryDimensions.height)
-            {
-                Debug.LogWarning($"[{GetType().Name}.IsGridAreaFree] Out of bounds check failed: Start={start}, Size={size}, Bounds={_inventoryDimensions.width}x{_inventoryDimensions.height}");
                 return false;
-            }
 
             for (int y = 0; y < size.y; y++)
             {
@@ -167,20 +159,13 @@ namespace SkyClerik.Inventory
                 {
                     int currentX = start.x + x;
                     int currentY = start.y + y;
-                    Debug.Log($"[{GetType().Name}.IsGridAreaFree] Checking cell: ({currentX}, {currentY})");
                     if (currentX >= _gridOccupancy.GetLength(0) || currentY >= _gridOccupancy.GetLength(1) || currentX < 0 || currentY < 0)
-                    {
-                        Debug.LogError($"[{GetType().Name}.IsGridAreaFree] Accessing out of bounds during check: currentX={currentX}, currentY={currentY}, GridOccupancy Size={_gridOccupancy.GetLength(0)}x{_gridOccupancy.GetLength(1)}");
                         return false;
-                    }
+
                     if (_gridOccupancy[currentX, currentY])
-                    {
-                        Debug.Log($"[{GetType().Name}.IsGridAreaFree] Cell ({currentX}, {currentY}) is OCCUPIED.");
                         return false;
-                    }
                 }
             }
-            Debug.Log($"[{GetType().Name}.IsGridAreaFree] Area from {start} with size {size} is FREE.");
             return true;
         }
 
@@ -210,15 +195,12 @@ namespace SkyClerik.Inventory
             Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
             Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.CurrentHeight);
 
-            Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Start. CurrentHoverGridPosition: {currentHoverGridPosition}, ItemGridSize: {itemGridSize}");
-
             _placementResults = new PlacementResults();
             _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
             _placementResults.OverlapItem = null;
 
             // Всегда определяем пересекающиеся предметы, так как это влияет на Swap
             List<ItemVisual> overlappingItems = FindOverlappingItems(currentHoverGridPosition, itemGridSize, draggedItem);
-            Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Overlapping items count: {overlappingItems.Count}");
 
             // 1. Проверка на выход за границы
             if (currentHoverGridPosition.x < 0 || currentHoverGridPosition.y < 0 ||
@@ -226,7 +208,6 @@ namespace SkyClerik.Inventory
                 currentHoverGridPosition.y + itemGridSize.y > _inventoryDimensions.height)
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
-                Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Beyond the grid boundary. Conflict: {_placementResults.Conflict}");
             }
             // 2. Проверка на пересечение с предметами (Swap или Multiple Intersect)
             else if (overlappingItems.Count == 1)
@@ -236,28 +217,24 @@ namespace SkyClerik.Inventory
                 _placementResults.Conflict = ReasonConflict.SwapAvailable;
                 _placementResults.OverlapItem = overlapItem;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
-                Debug.Log($"[{GetType().Name}.ShowPlacementTarget] SwapAvailable detected. OverlapItem: {_placementResults.OverlapItem.name}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
             }
             else if (overlappingItems.Count > 1)
             {
                 // Пересечение с несколькими предметами - конфликт
                 _placementResults.Conflict = ReasonConflict.intersectsObjects;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
-                Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Intersects with multiple items. Conflict: {_placementResults.Conflict}");
             }
             // 3. Если нет пересечений с предметами, проверяем, свободно ли место
             else if (IsGridAreaFree(currentHoverGridPosition, itemGridSize))
             {
                 _placementResults.Conflict = ReasonConflict.None;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
-                Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Place under cursor is FREE. SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
             }
             // 4. Если место занято, но нет пересечений с предметами (например, занято "пустотой")
             else
             {
                 _placementResults.Conflict = ReasonConflict.intersectsObjects;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
-                Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Inside grid but occupied (no overlapping items found). Conflict: {_placementResults.Conflict}");
             }
 
             if (_placementResults.Conflict == ReasonConflict.None || _placementResults.Conflict == ReasonConflict.SwapAvailable)
@@ -273,8 +250,6 @@ namespace SkyClerik.Inventory
                 _telegraph.Hide();
             }
 
-            Debug.Log($"[{GetType().Name}.ShowPlacementTarget] End. Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
-            Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Returning Init with Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}, OverlapItem: {(_placementResults.OverlapItem != null ? _placementResults.OverlapItem.name : "None")}, TargetInventory: {this.GetType().Name}");
             _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * _cellSize.width, itemGridSize.y * _cellSize.height); // Передаем размеры
             return _placementResults.Init(conflict: _placementResults.Conflict,
                                           position: new Vector2(_placementResults.SuggestedGridPosition.x * _cellSize.width, _placementResults.SuggestedGridPosition.y * _cellSize.height),
@@ -289,14 +264,12 @@ namespace SkyClerik.Inventory
             Vector2 mouseScreenPosition = Input.mousePosition;
             // Преобразуем ее в локальные координаты _inventoryGrid
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(mouseScreenPosition);
-
             // Вычисляем позицию в сетке
             int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
             // Инвертируем Y-координату, так как UI Toolkit использует верхний левый угол как (0,0)
             int gridY = Mathf.FloorToInt((_inventoryGrid.resolvedStyle.height - mouseLocalPosition.y) / _cellSize.height);
 
             Vector2Int currentHoverGridPosition = new Vector2Int(gridX, gridY);
-            Debug.Log($"[{GetType().Name}.CalculateCurrentHoverGridPosition] MouseScreenPosition: {mouseScreenPosition}, MouseLocalPosition: {mouseLocalPosition}, ResolvedHeight: {_inventoryGrid.resolvedStyle.height}, CellSize: {_cellSize.width}x{_cellSize.height}, CurrentHoverGridPosition: {currentHoverGridPosition}");
 
             return currentHoverGridPosition;
         }
@@ -334,8 +307,6 @@ namespace SkyClerik.Inventory
             Debug.LogWarning($"[{GetType().Name}] IDropTarget.AddStoredItem(ItemVisual) called. " +
                              "This method currently does not place the item in a specific grid position. " +
                              "Consider calling AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition) instead.");
-            // Default implementation, ideally this should not be called directly without a grid position
-            // You might want to implement a default placement logic here or throw an error.
         }
 
         public virtual void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
@@ -345,8 +316,8 @@ namespace SkyClerik.Inventory
             if (_placedItemsGridData.TryGetValue(storedItem, out var existingGridData))
             {
                 gridData = existingGridData;
-                OccupyGridCells(gridData, false); // Free old position
-                gridData.GridPosition = gridPosition; // Update position
+                OccupyGridCells(gridData, false);
+                gridData.GridPosition = gridPosition;
             }
             else
             {

@@ -1,21 +1,15 @@
-using SkyClerik.Data;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using SkyClerik.CraftingSystem; // Это специфичный using для крафта
-using UnityEngine.Toolbox; // Для SetVisibility, если используется
-using UnityEngine.DataEditor;
+using SkyClerik.CraftingSystem;
+using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
-    // CraftPageElement теперь наследуется от GridPageElementBase
     public class CraftPageElement : GridPageElementBase
     {
-        // Приватные поля, специфичные только для CraftPageElement
-        private const string _craftRootID = "craft_root";
         private const string _craftPageTitleText = "Окно крафта предметов";
+        private const string _craftRootID = "craft_root";
         private VisualElement _header;
         private const string _headerID = "header";
         private Label _title;
@@ -25,12 +19,10 @@ namespace SkyClerik.Inventory
         private Button _craftButton;
         private const string _craftButtonID = "b_craft";
 
-        // Конструктор CraftPageElement
         public CraftPageElement(ItemsPage itemsPage, UIDocument document, ItemContainerBase itemContainer, Vector2 cellSize, Vector2Int inventoryGridSize)
-            : base(itemsPage, document, itemContainer, cellSize, inventoryGridSize, _craftRootID) // Вызываем конструктор базового класса
+            : base(itemsPage, document, itemContainer, cellSize, inventoryGridSize, _craftRootID)
         {
-            // Инициализация специфичных для крафта UI элементов
-            _header = _root.Q(_headerID); // _root теперь унаследован от базового класса
+            _header = _root.Q(_headerID); 
             _title = _header.Q<Label>(_titleID);
             _body = _root.Q(_bodyID);
             _craftButton = _body.Q<Button>(_craftButtonID);

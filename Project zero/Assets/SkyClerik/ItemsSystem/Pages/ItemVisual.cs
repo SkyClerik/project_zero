@@ -9,7 +9,7 @@ namespace SkyClerik.Inventory
     {
         private ItemsPage _characterPages;
         private IDropTarget _ownerInventory;
-        private ItemBaseDefinition _itemDefinition; // Возвращено название
+        private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
         private Vector2Int _originalScale;
         private float _originalRotate;
@@ -24,7 +24,7 @@ namespace SkyClerik.Inventory
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
 
-        public ItemBaseDefinition ItemDefinition => _itemDefinition; // Возвращено свойство
+        public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
         public ItemVisual(ItemsPage itemsPage, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Vector2Int gridPosition, Vector2Int gridSize, bool singleRotationMode = true)
         {
