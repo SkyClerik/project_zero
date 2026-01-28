@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.DataEditor;
 
-namespace UnityEngine.CraftingSystem
+namespace SkyClerik.CraftingSystem
 {
     /// <summary>
     /// ScriptableObject для определения рецепта крафта.

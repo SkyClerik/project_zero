@@ -1,7 +1,8 @@
 using System;
+using UnityEngine;
 using UnityEngine.DataEditor;
 
-namespace UnityEngine.CraftingSystem
+namespace SkyClerik.CraftingSystem
 {
     /// <summary>
     /// Описывает один ингредиент для рецепта, включая необходимое количество.

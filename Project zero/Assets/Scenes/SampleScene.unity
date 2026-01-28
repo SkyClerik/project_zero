@@ -122,6 +122,68 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &365169864
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 365169865}
+  - component: {fileID: 365169867}
+  - component: {fileID: 365169866}
+  m_Layer: 0
+  m_Name: DevelopHUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &365169865
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365169864}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1923614411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &365169866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365169864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0774e6aef21ab74985cafeaa6e7e5f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _developHud: {fileID: 365169867}
+--- !u!114 &365169867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365169864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 39ffcfe28604fc947a27b91a04e4de1a, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 7ba35120bfb55b7499604d62ef9d3b9a, type: 3}
+  m_SortingOrder: 0
 --- !u!1 &627866735
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,10 +249,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _items:
-  - {fileID: 11400000, guid: 084d486511600af4782073e35e00f080, type: 2}
-  - {fileID: 11400000, guid: 54bc4e63f32e95045a874e7139f1acf9, type: 2}
-  - {fileID: 11400000, guid: 54bc4e63f32e95045a874e7139f1acf9, type: 2}
-  - {fileID: 11400000, guid: 54bc4e63f32e95045a874e7139f1acf9, type: 2}
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
 --- !u!114 &627866739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,7 +283,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _items:
-  - {fileID: 11400000, guid: 132ad1cbaead62a4288db350b498c278, type: 2}
+  - {fileID: 11400000, guid: f3b9ea3388f94424a97b49c14da6e2f5, type: 2}
+  - {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
+  - {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
 --- !u!114 &627866741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,7 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 759c6ab6f9835684398bb66de2722c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _recipeDatabase: {fileID: 11400000, guid: 37f6c64820b66d34c8c9fe2c1bc95f79, type: 2}
+  _recipeDatabase: {fileID: 11400000, guid: cdaf9ece590758e42936394cc83d83e6, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,6 +515,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 627866736}
+  - {fileID: 365169865}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807

@@ -1,21 +1,18 @@
 using System;
-using System.Reflection;
-using UnityEditor; // Добавлено
-using UnityEditor.UIElements; // Добавлено
-using UnityEditor.Toolbox; // Добавлено
+using UnityEditor.UIElements;
 using UnityEngine.DataEditor;
-using UnityEngine.CraftingSystem;
+using SkyClerik.CraftingSystem;
 using UnityEngine.UIElements;
-using UnityEngine; // Добавлено
+using UnityEngine;
 
 namespace UnityEditor.DataEditor
 {
     public class RecipeDetailPanel : VisualElement
     {
         private SerializedObject _currentSerializedObject;
-        private CraftingRecipe _currentDefinition; // Изменено на CraftingRecipe
+        private CraftingRecipe _currentDefinition;
         private EventCallback<SerializedPropertyChangeEvent> _definitionNameChangeHandler;
-        private Action _onRebuildCallback; // Изменено с onDefinitionNameChangedCallback
+        private Action _onRebuildCallback;
 
         public RecipeDetailPanel(Action onRebuildCallback)
         {
@@ -27,7 +24,7 @@ namespace UnityEditor.DataEditor
         public void DisplayDetails(BaseDefinition selected)
         {
             Clear();
-            _currentDefinition = selected as CraftingRecipe; // Приводим к CraftingRecipe
+            _currentDefinition = selected as CraftingRecipe;
 
             if (_definitionNameChangeHandler != null && _currentSerializedObject != null)
             {
@@ -59,12 +56,13 @@ namespace UnityEditor.DataEditor
             var propertyIterator = _currentSerializedObject.GetIterator();
             bool enterChildren = true;
 
-            // Отображаем стандартные поля BaseDefinition
             while (propertyIterator.NextVisible(enterChildren))
             {
                 enterChildren = false; // Для первого элемента NextVisible(true) заходит внутрь, дальше - нет
 
-                if (propertyIterator.name == "m_Script") continue; // Пропускаем ссылку на скрипт
+                // Пропускаем ссылку на скрипт
+                if (propertyIterator.name == "m_Script") 
+                    continue; 
 
                 // Дополнительная обработка для _id
                 if (propertyIterator.name == "_id")

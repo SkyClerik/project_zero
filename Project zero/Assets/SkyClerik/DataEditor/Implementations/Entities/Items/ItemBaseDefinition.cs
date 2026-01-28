@@ -77,6 +77,11 @@ namespace UnityEngine.DataEditor
 
         [JsonProperty]
         [SerializeField]
+        private bool _viewStackable = true;
+        public bool ViewStackable => _viewStackable;
+
+        [JsonProperty]
+        [SerializeField]
         [Tooltip("Размер и поворот предмета")]
         private ItemDimensions _dimensions;
         public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
@@ -93,16 +98,16 @@ namespace UnityEngine.DataEditor
         [SerializeField]
         private int defaultHeight = 1;
         [JsonProperty]
-        [SerializeField]
+        //[SerializeField]
         private float defaultAngle = 0;
         [JsonProperty]
-        [SerializeField]
-        private int currentHeight = 1;
+        //[SerializeField]
+        private int currentHeight = 0;
         [JsonProperty]
-        [SerializeField]
-        private int currentWidth = 1;
+        //[SerializeField]
+        private int currentWidth = 0;
         [JsonProperty]
-        [SerializeField]
+        //[SerializeField]
         private float currentAngle = 0;
 
         public int DefaultWidth { get => defaultWidth; set => defaultWidth = value; }

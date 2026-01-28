@@ -1,12 +1,7 @@
-using UnityEngine;
-using UnityEngine.DataEditor.Databases; // Добавлено для DefinitionDatabase
-using UnityEngine.CraftingSystem; // Добавлено для CraftingRecipe
+using SkyClerik.CraftingSystem;
 
-namespace UnityEngine.DataEditor.Databases
+namespace UnityEngine.DataEditor
 {
-    [CreateAssetMenu(fileName = "New Recipe Database", menuName = "SkyClerik/Databases/Recipe Database")]
-    public class RecipeDatabase : DefinitionDatabase<CraftingRecipe>
-    {
-        // Этот класс пустой, вся логика наследуется от DefinitionDatabase<T>
-    }
+    [CreateAssetMenu(fileName = "New Recipe Database", menuName = "Definition/Databases/Recipe Database")]
+    public class RecipeDatabase : DefinitionDatabase<CraftingRecipe> { }
 }

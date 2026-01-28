@@ -67,6 +67,46 @@ namespace UnityEngine.Toolbox
         }
 
         /// <summary>
+        /// Отменяет регистрацию конкретного экземпляра сервиса.
+        /// Этот метод ищет все регистрации, которые ссылаются на данный экземпляр сервиса, и удаляет их.
+        /// Полезно, когда один и тот же объект может быть зарегистрирован под разными типами/интерфейсами.
+        /// </summary>
+        /// <typeparam name="T">Тип экземпляра сервиса.</typeparam>
+        /// <param name="serviceInstance">Конкретный экземпляр сервиса для отмены регистрации.</param>
+        public static void Unregister<T>(T serviceInstance) where T : class
+        {
+            if (serviceInstance == null)
+            {
+                Debug.LogWarning("[ServiceProvider] Попытка отменить регистрацию для null-экземпляра сервиса.");
+                return;
+            }
+
+            // Используем список для сбора ключей, которые нужно удалить,
+            // чтобы избежать изменения коллекции во время итерации.
+            List<Type> keysToRemove = new List<Type>();
+
+            foreach (var entry in _services)
+            {
+                // Проверяем, является ли значение в словаре тем же экземпляром, что и serviceInstance.
+                if (ReferenceEquals(entry.Value, serviceInstance))
+                {
+                    keysToRemove.Add(entry.Key);
+                }
+            }
+
+            foreach (Type key in keysToRemove)
+            {
+                _services.Remove(key);
+                Debug.Log($"[ServiceProvider] Отменена регистрация сервиса '{serviceInstance.GetType().Name}' под типом '{key.Name}'.");
+            }
+
+            if (keysToRemove.Count == 0)
+            {
+                Debug.LogWarning($"[ServiceProvider] Экземпляр сервиса '{serviceInstance.GetType().Name}' не был найден ни под одним зарегистрированным типом.");
+            }
+        }
+
+        /// <summary>
         /// Полностью очищает все зарегистрированные сервисы.
         /// Вызывается автоматически при выходе из режима PlayMode в редакторе.
         /// </summary>

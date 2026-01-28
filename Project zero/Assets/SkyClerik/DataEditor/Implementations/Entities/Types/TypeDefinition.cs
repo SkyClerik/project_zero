@@ -7,6 +7,7 @@ namespace UnityEngine.DataEditor
 	[CreateAssetMenu(fileName = "TypeDefinition", menuName = "Definition/Game/TypeDefinition")]
 	public class TypeDefinition : BaseDefinition
 	{
+		//TODO переписать типы. Это базовый и используется как магический. Нужно четкое разделение по типам от базового.
 		[Header("Настройки типа")]
 		[Tooltip("Категория, к которой относится этот тип (например, 'SkillType', 'ElementType', 'WeaponType'). Используется для группировки и фильтрации в редакторе.")]
 		[SerializeField]

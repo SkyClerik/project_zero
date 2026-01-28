@@ -1,6 +1,5 @@
 using UnityEngine.DataEditor;
-using UnityEngine.DataEditor.Databases;
-using UnityEngine.CraftingSystem;
+using SkyClerik.CraftingSystem;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.DataEditor

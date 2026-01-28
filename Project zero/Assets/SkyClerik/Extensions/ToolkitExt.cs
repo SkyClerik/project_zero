@@ -6,7 +6,21 @@ namespace UnityEngine.Toolbox
     public static partial class ToolkitExt
     {
         /// <summary>
-        /// Устанавливает видимость `VisualElement` и всех его потомков, изменяя стиль `visibility`.
+        /// Устанавливает видимость `VisualElement` изменяя стиль `visibility`.
+        /// </summary>
+        /// <typeparam name="T">Тип VisualElement.</typeparam>
+        /// <param name="element">Целевой `VisualElement`.</param>
+        /// <param name="visible">Если `Hidden`, элемент становится НЕ видимым.</param>
+        public static void SetVisible<T>(this T element, Visibility visible) where T : VisualElement
+        {
+            if (element == null)
+                return;
+
+            element.style.visibility = visible;
+        }
+
+        /// <summary>
+        /// Устанавливает видимость `VisualElement` изменяя стиль `visibility`.
         /// </summary>
         /// <typeparam name="T">Тип VisualElement.</typeparam>
         /// <param name="element">Целевой `VisualElement`.</param>

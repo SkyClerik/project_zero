@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.DataEditor;
 
-namespace UnityEngine.CraftingSystem
+namespace SkyClerik.CraftingSystem
 {
     /// <summary>
     /// Интерфейс для системы крафта.
