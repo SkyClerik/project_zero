@@ -118,7 +118,20 @@ namespace SkyClerik.Inventory
 
         protected virtual void CalculateGridRect()
         {
-            _gridRect = _inventoryGrid.worldBound;
+            // Получаем оригинальные границы
+            Rect originalRect = _inventoryGrid.worldBound;
+
+            // Считаем отступ в половину ячейки
+            float marginX = _cellSize.width / 2f;
+            float marginY = _cellSize.height / 2f;
+
+            // Создаём новый, расширенный прямоугольник для "зоны захвата"
+            _gridRect = new Rect(
+                originalRect.x - marginX,
+                originalRect.y - marginY,
+                originalRect.width + marginX * 2,
+                originalRect.height + marginY * 2
+            );
         }
 
         public void AddItemToInventoryGrid(VisualElement item)
@@ -262,12 +275,42 @@ namespace SkyClerik.Inventory
         {
             // Получаем позицию мыши в экранных координатах
             Vector2 mouseScreenPosition = Input.mousePosition;
-            // Преобразуем ее в локальные координаты _inventoryGrid
+            // Преобразуем ее в локальные координаты _inventoryGrid.
+            // Так как _gridRect теперь больше, mouseLocalPosition может быть отрицательной или выходить за правую/нижнюю границу.
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(mouseScreenPosition);
+
+            float gridWidthInPixels = _inventoryGrid.resolvedStyle.width;
+            float gridHeightInPixels = _inventoryGrid.resolvedStyle.height;
+
+            float halfCellWidth = _cellSize.width / 2f;
+            float halfCellHeight = _cellSize.height / 2f;
+
+            // Округляем позицию до ближайшей ячейки, если курсор в "зоне захвата".
+            // Эта логика теперь работает в паре с расширенным _gridRect.
+            float finalX = mouseLocalPosition.x;
+            if (finalX < 0 && finalX >= -halfCellWidth)
+            {
+                finalX = 0;
+            }
+            else if (finalX > gridWidthInPixels && finalX <= gridWidthInPixels + halfCellWidth)
+            {
+                finalX = gridWidthInPixels - 0.001f; // -epsilon чтобы остаться в последней ячейке
+            }
+
+            float finalY = mouseLocalPosition.y;
+            if (finalY < 0 && finalY >= -halfCellHeight)
+            {
+                finalY = 0;
+            }
+            else if (finalY > gridHeightInPixels && finalY <= gridHeightInPixels + halfCellHeight)
+            {
+                finalY = gridHeightInPixels - 0.001f;
+            }
+
             // Вычисляем позицию в сетке
-            int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
+            int gridX = Mathf.FloorToInt(finalX / _cellSize.width);
             // Инвертируем Y-координату, так как UI Toolkit использует верхний левый угол как (0,0)
-            int gridY = Mathf.FloorToInt((_inventoryGrid.resolvedStyle.height - mouseLocalPosition.y) / _cellSize.height);
+            int gridY = Mathf.FloorToInt((gridHeightInPixels - finalY) / _cellSize.height);
 
             Vector2Int currentHoverGridPosition = new Vector2Int(gridX, gridY);
 
