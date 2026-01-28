@@ -65,10 +65,14 @@ public class DevelopHUD : MonoBehaviour
 
     private void _bAddItem_clicked()
     {
-        //for
-
-        //_developLut
-        //ServiceProvider.Get<PlayerItemContainer>().AddItemAsClone
+        if (_itemsPage?.InventoryPage != null && _developLut != null)
+        {
+            _itemsPage.InventoryPage.AddLoot(_developLut);
+        }
+        else
+        {
+            Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
+        }
     }
 
     private void _bExitGame_clicked()

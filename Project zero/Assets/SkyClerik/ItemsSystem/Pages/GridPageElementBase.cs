@@ -134,9 +134,59 @@ namespace SkyClerik.Inventory
             );
         }
 
-        public void AddItemToInventoryGrid(VisualElement item)
+                public void AddItemToInventoryGrid(VisualElement item)
         {
             _inventoryGrid.Add(item);
+        }
+
+        public void AddLoot(ItemContainerBase sourceContainer)
+        {
+            var itemsToLoot = sourceContainer.GetItems().ToList();
+            var sortedLoot = itemsToLoot.OrderByDescending(item =>
+                item.Dimensions.DefaultWidth * item.Dimensions.DefaultHeight).ToList();
+
+            var successfullyAddedOriginals = new List<ItemBaseDefinition>();
+
+            foreach (var item in sortedLoot)
+            {
+                if (TryAddItemInternal(item))
+                {
+                    successfullyAddedOriginals.Add(item);
+                }
+            }
+
+            foreach (var originalItem in successfullyAddedOriginals)
+            {
+                sourceContainer.RemoveItem(originalItem, destroy: false);
+            }
+        }
+
+        private bool TryAddItemInternal(ItemBaseDefinition itemToAdd)
+        {
+            if (TryFindPlacement(itemToAdd, out Vector2Int position))
+            {
+                var clonedItem = _itemContainer.AddItemAsClone(itemToAdd);
+                if (clonedItem == null) return false;
+
+                ItemGridData newGridData = new ItemGridData(clonedItem, position);
+
+                ItemVisual newItemVisual = new ItemVisual(
+                    itemsPage: _itemsPage,
+                    ownerInventory: this,
+                    itemDefinition: clonedItem,
+                    gridPosition: position,
+                    gridSize: newGridData.GridSize);
+
+                _placedItemsGridData.Add(newItemVisual, newGridData);
+                OccupyGridCells(newGridData, true);
+                RegisterVisual(newItemVisual, newGridData);
+                AddItemToInventoryGrid(newItemVisual);
+                newItemVisual.SetPosition(new Vector2(position.x * _cellSize.width, position.y * _cellSize.height));
+
+                return true;
+            }
+
+            return false;
         }
 
         protected void RemoveItemFromInventoryGrid(VisualElement item)

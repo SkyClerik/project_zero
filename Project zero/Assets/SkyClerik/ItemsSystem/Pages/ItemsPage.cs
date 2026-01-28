@@ -32,7 +32,8 @@ namespace SkyClerik.Inventory
         [SerializeField]
         private ItemContainerBase _craftItemContainer;
 
-        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
+                public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
+        public InventoryPageElement InventoryPage => _inventoryPage;
         public bool CraftElementVisible
         {
             get => _craftElementVisible;
