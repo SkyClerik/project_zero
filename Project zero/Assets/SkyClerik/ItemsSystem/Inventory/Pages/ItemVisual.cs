@@ -14,7 +14,7 @@ namespace Gameplay.Inventory
         private Vector2Int _originalScale;
         private float _originalRotate;
         private bool _isDragging;
-        private bool _hasNoHome = false; // Флаг для "бездомного" предмета
+        private bool _hasNoHome = false;
         private Rect _rect;
         private PlacementResults _placementResults;
         private VisualElement _icon;
@@ -24,8 +24,6 @@ namespace Gameplay.Inventory
 
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
-        //private const string _visualIconContainerName = "visual-icon-container";
-        //private const string _visualIconName = "visual-icon";
 
         public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
@@ -36,13 +34,10 @@ namespace Gameplay.Inventory
             _itemDefinition = itemDefinition;
             _rect = rect;
             _singleRotationMode = singleRotationMode;
-
             name = _itemDefinition.DefinitionName;
-            // Стили самого контейнера (ItemVisual)
             style.position = Position.Absolute;
             this.SetPadding(IconPadding);
 
-            // Сбрасываем состояние размеров и поворота при создании
             _itemDefinition.Dimensions.CurrentAngle = _itemDefinition.Dimensions.DefaultAngle;
             _itemDefinition.Dimensions.CurrentWidth = _itemDefinition.Dimensions.DefaultWidth;
             _itemDefinition.Dimensions.CurrentHeight = _itemDefinition.Dimensions.DefaultHeight;
@@ -60,8 +55,7 @@ namespace Gameplay.Inventory
                     position = Position.Absolute,
                 }
             };
-            
-            // Теперь, когда _icon создан, мы можем вызывать SetSize
+
             SetSize();
 
             if (_itemDefinition.Stackable)
@@ -123,7 +117,6 @@ namespace Gameplay.Inventory
             this.style.width = _itemDefinition.Dimensions.CurrentWidth * _rect.width;
             this.style.height = _itemDefinition.Dimensions.CurrentHeight * _rect.height;
 
-            // Обновляем позицию и размер иконки, чтобы она была по центру
             UpdateIconLayout();
         }
 
@@ -202,12 +195,14 @@ namespace Gameplay.Inventory
                     case ReasonConflict.None:
                         Placement();
                         break;
-                    
+
                     case ReasonConflict.SwapAvailable:
                         // Выполняем обмен
                         var itemToSwap = _placementResults.OverlapItem;
-                        Placement(); // Кладем текущий предмет
-                        itemToSwap.PickUp(isSwap: true); // Поднимаем старый как "бездомный"
+                        // Кладем текущий предмет
+                        Placement();
+                        // Поднимаем старый как "бездомный"
+                        itemToSwap.PickUp(isSwap: true);
                         break;
 
                     case ReasonConflict.beyondTheGridBoundary:
@@ -231,14 +226,12 @@ namespace Gameplay.Inventory
         public void UpdatePcs()
         {
             _pcsText.text = $"{_itemDefinition.Stack}";
-            //MarkDirtyRepaint();
         }
 
         private void TryDropBack()
         {
             if (_hasNoHome)
             {
-                // Если предмет "бездомный", он не возвращается, а снова "прилипает" к курсору
                 PickUp(isSwap: true);
                 return;
             }
@@ -270,10 +263,7 @@ namespace Gameplay.Inventory
             style.opacity = 0.7f;
 
             if (!_hasNoHome)
-            {
-                // Сохраняем исходную позицию только если это не "бездомный" предмет
                 _originalPosition = worldBound.position - parent.worldBound.position;
-            }
 
             _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
@@ -298,55 +288,6 @@ namespace Gameplay.Inventory
             { }
             else
             { }
-        }
-
-        private void OnOverlapItem(IDropTarget target)
-        {
-            //if (target is EquipmentPage equipment)
-            //{
-            //    // Если слот занят, выталкиваем старый предмет и делаем его перетаскиваемым
-            //    if (_placementResults.OverlapItem != null)
-            //    {
-            //        if (_placementResults.OverlapItem.ItemVisual == null)
-            //        {
-            //            // Не понятно как но объект есть а данных нет
-            //        }
-            //        else
-            //        {
-            //            // Поднимаем старый предмет в руку
-            //            _placementResults.OverlapItem.PickUp();
-            //        }
-            //    }
-            //    // Размещаем текущий перетаскиваемый предмет в слот
-            //    target.Drop(this, _placementResults.Position);
-            //}
-            if (target is InventoryPageElement inventory)
-            {
-                // Логика для обычного инвентаря (стэки и т.д.)
-                if (_placementResults.OverlapItem?.ItemDefinition.ID == _itemDefinition.ID)
-                {
-                    if (_itemDefinition.Stackable)
-                    {
-                        // Stack
-                        _placementResults.OverlapItem.ItemDefinition.AddStack(_itemDefinition.Stack, out int remainder);
-                        _placementResults.OverlapItem.UpdatePcs();
-                        _itemDefinition.Stack = remainder;
-                        UpdatePcs();
-
-                        if (remainder == 0)
-                        {
-                            this.RemoveFromHierarchy();
-                            ItemsPage.CurrentDraggedItem = null;
-                        }
-                    }
-                }
-                else
-                {
-                    // Логика для инвентаря, если предметы не совпадают
-                    //Drop(target);
-                    //_placementResults.OverlapItem.RootVisual.PickUp();
-                }
-            }
         }
 
         public void SetOwnerInventory(IDropTarget dropTarget)

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-
+using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
-namespace UnityEngine.DataEditor.Craft
+namespace UnityEngine.CraftingSystem
 {
     /// <summary>
     /// Управляет рецептами и логикой крафта в игре.

@@ -1,6 +1,7 @@
 using System;
+using UnityEngine.DataEditor;
 
-namespace UnityEngine.DataEditor.Craft
+namespace UnityEngine.CraftingSystem
 {
     /// <summary>
     /// Описывает один ингредиент для рецепта, включая необходимое количество.

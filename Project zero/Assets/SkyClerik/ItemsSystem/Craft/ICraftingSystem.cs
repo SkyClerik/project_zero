@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using UnityEngine.DataEditor;
 
-namespace UnityEngine.DataEditor.Craft
+namespace UnityEngine.CraftingSystem
 {
     /// <summary>
     /// Интерфейс для системы крафта.

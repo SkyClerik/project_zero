@@ -23,38 +23,48 @@ namespace Gameplay.Inventory
         {
             if (sourceItems == null)
                 return;
-            
-            var itemsToClone = sourceItems.ToList(); // 1. Сначала создаем копию.
-            _items.Clear(); // 2. Потом очищаем основной список.
 
-            foreach (var item in itemsToClone) // 3. Итерируемся по копии.
+            var itemsToClone = sourceItems.ToList();
+            _items.Clear();
+
+            foreach (var item in itemsToClone)
             {
                 if (item != null)
                 {
-                    var copy = Object.Instantiate(item);
-                    _items.Add(copy); // 4. Наполняем основной список.
+                    AddItemAsClone(item);
                 }
             }
         }
 
-        // Добавить предмет в инвентарь как копия
-        public void AddItemAsClone(ItemBaseDefinition item)
+        // Добавить предмет в инвентарь как копия и вернуть его
+        public ItemBaseDefinition AddItemAsClone(ItemBaseDefinition item)
         {
             if (item != null)
             {
                 var copy = Object.Instantiate(item);
                 _items.Add(copy);
+                return copy;
+            }
+            return null;
+        }
+
+        // Просто добавить существующий предмет в инвентарь
+        public void AddItem(ItemBaseDefinition item)
+        {
+            if (item != null)
+            {
+                _items.Add(item);
             }
         }
 
         // Удалить предмет из инвентаря (по ссылке)
-        public bool RemoveItem(ItemBaseDefinition item)
+        public bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
         {
             if (item == null)
                 return false;
 
             bool removed = _items.Remove(item);
-            if (removed)
+            if (removed && destroy) // Уничтожаем, только если флаг destroy = true
                 Object.Destroy(item);
 
             return removed;

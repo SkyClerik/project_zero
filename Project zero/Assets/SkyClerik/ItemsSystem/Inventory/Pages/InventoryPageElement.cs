@@ -15,8 +15,6 @@ namespace Gameplay.Inventory
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
         private InventoryItemContainer _itemContainer;
 
-        public InventoryItemContainer ItemContainer => _itemContainer;
-
         private UIDocument _document;
         private VisualElement _root;
         private const string _inventoryRootID = "inventory_root";
@@ -33,10 +31,10 @@ namespace Gameplay.Inventory
         private RectangleSize _inventoryDimensions;
         private Rect _cellSize;
         private Rect _gridRect;
-        //private Vector2 _mousePositionNormal;
 
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
+        public InventoryItemContainer ItemContainer => _itemContainer;
 
         public InventoryPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryPageRoot, InventoryItemContainer itemContainer)
         {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace UnityEngine.DataEditor.Craft
+namespace UnityEngine.CraftingSystem
 {
     /// <summary>
     /// ScriptableObject для определения рецепта крафта.

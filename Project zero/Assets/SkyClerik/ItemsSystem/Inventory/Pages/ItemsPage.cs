@@ -16,7 +16,7 @@ namespace Gameplay.Inventory
         [SerializeField]
         private InventoryItemContainer _inventoryItemContainer;
         [SerializeField]
-        private CraftItemsContainer _craftItemContainer;
+        private InventoryItemContainer _craftItemContainer;
 
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
@@ -104,27 +104,20 @@ namespace Gameplay.Inventory
 
         public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2 placementPosition)
         {
-            // Remove the item from the source container's data list
+            var itemToMove = draggedItem.ItemDefinition;
+
+            // Удаляем предмет из исходного контейнера, НЕ уничтожая его
             if (sourceInventory is InventoryPageElement sourceInvElement)
-            {
-                sourceInvElement.ItemContainer.RemoveItem(draggedItem.ItemDefinition);
-            }
+                sourceInvElement.ItemContainer.RemoveItem(itemToMove, destroy: false);
             else if (sourceInventory is CraftPageElement sourceCraftElement)
-            {
-                sourceCraftElement.ItemContainer.RemoveItem(draggedItem.ItemDefinition);
-            }
+                sourceCraftElement.ItemContainer.RemoveItem(itemToMove, destroy: false);
 
-            // Add the item to the target container's data list
+            // Добавляем ЭТОТ ЖЕ ЭКЗЕМПЛЯР предмета в целевой контейнер
             if (targetInventory is InventoryPageElement targetInvElement)
-            {
-                targetInvElement.ItemContainer.AddItemAsClone(draggedItem.ItemDefinition);
-            }
+                targetInvElement.ItemContainer.AddItem(itemToMove);
             else if (targetInventory is CraftPageElement targetCraftElement)
-            {
-                targetCraftElement.ItemContainer.AddItemAsClone(draggedItem.ItemDefinition);
-            }
+                targetCraftElement.ItemContainer.AddItem(itemToMove);
 
-            // Update the ItemVisual's owner and position (handled by Drop in IDropTarget)
             targetInventory.Drop(draggedItem, placementPosition);
         }
     }

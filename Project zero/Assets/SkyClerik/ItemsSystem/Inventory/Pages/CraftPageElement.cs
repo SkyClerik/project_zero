@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine.Toolbox;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.CraftingSystem;
 
 namespace Gameplay.Inventory
 {
@@ -12,42 +13,115 @@ namespace Gameplay.Inventory
     public class CraftPageElement : IDropTarget
     {
         private UIDocument _document;
-        private VisualElement _root;
         private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
-        private CraftItemsContainer _itemContainer;
-
-        public CraftItemsContainer ItemContainer => _itemContainer;
+        private InventoryItemContainer _itemContainer;
         private MonoBehaviour _coroutineRunner;
         private ItemsPage _itemsPage;
-
-        private VisualElement _inventoryGrid;
         private Telegraph _telegraph;
-
         private PlacementResults _placementResults;
         private ItemVisual _overlapItem = null;
-
         private RectangleSize _inventoryDimensions;
         private Rect _cellSize;
         private Rect _gridRect;
-        //private Vector2 _mousePositionNormal;
-
+        private const string _craftPageTitleText = "Окно крафта предметов";
+        private VisualElement _root;
         private const string _craftRootID = "craft_root";
+        private VisualElement _header;
+        private const string _headerID = "b_craft";
+        private Label _title;
+        private const string _titleID = "l_title";
+        private VisualElement _body;
+        private const string _bodyID = "b_craft";
+        private VisualElement _inventoryGrid;
         private const string _gridID = "grid";
+        private Button _craftButton;
+        private const string _craftButtonID = "b_craft";
+
 
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
+        public InventoryItemContainer ItemContainer => _itemContainer;
 
-        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, CraftItemsContainer itemContainer)
+        public CraftPageElement(ItemsPage itemsPage, UIDocument document, out VisualElement inventoryTwoPageRoot, InventoryItemContainer itemContainer)
         {
             _itemsPage = itemsPage;
             _document = document;
             _coroutineRunner = itemsPage;
             _itemContainer = itemContainer;
-            _root = _document.rootVisualElement.Q<VisualElement>(_craftRootID);
-            inventoryTwoPageRoot = _root;
-            _inventoryGrid = _root.Q<VisualElement>(_gridID);
 
+            _root = _document.rootVisualElement.Q<VisualElement>(_craftRootID);
+            //header
+            _header = _root.Q(_headerID);
+            _title = _header.Q<Label>(_titleID);
+            //body
+            _body = _root.Q(_bodyID);
+            _inventoryGrid = _body.Q(_gridID);
+            _craftButton = _body.Q<Button>(_craftButtonID);
+
+            _title.text = _craftPageTitleText;
+            _craftButton.clicked += _craftButton_clicked;
+            inventoryTwoPageRoot = _root;
             _coroutineRunner.StartCoroutine(Initialize());
+        }
+
+        private void _craftButton_clicked()
+        {
+            var craftSystem = ServiceProvider.Get<ICraftingSystem>();
+            if (craftSystem == null)
+            {
+                Debug.LogError("Система крафта не найдена!");
+                return;
+            }
+
+            // Собираем все предметы, которые сейчас лежат в сетке крафта
+            var itemsInGrid = _itemVisuals.Select(v => v.ItemDefinition).ToList();
+            
+            if (craftSystem.TryFindRecipe(itemsInGrid, out var foundRecipe))
+            {
+                // Ура, рецепт найден!
+                Debug.Log($"Найден рецепт! Результат: {foundRecipe.Result.Item.DefinitionName}");
+
+                // 1. Уничтожаем визуальные элементы ингредиентов
+                foreach (var visual in _itemVisuals)
+                {
+                    visual.RemoveFromHierarchy();
+                }
+                _itemVisuals.Clear();
+
+                // 2. Очищаем контейнер данных от ингредиентов
+                _itemContainer.Clear();
+
+                // 3. Создаем результирующий предмет
+                // TODO: Учесть количество из foundRecipe.Result.Quantity
+                var resultItem = _itemContainer.AddItemAsClone(foundRecipe.Result.Item);
+
+                if (resultItem != null)
+                {
+                    // 4. Создаем и отображаем визуальный элемент для результата
+                    ItemVisual resultVisual = new ItemVisual(
+                        itemsPage: _itemsPage,
+                        ownerInventory: this,
+                        itemDefinition: resultItem,
+                        rect: ConfigureSlotDimensions);
+                    
+                    AddItemToInventoryGrid(resultVisual);
+                    
+                    // Размещаем его в первой доступной ячейке
+                    _coroutineRunner.StartCoroutine(GetPositionForItem(resultVisual, success =>
+                    {
+                        if (!success)
+                        {
+                            Debug.LogError("В сетке крафта нет места для результата!");
+                            resultVisual.RemoveFromHierarchy();
+                            // TODO: Возможно, нужно вернуть предмет игроку другим способом
+                        }
+                    }));
+                }
+            }
+            else
+            {
+                Debug.Log("Такого рецепта не существует.");
+            }
         }
 
         private IEnumerator Initialize()
