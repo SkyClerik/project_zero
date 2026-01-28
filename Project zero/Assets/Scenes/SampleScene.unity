@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 627866739}
   - component: {fileID: 627866738}
   - component: {fileID: 627866740}
+  - component: {fileID: 627866741}
   m_Layer: 0
   m_Name: CharacterPages
   m_TagString: Untagged
@@ -188,6 +189,8 @@ MonoBehaviour:
   _items:
   - {fileID: 11400000, guid: 084d486511600af4782073e35e00f080, type: 2}
   - {fileID: 11400000, guid: 54bc4e63f32e95045a874e7139f1acf9, type: 2}
+  - {fileID: 11400000, guid: 54bc4e63f32e95045a874e7139f1acf9, type: 2}
+  - {fileID: 11400000, guid: 54bc4e63f32e95045a874e7139f1acf9, type: 2}
 --- !u!114 &627866739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,6 +219,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _items:
   - {fileID: 11400000, guid: 132ad1cbaead62a4288db350b498c278, type: 2}
+--- !u!114 &627866741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627866735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 759c6ab6f9835684398bb66de2722c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _recipeDatabase: {fileID: 11400000, guid: 37f6c64820b66d34c8c9fe2c1bc95f79, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

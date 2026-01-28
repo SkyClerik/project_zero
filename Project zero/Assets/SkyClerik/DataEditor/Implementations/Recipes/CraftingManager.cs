@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
+using UnityEngine; // Добавлено, так как UnityEditor.Object убран
 using UnityEngine.DataEditor;
+using UnityEngine.DataEditor.Databases; // Добавлено для RecipeDatabase
 using UnityEngine.Toolbox;
 
 namespace UnityEngine.CraftingSystem
@@ -12,6 +13,9 @@ namespace UnityEngine.CraftingSystem
     /// </summary>
     public class CraftingManager : MonoBehaviour, ICraftingSystem
     {
+        [SerializeField]
+        private RecipeDatabase _recipeDatabase; // Наша база данных рецептов
+
         // Словарь для молниеносного поиска рецептов по их "отпечатку".
         private readonly Dictionary<string, CraftingRecipe> _recipes = new Dictionary<string, CraftingRecipe>();
 
@@ -29,17 +33,18 @@ namespace UnityEngine.CraftingSystem
         }
 
         /// <summary>
-        /// Инициализирует менеджер, загружая и обрабатывая все рецепты.
+        /// Инициализирует менеджер, загружая и обрабатывая все рецепты из RecipeDatabase.
         /// </summary>
         private void Initialize()
         {
-            // Находим GUID'ы всех ассетов типа CraftingRecipe в проекте.
-            string[] guids = AssetDatabase.FindAssets("t:CraftingRecipe");
-            foreach (string guid in guids)
+            if (_recipeDatabase == null)
             {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                CraftingRecipe recipe = AssetDatabase.LoadAssetAtPath<CraftingRecipe>(path);
+                Debug.LogError("CraftingManager: RecipeDatabase не назначен! Крафт не будет работать.");
+                return;
+            }
 
+            foreach (var recipe in _recipeDatabase.Items) // Берем рецепты из нашей базы
+            {
                 if (recipe != null && recipe.Ingredients.Count > 0)
                 {
                     // Создаем "отпечаток" для рецепта и добавляем в словарь.
@@ -51,7 +56,7 @@ namespace UnityEngine.CraftingSystem
                     else
                     {
                         // Предупреждение, если найдены два рецепта с одинаковым набором ингредиентов.
-                        Debug.LogWarning($"Найден дубликат рецепта для набора ингредиентов. Рецепт '{recipe.name}' будет проигнорирован.");
+                        Debug.LogWarning($"Найден дубликат рецепта для набора ингредиентов. Рецепт '{recipe.DefinitionName}' будет проигнорирован.");
                     }
                 }
             }

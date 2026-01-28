@@ -27,11 +27,11 @@ namespace Gameplay.Inventory
         private VisualElement _root;
         private const string _craftRootID = "craft_root";
         private VisualElement _header;
-        private const string _headerID = "b_craft";
+        private const string _headerID = "header";
         private Label _title;
         private const string _titleID = "l_title";
         private VisualElement _body;
-        private const string _bodyID = "b_craft";
+        private const string _bodyID = "body";
         private VisualElement _inventoryGrid;
         private const string _gridID = "grid";
         private Button _craftButton;

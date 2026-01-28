@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2389aef50adf6c4f8737d478d8fc297, type: 3}
-  m_Name: ItemDefinition 1
+  m_Name: potion 3
   m_EditorClassIdentifier: 
-  _id: 88266f4c-80d9-46e2-aa34-da54f25545b4
-  _definitionName: ItemDefinition
+  _id: 5da42c5d-5cf8-435d-a7d6-ff1ec5709f3a
+  _definitionName: potion 1
   _description: 
-  _icon: {fileID: 21300000, guid: 86e6bf803151d534a8fc5706b1ae1225, type: 3}
+  _icon: {fileID: 21300000, guid: d97ccd6843cc0ba46a5ff5054d62fad2, type: 3}
   _price: 32
   _curStack: 20
   _maxStack: 100
@@ -24,6 +24,6 @@ MonoBehaviour:
     defaultWidth: 2
     defaultHeight: 2
     defaultAngle: 0
-    currentHeight: 0
-    currentWidth: 0
+    currentHeight: 2
+    currentWidth: 2
     currentAngle: 0

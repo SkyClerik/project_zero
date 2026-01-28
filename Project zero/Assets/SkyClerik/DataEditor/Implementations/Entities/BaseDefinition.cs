@@ -34,6 +34,17 @@ namespace UnityEngine.DataEditor
         public string ID => _id;
 
         /// <summary>
+        /// Генерирует новый уникальный ID для этого определения.
+        /// Вызывается из контекстного меню в Инспекторе.
+        /// </summary>
+        [ContextMenu("Regenerate ID")]
+        public void RegenerateID()
+        {
+            _id = Guid.NewGuid().ToString();
+            Debug.Log($"[BaseDefinition] ID для '{_definitionName}' пересоздан: {_id}");
+        }
+
+        /// <summary>
         /// Имя определения, отображаемое в игре.
         /// </summary>
         public string DefinitionName => _definitionName;

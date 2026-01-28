@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2389aef50adf6c4f8737d478d8fc297, type: 3}
+  m_Name: potion 2
+  m_EditorClassIdentifier: 
+  _id: 60c3f671-5edc-46c4-9226-7831f86cc5f3
+  _definitionName: potion 2
+  _description: 
+  _icon: {fileID: 21300000, guid: 13f5f3b3606866b40b80c99f8bef4002, type: 3}
+  _price: 32
+  _curStack: 20
+  _maxStack: 100
+  _stackable: 1
+  _dimensions:
+    defaultWidth: 1
+    defaultHeight: 1
+    defaultAngle: 0
+    currentHeight: 0
+    currentWidth: 0
+    currentAngle: 0

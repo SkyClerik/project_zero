@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEditor.DataEditor;
+using UnityEngine.CraftingSystem;
 
 namespace UnityEngine.DataEditor
 {
@@ -104,9 +105,9 @@ namespace UnityEngine.DataEditor
 
             // Register tabs and collect their buttons
             RegisterTabAndCollectButton("Навыки", () => new SkillsTabController(_mainContentArea, settings), typeof(SkillBaseDefinition), tabButtonsList);
-            RegisterTabAndCollectButton("Юниты", () => new UnitsTabController(_mainContentArea, settings), typeof(UnitBaseDefinition), tabButtonsList);
-            
-            RegisterTabAndCollectButton("Предметы", () => new ItemsTabController(_mainContentArea, settings), typeof(ItemBaseDefinition), tabButtonsList);
+                RegisterTabAndCollectButton("Юниты", () => new UnitsTabController(_mainContentArea, settings), typeof(UnitBaseDefinition), tabButtonsList);
+                RegisterTabAndCollectButton("Предметы", () => new ItemsTabController(_mainContentArea, settings), typeof(ItemBaseDefinition), tabButtonsList);
+                RegisterTabAndCollectButton("Рецепты", () => new RecipesTabController(_mainContentArea, settings), typeof(CraftingRecipe), tabButtonsList);
             
             RegisterTabAndCollectButton("Классы", () => new ClassTabController(_mainContentArea, settings), typeof(ClassDefinition), tabButtonsList);
             RegisterTabAndCollectButton("Состояния", () => new StateTabController(_mainContentArea, settings), typeof(StateDefinition), tabButtonsList);

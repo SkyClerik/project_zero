@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2389aef50adf6c4f8737d478d8fc297, type: 3}
   m_Name: Item goddess statue
   m_EditorClassIdentifier: 
-  _id: 88266f4c-80d9-46e2-aa34-da54f25545b4
+  _id: 9f74507e-8470-476d-b037-601476f0bedf
   _definitionName: "\u0421\u0442\u0430\u0442\u0443\u044D\u0442\u043A\u0430 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\u043E\u0432"
   _description: "\u041D\u0435 \u0431\u0440\u043E\u0441\u0441\u043A\u043E\u0435 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435
     \u043D\u0435\u0431\u043E\u043B\u044C\u0448\u043E\u0439 \u043A\u0430\u043C\u0435\u043D\u043D\u043E\u0439

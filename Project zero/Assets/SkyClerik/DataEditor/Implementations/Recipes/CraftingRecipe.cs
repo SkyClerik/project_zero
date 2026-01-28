@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine.DataEditor;
 
 namespace UnityEngine.CraftingSystem
 {
@@ -7,7 +8,7 @@ namespace UnityEngine.CraftingSystem
     /// Создайте ассет этого типа для каждого нового рецепта.
     /// </summary>
     [CreateAssetMenu(fileName = "New Crafting Recipe", menuName = "SkyClerik/Crafting/Crafting Recipe")]
-    public class CraftingRecipe : ScriptableObject
+    public class CraftingRecipe : BaseDefinition
     {
         [SerializeField]
         [Tooltip("Список ингредиентов, необходимых для крафта.")]
