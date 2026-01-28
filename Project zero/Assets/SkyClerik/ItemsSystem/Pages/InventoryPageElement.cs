@@ -275,6 +275,7 @@ namespace SkyClerik.Inventory
                 _telegraph.style.top = _placementResults.SuggestedGridPosition.y * _cellSize.height;
                 _telegraph.style.width = itemGridSize.x * _cellSize.width;
                 _telegraph.style.height = itemGridSize.y * _cellSize.height;
+                _telegraph.style.display = DisplayStyle.Flex; // ИЗМЕНЕНО: теперь используем style.display
             }
             else // Если beyondTheGridBoundary или какой-то другой, то скрываем
             {
