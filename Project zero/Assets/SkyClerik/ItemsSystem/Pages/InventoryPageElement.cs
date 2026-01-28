@@ -236,7 +236,7 @@ namespace SkyClerik.Inventory
 
                     _placementResults.Conflict = ReasonConflict.SwapAvailable;
                     _placementResults.OverlapItem = overlapItem;
-                    _placementResults.SuggestedGridPosition = potentialOverlapGridData.GridPosition;
+                    _placementResults.SuggestedGridPosition = currentHoverGridPosition; // ИЗМЕНЕНО: теперь используется currentHoverGridPosition
                     Debug.Log($"[InventoryPageElement.ShowPlacementTarget] SwapAvailable detected. OverlapItem: {_placementResults.OverlapItem.name}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
                 }
                 else if (overlappingItems.Count > 1)

@@ -233,10 +233,15 @@ namespace SkyClerik.Inventory
                         Debug.Log("[ItemVisual.OnMouseUp] Conflict: SwapAvailable. Performing swap.");
                         // Выполняем обмен
                         var itemToSwap = _placementResults.OverlapItem;
-                        // Кладем текущий предмет
-                        Placement(targetGridPosition);
-                        // Поднимаем старый как "бездомный"
+                        
+                        // Сначала поднимаем предмет, который будет заменен.
+                        // Это освободит его ячейки в инвентаре.
+                        // Важно: PickUp также устанавливает его как CurrentDraggedItem и делает "бездомным"
                         itemToSwap.PickUp(isSwap: true);
+
+                        // Затем кладем текущий предмет (R)
+                        Placement(targetGridPosition);
+                        
                         break;
 
                     case ReasonConflict.beyondTheGridBoundary:
