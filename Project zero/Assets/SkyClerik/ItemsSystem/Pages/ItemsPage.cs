@@ -75,7 +75,6 @@ namespace SkyClerik.Inventory
             _inventoryPage = new InventoryPageElement(
                 itemsPage: this,
                 document: _document,
-                inventoryPageRoot: out _,
                 itemContainer: _inventoryItemContainer,
                 cellSize: _defaultCellSize,
                 inventoryGridSize: _inventoryGridSize);
@@ -83,10 +82,11 @@ namespace SkyClerik.Inventory
             _craftPage = new CraftPageElement(
                 itemsPage: this,
                 document: _document,
-                inventoryTwoPageRoot: out _craftPageRoot,
                 itemContainer: _craftItemContainer,
                 cellSize: _defaultCellSize,
                 inventoryGridSize: _craftGridSize);
+
+            _craftPageRoot = _craftPage.Root; // Теперь получаем _root через новое свойство
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
