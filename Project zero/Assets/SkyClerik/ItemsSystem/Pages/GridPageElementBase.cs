@@ -101,7 +101,7 @@ namespace SkyClerik.Inventory
                     OccupyGridCells(newGridData, true);
 
                     AddItemToInventoryGrid(inventoryItemVisual);
-                    // RegisterVisual(inventoryItemVisual, newGridData); // Удален, так как вызывается в конструкторе ItemVisual
+                    RegisterVisual(inventoryItemVisual, newGridData);
                     inventoryItemVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
                 }
                 else
@@ -275,7 +275,7 @@ namespace SkyClerik.Inventory
 
             Debug.Log($"[{GetType().Name}.ShowPlacementTarget] End. Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}");
             Debug.Log($"[{GetType().Name}.ShowPlacementTarget] Returning Init with Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}, OverlapItem: {(_placementResults.OverlapItem != null ? _placementResults.OverlapItem.name : "None")}, TargetInventory: {this.GetType().Name}");
-            _telegraph.SetPlacement(_placementResults.Conflict);
+            _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * _cellSize.width, itemGridSize.y * _cellSize.height); // Передаем размеры
             return _placementResults.Init(conflict: _placementResults.Conflict,
                                           position: new Vector2(_placementResults.SuggestedGridPosition.x * _cellSize.width, _placementResults.SuggestedGridPosition.y * _cellSize.height),
                                           suggestedGridPosition: _placementResults.SuggestedGridPosition,

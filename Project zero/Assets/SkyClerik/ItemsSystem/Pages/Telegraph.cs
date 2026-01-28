@@ -20,7 +20,7 @@ namespace SkyClerik.Inventory
             Hide();
         }
 
-        public void SetPlacement(ReasonConflict conflict)
+        public void SetPlacement(ReasonConflict conflict, float width, float height)
         {
             switch (conflict)
             {
@@ -35,6 +35,8 @@ namespace SkyClerik.Inventory
                     break;
             }
             
+            this.style.width = width;
+            this.style.height = height;
             style.display = DisplayStyle.Flex;
         }
 

@@ -6,6 +6,7 @@ namespace SkyClerik.Inventory
     {
         protected override void Awake()
         {
+            base.Awake();
             ServiceProvider.Register(this);
 
         }
