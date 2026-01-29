@@ -7,7 +7,7 @@ namespace SkyClerik.Inventory
 {
     public class ItemVisual : VisualElement
     {
-        private ItemsPage _characterPages;
+        private ItemsPage _itemsPage;
         private IDropTarget _ownerInventory;
         private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
@@ -28,7 +28,7 @@ namespace SkyClerik.Inventory
 
         public ItemVisual(ItemsPage itemsPage, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Vector2Int gridPosition, Vector2Int gridSize, bool singleRotationMode = true)
         {
-            _characterPages = itemsPage;
+            _itemsPage = itemsPage;
             _ownerInventory = ownerInventory;
             _itemDefinition = itemDefinition;
             _singleRotationMode = singleRotationMode;
@@ -71,8 +71,8 @@ namespace SkyClerik.Inventory
                     {
                         width = _itemDefinition.Dimensions.DefaultWidth * _ownerInventory.CellSize.x,
                         height = _itemDefinition.Dimensions.DefaultHeight * _ownerInventory.CellSize.y,
-                        fontSize = 20,
-                        color = new StyleColor(Color.red),
+                        fontSize = 40,
+                        color = new StyleColor(Color.blue),
                         alignItems = Align.FlexStart,
                         alignContent = Align.FlexStart,
                         justifyContent = Justify.FlexStart,
@@ -113,12 +113,12 @@ namespace SkyClerik.Inventory
             if (_isDragging)
                 return;
 
-            _characterPages.StartTooltipDelay(this);
+            _itemsPage.StartTooltipDelay(this);
         }
 
         private void OnMouseLeave(MouseLeaveEvent evt)
         {
-            _characterPages.StopTooltipDelayAndHideTooltip();
+            _itemsPage.StopTooltipDelayAndHideTooltip();
         }
 
         public void Rotate()
@@ -190,13 +190,50 @@ namespace SkyClerik.Inventory
         {
             if (mouseEvent.button == 0)
             {
-                if (!_isDragging)
+                if (!_isDragging) 
                     return;
+
+                _placementResults = _itemsPage.HandleItemPlacement(this);
+
+                if (_placementResults.Conflict == ReasonConflict.StackAvailable)
+                {
+                    var targetItemVisual = _placementResults.OverlapItem;
+                    int spaceAvailable = targetItemVisual.ItemDefinition.MaxStack - targetItemVisual.ItemDefinition.Stack;
+                    int amountToTransfer = Mathf.Min(spaceAvailable, this.ItemDefinition.Stack);
+
+                    if (amountToTransfer > 0)
+                    {
+                        targetItemVisual.ItemDefinition.AddStack(amountToTransfer, out _);
+                        this.ItemDefinition.RemoveStack(amountToTransfer);
+                        targetItemVisual.UpdatePcs();
+                        this.UpdatePcs();
+                    }
+
+                    _placementResults.TargetInventory.FinalizeDrag();
+
+                    if (this.ItemDefinition.Stack <= 0)
+                    {
+                        _isDragging = false;
+                        ItemsPage.CurrentDraggedItem = null;
+
+                        this.style.display = DisplayStyle.None; // Hide immediately
+
+                        this.schedule.Execute(() =>
+                        {
+                            var ownerGrid = _ownerInventory as GridPageElementBase;
+                            if (ownerGrid != null)
+                            {
+                                ownerGrid.ItemContainer.RemoveItem(this.ItemDefinition, destroy: true);
+                            }
+                            this.RemoveFromHierarchy();
+                        }).ExecuteLater(1); // Schedule actual removal
+                    }
+                    return;
+                }
 
                 _isDragging = false;
                 style.opacity = 1f;
                 ItemsPage.CurrentDraggedItem = null;
-                _placementResults = _characterPages.HandleItemPlacement(this);
 
                 Vector2Int targetGridPosition = new Vector2Int(
                     Mathf.RoundToInt(_placementResults.Position.x / _ownerInventory.CellSize.x),
@@ -208,28 +245,89 @@ namespace SkyClerik.Inventory
                     case ReasonConflict.None:
                         Placement(targetGridPosition);
                         break;
-
                     case ReasonConflict.SwapAvailable:
                         var itemToSwap = _placementResults.OverlapItem;
                         itemToSwap.PickUp(isSwap: true);
                         Placement(targetGridPosition);
                         break;
-
-                    case ReasonConflict.beyondTheGridBoundary:
-                    case ReasonConflict.intersectsObjects:
-                    case ReasonConflict.invalidSlotType:
                     default:
                         TryDropBack();
-                        return;
+                        break;
                 }
 
-                _characterPages.FinalizeDragOfItem(this);
+                _itemsPage.FinalizeDragOfItem(this);
             }
+        }
+
+        private void OnMouseDown(MouseDownEvent mouseEvent)
+        {
+            if (mouseEvent.button == 0)
+            {
+                if (_itemsPage.GiveItem != null)
+                {
+                    Debug.Log($"GiveItem : {_itemDefinition.DefinitionName}");
+                    _itemsPage.TriggerItemGiveEvent(_itemDefinition);
+                }
+                else
+                {
+                    if (ItemsPage.CurrentDraggedItem != this)
+                    {
+                        PickUp();
+                    }
+                }
+            }
+        }
+
+        private void OnMouseMove(MouseMoveEvent evt)
+        {
+            if (!_isDragging)
+                return;
+
+            _placementResults = _itemsPage.HandleItemPlacement(this);
+        }
+
+        public void PickUp(bool isSwap = false)
+        {
+            _isDragging = true;
+            _hasNoHome = isSwap;
+            style.opacity = 0.7f;
+
+            if (!_hasNoHome)
+            {
+                ItemGridData currentGridData = _ownerInventory.GetItemGridData(this);
+                if (currentGridData != null)
+                    _originalPosition = new Vector2(currentGridData.GridPosition.x * _ownerInventory.CellSize.x, currentGridData.GridPosition.y * _ownerInventory.CellSize.y);
+                else
+                    _originalPosition = Vector2.zero;
+            }
+
+            _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
+            _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
+
+            ItemsPage.CurrentDraggedItem = this;
+
+            _ownerInventory.PickUp(this);
+
+            _placementResults = _itemsPage.HandleItemPlacement(this);
+
+            Vector2 mouseScreenPosition = Input.mousePosition;
+            Vector2 mouseLocalPosition = _ownerInventory.GetDocument.rootVisualElement.WorldToLocal(mouseScreenPosition);
+
+            this.style.left = mouseLocalPosition.x - (this.resolvedStyle.width / 2);
+            this.style.top = mouseLocalPosition.y - (this.resolvedStyle.height / 2);
+            this.style.position = Position.Absolute;
+            _ownerInventory.GetDocument.rootVisualElement.Add(this);
+        }
+
+        public void SetOwnerInventory(IDropTarget dropTarget)
+        {
+            _ownerInventory = dropTarget;
         }
 
         private void Placement(Vector2Int gridPosition)
         {
-            _characterPages.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
+            Debug.Log($"[DIAGNOSTIC] ItemVisual.Placement called for item '{this.name}' at grid position {gridPosition}.");
+            _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
         }
 
         public void UpdatePcs()
@@ -254,61 +352,6 @@ namespace SkyClerik.Inventory
             _ownerInventory.Drop(this, originalGridPosition);
             SetPosition(_originalPosition);
             RestoreSizeAndRotate();
-        }
-
-        private void OnMouseDown(MouseDownEvent mouseEvent)
-        {
-            if (mouseEvent.button == 0)
-            {
-                if (ItemsPage.CurrentDraggedItem != this)
-                    PickUp();
-            }
-        }
-
-        public void PickUp(bool isSwap = false)
-        {
-            _isDragging = true;
-            _hasNoHome = isSwap;
-
-            _placementResults = _characterPages.HandleItemPlacement(this);
-            style.opacity = 0.7f;
-
-            Vector2 mouseScreenPosition = Input.mousePosition;
-            Vector2 mouseLocalPosition = _ownerInventory.GetDocument.rootVisualElement.WorldToLocal(mouseScreenPosition);
-
-            this.style.left = mouseLocalPosition.x - (this.resolvedStyle.width / 2);
-            this.style.top = mouseLocalPosition.y - (this.resolvedStyle.height / 2);
-
-            if (!_hasNoHome)
-            {
-                ItemGridData currentGridData = _ownerInventory.GetItemGridData(this);
-                if (currentGridData != null)
-                    _originalPosition = new Vector2(currentGridData.GridPosition.x * _ownerInventory.CellSize.x, currentGridData.GridPosition.y * _ownerInventory.CellSize.y);
-                else
-                    _originalPosition = Vector2.zero;
-            }
-
-            _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
-            _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
-
-            this.style.position = Position.Absolute;
-            _ownerInventory.GetDocument.rootVisualElement.Add(this);
-            ItemsPage.CurrentDraggedItem = this;
-
-            _ownerInventory.PickUp(this);
-        }
-
-        private void OnMouseMove(MouseMoveEvent evt)
-        {
-            if (!_isDragging)
-                return;
-
-            _placementResults = _characterPages.HandleItemPlacement(this);
-        }
-
-        public void SetOwnerInventory(IDropTarget dropTarget)
-        {
-            _ownerInventory = dropTarget;
         }
     }
 }

@@ -84,9 +84,14 @@ namespace SkyClerik.Inventory
             if (item == null)
                 return false;
 
+            Debug.Log($"[DIAGNOSTIC] ItemContainerBase.RemoveItem: Attempting to remove '{item.name}'. Parameter 'destroy' is {destroy}.");
+
             bool removed = _items.Remove(item);
-            if (removed && destroy) // Уничтожаем, только если флаг destroy = true
+            if (removed && destroy)
+            {
+                Debug.LogWarning($"[DIAGNOSTIC] ItemContainerBase.RemoveItem: Object '{item.name}' IS BEING DESTROYED.");
                 Object.Destroy(item);
+            }
 
             return removed;
         }

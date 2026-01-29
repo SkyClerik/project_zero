@@ -93,7 +93,7 @@
                             <ui:VisualElement name="item_box" class="item_box" />
                         </ui:VisualElement>
                         <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center;">
-                            <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_craft" style="height: 96px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                            <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_craft" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>

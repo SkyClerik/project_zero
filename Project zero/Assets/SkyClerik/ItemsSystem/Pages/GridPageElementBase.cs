@@ -156,6 +156,35 @@ namespace SkyClerik.Inventory
 
         private bool TryAddItemInternal(ItemBaseDefinition itemToAdd)
         {
+            if (itemToAdd.Stackable)
+            {
+                foreach (var visual in _visualToGridDataMap.Keys.ToList())
+                {
+                    if (itemToAdd.Stack <= 0) break;
+
+                    var existingItemDef = visual.ItemDefinition;
+                    if (existingItemDef.Stackable &&
+                        existingItemDef.DefinitionName == itemToAdd.DefinitionName &&
+                        existingItemDef.Stack < existingItemDef.MaxStack)
+                    {
+                        int spaceAvailable = existingItemDef.MaxStack - existingItemDef.Stack;
+                        int amountToTransfer = Mathf.Min(spaceAvailable, itemToAdd.Stack);
+
+                        if (amountToTransfer > 0)
+                        {
+                            existingItemDef.AddStack(amountToTransfer, out _);
+                            itemToAdd.RemoveStack(amountToTransfer);
+                            visual.UpdatePcs();
+                        }
+                    }
+                }
+            }
+
+            if (itemToAdd.Stack <= 0)
+            {
+                return true;
+            }
+
             if (TryFindPlacement(itemToAdd, out Vector2Int position))
             {
                 var clonedItem = _itemContainer.AddItemAsClone(itemToAdd);
@@ -268,9 +297,21 @@ namespace SkyClerik.Inventory
             // 2. Проверка на пересечение с предметами (Swap или Multiple Intersect)
             else if (overlappingItems.Count == 1)
             {
-                // Пересечение с одним предметом - возможен Swap
                 ItemVisual overlapItem = overlappingItems[0];
-                _placementResults.Conflict = ReasonConflict.SwapAvailable;
+
+                bool isSameStackableType = draggedItem.ItemDefinition.Stackable &&
+                                           overlapItem.ItemDefinition.Stackable &&
+                                           draggedItem.ItemDefinition.DefinitionName == overlapItem.ItemDefinition.DefinitionName;
+
+                if (isSameStackableType)
+                {
+                    _placementResults.Conflict = ReasonConflict.StackAvailable;
+                }
+                else
+                {
+                    _placementResults.Conflict = ReasonConflict.SwapAvailable;
+                }
+                
                 _placementResults.OverlapItem = overlapItem;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
             }

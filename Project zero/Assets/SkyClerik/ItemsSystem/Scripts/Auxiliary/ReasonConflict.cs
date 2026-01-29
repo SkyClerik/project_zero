@@ -7,5 +7,6 @@ namespace SkyClerik.Inventory
         intersectsObjects = 2,
         invalidSlotType = 3,
         SwapAvailable = 4,
+        StackAvailable = 5,
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
@@ -11,7 +12,6 @@ namespace SkyClerik.Inventory
         private InventoryPageElement _inventoryPage;
         private bool _showInventory = false;
         private CraftPageElement _craftPage;
-        private VisualElement _craftPageRoot;
         private bool _craftElementVisible = false;
         private Vector2 _mousePositionNormal;
         private static ItemVisual _currentDraggedItem = null;
@@ -19,6 +19,7 @@ namespace SkyClerik.Inventory
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
+        private ItemBaseDefinition _givenItem = null;
 
         [SerializeField]
         [Tooltip("Размер одной ячейки в пикселях")]
@@ -34,30 +35,62 @@ namespace SkyClerik.Inventory
         [SerializeField]
         private ItemContainerBase _craftItemContainer;
 
+        public delegate void OnItemGivenDelegate(ItemBaseDefinition item);
+        public event OnItemGivenDelegate OnItemGiven;
+
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
         public InventoryPageElement InventoryPage => _inventoryPage;
-        public bool CraftElementVisible
+        public ItemBaseDefinition GiveItem => _givenItem;
+        public bool IsCraftVisible
         {
             get => _craftElementVisible;
-            set
-            {
-                _craftElementVisible = value;
-                _craftPageRoot.SetVisibility(_craftElementVisible);
-            }
+            set => _craftElementVisible = value;
         }
 
-        public bool ShowInventory
-        {
-            get => _showInventory;
-            set
-            {
-                _showInventory = value;
-                _document.rootVisualElement.SetVisibility(_showInventory);
+        public bool IsInventoryVisible => _showInventory;
 
-                _craftPageRoot.SetVisibility(false);
-                if (_craftElementVisible)
-                    _craftPageRoot.SetVisibility(_showInventory);
-            }
+        public void OpenInventoryGiveItem(int itemId)
+        {
+            //TODO стоит заглушка, нужно написать скрипт поиска предмета по ID
+            //_giveItem = itemId;
+            _givenItem = null;
+            OpenInventoryNormal();
+        }
+
+        public void OpenInventoryGiveItem(ItemBaseDefinition item)
+        {
+            _givenItem = item;
+            OpenInventoryNormal();
+        }
+
+        public void OpenInventoryNormal()
+        {
+            _showInventory = true;
+            _document.rootVisualElement.SetVisibility(true);
+        }
+
+        public void CloseInventory()
+        {
+            _givenItem = null;
+            _showInventory = false;
+            _document.rootVisualElement.SetVisibility(false);
+        }
+
+        public void OpenCraft()
+        {
+            _craftPage.Root.SetVisibility(false);
+            if (_craftElementVisible)
+                _craftPage.Root.SetVisibility(true);
+        }
+
+        public void CloseCraft()
+        {
+            _craftPage.Root.SetVisibility(false);
+        }
+
+        public void TriggerItemGiveEvent(ItemBaseDefinition item)
+        {
+            OnItemGiven?.Invoke(item);
         }
 
         private void Awake()
@@ -89,11 +122,10 @@ namespace SkyClerik.Inventory
                 cellSize: _defaultCellSize,
                 inventoryGridSize: _craftGridSize);
 
-            _craftPageRoot = _craftPage.Root;
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
             _document.rootVisualElement.SetVisibility(false);
-            _craftPageRoot.SetVisibility(_craftElementVisible);
+            _craftPage.Root.SetVisibility(_craftElementVisible);
         }
 
         //переместить под общий fixedUpdate после тестов
@@ -156,6 +188,7 @@ namespace SkyClerik.Inventory
         public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2Int gridPosition)
         {
             var itemToMove = draggedItem.ItemDefinition;
+            Debug.Log($"[DIAGNOSTIC] TransferItemBetweenContainers: Moving '{itemToMove.name}'. Source is '{sourceInventory.GetType().Name}', Target is '{targetInventory.GetType().Name}'.");
 
             // Удаляем предмет из исходного контейнера, НЕ уничтожая его
             if (sourceInventory is InventoryPageElement sourceInvElement)

@@ -9,18 +9,17 @@ public class DevelopHUD : MonoBehaviour
     [SerializeField]
     [ReadOnly]
     private UIDocument _developHudUiDocument;
-
-    private Button _bInventory;
-    private const string _bInventoryID = "b_inventory";
+    private Button _bInventoryNormal;
+    private const string _bInventoryNormalID = "b_inventory_normal";
+    private Button _bInventoryGive;
+    private const string _bInventoryGiveID = "b_inventory_give";
     private Button _bTrueCraft;
     private const string _bTrueCraftID = "b_true_craft";
     private Button _bAddItem;
     private const string _bAddItemID = "b_add_item";
     private Button _bExitGame;
     private const string _bExitGameID = "b_exit_game";
-
     private ItemsPage _itemsPage;
-
     [SerializeField]
     private LutContainer _developLut;
 
@@ -35,44 +34,60 @@ public class DevelopHUD : MonoBehaviour
 
         _developHudUiDocument.enabled = true;
         var root = _developHudUiDocument.rootVisualElement;
-        _bInventory = root.Q<Button>(_bInventoryID);
+        _bInventoryNormal = root.Q<Button>(_bInventoryNormalID);
+        _bInventoryGive = root.Q<Button>(_bInventoryGiveID);
         _bTrueCraft = root.Q<Button>(_bTrueCraftID);
         _bAddItem = root.Q<Button>(_bAddItemID);
         _bExitGame = root.Q<Button>(_bExitGameID);
 
-        _bInventory.clicked += _bInventory_clicked;
+        _bInventoryNormal.clicked += _bInventory_clicked;
+        _bInventoryGive.clicked += _bInventoryGive_clicked;
         _bTrueCraft.clicked += _bTrueCraft_clicked;
         _bAddItem.clicked += _bAddItem_clicked;
         _bExitGame.clicked += _bExitGame_clicked;
     }
 
+
     private void OnDestroy()
     {
-        _bInventory.clicked -= _bInventory_clicked;
+        _bInventoryNormal.clicked -= _bInventory_clicked;
         _bTrueCraft.clicked -= _bTrueCraft_clicked;
         _bExitGame.clicked -= _bExitGame_clicked;
     }
 
     private void _bInventory_clicked()
     {
-        _itemsPage.ShowInventory = !_itemsPage.ShowInventory;
+        if (_itemsPage.IsInventoryVisible)
+        {
+            _itemsPage.CloseInventory();
+            _itemsPage.CloseCraft();
+        }
+        else
+        {
+            _itemsPage.OpenInventoryNormal();
+            _itemsPage.OpenCraft();
+        }
+    }
+
+    private void _bInventoryGive_clicked()
+    {
+        if (_itemsPage.IsInventoryVisible)
+            _itemsPage.CloseInventory();
+        else
+            _itemsPage.OpenInventoryGiveItem(itemId: 0);
     }
 
     private void _bTrueCraft_clicked()
     {
-        _itemsPage.CraftElementVisible = !_itemsPage.CraftElementVisible;
+        _itemsPage.IsCraftVisible = !_itemsPage.IsCraftVisible;
     }
 
     private void _bAddItem_clicked()
     {
         if (_itemsPage?.InventoryPage != null && _developLut != null)
-        {
             _itemsPage.InventoryPage.AddLoot(_developLut);
-        }
         else
-        {
             Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
-        }
     }
 
     private void _bExitGame_clicked()
