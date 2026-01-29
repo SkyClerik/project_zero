@@ -27,6 +27,7 @@ namespace SkyClerik.Inventory
                 case ReasonConflict.None:
                     style.backgroundColor = _validColor;
                     break;
+                case ReasonConflict.StackAvailable:
                 case ReasonConflict.SwapAvailable:
                     style.backgroundColor = _swapColor;
                     break;

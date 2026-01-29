@@ -235,20 +235,15 @@ namespace SkyClerik.Inventory
                 style.opacity = 1f;
                 ItemsPage.CurrentDraggedItem = null;
 
-                Vector2Int targetGridPosition = new Vector2Int(
-                    Mathf.RoundToInt(_placementResults.Position.x / _ownerInventory.CellSize.x),
-                    Mathf.RoundToInt(_placementResults.Position.y / _ownerInventory.CellSize.y)
-                );
-
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
-                        Placement(targetGridPosition);
+                        Placement(_placementResults.SuggestedGridPosition);
                         break;
                     case ReasonConflict.SwapAvailable:
                         var itemToSwap = _placementResults.OverlapItem;
                         itemToSwap.PickUp(isSwap: true);
-                        Placement(targetGridPosition);
+                        Placement(_placementResults.SuggestedGridPosition);
                         break;
                     default:
                         TryDropBack();

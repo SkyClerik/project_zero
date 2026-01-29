@@ -74,7 +74,7 @@ namespace SkyClerik.Inventory
 
             // Позиционируем тултип чуть ниже и правее курсора
             style.left = mousePosition.x + 20;
-            style.top = mousePosition.y + 20;
+            style.top = Screen.height - mousePosition.y + 20;
 
             // Убеждаемся, что тултип не выходит за пределы экрана
             // (простая проверка, можно усложнить)
