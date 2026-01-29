@@ -78,6 +78,14 @@ namespace SkyClerik.Inventory
             _items.Add(item);
         }
 
+        public void AddItemReference(ItemBaseDefinition item)
+        {
+            if (item != null)
+            {
+                _items.Add(item);
+            }
+        }
+
         // Удалить предмет из инвентаря (по ссылке)
         public bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
         {

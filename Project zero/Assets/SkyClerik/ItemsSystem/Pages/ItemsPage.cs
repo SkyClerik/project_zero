@@ -190,17 +190,17 @@ namespace SkyClerik.Inventory
             var itemToMove = draggedItem.ItemDefinition;
             Debug.Log($"[DIAGNOSTIC] TransferItemBetweenContainers: Moving '{itemToMove.name}'. Source is '{sourceInventory.GetType().Name}', Target is '{targetInventory.GetType().Name}'.");
 
-            // Удаляем предмет из исходного контейнера, НЕ уничтожая его
-            if (sourceInventory is InventoryPageElement sourceInvElement)
-                sourceInvElement.ItemContainer.RemoveItem(itemToMove, destroy: false);
-            else if (sourceInventory is CraftPageElement sourceCraftElement)
-                sourceCraftElement.ItemContainer.RemoveItem(itemToMove, destroy: false);
+            var sourceContainer = (sourceInventory as GridPageElementBase)?.ItemContainer;
+            var targetContainer = (targetInventory as GridPageElementBase)?.ItemContainer;
 
-            // Добавляем ЭТОТ ЖЕ ЭКЗЕМПЛЯР предмета в целевой контейнер
-            if (targetInventory is InventoryPageElement targetInvElement)
-                targetInvElement.ItemContainer.AddItem(itemToMove);
-            else if (targetInventory is CraftPageElement targetCraftElement)
-                targetCraftElement.ItemContainer.AddItem(itemToMove);
+            if (sourceContainer == null || targetContainer == null)
+            {
+                Debug.LogError("Could not find containers for transfer!");
+                return;
+            }
+
+            sourceContainer.RemoveItem(itemToMove, destroy: false);
+            targetContainer.AddItemReference(itemToMove);
 
             targetInventory.Drop(draggedItem, gridPosition);
         }
