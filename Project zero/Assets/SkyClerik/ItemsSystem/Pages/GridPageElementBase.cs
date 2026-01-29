@@ -332,23 +332,15 @@ namespace SkyClerik.Inventory
             // Эта логика теперь работает в паре с расширенным _gridRect.
             float finalX = mouseLocalPosition.x;
             if (finalX < 0 && finalX >= -halfCellWidth)
-            {
                 finalX = 0;
-            }
             else if (finalX > gridWidthInPixels && finalX <= gridWidthInPixels + halfCellWidth)
-            {
                 finalX = gridWidthInPixels - 0.001f; // -epsilon чтобы остаться в последней ячейке
-            }
 
             float finalY = mouseLocalPosition.y;
             if (finalY < 0 && finalY >= -halfCellHeight)
-            {
                 finalY = 0;
-            }
             else if (finalY > gridHeightInPixels && finalY <= gridHeightInPixels + halfCellHeight)
-            {
                 finalY = gridHeightInPixels - 0.001f;
-            }
 
             // Вычисляем позицию в сетке
             int gridX = Mathf.FloorToInt(finalX / _cellSize.width);
@@ -374,9 +366,7 @@ namespace SkyClerik.Inventory
                 RectInt currentItemRect = new RectInt(gridData.GridPosition.x, gridData.GridPosition.y, gridData.GridSize.x, gridData.GridSize.y);
 
                 if (targetRect.Overlaps(currentItemRect))
-                {
                     overlappingItems.Add(currentItem);
-                }
             }
             return overlappingItems;
         }
@@ -446,17 +436,13 @@ namespace SkyClerik.Inventory
         public virtual void RegisterVisual(ItemVisual visual, ItemGridData gridData)
         {
             if (!_visualToGridDataMap.ContainsKey(visual))
-            {
                 _visualToGridDataMap.Add(visual, gridData);
-            }
         }
 
         public virtual void UnregisterVisual(ItemVisual visual)
         {
             if (_visualToGridDataMap.ContainsKey(visual))
-            {
                 _visualToGridDataMap.Remove(visual);
-            }
         }
     }
 }

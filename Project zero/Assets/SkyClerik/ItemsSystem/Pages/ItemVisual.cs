@@ -123,6 +123,9 @@ namespace SkyClerik.Inventory
 
         public void Rotate()
         {
+            if (_itemDefinition.Dimensions.DefaultWidth == _itemDefinition.Dimensions.DefaultHeight)
+                return;
+
             _itemDefinition.Dimensions.Swap();
             SetSize();
             RotateIconRight();

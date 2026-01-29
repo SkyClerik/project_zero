@@ -120,10 +120,7 @@ namespace SkyClerik.Inventory
                 return;
 
             if (Input.GetMouseButtonDown(1))
-            {
-                if (_currentDraggedItem.ItemDefinition.Dimensions.DefaultWidth != _currentDraggedItem.ItemDefinition.Dimensions.DefaultHeight)
-                    _currentDraggedItem.Rotate();
-            }
+                _currentDraggedItem.Rotate();
         }
 
         public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
