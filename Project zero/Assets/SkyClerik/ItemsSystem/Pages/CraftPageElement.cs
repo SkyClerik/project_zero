@@ -49,9 +49,10 @@ namespace SkyClerik.Inventory
                 Debug.Log($"Найден рецепт! Результат: {foundRecipe.Result.Item.DefinitionName}");
 
                 // 1. Уничтожаем визуальные элементы ингредиентов и освобождаем ячейки
-                foreach (var entry in _visualToGridDataMap.ToList())
+            var currentItemsInGrid = _placedItemsGridData.ToList();
+                foreach (var entry in currentItemsInGrid)
                 {
-                    UnregisterVisual(entry.Key);
+
                     OccupyGridCells(entry.Value, false);
                     entry.Key.RemoveFromHierarchy();
                 }
@@ -80,7 +81,7 @@ namespace SkyClerik.Inventory
                         resultVisual.UpdatePcs();
                         
                         AddItemToInventoryGrid(resultVisual);
-                        RegisterVisual(resultVisual, newGridData);
+
                         resultVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
                     }
                     else

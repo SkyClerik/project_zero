@@ -14,7 +14,7 @@ namespace SkyClerik.Inventory
         // Общие поля для управления сеткой и предметами
         protected Dictionary<ItemVisual, ItemGridData> _placedItemsGridData = new Dictionary<ItemVisual, ItemGridData>();
         protected bool[,] _gridOccupancy;
-        protected Dictionary<ItemVisual, ItemGridData> _visualToGridDataMap = new Dictionary<ItemVisual, ItemGridData>();
+
         protected RectangleSize _inventoryDimensions;
         protected Rect _cellSize;
         protected Rect _gridRect;
@@ -97,7 +97,7 @@ namespace SkyClerik.Inventory
                     OccupyGridCells(newGridData, true);
 
                     AddItemToInventoryGrid(inventoryItemVisual);
-                    RegisterVisual(inventoryItemVisual, newGridData);
+
                     inventoryItemVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
                 }
                 else
@@ -158,7 +158,7 @@ namespace SkyClerik.Inventory
         {
             if (itemToAdd.Stackable)
             {
-                foreach (var visual in _visualToGridDataMap.Keys.ToList())
+                foreach (var visual in _placedItemsGridData.Keys.ToList())
                 {
                     if (itemToAdd.Stack <= 0) break;
 
@@ -201,7 +201,7 @@ namespace SkyClerik.Inventory
 
                 _placedItemsGridData.Add(newItemVisual, newGridData);
                 OccupyGridCells(newGridData, true);
-                RegisterVisual(newItemVisual, newGridData);
+
                 AddItemToInventoryGrid(newItemVisual);
                 newItemVisual.SetPosition(new Vector2(position.x * _cellSize.width, position.y * _cellSize.height));
 
@@ -408,7 +408,7 @@ namespace SkyClerik.Inventory
             List<ItemVisual> overlappingItems = new List<ItemVisual>();
             RectInt targetRect = new RectInt(start.x, start.y, size.x, size.y);
 
-            foreach (var entry in _visualToGridDataMap)
+            foreach (var entry in _placedItemsGridData)
             {
                 ItemVisual currentItem = entry.Key;
                 if (currentItem == draggedItem) continue; // Игнорируем сам перетаскиваемый предмет
@@ -443,7 +443,7 @@ namespace SkyClerik.Inventory
             }
 
             OccupyGridCells(gridData, true);
-            RegisterVisual(storedItem, gridData);
+
             AddItemToInventoryGrid(storedItem);
 
             storedItem.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
@@ -452,11 +452,11 @@ namespace SkyClerik.Inventory
 
         public virtual void RemoveStoredItem(ItemVisual storedItem)
         {
-            if (_visualToGridDataMap.TryGetValue(storedItem, out ItemGridData gridData))
+            if (_placedItemsGridData.TryGetValue(storedItem, out ItemGridData gridData))
             {
                 OccupyGridCells(gridData, false);
                 _placedItemsGridData.Remove(storedItem);
-                UnregisterVisual(storedItem);
+
                 storedItem.RemoveFromHierarchy();
             }
         }
@@ -468,7 +468,7 @@ namespace SkyClerik.Inventory
                 OccupyGridCells(gridData, false);
                 _placedItemsGridData.Remove(storedItem);
             }
-            UnregisterVisual(storedItem);
+
             ItemsPage.CurrentDraggedItem = storedItem;
             storedItem.SetOwnerInventory(this);
         }
@@ -484,16 +484,19 @@ namespace SkyClerik.Inventory
             return gridData;
         }
 
+
+
+
         public virtual void RegisterVisual(ItemVisual visual, ItemGridData gridData)
         {
-            if (!_visualToGridDataMap.ContainsKey(visual))
-                _visualToGridDataMap.Add(visual, gridData);
+            if (!_placedItemsGridData.ContainsKey(visual))
+                _placedItemsGridData.Add(visual, gridData);
         }
 
         public virtual void UnregisterVisual(ItemVisual visual)
         {
-            if (_visualToGridDataMap.ContainsKey(visual))
-                _visualToGridDataMap.Remove(visual);
+            if (_placedItemsGridData.ContainsKey(visual))
+                _placedItemsGridData.Remove(visual);
         }
     }
 }
