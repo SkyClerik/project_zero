@@ -8,7 +8,6 @@ namespace SkyClerik.Inventory
     {
         [SerializeField]
         private ItemBaseDefinition _itemDefinition; 
-
         [SerializeField]
         private Vector2Int _gridPosition;
 

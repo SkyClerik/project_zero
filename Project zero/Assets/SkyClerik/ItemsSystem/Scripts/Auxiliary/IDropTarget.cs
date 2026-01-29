@@ -10,7 +10,7 @@ namespace SkyClerik.Inventory
         PlacementResults ShowPlacementTarget(ItemVisual itemVisual);
         void FinalizeDrag();
 
-        void AddStoredItem(ItemVisual storedItem);
+                void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition);
         void RemoveStoredItem(ItemVisual storedItem);
 
         void PickUp(ItemVisual storedItem);

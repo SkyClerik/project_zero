@@ -167,7 +167,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0774e6aef21ab74985cafeaa6e7e5f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _developHud: {fileID: 365169867}
+  _developHudUiDocument: {fileID: 365169867}
+  _developLut: {fileID: 562551364}
 --- !u!114 &365169867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,6 +185,54 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 7ba35120bfb55b7499604d62ef9d3b9a, type: 3}
   m_SortingOrder: 0
+--- !u!1 &562551363
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 562551365}
+  - component: {fileID: 562551364}
+  m_Layer: 0
+  m_Name: AddLut
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &562551364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562551363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eefaf293c04a6e744834a57f56951e74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _items:
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
+--- !u!4 &562551365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562551363}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &627866735
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,9 +244,9 @@ GameObject:
   - component: {fileID: 627866736}
   - component: {fileID: 627866737}
   - component: {fileID: 627866739}
-  - component: {fileID: 627866738}
-  - component: {fileID: 627866740}
   - component: {fileID: 627866741}
+  - component: {fileID: 627866743}
+  - component: {fileID: 627866742}
   m_Layer: 0
   m_Name: CharacterPages
   m_TagString: Untagged
@@ -236,26 +285,6 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 9fe69c9212cdcc1498ee1d5d577021c7, type: 3}
   m_SortingOrder: 0
---- !u!114 &627866738
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627866735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feb345a8cdf809740a1c05ade922689b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _items:
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
-  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
-  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
 --- !u!114 &627866739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,24 +297,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0fa887a3b208444c88f74eb7d7400e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inventoryItemContainer: {fileID: 627866738}
-  _craftItemContainer: {fileID: 627866740}
---- !u!114 &627866740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627866735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feb345a8cdf809740a1c05ade922689b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _items:
-  - {fileID: 11400000, guid: f3b9ea3388f94424a97b49c14da6e2f5, type: 2}
-  - {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
-  - {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
+  _defaultCellSize: {x: 128, y: 128}
+  _inventoryGridSize: {x: 7, y: 8}
+  _craftGridSize: {x: 3, y: 4}
+  _inventoryItemContainer: {fileID: 627866743}
+  _craftItemContainer: {fileID: 627866742}
 --- !u!114 &627866741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,6 +315,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _recipeDatabase: {fileID: 11400000, guid: cdaf9ece590758e42936394cc83d83e6, type: 2}
+--- !u!114 &627866742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627866735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2971fa98ec98b8d4288a1d717a6961c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _items:
+  - {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
+  - {fileID: 11400000, guid: f3b9ea3388f94424a97b49c14da6e2f5, type: 2}
+--- !u!114 &627866743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627866735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 246f182f6f292544e8a06f982e48eade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _items:
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,3 +573,4 @@ SceneRoots:
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 1923614411}
+  - {fileID: 562551365}

@@ -21,14 +21,11 @@ MonoBehaviour:
     \u043F\u043E\u043A\u043E\u0439 \u0438 \u043F\u0440\u043E\u0446\u0432\u0435\u0442\u0430\u043D\u0438\u0435
     \u0432 \u043A\u043E\u0434\u0435 \u0438 \u0434\u0443\u0448\u0435. "
   _icon: {fileID: 21300000, guid: f946925a07946fa40a425f1b0198ff5a, type: 3}
-  _price: 122
+  _price: 63
   _curStack: 1
   _maxStack: 1
   _stackable: 0
+  _viewStackable: 0
   _dimensions:
     defaultWidth: 1
     defaultHeight: 2
-    defaultAngle: 0
-    currentHeight: 1
-    currentWidth: 1
-    currentAngle: 0

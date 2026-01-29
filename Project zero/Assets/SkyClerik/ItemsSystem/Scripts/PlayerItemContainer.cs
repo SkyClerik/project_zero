@@ -2,12 +2,11 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
-
     public class PlayerItemContainer : ItemContainerBase
     {
         protected override void Awake()
         {
-            base.Awake(); // Вызов базовой реализации Awake для инициализации ItemContainerBase
+            base.Awake();
             ServiceProvider.Register(this);
         }
 

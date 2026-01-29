@@ -15,24 +15,26 @@ namespace SkyClerik.Inventory
         private bool _craftElementVisible = false;
         private Vector2 _mousePositionNormal;
         private static ItemVisual _currentDraggedItem = null;
-        private PlacementResults _placementResults;
 
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
 
         [SerializeField]
-        private Vector2 _defaultCellSize = new Vector2(50, 50); // Размер одной ячейки в пикселях
+        [Tooltip("Размер одной ячейки в пикселях")]
+        private Vector2 _defaultCellSize = new Vector2(128, 128);
         [SerializeField]
-        private Vector2Int _inventoryGridSize = new Vector2Int(10, 5); // Ширина и высота инвентаря в ячейках
+        [Tooltip("Ширина и высота инвентаря в ячейках")]
+        private Vector2Int _inventoryGridSize = new Vector2Int(7, 8);
         [SerializeField]
-        private Vector2Int _craftGridSize = new Vector2Int(3, 3); // Ширина и высота стола крафта в ячейках
+        [Tooltip("Ширина и высота стола крафта в ячейках")]
+        private Vector2Int _craftGridSize = new Vector2Int(3, 4);
         [SerializeField]
         private ItemContainerBase _inventoryItemContainer;
         [SerializeField]
         private ItemContainerBase _craftItemContainer;
 
-                public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
+        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
         public InventoryPageElement InventoryPage => _inventoryPage;
         public bool CraftElementVisible
         {
@@ -87,21 +89,12 @@ namespace SkyClerik.Inventory
                 cellSize: _defaultCellSize,
                 inventoryGridSize: _craftGridSize);
 
-            _craftPageRoot = _craftPage.Root; // Теперь получаем _root через новое свойство
-
+            _craftPageRoot = _craftPage.Root;
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
             _document.rootVisualElement.SetVisibility(false);
             _craftPageRoot.SetVisibility(_craftElementVisible);
-            //RootPosition(DisplayStyle.None);
         }
-
-        //private void RootPosition(DisplayStyle display)
-        //{
-        //    int enumValue = (int)display;
-        //    int offset = enumValue * 900000;
-        //    _document.rootVisualElement.style.top = offset;
-        //}
 
         //переместить под общий fixedUpdate после тестов
         private void FixedUpdate()
@@ -118,11 +111,25 @@ namespace SkyClerik.Inventory
             _currentDraggedItem.SetPosition(_mousePositionNormal);
         }
 
+        private void Update()
+        {
+            if (!_document.isActiveAndEnabled)
+                return;
+
+            if (_currentDraggedItem == null)
+                return;
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                if (_currentDraggedItem.ItemDefinition.Dimensions.DefaultWidth != _currentDraggedItem.ItemDefinition.Dimensions.DefaultHeight)
+                    _currentDraggedItem.Rotate();
+            }
+        }
+
         public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
         {
             // Проверяем первый инвентарь
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
-            Debug.Log($"[ItemsPage.HandleItemPlacement] _inventoryPage results: Conflict={resultsPage.Conflict}, Position={resultsPage.Position}, OverlapItem={resultsPage.OverlapItem?.name}, SuggestedGridPosition={resultsPage.SuggestedGridPosition}");
             if (resultsPage.Conflict != ReasonConflict.beyondTheGridBoundary)
             {
                 _craftPage.Telegraph.Hide(); // Скрываем телеграф второго инвентаря, если первый активен
@@ -131,7 +138,6 @@ namespace SkyClerik.Inventory
 
             // Если первый инвентарь не активен, проверяем второй
             PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
-            Debug.Log($"[ItemsPage.HandleItemPlacement] _craftPage results: Conflict={resultsTwo.Conflict}, Position={resultsTwo.Position}, OverlapItem={resultsTwo.OverlapItem?.name}, SuggestedGridPosition={resultsTwo.SuggestedGridPosition}");
             if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
             {
                 _inventoryPage.Telegraph.Hide(); // Скрываем телеграф первого инвентаря, если второй активен

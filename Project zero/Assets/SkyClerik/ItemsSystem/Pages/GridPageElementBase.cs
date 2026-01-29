@@ -39,7 +39,6 @@ namespace SkyClerik.Inventory
         public Vector2 CellSize => new Vector2(_cellSize.width, _cellSize.height);
         public VisualElement Root => _root;
 
-        // Конструктор базового класса
         protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainerBase itemContainer, Vector2 cellSize, Vector2Int inventoryGridSize, string rootID)
         {
             _itemsPage = itemsPage;
@@ -71,7 +70,6 @@ namespace SkyClerik.Inventory
 
             yield return new WaitForEndOfFrame();
 
-            ConfigureInventoryDimensions();
             CalculateGridRect();
         }
 
@@ -111,11 +109,6 @@ namespace SkyClerik.Inventory
             yield break;
         }
 
-        protected virtual void ConfigureInventoryDimensions()
-        {
-            Debug.Log($"[{GetType().Name}] Configured Inventory Dimensions: Width={_inventoryDimensions.width}, Height={_inventoryDimensions.height}");
-        }
-
         protected virtual void CalculateGridRect()
         {
             // Получаем оригинальные границы
@@ -134,7 +127,7 @@ namespace SkyClerik.Inventory
             );
         }
 
-                public void AddItemToInventoryGrid(VisualElement item)
+        public void AddItemToInventoryGrid(VisualElement item)
         {
             _inventoryGrid.Add(item);
         }
@@ -388,23 +381,13 @@ namespace SkyClerik.Inventory
             return overlappingItems;
         }
 
-        // ---------- IDropTarget Implementation ----------
         public virtual void FinalizeDrag()
         {
-            Debug.Log($"[{GetType().Name}.FinalizeDrag] Default implementation.");
             _telegraph.Hide();
-        }
-
-        void IDropTarget.AddStoredItem(ItemVisual storedItem)
-        {
-            Debug.LogWarning($"[{GetType().Name}] IDropTarget.AddStoredItem(ItemVisual) called. " +
-                             "This method currently does not place the item in a specific grid position. " +
-                             "Consider calling AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition) instead.");
         }
 
         public virtual void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            Debug.Log($"[{GetType().Name}.AddStoredItem] Default implementation for {storedItem.name} at {gridPosition}.");
             ItemGridData gridData;
             if (_placedItemsGridData.TryGetValue(storedItem, out var existingGridData))
             {
@@ -428,7 +411,6 @@ namespace SkyClerik.Inventory
 
         public virtual void RemoveStoredItem(ItemVisual storedItem)
         {
-            Debug.Log($"[{GetType().Name}.RemoveStoredItem] Default implementation for {storedItem.name}.");
             if (_visualToGridDataMap.TryGetValue(storedItem, out ItemGridData gridData))
             {
                 OccupyGridCells(gridData, false);
@@ -440,7 +422,6 @@ namespace SkyClerik.Inventory
 
         public virtual void PickUp(ItemVisual storedItem)
         {
-            Debug.Log($"[{GetType().Name}.PickUp] Default implementation for {storedItem.name}.");
             if (_placedItemsGridData.TryGetValue(storedItem, out ItemGridData gridData))
             {
                 OccupyGridCells(gridData, false);
@@ -453,7 +434,6 @@ namespace SkyClerik.Inventory
 
         public virtual void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            Debug.Log($"[{GetType().Name}.Drop] Default implementation for {storedItem.name} at {gridPosition}.");
             AddStoredItem(storedItem, gridPosition);
         }
 
@@ -465,7 +445,6 @@ namespace SkyClerik.Inventory
 
         public virtual void RegisterVisual(ItemVisual visual, ItemGridData gridData)
         {
-            Debug.Log($"[{GetType().Name}.RegisterVisual] Default implementation for {visual.name}.");
             if (!_visualToGridDataMap.ContainsKey(visual))
             {
                 _visualToGridDataMap.Add(visual, gridData);
@@ -474,7 +453,6 @@ namespace SkyClerik.Inventory
 
         public virtual void UnregisterVisual(ItemVisual visual)
         {
-            Debug.Log($"[{GetType().Name}.UnregisterVisual] Default implementation for {visual.name}.");
             if (_visualToGridDataMap.ContainsKey(visual))
             {
                 _visualToGridDataMap.Remove(visual);

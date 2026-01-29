@@ -56,7 +56,7 @@ namespace SkyClerik.Inventory
                 style =
                 {
                     backgroundImage = new StyleBackground(_itemDefinition.Icon),
-                    rotate = new Rotate(_itemDefinition.Dimensions.CurrentAngle), // Используем ItemDefinition
+                    rotate = new Rotate(_itemDefinition.Dimensions.CurrentAngle),
                     position = Position.Absolute,
                 }
             };
@@ -121,9 +121,9 @@ namespace SkyClerik.Inventory
             _characterPages.StopTooltipDelayAndHideTooltip();
         }
 
-        private void Rotate()
+        public void Rotate()
         {
-            _itemDefinition.Dimensions.Swap(); // Используем ItemDefinition.Dimensions.Swap()
+            _itemDefinition.Dimensions.Swap();
             SetSize();
             RotateIconRight();
         }
@@ -156,11 +156,11 @@ namespace SkyClerik.Inventory
             float angle;
             if (_singleRotationMode)
             {
-                angle = (_itemDefinition.Dimensions.CurrentAngle == 0) ? 90 : 0; // Используем ItemDefinition
+                angle = (_itemDefinition.Dimensions.CurrentAngle == 0) ? 90 : 0;
             }
             else
             {
-                angle = _itemDefinition.Dimensions.CurrentAngle + 90; // Используем ItemDefinition
+                angle = _itemDefinition.Dimensions.CurrentAngle + 90;
                 if (angle >= 360)
                     angle = 0;
             }
@@ -171,7 +171,7 @@ namespace SkyClerik.Inventory
 
         private void RotateIcon(float angle) => _icon.style.rotate = new Rotate(angle);
 
-        private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.CurrentAngle = angle; // Сохраняем в ItemDefinition
+        private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.CurrentAngle = angle;
 
         private void RestoreSizeAndRotate()
         {
@@ -194,23 +194,19 @@ namespace SkyClerik.Inventory
                 style.opacity = 1f;
                 ItemsPage.CurrentDraggedItem = null;
                 _placementResults = _characterPages.HandleItemPlacement(this);
-                Debug.Log($"[ItemVisual.OnMouseUp] After HandleItemPlacement. Conflict: {_placementResults.Conflict}, SuggestedGridPosition: {_placementResults.SuggestedGridPosition}, OverlapItem: {(_placementResults.OverlapItem != null ? _placementResults.OverlapItem.name : "None")}");
 
                 Vector2Int targetGridPosition = new Vector2Int(
                     Mathf.RoundToInt(_placementResults.Position.x / _ownerInventory.CellSize.x),
                     Mathf.RoundToInt(_placementResults.Position.y / _ownerInventory.CellSize.y)
                 );
-                Debug.Log($"[ItemVisual.OnMouseUp] Calculated targetGridPosition: {targetGridPosition}");
 
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
-                        Debug.Log("[ItemVisual.OnMouseUp] Conflict: None. Performing placement.");
                         Placement(targetGridPosition);
                         break;
 
                     case ReasonConflict.SwapAvailable:
-                        Debug.Log("[ItemVisual.OnMouseUp] Conflict: SwapAvailable. Performing swap.");
                         var itemToSwap = _placementResults.OverlapItem;
                         itemToSwap.PickUp(isSwap: true);
                         Placement(targetGridPosition);
@@ -220,7 +216,6 @@ namespace SkyClerik.Inventory
                     case ReasonConflict.intersectsObjects:
                     case ReasonConflict.invalidSlotType:
                     default:
-                        Debug.Log($"[ItemVisual.OnMouseUp] Conflict: {_placementResults.Conflict}. No specific handling, trying to drop back.");
                         TryDropBack();
                         return;
                 }
@@ -231,16 +226,13 @@ namespace SkyClerik.Inventory
 
         private void Placement(Vector2Int gridPosition)
         {
-            Debug.Log($"[ItemVisual.Placement] Placing item {name} at gridPosition: {gridPosition}");
             _characterPages.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
         }
 
         public void UpdatePcs()
         {
             if (_pcsText != null)
-            {
                 _pcsText.text = $"{_itemDefinition.Stack}";
-            }
         }
 
         private void TryDropBack()
@@ -288,13 +280,9 @@ namespace SkyClerik.Inventory
             {
                 ItemGridData currentGridData = _ownerInventory.GetItemGridData(this);
                 if (currentGridData != null)
-                {
                     _originalPosition = new Vector2(currentGridData.GridPosition.x * _ownerInventory.CellSize.x, currentGridData.GridPosition.y * _ownerInventory.CellSize.y);
-                }
                 else
-                {
                     _originalPosition = Vector2.zero;
-                }
             }
 
             _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
@@ -311,9 +299,6 @@ namespace SkyClerik.Inventory
         {
             if (!_isDragging)
                 return;
-
-            if (Input.GetMouseButtonDown(1))
-                Rotate();
 
             _placementResults = _characterPages.HandleItemPlacement(this);
         }
