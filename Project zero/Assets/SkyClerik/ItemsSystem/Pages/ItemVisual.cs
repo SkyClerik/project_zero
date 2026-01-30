@@ -216,7 +216,7 @@ namespace SkyClerik.Inventory
                         _isDragging = false;
                         ItemsPage.CurrentDraggedItem = null;
 
-                        this.style.display = DisplayStyle.None; // Hide immediately
+                        this.style.display = DisplayStyle.None;
 
                         this.schedule.Execute(() =>
                         {
@@ -226,7 +226,7 @@ namespace SkyClerik.Inventory
                                 ownerGrid.ItemContainer.RemoveItem(this.ItemDefinition, destroy: true);
                             }
                             this.RemoveFromHierarchy();
-                        }).ExecuteLater(1); // Schedule actual removal
+                        }).ExecuteLater(1);
                     }
                     return;
                 }
@@ -260,7 +260,6 @@ namespace SkyClerik.Inventory
             {
                 if (_itemsPage.GiveItem != null)
                 {
-                    Debug.Log($"GiveItem : {_itemDefinition.DefinitionName}");
                     _itemsPage.TriggerItemGiveEvent(_itemDefinition);
                 }
                 else
@@ -321,7 +320,6 @@ namespace SkyClerik.Inventory
 
         private void Placement(Vector2Int gridPosition)
         {
-            Debug.Log($"[DIAGNOSTIC] ItemVisual.Placement called for item '{this.name}' at grid position {gridPosition}.");
             _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
         }
 

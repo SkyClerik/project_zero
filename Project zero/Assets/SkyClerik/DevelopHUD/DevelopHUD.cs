@@ -74,7 +74,7 @@ public class DevelopHUD : MonoBehaviour
         if (_itemsPage.IsInventoryVisible)
             _itemsPage.CloseInventory();
         else
-            _itemsPage.OpenInventoryGiveItem(itemId: 0);
+            _itemsPage.OpenInventoryGiveItem(_developLut.GetItems()[0]);
     }
 
     private void _bTrueCraft_clicked()

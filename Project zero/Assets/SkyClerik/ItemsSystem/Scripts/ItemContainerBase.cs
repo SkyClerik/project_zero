@@ -36,7 +36,6 @@ namespace SkyClerik.Inventory
             }
         }
 
-        // Добавить предмет в инвентарь как копия и вернуть его
         public ItemBaseDefinition AddItemAsClone(ItemBaseDefinition item)
         {
             if (item != null)
@@ -48,7 +47,6 @@ namespace SkyClerik.Inventory
             return null;
         }
 
-        // Просто добавить существующий предмет в инвентарь
         public void AddItem(ItemBaseDefinition item)
         {
             if (item == null)
@@ -56,7 +54,6 @@ namespace SkyClerik.Inventory
 
             if (item.Stackable)
             {
-                // Ищем существующий стакуемый предмет того же типа
                 ItemBaseDefinition existingStack = _items.FirstOrDefault(i => i.DefinitionName == item.DefinitionName && i.Stackable && i.Stack < i.MaxStack);
 
                 if (existingStack != null)
@@ -64,13 +61,11 @@ namespace SkyClerik.Inventory
                     existingStack.AddStack(item.Stack, out int remainder);
                     if (remainder == 0)
                     {
-                        // Весь предмет был добавлен в существующий стак, уничтожаем оригинальный предмет
                         Object.Destroy(item); 
                         return;
                     }
                     else
                     {
-                        // Часть предмета осталась, обновляем его количество
                         item.Stack = remainder;
                     }
                 }
@@ -86,44 +81,30 @@ namespace SkyClerik.Inventory
             }
         }
 
-        // Удалить предмет из инвентаря (по ссылке)
         public bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
         {
             if (item == null)
                 return false;
 
-            Debug.Log($"[DIAGNOSTIC] ItemContainerBase.RemoveItem: Attempting to remove '{item.name}'. Parameter 'destroy' is {destroy}.");
-
             bool removed = _items.Remove(item);
             if (removed && destroy)
             {
-                Debug.LogWarning($"[DIAGNOSTIC] ItemContainerBase.RemoveItem: Object '{item.name}' IS BEING DESTROYED.");
                 Object.Destroy(item);
             }
 
             return removed;
         }
 
-        // Получить список предметов в инвентаре (только для чтения)
         public IReadOnlyList<ItemBaseDefinition> GetItems()
         {
             return _items.AsReadOnly();
         }
 
-        // Очистить инвентарь и уничтожить все копии
         public void Clear()
         {
-            // foreach (var item in _inventoryItems)
-            // {
-            //     Object.Destroy(item); // Удалено, чтобы избежать удаления ассетов ScriptableObject
-            // }
             _items.Clear();
         }
 
-        /// <summary>
-        /// Сериализует список предметов в JSON строку.
-        /// </summary>
-        /// <returns>JSON строка, представляющая список предметов.</returns>
         public string SaveItemsToJson()
         {
             return JsonConvert.SerializeObject(_items, new JsonSerializerSettings
@@ -134,10 +115,6 @@ namespace SkyClerik.Inventory
             });
         }
 
-        /// <summary>
-        /// Десериализует JSON строку в список предметов.
-        /// </summary>
-        /// <param name="json">JSON строка для десериализации.</param>
         public void LoadItemsFromJson(string json)
         {
             Clear();
