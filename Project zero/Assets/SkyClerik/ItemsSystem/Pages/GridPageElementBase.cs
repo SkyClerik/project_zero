@@ -1,4 +1,3 @@
-using SkyClerik.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -169,7 +168,8 @@ namespace SkyClerik.Inventory
             {
                 foreach (var visual in _placedItemsGridData.Keys.ToList())
                 {
-                    if (itemToAdd.Stack <= 0) break;
+                    if (itemToAdd.Stack <= 0) 
+                        break;
 
                     var existingItemDef = visual.ItemDefinition;
                     if (existingItemDef.Stackable &&
@@ -218,17 +218,6 @@ namespace SkyClerik.Inventory
             }
 
             return false;
-        }
-
-        protected void RemoveItemFromInventoryGrid(VisualElement item)
-        {
-            _inventoryGrid.Remove(item);
-        }
-
-        protected static void SetItemPosition(VisualElement element, Vector2 vector)
-        {
-            element.style.left = vector.x;
-            element.style.top = vector.y;
         }
 
         protected void OccupyGridCells(ItemGridData gridData, bool occupy)
@@ -289,7 +278,7 @@ namespace SkyClerik.Inventory
             Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
             Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.CurrentHeight);
 
-            Debug.Log($"[ЛОГ] ShowPlacementTarget в '{_root.name}'. Мышь в коорд. сетки: {currentHoverGridPosition}. Размер предмета: {itemGridSize}. Границы сетки _gridRect: {_gridRect}");
+            //Debug.Log($"[ЛОГ] ShowPlacementTarget в '{_root.name}'. Мышь в коорд. сетки: {currentHoverGridPosition}. Размер предмета: {itemGridSize}. Границы сетки _gridRect: {_gridRect}");
 
             _placementResults = new PlacementResults();
             _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
@@ -304,7 +293,7 @@ namespace SkyClerik.Inventory
                 currentHoverGridPosition.y + itemGridSize.y > _gridOccupancy.GetLength(1))
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
-                Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.beyondTheGridBoundary}");
+                //Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.beyondTheGridBoundary}");
             }
             // 2. Проверка на пересечение с предметами (Swap или Multiple Intersect)
             else if (overlappingItems.Count == 1)
@@ -323,7 +312,7 @@ namespace SkyClerik.Inventory
                 {
                     _placementResults.Conflict = ReasonConflict.SwapAvailable;
                 }
-                Debug.Log($"[ЛОГ] Причина конфликта: {_placementResults.Conflict}");
+                //Debug.Log($"[ЛОГ] Причина конфликта: {_placementResults.Conflict}");
 
                 _placementResults.OverlapItem = overlapItem;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
@@ -332,21 +321,21 @@ namespace SkyClerik.Inventory
             {
                 // Пересечение с несколькими предметами - конфликт
                 _placementResults.Conflict = ReasonConflict.intersectsObjects;
-                Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.intersectsObjects} (Пересечение с {overlappingItems.Count} предметами)");
+                //Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.intersectsObjects} (Пересечение с {overlappingItems.Count} предметами)");
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
             }
             // 3. Если нет пересечений с предметами, проверяем, свободно ли место
             else if (IsGridAreaFree(currentHoverGridPosition, itemGridSize))
             {
                 _placementResults.Conflict = ReasonConflict.None;
-                Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.None}");
+                //Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.None}");
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
             }
             // 4. Если место занято, но нет пересечений с предметами (например, занято "пустотой")
             else
             {
                 _placementResults.Conflict = ReasonConflict.intersectsObjects;
-                Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.intersectsObjects} (Место занято)");
+                //Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.intersectsObjects} (Место занято)");
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
             }
 
@@ -370,15 +359,9 @@ namespace SkyClerik.Inventory
 
         protected Vector2Int CalculateCurrentHoverGridPosition()
         {
-            Vector2 mouseScreenPosition = _itemsPage.MousePositionNormal;
-            Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(mouseScreenPosition);
-
-            float gridHeightInPixels = _inventoryGrid.resolvedStyle.height;
-
+            Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
             int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
-            //int gridY = Mathf.FloorToInt((gridHeightInPixels - mouseLocalPosition.y) / _cellSize.height);
             int gridY = Mathf.FloorToInt(mouseLocalPosition.y / _cellSize.height);
-
             return new Vector2Int(gridX, gridY);
         }
 

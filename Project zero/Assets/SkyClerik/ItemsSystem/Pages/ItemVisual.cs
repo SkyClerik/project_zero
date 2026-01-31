@@ -10,6 +10,7 @@ namespace SkyClerik.Inventory
         private ItemsPage _itemsPage;
         private IDropTarget _ownerInventory;
         private ItemBaseDefinition _itemDefinition;
+        private Vector2 _startDraggedPosition;
         private Vector2 _originalPosition;
         private Vector2Int _originalScale;
         private float _originalRotate;
@@ -18,9 +19,7 @@ namespace SkyClerik.Inventory
         private PlacementResults _placementResults;
         private VisualElement _icon;
         private Label _pcsText;
-
         private bool _singleRotationMode;
-
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
 
@@ -107,6 +106,8 @@ namespace SkyClerik.Inventory
             style.top = pos.y;
             style.left = pos.x;
         }
+
+        public Vector2 GetPosition => new Vector2(style.top.value.value, style.left.value.value);
 
         private void OnMouseEnter(MouseEnterEvent evt)
         {
@@ -267,9 +268,20 @@ namespace SkyClerik.Inventory
                     if (ItemsPage.CurrentDraggedItem != this)
                     {
                         PickUp();
+                        SetDraggedItemPosition(mouseEvent.mousePosition, mouseEvent.localMousePosition);
                     }
                 }
             }
+        }
+
+        public void SetDraggedItemPosition(Vector2 globalClickPosition, Vector2 localClickOffset)
+        {
+            Vector2 rootOffset = _ownerInventory.GetDocument.rootVisualElement.worldBound.position;
+            Vector2 correctedGlobalClickPosition = globalClickPosition - rootOffset;
+            float desiredLeft = correctedGlobalClickPosition.x - localClickOffset.x;
+            float desiredTop = correctedGlobalClickPosition.y - localClickOffset.y;
+            Vector2 newPositionForSet = new Vector2(desiredLeft, desiredTop);
+            this.SetPosition(newPositionForSet);
         }
 
         private void OnMouseMove(MouseMoveEvent evt)
@@ -282,6 +294,7 @@ namespace SkyClerik.Inventory
 
         public void PickUp(bool isSwap = false)
         {
+            Debug.Log($"PickUp");
             _isDragging = true;
             _hasNoHome = isSwap;
             style.opacity = 0.7f;
@@ -300,17 +313,12 @@ namespace SkyClerik.Inventory
 
             ItemsPage.CurrentDraggedItem = this;
 
+            this.style.position = Position.Absolute;
+            _ownerInventory.GetDocument.rootVisualElement.Add(this);
+
             _ownerInventory.PickUp(this);
 
             _placementResults = _itemsPage.HandleItemPlacement(this);
-
-            Vector2 mouseScreenPosition = Input.mousePosition;
-            Vector2 mouseLocalPosition = _ownerInventory.GetDocument.rootVisualElement.WorldToLocal(mouseScreenPosition);
-
-            this.style.left = mouseLocalPosition.x - (this.resolvedStyle.width / 2);
-            this.style.top = mouseLocalPosition.y - (this.resolvedStyle.height / 2);
-            this.style.position = Position.Absolute;
-            _ownerInventory.GetDocument.rootVisualElement.Add(this);
         }
 
         public void SetOwnerInventory(IDropTarget dropTarget)
