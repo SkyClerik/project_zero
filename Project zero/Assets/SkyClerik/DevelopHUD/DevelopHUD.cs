@@ -79,7 +79,7 @@ public class DevelopHUD : MonoBehaviour
 
     private void _bTrueCraft_clicked()
     {
-        _itemsPage.IsCraftVisible = !_itemsPage.IsCraftVisible;
+        _itemsPage.MakeCraftAccessible = !_itemsPage.MakeCraftAccessible;
     }
 
     private void _bAddItem_clicked()

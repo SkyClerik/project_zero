@@ -32,10 +32,10 @@ namespace SkyClerik.Inventory
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
         public InventoryPageElement InventoryPage => _inventoryPage;
         public ItemBaseDefinition GiveItem => _givenItem;
-        public bool IsInventoryVisible => _inventoryPage.Root.enabledSelf;
-        public bool IsCraftVisible => _craftPage.Root.enabledSelf;
+        public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
+        public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
+        public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
-        public UIDocument Document { get => _document; set => _document = value; }
 
         private void Awake()
         {
@@ -225,11 +225,6 @@ namespace SkyClerik.Inventory
         {
             _craftPage.Root.SetVisibility(false);
             _craftPage.Root.SetEnabled(false);
-        }
-
-        public void MakeCraftAccessible(bool isAccessible)
-        {
-            _craftAccessible = isAccessible;
         }
 
         public void TriggerItemGiveEvent(ItemBaseDefinition item)
