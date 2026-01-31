@@ -10,9 +10,8 @@ namespace SkyClerik.Inventory
     {
         private UIDocument _document;
         private InventoryPageElement _inventoryPage;
-        private bool _showInventory = false;
         private CraftPageElement _craftPage;
-        private bool _craftElementVisible = false;
+        private bool _craftAccessible = false;
         private Vector2 _mouseUILocalPosition;
         private Vector2 _mousePositionOffset;
         private static ItemVisual _currentDraggedItem = null;
@@ -33,9 +32,8 @@ namespace SkyClerik.Inventory
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
         public InventoryPageElement InventoryPage => _inventoryPage;
         public ItemBaseDefinition GiveItem => _givenItem;
-        public bool IsCraftVisible { get => _craftElementVisible; set => _craftElementVisible = value; }
-
-        public bool IsInventoryVisible => _showInventory;
+        public bool IsInventoryVisible => _inventoryPage.Root.enabledSelf;
+        public bool IsCraftVisible => _craftPage.Root.enabledSelf;
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
         public UIDocument Document { get => _document; set => _document = value; }
 
@@ -66,8 +64,8 @@ namespace SkyClerik.Inventory
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
-            _document.rootVisualElement.SetVisibility(false);
-            _craftPage.Root.SetVisibility(_craftElementVisible);
+            CloseInventory();
+            CloseCraft();
         }
 
         private void OnRootMouseMove(MouseMoveEvent evt)
@@ -108,18 +106,29 @@ namespace SkyClerik.Inventory
             }
 
             //Debug.Log($"[ЛОГ] Страница инвентаря не подходит. Проверяю страницу крафта ({_craftPage.Root.name}).");
-            PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
-            if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
+
+            if (!_craftAccessible)
             {
-                //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
+                //Debug.Log($"[ЛОГ] Крафт не видимый и мы пропускаем размещение в него");
                 _inventoryPage.Telegraph.Hide();
-                return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
+                _craftPage.Telegraph.Hide();
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
+            }
+            else
+            {
+                PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
+                if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
+                {
+                    //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
+                    _inventoryPage.Telegraph.Hide();
+                    return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
+                }
             }
 
             //Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
             _inventoryPage.Telegraph.Hide();
             _craftPage.Telegraph.Hide();
-            return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Изменили null на Vector2.zero для position
+            return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
 
         public void FinalizeDragOfItem(ItemVisual draggedItem)
@@ -170,7 +179,7 @@ namespace SkyClerik.Inventory
         private IEnumerator ShowTooltipCoroutine(ItemVisual itemVisual)
         {
             yield return new WaitForSeconds(_tooltipDelay);
-            _itemTooltip.ShowTooltip(itemVisual.ItemDefinition, Input.mousePosition);
+            _itemTooltip.ShowTooltip(itemVisual.ItemDefinition, itemVisual.worldBound.center);
         }
 
         public void OpenInventoryGiveItem(int itemId)
@@ -189,7 +198,7 @@ namespace SkyClerik.Inventory
 
         public void OpenInventoryNormal()
         {
-            _showInventory = true;
+            _inventoryPage.Root.SetEnabled(true);
             _document.rootVisualElement.SetVisibility(true);
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
@@ -197,7 +206,7 @@ namespace SkyClerik.Inventory
         public void CloseInventory()
         {
             _givenItem = null;
-            _showInventory = false;
+            _inventoryPage.Root.SetEnabled(false);
             _document.rootVisualElement.SetVisibility(false);
             _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
@@ -205,13 +214,22 @@ namespace SkyClerik.Inventory
         public void OpenCraft()
         {
             _craftPage.Root.SetVisibility(false);
-            if (_craftElementVisible)
+            if (_craftAccessible)
+            {
                 _craftPage.Root.SetVisibility(true);
+                _craftPage.Root.SetEnabled(true);
+            }
         }
 
         public void CloseCraft()
         {
             _craftPage.Root.SetVisibility(false);
+            _craftPage.Root.SetEnabled(false);
+        }
+
+        public void MakeCraftAccessible(bool isAccessible)
+        {
+            _craftAccessible = isAccessible;
         }
 
         public void TriggerItemGiveEvent(ItemBaseDefinition item)

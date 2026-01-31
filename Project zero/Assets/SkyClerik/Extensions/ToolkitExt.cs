@@ -280,39 +280,5 @@ namespace UnityEngine.Toolbox
             }
             return null;
         }
-
-        /// <summary>
-        /// Конвертирует экранные координаты Unity (где (0,0) внизу слева)
-        /// в локальные координаты корневого VisualElement UI Toolkit (где (0,0) вверху слева, и учитывается масштабирование).
-        /// </summary>
-        /// <param name="screenPosition">Экранные координаты Unity (Input.mousePosition).</param>
-        /// <param name="document">UIDocument, содержащий UI Toolkit.</param>
-        /// <returns>Координаты в пространстве корневого VisualElement UI Toolkit.</returns>
-        public static Vector2 ScreenToRootVisualElementCoordinates(Vector2 screenPosition, UIDocument document)
-        {
-            if (document == null || document.rootVisualElement == null)
-            {
-                Debug.LogError("UIDocument или его rootVisualElement не найден.");
-                return Vector2.zero;
-            }
-            return document.rootVisualElement.WorldToLocal(screenPosition);
-        }
-
-        /// <summary>
-        /// Конвертирует локальные координаты корневого VisualElement UI Toolkit
-        /// в экранные координаты Unity (где (0,0) внизу слева).
-        /// </summary>
-        /// <param name="uiToolkitPosition">Локальные координаты в пространстве корневого VisualElement UI Toolkit.</param>
-        /// <param name="document">UIDocument, содержащий UI Toolkit.</param>
-        /// <returns>Экранные координаты Unity.</returns>
-        public static Vector2 RootVisualElementToScreenCoordinates(Vector2 uiToolkitPosition, UIDocument document)
-        {
-            if (document == null || document.rootVisualElement == null)
-            {
-                Debug.LogError("UIDocument или его rootVisualElement не найден.");
-                return Vector2.zero;
-            }
-            return document.rootVisualElement.LocalToWorld(uiToolkitPosition);
-        }
     }
 }

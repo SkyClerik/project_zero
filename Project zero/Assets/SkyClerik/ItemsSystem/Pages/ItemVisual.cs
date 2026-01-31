@@ -310,6 +310,8 @@ namespace SkyClerik.Inventory
             _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
 
+            _itemsPage.StopTooltipDelayAndHideTooltip();
+
             ItemsPage.CurrentDraggedItem = this;
 
             this.style.position = Position.Absolute;

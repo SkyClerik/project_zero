@@ -72,9 +72,8 @@ namespace SkyClerik.Inventory
             _descriptionLabel.text = item.Description;
             _priceLabel.text = $"Цена: {item.Price} Золота"; // Предполагаем, что Price - это int
 
-            // Позиционируем тултип чуть ниже и правее курсора
-            style.left = mousePosition.x + 20;
-            style.top = Screen.height - mousePosition.y + 20;
+            style.left = mousePosition.x;
+            style.top = Screen.height - mousePosition.y;
 
             // Убеждаемся, что тултип не выходит за пределы экрана
             // (простая проверка, можно усложнить)
