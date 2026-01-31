@@ -8,19 +8,19 @@ namespace SkyClerik.Inventory
 {
     public class ItemsPage : MonoBehaviour
     {
+        private static ItemVisual _currentDraggedItem = null;
+
         private UIDocument _document;
         private InventoryPageElement _inventoryPage;
         private bool _showInventory = false;
         private CraftPageElement _craftPage;
         private bool _craftElementVisible = false;
         private Vector2 _mousePositionNormal;
-        private static ItemVisual _currentDraggedItem = null;
-
+        private Telegraph _telegraph;
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
         private ItemBaseDefinition _givenItem = null;
-
         [SerializeField]
         private ItemContainerBase _inventoryItemContainer;
         [SerializeField]
@@ -39,8 +39,7 @@ namespace SkyClerik.Inventory
         }
 
         public bool IsInventoryVisible => _showInventory;
-
-        public Vector2 MousePositionNormal => _mousePositionNormal;
+        public Telegraph Telegraph => _telegraph;
 
         public void OpenInventoryGiveItem(int itemId)
         {
@@ -60,7 +59,6 @@ namespace SkyClerik.Inventory
         {
             _showInventory = true;
             _document.rootVisualElement.SetVisibility(true);
-            _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
 
         public void CloseInventory()
@@ -68,7 +66,6 @@ namespace SkyClerik.Inventory
             _givenItem = null;
             _showInventory = false;
             _document.rootVisualElement.SetVisibility(false);
-            _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
 
         public void OpenCraft()
@@ -85,7 +82,6 @@ namespace SkyClerik.Inventory
 
         public void TriggerItemGiveEvent(ItemBaseDefinition item)
         {
-            Debug.Log($"TriggerItemGiveEvent: {item}");
             OnItemGiven?.Invoke(item);
         }
 
@@ -103,7 +99,11 @@ namespace SkyClerik.Inventory
         {
             _document = GetComponentInChildren<UIDocument>(includeInactive: false);
             _document.enabled = true;
+            Initialize();
+        }
 
+        private void Initialize()
+        {
             _inventoryPage = new InventoryPageElement(
                 itemsPage: this,
                 document: _document,
@@ -115,12 +115,14 @@ namespace SkyClerik.Inventory
                 itemContainer: _craftItemContainer);
 
             _itemTooltip = new ItemTooltip();
+            _telegraph = new Telegraph();
             _document.rootVisualElement.Add(_itemTooltip);
-            _document.rootVisualElement.SetVisibility(false);
-            _craftPage.Root.SetVisibility(_craftElementVisible);
+            _document.rootVisualElement.Add(_telegraph);
+
+            CloseInventory();
+            CloseCraft();
         }
 
-        //переместить под общий fixedUpdate после тестов
         private void FixedUpdate()
         {
             if (!_document.isActiveAndEnabled)
@@ -129,18 +131,10 @@ namespace SkyClerik.Inventory
             if (_currentDraggedItem == null)
                 return;
 
-            _currentDraggedItem.SetPosition(_mousePositionNormal);
-        }
-
-        private void OnRootMouseMove(MouseMoveEvent evt)
-        {
-            if (_currentDraggedItem == null)
-                return;
-
-            _mousePositionNormal = evt.localMousePosition;
-            //_mousePositionNormal.y = (Screen.height - _mousePositionNormal.y) - (_currentDraggedItem.resolvedStyle.height / 2);
+            _mousePositionNormal = _document.rootVisualElement.WorldToLocal(Input.mousePosition);
             _mousePositionNormal.x = _mousePositionNormal.x - (_currentDraggedItem.resolvedStyle.width / 2);
-            _mousePositionNormal.y = _mousePositionNormal.y - (_currentDraggedItem.resolvedStyle.height / 2);
+            _mousePositionNormal.y = (Screen.height - _mousePositionNormal.y) - (_currentDraggedItem.resolvedStyle.height / 2);
+            _currentDraggedItem.SetPosition(_mousePositionNormal);
         }
 
         private void Update()
@@ -155,38 +149,44 @@ namespace SkyClerik.Inventory
                 _currentDraggedItem.Rotate();
         }
 
-        public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
+        public PlacementResults HandleItemPlacement(ItemVisual itemVisual)
         {
-            Debug.Log($"[ЛОГ] HandleItemPlacement: Начинаю проверку размещения для {draggedItem.ItemDefinition.DefinitionName}.");
-
             // Проверяем первый инвентарь
-            Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
-            PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
+            PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(itemVisual);
             if (resultsPage.Conflict != ReasonConflict.beyondTheGridBoundary)
             {
-                Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
-                _craftPage.Telegraph.Hide(); // Скрываем телеграф второго инвентаря, если первый активен
+                var width = itemVisual.ItemDefinition.Dimensions.CurrentWidth * _inventoryPage.CellSize.x;
+                var height = itemVisual.ItemDefinition.Dimensions.CurrentHeight * _inventoryPage.CellSize.y;
+                Vector2 inventoryGridWorldPosition = _inventoryPage.InventoryGrid.worldBound.position;
+                Vector2 finalTelegraphPosition = inventoryGridWorldPosition + resultsPage.Position;
+
+                _telegraph.SetPlacement(resultsPage.Conflict, width, height);
+                _telegraph.SetPosition(finalTelegraphPosition);
                 return resultsPage.Init(resultsPage.Conflict, resultsPage.Position, resultsPage.SuggestedGridPosition, resultsPage.OverlapItem, _inventoryPage);
             }
 
             // Если первый инвентарь не активен, проверяем второй
-            Debug.Log($"[ЛОГ] Страница инвентаря не подходит. Проверяю страницу крафта ({_craftPage.Root.name}).");
-            PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
+            PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(itemVisual);
             if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
             {
-                Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
-                _inventoryPage.Telegraph.Hide(); // Скрываем телеграф первого инвентаря, если второй активен
+                var width = itemVisual.ItemDefinition.Dimensions.CurrentWidth * _craftPage.CellSize.x;
+                var height = itemVisual.ItemDefinition.Dimensions.CurrentHeight * _craftPage.CellSize.y;
+
+                // Получаем мировые координаты _craftGrid
+                Vector2 craftGridWorldPosition = _craftPage.InventoryGrid.worldBound.position;
+                // Добавляем смещение сетки к рассчитанной позиции ячейки
+                Vector2 finalTelegraphPosition = craftGridWorldPosition + resultsTwo.Position;
+
+                _telegraph.SetPlacement(resultsTwo.Conflict, width, height);
+                _telegraph.SetPosition(finalTelegraphPosition);
                 return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
             }
 
-            // Если ни один инвентарь не является целью, скрываем оба телеграфа и возвращаем конфликт
-            Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
-            _inventoryPage.Telegraph.Hide();
-            _craftPage.Telegraph.Hide();
-            return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Изменили null на Vector2.zero для position
+            _telegraph.Hide();
+            return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
 
-        public void FinalizeDragOfItem(ItemVisual draggedItem)
+        public void FinalizeDragOfItem()
         {
             _inventoryPage.FinalizeDrag();
             _craftPage.FinalizeDrag();
@@ -209,12 +209,12 @@ namespace SkyClerik.Inventory
             sourceContainer.RemoveItem(itemToMove, destroy: false);
             targetContainer.AddItemReference(itemToMove);
 
-            targetInventory.Drop(draggedItem, gridPosition);
+            targetInventory.Drop(_currentDraggedItem, gridPosition);
         }
 
         public void StartTooltipDelay(ItemVisual itemVisual)
         {
-            if (CurrentDraggedItem != null)
+            if (_currentDraggedItem != null)
                 return;
 
             StopTooltipDelayAndHideTooltip();

@@ -1,0 +1,12 @@
+namespace SkyClerik.Inventory
+{
+    public enum ReasonConflict : byte
+    {
+        None = 0,
+        beyondTheGridBoundary = 1,
+        intersectsObjects = 2,
+        invalidSlotType = 3,
+        SwapAvailable = 4,
+        StackAvailable = 5,
+    }
+}

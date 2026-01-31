@@ -194,6 +194,9 @@ namespace SkyClerik.Inventory
                     return;
 
                 _placementResults = _itemsPage.HandleItemPlacement(this);
+                _isDragging = false;
+                style.opacity = 1f;
+                ItemsPage.CurrentDraggedItem = null;
 
                 if (_placementResults.Conflict == ReasonConflict.StackAvailable)
                 {
@@ -213,11 +216,7 @@ namespace SkyClerik.Inventory
 
                     if (this.ItemDefinition.Stack <= 0)
                     {
-                        _isDragging = false;
-                        ItemsPage.CurrentDraggedItem = null;
-
                         this.style.display = DisplayStyle.None;
-
                         this.schedule.Execute(() =>
                         {
                             var ownerGrid = _ownerInventory as GridPageElementBase;
@@ -230,10 +229,6 @@ namespace SkyClerik.Inventory
                     }
                     return;
                 }
-
-                _isDragging = false;
-                style.opacity = 1f;
-                ItemsPage.CurrentDraggedItem = null;
 
                 switch (_placementResults.Conflict)
                 {
@@ -250,8 +245,9 @@ namespace SkyClerik.Inventory
                         break;
                 }
 
-                _itemsPage.FinalizeDragOfItem(this);
+                _itemsPage.FinalizeDragOfItem();
             }
+
         }
 
         private void OnMouseDown(MouseDownEvent mouseEvent)
@@ -260,6 +256,7 @@ namespace SkyClerik.Inventory
             {
                 if (_itemsPage.GiveItem != null)
                 {
+                    Debug.Log($"GiveItem : {_itemDefinition.DefinitionName}");
                     _itemsPage.TriggerItemGiveEvent(_itemDefinition);
                 }
                 else
@@ -320,6 +317,7 @@ namespace SkyClerik.Inventory
 
         private void Placement(Vector2Int gridPosition)
         {
+            Debug.Log($"[DIAGNOSTIC] ItemVisual.Placement called for item '{this.name}' at grid position {gridPosition}.");
             _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
         }
 
