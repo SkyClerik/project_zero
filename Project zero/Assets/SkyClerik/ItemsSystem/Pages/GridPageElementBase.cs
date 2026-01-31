@@ -31,6 +31,7 @@ namespace SkyClerik.Inventory
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
+        private float _gridHoverSnapToBoundaryPixels = 20f; // Размер буферной зоны в пикселях для "притягивания" курсора к границам сетки
 
         // Свойства для доступа к внутренним элементам
         public UIDocument GetDocument => _document;
@@ -115,10 +116,11 @@ namespace SkyClerik.Inventory
             // Считаю кол-во в ширину и высоту
             int widthCount = (int)(_inventoryGrid.localBound.width / _cellSize.width);
             int heightCount = (int)(_inventoryGrid.localBound.height / _cellSize.height);
-
             Debug.Log($"{_root.name} : x={originalRect.x}   y={originalRect.y}   w={originalRect.width}   h={originalRect.height}   wc={widthCount}   hc={heightCount}");
-            // Создаю новый Rect
-            _gridRect = new Rect(originalRect.x, originalRect.y, originalRect.width, originalRect.height);
+
+            _gridHoverSnapToBoundaryPixels = _cellSize.width / 2;
+            _gridRect = new Rect(originalRect.x - _gridHoverSnapToBoundaryPixels, originalRect.y - _gridHoverSnapToBoundaryPixels, originalRect.width + _cellSize.width, originalRect.height + _cellSize.width);
+            //_gridRect = new Rect(originalRect.x, originalRect.y, originalRect.width, originalRect.height);
             // Создаю матрицу проходимости
             _gridOccupancy = new bool[widthCount, heightCount];
 
@@ -168,7 +170,7 @@ namespace SkyClerik.Inventory
             {
                 foreach (var visual in _placedItemsGridData.Keys.ToList())
                 {
-                    if (itemToAdd.Stack <= 0) 
+                    if (itemToAdd.Stack <= 0)
                         break;
 
                     var existingItemDef = visual.ItemDefinition;
@@ -287,6 +289,7 @@ namespace SkyClerik.Inventory
             // Всегда определяем пересекающиеся предметы, так как это влияет на Swap
             List<ItemVisual> overlappingItems = FindOverlappingItems(currentHoverGridPosition, itemGridSize, draggedItem);
 
+
             // 1. Проверка на выход за границы
             if (currentHoverGridPosition.x < 0 || currentHoverGridPosition.y < 0 ||
                 currentHoverGridPosition.x + itemGridSize.x > _gridOccupancy.GetLength(0) ||
@@ -295,6 +298,7 @@ namespace SkyClerik.Inventory
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
                 //Debug.Log($"[ЛОГ] Причина конфликта: {ReasonConflict.beyondTheGridBoundary}");
             }
+
             // 2. Проверка на пересечение с предметами (Swap или Multiple Intersect)
             else if (overlappingItems.Count == 1)
             {
@@ -360,8 +364,41 @@ namespace SkyClerik.Inventory
         protected Vector2Int CalculateCurrentHoverGridPosition()
         {
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
-            int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
-            int gridY = Mathf.FloorToInt(mouseLocalPosition.y / _cellSize.height);
+
+            // --- Оригинальная реализация CalculateCurrentHoverGridPosition (закомментирована) ---
+            // int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
+            // int gridY = Mathf.FloorToInt(mouseLocalPosition.y / _cellSize.height);
+            // return new Vector2Int(gridX, gridY);
+            // ----------------------------------------------------------------------------------
+
+            // Корректируем mouseLocalPosition так, чтобы она "притягивалась" к границам сетки,
+            // если находится в пределах буферной зоны
+            float adjustedX = mouseLocalPosition.x;
+            float adjustedY = mouseLocalPosition.y;
+
+            // Если курсор чуть-чуть слева от сетки (в буферной зоне), притягиваем его к 0
+            if (adjustedX < 0 && adjustedX > -_gridHoverSnapToBoundaryPixels)
+            {
+                adjustedX = 0;
+            }
+            // Если курсор чуть-чуть справа от сетки, притягиваем его к краю
+            else if (adjustedX > _inventoryGrid.localBound.width && adjustedX < _inventoryGrid.localBound.width + _gridHoverSnapToBoundaryPixels)
+            {
+                adjustedX = _inventoryGrid.localBound.width;
+            }
+
+            // Аналогично для Y
+            if (adjustedY < 0 && adjustedY > -_gridHoverSnapToBoundaryPixels)
+            {
+                adjustedY = 0;
+            }
+            else if (adjustedY > _inventoryGrid.localBound.height && adjustedY < _inventoryGrid.localBound.height + _gridHoverSnapToBoundaryPixels)
+            {
+                adjustedY = _inventoryGrid.localBound.height;
+            }
+
+            int gridX = Mathf.FloorToInt(adjustedX / _cellSize.width);
+            int gridY = Mathf.FloorToInt(adjustedY / _cellSize.height);
             return new Vector2Int(gridX, gridY);
         }
 

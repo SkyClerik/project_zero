@@ -294,7 +294,6 @@ namespace SkyClerik.Inventory
 
         public void PickUp(bool isSwap = false)
         {
-            Debug.Log($"PickUp");
             _isDragging = true;
             _hasNoHome = isSwap;
             style.opacity = 0.7f;
