@@ -17,6 +17,13 @@ public class DevelopHUD : MonoBehaviour
     private const string _bTrueCraftID = "b_true_craft";
     private Button _bAddItem;
     private const string _bAddItemID = "b_add_item";
+
+    private Button _bSave;
+    private const string _bSaveID = "b_save";
+    private Button _bLoad;
+    private const string _bLoadID = "b_load";
+
+
     private Button _bExitGame;
     private const string _bExitGameID = "b_exit_game";
     private ItemsPage _itemsPage;
@@ -38,14 +45,21 @@ public class DevelopHUD : MonoBehaviour
         _bInventoryGive = root.Q<Button>(_bInventoryGiveID);
         _bTrueCraft = root.Q<Button>(_bTrueCraftID);
         _bAddItem = root.Q<Button>(_bAddItemID);
+        _bSave = root.Q<Button>(_bSaveID);
+        _bLoad = root.Q<Button>(_bLoadID);
+
         _bExitGame = root.Q<Button>(_bExitGameID);
 
         _bInventoryNormal.clicked += _bInventory_clicked;
         _bInventoryGive.clicked += _bInventoryGive_clicked;
         _bTrueCraft.clicked += _bTrueCraft_clicked;
         _bAddItem.clicked += _bAddItem_clicked;
+        _bSave.clicked += _bSave_clicked;
+        _bLoad.clicked += _bLoad_clicked;
+
         _bExitGame.clicked += _bExitGame_clicked;
     }
+
 
 
     private void OnDestroy()
@@ -88,6 +102,17 @@ public class DevelopHUD : MonoBehaviour
             _itemsPage.InventoryPage.AddLoot(_developLut);
         else
             Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
+    }
+
+    private void _bSave_clicked()
+    {
+        var itemsPage = ServiceProvider.Get<ItemsPage>();
+        SaveAndLoadPlayerItems.SaveContainer(itemsPage.InventoryItemContainer, 0);
+    }
+    private void _bLoad_clicked()
+    {
+        var itemsPage = ServiceProvider.Get<ItemsPage>();
+        SaveAndLoadPlayerItems.LoadContainer(itemsPage.CraftItemContainer, 0);
     }
 
     private void _bExitGame_clicked()

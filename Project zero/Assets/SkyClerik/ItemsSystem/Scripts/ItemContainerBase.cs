@@ -3,6 +3,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using Newtonsoft.Json;
+using System;
+using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
@@ -11,12 +13,37 @@ namespace SkyClerik.Inventory
     /// </summary>
     public class ItemContainerBase : MonoBehaviour
     {
+        [JsonProperty]
+        [SerializeField]
+        [ReadOnly]
+        private string _containerGuid;
+        public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
+
         [SerializeField]
         private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
         protected virtual void Awake()
         {
+            ValidateGuid();
             Initialize(_items);
+        }
+
+        /// <summary>
+        /// Проверяет и генерирует GUID для контейнера, если он отсутствует.
+        /// Может быть вызван вручную через контекстное меню.
+        /// </summary>
+        [ContextMenu("Validate GUID")]
+        public void ValidateGuid()
+        {
+            if (string.IsNullOrEmpty(_containerGuid))
+            {
+                _containerGuid = Guid.NewGuid().ToString();
+                Debug.Log($"Сгенерирован новый GUID для контейнера: {_containerGuid} (из ValidateGuid)");
+            }
+            else
+            {
+                Debug.Log($"GUID контейнера уже существует: {_containerGuid}");
+            }
         }
 
         public void Initialize(List<ItemBaseDefinition> sourceItems)
@@ -40,7 +67,7 @@ namespace SkyClerik.Inventory
         {
             if (item != null)
             {
-                var copy = Object.Instantiate(item);
+                var copy = UnityEngine.Object.Instantiate(item);
                 _items.Add(copy);
                 return copy;
             }
@@ -61,7 +88,7 @@ namespace SkyClerik.Inventory
                     existingStack.AddStack(item.Stack, out int remainder);
                     if (remainder == 0)
                     {
-                        Object.Destroy(item); 
+                        UnityEngine.Object.Destroy(item); 
                         return;
                     }
                     else
@@ -89,7 +116,7 @@ namespace SkyClerik.Inventory
             bool removed = _items.Remove(item);
             if (removed && destroy)
             {
-                Object.Destroy(item);
+                UnityEngine.Object.Destroy(item);
             }
 
             return removed;

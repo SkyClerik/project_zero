@@ -6,6 +6,8 @@
                 <ui:Button text="Инвентарь для выдачи" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory_give" />
                 <ui:Button text="Разрешить крафт" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_true_craft" />
                 <ui:Button text="Добавить лут" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_add_item" />
+                <ui:Button text="Сохранить в слот 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_save" />
+                <ui:Button text="Загрузить слот 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_load" />
             </ui:VisualElement>
             <ui:VisualElement name="button_group" picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; height: 100%;">
                 <ui:Button text="Выход из игры" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_exit_game" />

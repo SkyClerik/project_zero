@@ -5,7 +5,7 @@ namespace UnityEngine.DataEditor
     /// <summary>
     /// Базовое определение для юнита (персонажа, врага), содержащее много данных описывающих юнита.
     /// </summary>
-    [CreateAssetMenu(fileName = "UnitBaseDefinition", menuName = "Definition/UnitBaseDefinition")]
+    [CreateAssetMenu(fileName = "UnitBaseDefinition", menuName = "SkyClerik/Definition/UnitBaseDefinition")]
     public class UnitBaseDefinition : BaseDefinition
     {
         [SerializeField]

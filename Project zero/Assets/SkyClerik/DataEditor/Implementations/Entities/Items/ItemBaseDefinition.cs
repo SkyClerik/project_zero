@@ -85,6 +85,11 @@ namespace UnityEngine.DataEditor
         [Tooltip("Размер и поворот предмета")]
         private ItemDimensions _dimensions;
         public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        private Vector2Int _gridPosition;
+        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
     }
 
     [Serializable]

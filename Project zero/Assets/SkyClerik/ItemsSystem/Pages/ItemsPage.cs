@@ -36,6 +36,8 @@ namespace SkyClerik.Inventory
         public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
         public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
+        public ItemContainerBase InventoryItemContainer => _inventoryItemContainer;
+        public ItemContainerBase CraftItemContainer => _craftItemContainer;
 
         private void Awake()
         {
@@ -153,6 +155,7 @@ namespace SkyClerik.Inventory
 
             sourceContainer.RemoveItem(itemToMove, destroy: false);
             targetContainer.AddItemReference(itemToMove);
+            itemToMove.GridPosition = gridPosition;
 
             targetInventory.Drop(draggedItem, gridPosition);
         }

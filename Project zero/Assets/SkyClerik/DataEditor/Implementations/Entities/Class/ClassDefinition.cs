@@ -7,7 +7,7 @@ namespace UnityEngine.DataEditor
     /// Определение класса персонажа (Воин, Маг и т.д.).
     /// Определяет базовые характеристики, их рост по уровням, изучаемые навыки и доступное снаряжение.
     /// </summary>
-    [CreateAssetMenu(fileName = "ClassDefinition", menuName = "Definition/ClassDefinition")]
+    [CreateAssetMenu(fileName = "ClassDefinition", menuName = "SkyClerik/Definition/ClassDefinition")]
     public class ClassDefinition : BaseDefinition
     {
         [Header("Кривые роста характеристик")]

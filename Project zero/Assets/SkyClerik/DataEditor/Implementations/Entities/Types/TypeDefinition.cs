@@ -4,7 +4,7 @@ namespace UnityEngine.DataEditor
 	/// Универсальное определение для различных игровых "типов", 
 	/// таких как типы навыков, типы оружия, элементы и т.д.
 	/// </summary>
-	[CreateAssetMenu(fileName = "TypeDefinition", menuName = "Definition/Game/TypeDefinition")]
+	[CreateAssetMenu(fileName = "TypeDefinition", menuName = "SkyClerik/Definition/Game/TypeDefinition")]
 	public class TypeDefinition : BaseDefinition
 	{
 		//TODO переписать типы. Это базовый и используется как магический. Нужно четкое разделение по типам от базового.

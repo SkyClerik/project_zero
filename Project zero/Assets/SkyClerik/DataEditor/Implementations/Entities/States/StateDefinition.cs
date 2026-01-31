@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.DataEditor
 {
-    [CreateAssetMenu(fileName = "StateDefinition", menuName = "Definition/State")]
+    [CreateAssetMenu(fileName = "StateDefinition", menuName = "SkyClerik/Definition/State")]
     public class StateDefinition : StateBaseDefinition
     {
         [Header("Параметры Состояния")]

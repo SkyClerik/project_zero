@@ -3,7 +3,7 @@ namespace UnityEngine.DataEditor
 	/// <summary>
 	/// Определение для ключевых предметов.
 	/// </summary>
-	[CreateAssetMenu(fileName = "KeyItemDefinition", menuName = "Definition/Item/KeyItemDefinition")]
+	[CreateAssetMenu(fileName = "KeyItemDefinition", menuName = "SkyClerik/Definition/Item/KeyItemDefinition")]
 	public class KeyItemDefinition : ItemBaseDefinition
 	{
 		// Ключевые предметы обычно используются для продвижения по сюжету

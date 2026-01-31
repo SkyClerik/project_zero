@@ -214,6 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eefaf293c04a6e744834a57f56951e74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _containerGuid: 
   _items:
   - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
   - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
@@ -297,9 +298,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0fa887a3b208444c88f74eb7d7400e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultCellSize: {x: 128, y: 128}
-  _inventoryGridSize: {x: 7, y: 8}
-  _craftGridSize: {x: 3, y: 4}
   _inventoryItemContainer: {fileID: 627866743}
   _craftItemContainer: {fileID: 627866742}
 --- !u!114 &627866741
@@ -327,6 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2971fa98ec98b8d4288a1d717a6961c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _containerGuid: 81a7e6ce-8e25-4f32-b2d3-dec8442087fd
   _items:
   - {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
   - {fileID: 11400000, guid: f3b9ea3388f94424a97b49c14da6e2f5, type: 2}
@@ -342,15 +341,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 246f182f6f292544e8a06f982e48eade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _containerGuid: 9c8aee50-4981-4f3e-a0a8-9379ae9b31cf
   _items:
   - {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
   - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
   - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
   - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
-  - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
+  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
