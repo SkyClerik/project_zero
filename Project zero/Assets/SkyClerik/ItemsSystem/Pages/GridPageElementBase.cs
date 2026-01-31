@@ -356,8 +356,8 @@ namespace SkyClerik.Inventory
             }
             else
             {
-                _telegraph.style.left = _placementResults.SuggestedGridPosition.x * _cellSize.width;
-                _telegraph.style.top = _placementResults.SuggestedGridPosition.y * _cellSize.height;
+                var pos = new Vector2(_placementResults.SuggestedGridPosition.x * _cellSize.width, _placementResults.SuggestedGridPosition.y * _cellSize.height);
+                _telegraph.SetPosition(pos);
                 _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * _cellSize.width, itemGridSize.y * _cellSize.height);
             }
 

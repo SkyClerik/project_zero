@@ -20,6 +20,12 @@ namespace SkyClerik.Inventory
             Hide();
         }
 
+        public void SetPosition(Vector2 position)
+        {
+            style.left = position.x;
+            style.top = position.y;
+        }
+
         public void SetPlacement(ReasonConflict conflict, float width, float height)
         {
             switch (conflict)
