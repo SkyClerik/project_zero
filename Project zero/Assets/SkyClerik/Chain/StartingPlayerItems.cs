@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.Toolbox;
 using System.Collections;
-using SkyClerik.GlobalGameStates;
+using SkyClerik.Inventory;
+using SkyClerik.Utils;
 
-namespace SkyClerik.Inventory
+namespace SkyClerik
 {
     public class StartingPlayerItems : ItemContainer, IChain
     {

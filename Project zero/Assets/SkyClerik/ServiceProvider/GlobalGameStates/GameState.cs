@@ -1,4 +1,4 @@
-namespace SkyClerik.GlobalGameStates
+namespace SkyClerik.Utils
 {
     public enum GameState : byte
     {

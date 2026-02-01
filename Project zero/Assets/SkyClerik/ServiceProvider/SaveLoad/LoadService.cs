@@ -1,10 +1,9 @@
 using UnityEngine;
-using SkyClerik.GlobalGameStates;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace SkyClerik.SaveLoad
+namespace SkyClerik.Utils
 {
     public class LoadService
     {

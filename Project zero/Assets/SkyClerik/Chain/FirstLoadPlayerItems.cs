@@ -1,9 +1,9 @@
-
-using SkyClerik.GlobalGameStates;
+using SkyClerik.Inventory;
+using SkyClerik.Utils;
 using UnityEngine;
 using UnityEngine.Toolbox;
 
-namespace SkyClerik.Inventory
+namespace SkyClerik
 {
     public class FirstLoadPlayerItems : MonoBehaviour, IChain
     {

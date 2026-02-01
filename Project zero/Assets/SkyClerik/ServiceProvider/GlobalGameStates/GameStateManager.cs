@@ -1,9 +1,8 @@
 using SkyClerik.Inventory;
-using SkyClerik.SaveLoad;
 using UnityEngine;
 using UnityEngine.Toolbox;
 
-namespace SkyClerik.GlobalGameStates
+namespace SkyClerik.Utils
 {
     public class GameStateManager : MonoBehaviour
     {

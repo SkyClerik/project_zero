@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.Toolbox;
-using SkyClerik.GlobalGameStates;
 using SkyClerik.Utils;
 
 namespace SkyClerik
@@ -10,12 +9,24 @@ namespace SkyClerik
     public class MainMenuDevelopPage : MonoBehaviour
     {
         [SerializeField]
-        private ChainTrigger _newGameChain;
+        [Tooltip("Сюда перетаскиваем первое звено которое начнет цепочку")]
+        private MonoBehaviour _firstStep;
+        private IChain _chainHead;
         private UIDocument _uiDocument;
 
         private void Awake()
         {
             _uiDocument = GetComponent<UIDocument>();
+
+            if (_firstStep != null && _firstStep is IChain)
+                _chainHead = _firstStep as IChain;
+            else
+                Debug.LogError("Первое звено цепи не назначено или не реализует IChain!", this);
+        }
+
+        public void StartChain()
+        {
+            _chainHead?.ExecuteStep();
         }
 
         private void OnEnable()
@@ -61,8 +72,9 @@ namespace SkyClerik
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager != null)
             {
+                Hide();
                 gameStateManager.GlobalGameState.SetNewGame();
-                _newGameChain?.StartChain();
+                StartChain();
             }
             else
             {
@@ -75,8 +87,9 @@ namespace SkyClerik
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager != null)
             {
+                Hide();
                 gameStateManager.GlobalGameState.SetLoadGame();
-                _newGameChain?.StartChain();
+                StartChain();
             }
             else
             {
@@ -86,7 +99,13 @@ namespace SkyClerik
 
         private void OnExitClick()
         {
+            Hide();
             Application.Quit();
+        }
+
+        private void Hide()
+        {
+            _uiDocument.rootVisualElement.SetDisplay(false);
         }
     }
 }

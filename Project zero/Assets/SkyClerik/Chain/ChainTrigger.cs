@@ -1,8 +1,8 @@
 using UnityEngine;
-using SkyClerik.GlobalGameStates;
 
 namespace SkyClerik.Utils
 {
+    // TODO Временно не используется потому что его подменяет заглушка главного меню игры
     public class ChainTrigger : MonoBehaviour
     {
         [SerializeField]

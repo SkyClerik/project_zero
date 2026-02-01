@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SkyClerik.GlobalGameStates
+namespace SkyClerik.Utils
 {
     [System.Serializable]
     public class GlobalGameState

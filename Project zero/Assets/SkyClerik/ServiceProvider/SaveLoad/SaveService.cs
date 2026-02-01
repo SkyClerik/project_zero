@@ -1,10 +1,9 @@
 using UnityEngine;
-using SkyClerik.GlobalGameStates;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace SkyClerik.SaveLoad
+namespace SkyClerik.Utils
 {
     public class SaveService
     {
@@ -24,7 +23,7 @@ namespace SkyClerik.SaveLoad
             {
                 SaveItemContainer(container, slotFolderPath);
             }
-            
+
             Debug.Log($"Полное сохранение для слота {slotIndex} завершено.");
         }
 
@@ -43,7 +42,7 @@ namespace SkyClerik.SaveLoad
             File.WriteAllText(filePath, json);
             Debug.Log($"Глобальное состояние игры сохранено в: {filePath}");
         }
-        
+
         /// <summary>
         /// Сохраняет один ItemContainer в указанную папку слота.
         /// </summary>
@@ -54,7 +53,7 @@ namespace SkyClerik.SaveLoad
                 Debug.LogWarning("Попытка сохранить пустой (null) ItemContainer.");
                 return;
             }
-            
+
             if (itemContainer.ItemDataStorageSO == null || string.IsNullOrEmpty(itemContainer.ItemDataStorageSO.ContainerGuid))
             {
                 Debug.LogError($"GUID контейнера '{itemContainer.name}' не может быть пустым для сохранения!");
@@ -68,7 +67,7 @@ namespace SkyClerik.SaveLoad
             File.WriteAllText(filePath, json);
             Debug.Log($"Контейнер '{itemContainer.ItemDataStorageSO.ContainerGuid}' сохранен в: {filePath}");
         }
-        
+
         /// <summary>
         /// Получает или создает путь к папке для указанного слота сохранения.
         /// </summary>

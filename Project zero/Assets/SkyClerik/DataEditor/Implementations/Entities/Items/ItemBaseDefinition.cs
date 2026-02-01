@@ -11,6 +11,12 @@ namespace UnityEngine.DataEditor
     {
         [JsonProperty]
         [SerializeField]
+        [Tooltip("Уникальный идентификатор. Индекс полученный от массива предметов")]
+        private int _wrapperIndex;
+        public int WrapperIndex { get => _wrapperIndex; set => _wrapperIndex = value; }
+
+        [JsonProperty]
+        [SerializeField]
         [Tooltip("Цена предмета в магазинах.")]
         private int _price;
         public int Price => _price;
