@@ -28,7 +28,7 @@ namespace SkyClerik.Inventory
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
-        protected LogicalGridVisualizer _logicalGridVisualizer; // Добавляем новое поле
+        public LogicalGridVisualizer LogicalGridVisualizer; // Добавляем новое поле
 
         // --- Свойства IDropTarget и прочие ---
         public UIDocument GetDocument => _document;
@@ -61,9 +61,9 @@ string rootID)
                     CreateGridBoundaryVisualizer(); // Возвращаем создание визуального отладчика
 
             // Мой хороший, здесь мы инициализируем наш новый визуализатор
-            _logicalGridVisualizer = new LogicalGridVisualizer();
-            _logicalGridVisualizer.Init(_itemContainer);
-            _document.rootVisualElement.Add(_logicalGridVisualizer); // Добавляем его к корневому элементу UI
+            LogicalGridVisualizer = new LogicalGridVisualizer();
+            LogicalGridVisualizer.Init(_itemContainer);
+            _document.rootVisualElement.Add(LogicalGridVisualizer); // Добавляем его к корневому элементу UI
 
         
                     SubscribeToContainerEvents();
@@ -135,6 +135,8 @@ string rootID)
         
                     // Используем данные из ItemContainer для позиционирования
                     var _gridRect = _itemContainer.GridWorldRect; // Берем готовую мировую позицию сетки
+        
+                    Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
         
                     var test1 = new VisualElement();
                     test1.name = "test1";
@@ -227,35 +229,51 @@ string rootID)
 
         public virtual PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
+            Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'", _coroutineRunner);
+
             // Если корневой элемент скрыт или неактивен, считать его недоступным
             if (!_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
+                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Корневой элемент скрыт или неактивен. Conflict: beyondTheGridBoundary", _coroutineRunner);
                 return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
             
             Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
-            Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.CurrentHeight);
+            Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.DefaultHeight);
             _placementResults = new PlacementResults();
             _placementResults.OverlapItem = null;
 
+            Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: currentHoverGridPosition = {currentHoverGridPosition}, itemGridSize = {itemGridSize}", _coroutineRunner);
+
+            // Проверяем, свободно ли место для размещения предмета
             if (_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize))
             {
                 _placementResults.Conflict = ReasonConflict.None;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
+                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Место свободно. Conflict: None", _coroutineRunner);
             }
             else
             {
-                List<ItemVisual> overlappingItems = FindOverlappingItems(currentHoverGridPosition, itemGridSize,
-draggedItem);
+                List<ItemVisual> overlappingItems = FindOverlappingItems(currentHoverGridPosition, itemGridSize, draggedItem);
+                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Место занято. Количество пересекающихся предметов: {overlappingItems.Count}", _coroutineRunner);
+
                 if (overlappingItems.Count == 1)
                 {
                     ItemVisual overlapItem = overlappingItems[0];
                     bool isSameStackableType = draggedItem.ItemDefinition.Stackable &&
                                                overlapItem.ItemDefinition.Stackable &&
-                                               draggedItem.ItemDefinition.DefinitionName ==
-overlapItem.ItemDefinition.DefinitionName;
-                    _placementResults.Conflict = isSameStackableType ? ReasonConflict.StackAvailable :
-ReasonConflict.SwapAvailable;
+                                               draggedItem.ItemDefinition.DefinitionName == overlapItem.ItemDefinition.DefinitionName;
+                    
+                    if (isSameStackableType)
+                    {
+                        _placementResults.Conflict = ReasonConflict.StackAvailable;
+                        Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: StackAvailable", _coroutineRunner);
+                    }
+                    else
+                    {
+                        _placementResults.Conflict = ReasonConflict.SwapAvailable;
+                        Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: SwapAvailable", _coroutineRunner);
+                    }
                     _placementResults.OverlapItem = overlapItem;
                     _placementResults.SuggestedGridPosition = currentHoverGridPosition;
                 }
@@ -263,32 +281,33 @@ ReasonConflict.SwapAvailable;
                 {
                     _placementResults.Conflict = ReasonConflict.intersectsObjects;
                     _placementResults.SuggestedGridPosition = currentHoverGridPosition;
+                    Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с несколькими предметами или занято 'пустым' местом. Conflict: intersectsObjects", _coroutineRunner);
                 }
             }
 
-            if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize) &&
-_placementResults.Conflict == ReasonConflict.None)
+            // Дополнительная проверка на выход за границы, если IsGridAreaFree вернул true, но Conflict остался None (не должно случаться, но для безопасности)
+            if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize) && _placementResults.Conflict == ReasonConflict.None)
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
+                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Переопределен Conflict: beyondTheGridBoundary, так как IsGridAreaFree вернул false", _coroutineRunner);
             }
 
-            if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary || _placementResults.Conflict
-== ReasonConflict.intersectsObjects)
+            // Управление видимостью телеграфа
+            if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary || _placementResults.Conflict == ReasonConflict.intersectsObjects)
             {
                 _telegraph.Hide();
+                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph скрыт из-за конфликта: {_placementResults.Conflict}", _coroutineRunner);
             }
             else
             {
-                var pos = new Vector2(_placementResults.SuggestedGridPosition.x * CellSize.x,
-_placementResults.SuggestedGridPosition.y * CellSize.y);
+                var pos = new Vector2(_placementResults.SuggestedGridPosition.x * CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y);
                 _telegraph.SetPosition(pos);
-                _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x,
-itemGridSize.y * CellSize.y);
+                _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x, itemGridSize.y * CellSize.y);
+                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph показан на позиции {pos} с размером {itemGridSize.x * CellSize.x}x{itemGridSize.y * CellSize.y}. Conflict: {_placementResults.Conflict}", _coroutineRunner);
             }
 
             return _placementResults.Init(conflict: _placementResults.Conflict,
-                                          position: new Vector2(_placementResults.SuggestedGridPosition.x *
-CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y),
+                                          position: new Vector2(_placementResults.SuggestedGridPosition.x * CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y),
                                           suggestedGridPosition: _placementResults.SuggestedGridPosition,
                                           overlapItem: _placementResults.OverlapItem,
                                           targetInventory: this);
@@ -307,7 +326,7 @@ CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y),
             int gridX = Mathf.FloorToInt(mouseLocalPosition.x / CellSize.x);
             int gridY = Mathf.FloorToInt(mouseLocalPosition.y / CellSize.y);
             
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: Calculated gridX = {gridX}, gridY = {gridY}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: Calculated gridX = {gridX}, gridY = {gridY}. Expected range: 0-{_itemContainer.GridDimensions.x -1}, 0-{_itemContainer.GridDimensions.y -1}");
 
             return new Vector2Int(gridX, gridY);
         }
@@ -333,6 +352,18 @@ gridData.GridSize.x, gridData.GridSize.y);
         }
 
         public virtual void FinalizeDrag() => _telegraph.Hide();
+
+        public void SetLogicalGridVisualizerActive(bool active)
+        {
+            if (LogicalGridVisualizer != null)
+            {
+                LogicalGridVisualizer.IsEnabled = active;
+            }
+            else
+            {
+                Debug.LogWarning($"[GridPageElementBase:{_root.name}] Попытка установить состояние LogicalGridVisualizer до его инициализации.");
+            }
+        }
 
         public virtual void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {

@@ -118,14 +118,14 @@ namespace SkyClerik.Inventory
                     if (changed)
                     {
                         EditorUtility.SetDirty(this);
-                        Debug.Log($"Параметры сетки для '{name}' успешно рассчитаны:\n" +
+                        Debug.Log($"[ItemContainer:{name}] Параметры сетки для '{_rootPanelName}' успешно рассчитаны:\n" +
                                   $"- Размеры в ячейках: {widthCount}x{heightCount}\n" +
                                   $"- Размер ячейки (px): {_cellSize.x}x{_cellSize.y}\n" +
                                   $"- Позиция и размер сетки (world): {_gridWorldRect}", this);
                     }
                     else
                     {
-                        Debug.Log($"Параметры сетки для '{name}' уже актуальны.", this);
+                        Debug.Log($"[ItemContainer:{name}] Параметры сетки для '{_rootPanelName}' уже актуальны.", this);
                     }
                 }
                 else
