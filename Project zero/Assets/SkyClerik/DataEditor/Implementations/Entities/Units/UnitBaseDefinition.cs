@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using SkyClerik.Inventory;
+using Newtonsoft.Json;
 
 namespace UnityEngine.DataEditor
 {
@@ -10,6 +12,7 @@ namespace UnityEngine.DataEditor
     {
         [SerializeField]
         [Tooltip("Изображение юнита, используемое в бою.")]
+        [JsonConverter(typeof(SpriteJsonConverter))]
         private Sprite _battleImage;
         /// <summary>
         /// Изображение юнита, используемое в бою.
@@ -18,6 +21,7 @@ namespace UnityEngine.DataEditor
 
         [SerializeField]
         [Tooltip("Полное изображение юнита (например, для отображения в инвентаре или меню).")]
+        [JsonConverter(typeof(SpriteJsonConverter))]
         private Sprite _fullImage;
         /// <summary>
         /// Полное изображение юнита (например, для отображения в инвентаре или меню).

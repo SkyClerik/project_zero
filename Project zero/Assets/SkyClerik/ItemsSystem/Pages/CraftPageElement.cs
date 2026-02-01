@@ -19,7 +19,7 @@ namespace SkyClerik.Inventory
         private Button _craftButton;
         private const string _craftButtonID = "b_craft";
 
-        public CraftPageElement(ItemsPage itemsPage, UIDocument document, ItemContainerBase itemContainer)
+        public CraftPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, _craftRootID)
         {
             _header = _root.Q(_headerID);

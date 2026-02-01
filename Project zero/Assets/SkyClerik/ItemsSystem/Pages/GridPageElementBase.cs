@@ -23,7 +23,7 @@ namespace SkyClerik.Inventory
         protected UIDocument _document;
         protected MonoBehaviour _coroutineRunner;
         protected ItemsPage _itemsPage;
-        protected ItemContainerBase _itemContainer;
+        protected ItemContainer _itemContainer;
 
         // Общие UI-элементы и логика перетаскивания
         protected VisualElement _root;
@@ -36,11 +36,11 @@ namespace SkyClerik.Inventory
         // Свойства для доступа к внутренним элементам
         public UIDocument GetDocument => _document;
         public Telegraph Telegraph => _telegraph;
-        public ItemContainerBase ItemContainer => _itemContainer;
+        public ItemContainer ItemContainer => _itemContainer;
         public Vector2 CellSize => new Vector2(_cellSize.width, _cellSize.height);
         public VisualElement Root => _root;
 
-        protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainerBase itemContainer, string rootID)
+        protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer, string rootID)
         {
             _itemsPage = itemsPage;
             _document = document;
@@ -77,30 +77,15 @@ namespace SkyClerik.Inventory
                 yield break;
             }
 
-            foreach (var itemInContainer in _itemContainer.GetItems().ToList())
+            // Добавляем предметы в сетку с использованием новой логики AddItemsToGrid
+            List<ItemBaseDefinition> unplacedItems = AddItemsToGrid(_itemContainer.GetItems().ToList());
+
+            if (unplacedItems.Any())
             {
-                if (TryFindPlacement(itemInContainer, out Vector2Int gridPosition))
+                foreach (var item in unplacedItems)
                 {
-                    ItemGridData newGridData = new ItemGridData(itemInContainer, gridPosition);
-
-                    ItemVisual inventoryItemVisual = new ItemVisual(
-                        itemsPage: _itemsPage,
-                        ownerInventory: this,
-                        itemDefinition: itemInContainer,
-                        gridPosition: gridPosition,
-                        gridSize: newGridData.GridSize);
-
-                    _placedItemsGridData.Add(inventoryItemVisual, newGridData);
-                    OccupyGridCells(newGridData, true);
-
-                    AddItemToInventoryGrid(inventoryItemVisual);
-
-                    inventoryItemVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
-                }
-                else
-                {
-                    Debug.LogWarning($"[{GetType().Name}.LoadInventory] Не удалось разместить предмет {itemInContainer.name} в инвентаре. Возможно, нет места.");
-                    _itemContainer.RemoveItem(itemInContainer);
+                    Debug.LogWarning($"[{GetType().Name}.LoadInventory] Не удалось разместить предмет {item.name} в инвентаре после загрузки. Возможно, нет места.");
+                    _itemContainer.RemoveItem(item); // Удаляем неразмещенные предметы из контейнера
                 }
             }
             yield break;
@@ -142,25 +127,92 @@ namespace SkyClerik.Inventory
             _inventoryGrid.Add(item);
         }
 
-        public void AddLoot(ItemContainerBase sourceContainer)
+        /// <summary>
+        /// Размещает список предметов в сетке инвентаря. Сортирует по размеру, ищет место,
+        /// устанавливает GridPosition для размещенных предметов и создает ItemVisual, если UI активен.
+        /// </summary>
+        /// <param name="itemsToAdd">Список предметов для добавления.</param>
+        /// <returns>Список предметов, которые не удалось разместить.</returns>
+        public List<ItemBaseDefinition> AddItemsToGrid(List<ItemBaseDefinition> itemsToAdd)
         {
-            var itemsToLoot = sourceContainer.GetItems().ToList();
-            var sortedLoot = itemsToLoot.OrderByDescending(item =>
-                item.Dimensions.DefaultWidth * item.Dimensions.DefaultHeight).ToList();
+            Debug.Log($"[{GetType().Name}.AddItemsToGrid] Вызван AddItemsToGrid с {itemsToAdd.Count} предметами.");
+            List<ItemBaseDefinition> unplacedItems = new List<ItemBaseDefinition>();
 
-            var successfullyAddedOriginals = new List<ItemBaseDefinition>();
+            // Сортируем предметы по размеру (от большего к меньшему)
+            var sortedItems = itemsToAdd.OrderByDescending(item =>
+                item.Dimensions.CurrentWidth * item.Dimensions.CurrentHeight).ToList();
 
-            foreach (var item in sortedLoot)
+            foreach (var item in sortedItems)
             {
-                if (TryAddItemInternal(item))
+                Vector2Int itemGridSize = new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight);
+                Vector2Int foundPosition;
+
+                if (TryFindPlacement(item, out foundPosition))
                 {
-                    successfullyAddedOriginals.Add(item);
+                    Debug.Log($"[{GetType().Name}.AddItemsToGrid] Для предмета '{item.name}' ({itemGridSize.x}x{itemGridSize.y}) найдена позиция: {foundPosition}.");
+                    // Место найдено, устанавливаем позицию в предмете и занимаем ячейки
+                    item.GridPosition = foundPosition;
+                    Debug.Log($"[{GetType().Name}.AddItemsToGrid] После присвоения, GridPosition предмета '{item.name}' = {item.GridPosition}.");
+                    OccupyGridCells(new ItemGridData(item, foundPosition), true); // Занимаем ячейки в логической матрице
+
+                    // Если UI активен, создаем и размещаем ItemVisual
+                    if (_inventoryGrid != null && _inventoryGrid.resolvedStyle.display != DisplayStyle.None) // Проверяем, что UI-сетка существует и видна
+                    {
+                        ItemGridData newGridData = new ItemGridData(item, foundPosition);
+                        ItemVisual newItemVisual = new ItemVisual(
+                            itemsPage: _itemsPage,
+                            ownerInventory: this,
+                            itemDefinition: item,
+                            gridPosition: foundPosition,
+                            gridSize: newGridData.GridSize);
+
+                        _placedItemsGridData.Add(newItemVisual, newGridData); // Добавляем в список размещенных визуальных элементов
+                        AddItemToInventoryGrid(newItemVisual); // Добавляем в UI-сетку
+                        newItemVisual.SetPosition(new Vector2(foundPosition.x * _cellSize.width, foundPosition.y * _cellSize.height));
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[{GetType().Name}.AddItemsToGrid] Не удалось найти место для предмета '{item.name}' ({itemGridSize.x}x{itemGridSize.y}).");
+                    // Место не найдено
+                    unplacedItems.Add(item);
                 }
             }
+            return unplacedItems;
+        }
 
-            foreach (var originalItem in successfullyAddedOriginals)
+        public void AddLoot(LutContainer sourceLut)
+        {
+            if (sourceLut == null || !sourceLut.Items.Any()) return;
+
+            // 1. Клонируем все предметы из исходного контейнера
+            var clonedItems = sourceLut.Items.Select(item => Object.Instantiate(item)).ToList();
+
+            // 2. Сразу очищаем исходный контейнер
+            sourceLut.Items.Clear();
+
+            // Сортируем клоны для оптимального размещения
+            var sortedClones = clonedItems.OrderByDescending(item =>
+                item.Dimensions.DefaultWidth * item.Dimensions.DefaultHeight).ToList();
+
+            foreach (var clone in sortedClones)
             {
-                sourceContainer.RemoveItem(originalItem, destroy: false);
+                if (clone == null) continue;
+
+                // 3. Пытаемся забрать клон
+                bool wasFullyPlaced = TryAddItemInternal(clone);
+
+                if (!wasFullyPlaced)
+                {
+                    // 4. Если не влезло - возвращаем остаток в (теперь уже пустой) LutContainer
+                    sourceLut.Items.Add(clone);
+                }
+                else if (clone.Stack <= 0)
+                {
+                    // Если предмет был полностью поглощен (например, ушел в стак),
+                    // а сам объект-клон остался с нулевым количеством, уничтожаем его, чтобы не мусорить в сцене.
+                    Object.Destroy(clone);
+                }
             }
         }
 
@@ -193,33 +245,13 @@ namespace SkyClerik.Inventory
 
             if (itemToAdd.Stack <= 0)
             {
-                return true;
+                return true; // Предмет полностью стакнулся
             }
 
-            if (TryFindPlacement(itemToAdd, out Vector2Int position))
-            {
-                var clonedItem = _itemContainer.AddItemAsClone(itemToAdd);
-                if (clonedItem == null) return false;
+            // Используем новый AddItemsToGrid для размещения оставшегося предмета
+            List<ItemBaseDefinition> unplacedItems = AddItemsToGrid(new List<ItemBaseDefinition> { itemToAdd });
 
-                ItemGridData newGridData = new ItemGridData(clonedItem, position);
-
-                ItemVisual newItemVisual = new ItemVisual(
-                    itemsPage: _itemsPage,
-                    ownerInventory: this,
-                    itemDefinition: clonedItem,
-                    gridPosition: position,
-                    gridSize: newGridData.GridSize);
-
-                _placedItemsGridData.Add(newItemVisual, newGridData);
-                OccupyGridCells(newGridData, true);
-
-                AddItemToInventoryGrid(newItemVisual);
-                newItemVisual.SetPosition(new Vector2(position.x * _cellSize.width, position.y * _cellSize.height));
-
-                return true;
-            }
-
-            return false;
+            return !unplacedItems.Any(); // Возвращаем true, если предмет был размещен
         }
 
         protected void OccupyGridCells(ItemGridData gridData, bool occupy)

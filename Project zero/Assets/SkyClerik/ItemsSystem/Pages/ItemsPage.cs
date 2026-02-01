@@ -22,9 +22,9 @@ namespace SkyClerik.Inventory
         private ItemBaseDefinition _givenItem = null;
 
         [SerializeField]
-        private ItemContainerBase _inventoryItemContainer;
+        private ItemContainer _inventoryItemContainer;
         [SerializeField]
-        private ItemContainerBase _craftItemContainer;
+        private ItemContainer _craftItemContainer;
 
         public delegate void OnItemGivenDelegate(ItemBaseDefinition item);
         public event OnItemGivenDelegate OnItemGiven;
@@ -36,8 +36,8 @@ namespace SkyClerik.Inventory
         public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
         public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
-        public ItemContainerBase InventoryItemContainer => _inventoryItemContainer;
-        public ItemContainerBase CraftItemContainer => _craftItemContainer;
+        public ItemContainer InventoryItemContainer => _inventoryItemContainer;
+        public ItemContainer CraftItemContainer => _craftItemContainer;
 
         private void Awake()
         {

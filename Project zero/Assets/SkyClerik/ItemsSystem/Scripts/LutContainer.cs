@@ -1,18 +1,14 @@
-using UnityEngine.Toolbox;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
 {
-    public class LutContainer : ItemContainerBase
+    public class LutContainer : MonoBehaviour
     {
-        protected override void Awake()
-        {
-            ServiceProvider.Register(this);
+        [SerializeField]
+        private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
-        }
-
-        private void OnDestroy()
-        {
-            ServiceProvider.Unregister(this);
-        }
+        public List<ItemBaseDefinition> Items => _items;
     }
 }

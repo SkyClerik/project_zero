@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: SkyClerik
+  m_EditorClassIdentifier: 
+  m_GroupName: SkyClerik
+  m_Data:
+    m_SerializedData: []
+  m_GUID: c09dd0c2355bd7a4eaee7ff528981823
+  m_SerializeEntries:
+  - m_GUID: 13f5f3b3606866b40b80c99f8bef4002
+    m_Address: Assets/SkyClerik/Images/Items/Potions/7.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca525d827c9bb7c46863445068867b30
+    m_Address: Assets/SkyClerik/Images/Items/Potions/9.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d97ccd6843cc0ba46a5ff5054d62fad2
+    m_Address: Assets/SkyClerik/Images/Items/Potions/8.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e98a0bdc16bd6854ea99f01a79574505
+    m_Address: Assets/SkyClerik/Images/Items/Potions/1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f946925a07946fa40a425f1b0198ff5a
+    m_Address: Assets/SkyClerik/Images/Develop/Statue of the goddess of testers.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7a0db52219d32ef40a14de70d6a0feec, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b22e35f42eea9cd48815d0217d922739, type: 2}
+    - {fileID: 11400000, guid: f0fe6045b431c7946afa5de86d305886, type: 2}

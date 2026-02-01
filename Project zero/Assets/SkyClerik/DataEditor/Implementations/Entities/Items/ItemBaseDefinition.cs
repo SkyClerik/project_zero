@@ -122,6 +122,13 @@ namespace UnityEngine.DataEditor
         public int CurrentWidth { get => currentWidth; set => currentWidth = value; }
         public float CurrentAngle { get => currentAngle; set => currentAngle = value; }
 
+        public ItemDimensions()
+        {
+            currentWidth = defaultWidth;
+            currentHeight = defaultHeight;
+            currentAngle = defaultAngle;
+        }
+
         public void Swap()
         {
             (currentWidth, currentHeight) = (currentHeight, currentWidth);

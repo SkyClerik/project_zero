@@ -6,7 +6,7 @@ namespace SkyClerik.Inventory
     {
         private const string _inventoryRootID = "inventory_root";
 
-        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, ItemContainerBase itemContainer)
+        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, _inventoryRootID)
         { }
 

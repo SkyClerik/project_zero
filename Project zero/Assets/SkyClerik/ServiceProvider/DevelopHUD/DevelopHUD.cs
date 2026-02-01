@@ -1,3 +1,4 @@
+using SkyClerik.GlobalGameStates;
 using SkyClerik.Inventory;
 using UnityEngine;
 using UnityEngine.Toolbox;
@@ -60,8 +61,6 @@ public class DevelopHUD : MonoBehaviour
         _bExitGame.clicked += _bExitGame_clicked;
     }
 
-
-
     private void OnDestroy()
     {
         _bInventoryNormal.clicked -= _bInventory_clicked;
@@ -88,7 +87,7 @@ public class DevelopHUD : MonoBehaviour
         if (_itemsPage.IsInventoryVisible)
             _itemsPage.CloseInventory();
         else
-            _itemsPage.OpenInventoryGiveItem(_developLut.GetItems()[0]);
+            _itemsPage.OpenInventoryGiveItem(itemId: 0);
     }
 
     private void _bTrueCraft_clicked()
@@ -106,13 +105,54 @@ public class DevelopHUD : MonoBehaviour
 
     private void _bSave_clicked()
     {
+        var gameStateManager = ServiceProvider.Get<GameStateManager>();
+        if (gameStateManager == null)
+        {
+            Debug.LogError("GameStateManager не найден в ServiceProvider!");
+            return;
+        }
+
         var itemsPage = ServiceProvider.Get<ItemsPage>();
-        SaveAndLoadPlayerItems.SaveContainer(itemsPage.InventoryItemContainer, 0);
+        if (itemsPage == null)
+        {
+            Debug.LogError("ItemsPage не найден в ServiceProvider!");
+            return;
+        }
+
+        var saveService = gameStateManager.SaveService;
+        var globalState = gameStateManager.GlobalGameState;
+        string slotFolderPath = saveService.GetSaveSlotFolderPath(globalState.CurrentSaveSlotIndex);
+
+        saveService.SaveItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
+        saveService.SaveItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
+
+        Debug.Log($"[DevelopHUD] Сохранение контейнеров в слот {globalState.CurrentSaveSlotIndex} завершено.");
     }
+
     private void _bLoad_clicked()
     {
+        var gameStateManager = ServiceProvider.Get<GameStateManager>();
+        if (gameStateManager == null)
+        {
+            Debug.LogError("GameStateManager не найден в ServiceProvider!");
+            return;
+        }
+
         var itemsPage = ServiceProvider.Get<ItemsPage>();
-        SaveAndLoadPlayerItems.LoadContainer(itemsPage.CraftItemContainer, 0);
+        if (itemsPage == null)
+        {
+            Debug.LogError("ItemsPage не найден в ServiceProvider!");
+            return;
+        }
+
+        var loadService = gameStateManager.LoadService;
+        var globalState = gameStateManager.GlobalGameState;
+        string slotFolderPath = loadService.GetSaveSlotFolderPath(globalState.CurrentSaveSlotIndex);
+
+        loadService.LoadItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
+        loadService.LoadItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
+
+        Debug.Log($"[DevelopHUD] Загрузка контейнеров из слота {globalState.CurrentSaveSlotIndex} завершена.");
     }
 
     private void _bExitGame_clicked()

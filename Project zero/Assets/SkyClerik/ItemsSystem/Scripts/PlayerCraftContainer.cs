@@ -2,7 +2,7 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
-    public class PlayerCraftContainer : ItemContainerBase
+    public class PlayerCraftContainer : ItemContainer
     {
         protected override void Awake()
         {

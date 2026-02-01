@@ -1,4 +1,6 @@
+using Newtonsoft.Json;
 using System;
+using SkyClerik.Inventory;
 
 namespace UnityEngine.DataEditor
 {
@@ -7,24 +9,29 @@ namespace UnityEngine.DataEditor
     /// Предоставляет общий набор данных, таких как ID, имя, описание и иконка,
     /// чтобы все производные классы имели единую структуру.
     /// </summary>
+    [JsonObject(MemberSerialization.Fields)]
     public abstract class BaseDefinition : ScriptableObject
     {
         [Header("Базовая информация")]
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Уникальный идентификатор. Может быть числом или строкой.")]
         private string _id;
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Имя, отображаемое в игре. Используем другое имя, чтобы избежать конфликта с 'name' из ScriptableObject.")]
         private string _definitionName;
 
+        [JsonProperty]
         [SerializeField, TextArea(3, 10)]
         [Tooltip("Подробное описание, которое может отображаться в UI.")]
         private string _description;
 
         [SerializeField]
         [Tooltip("Иконка для отображения в инвентаре, меню навыков и т.д.")]
+        [JsonConverter(typeof(SpriteJsonConverter))]
         [DrawWithIconField]
         private Sprite _icon;
 
