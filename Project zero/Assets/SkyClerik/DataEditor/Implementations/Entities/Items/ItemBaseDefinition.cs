@@ -11,7 +11,7 @@ namespace UnityEngine.DataEditor
     {
         [JsonProperty]
         [SerializeField]
-        [Tooltip("Уникальный идентификатор. Индекс полученный от массива предметов")]
+        [Tooltip("Уникальный идентификатор. Индекс полученный от общей базы предметов")]
         private int _wrapperIndex;
         public int WrapperIndex { get => _wrapperIndex; set => _wrapperIndex = value; }
 

@@ -10,8 +10,8 @@ namespace SkyClerik.Inventory
     /// <summary>
     /// ScriptableObject для хранения списка ItemBaseDefinition и GUID контейнера.
     /// </summary>
-    [CreateAssetMenu(fileName = "NewItemDataStorage", menuName = "SkyClerik/Inventory/Item Data Storage")]
-    public class ItemDataStorageSO : ScriptableObject
+    [CreateAssetMenu(fileName = "ItemContainerDefinition", menuName = "SkyClerik/Inventory/Item Container Definition")]
+    public class ItemContainerDefinition : ScriptableObject
     {
         [JsonProperty]
         [SerializeField]
@@ -49,7 +49,7 @@ namespace SkyClerik.Inventory
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 Formatting = Formatting.Indented,
                 TypeNameHandling = TypeNameHandling.Auto,
-                Converters = { new SpriteJsonConverter() }
+                //Converters = { new SpriteJsonConverter() }
             };
             return JsonConvert.SerializeObject(this, settings);
         }
@@ -59,7 +59,7 @@ namespace SkyClerik.Inventory
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                Converters = { new SpriteJsonConverter() }
+                //Converters = { new SpriteJsonConverter() }
             };
 
             var tempAnonObject = JsonConvert.DeserializeAnonymousType(json, new { ContainerGuid = "", Items = new List<object>() }, settings);

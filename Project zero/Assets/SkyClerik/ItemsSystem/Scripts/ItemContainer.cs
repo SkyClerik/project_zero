@@ -12,8 +12,8 @@ namespace SkyClerik.Inventory
     {
         [Header("Хранилище данных")]
         [SerializeField]
-        private ItemDataStorageSO _itemDataStorageSO;
-        public ItemDataStorageSO ItemDataStorageSO => _itemDataStorageSO;
+        private ItemContainerDefinition _itemDataStorageSO;
+        public ItemContainerDefinition ItemDataStorageSO => _itemDataStorageSO;
 
         [Header("Конфигурация сетки")]
         [Tooltip("Ссылка на UI Document, в котором находится сетка для этого контейнера.")]
@@ -144,7 +144,7 @@ namespace SkyClerik.Inventory
             if (_itemDataStorageSO == null)
             {
                 //Debug.LogWarning("ItemDataStorageSO не назначен в ItemContainer. Создаем новый пустой ItemDataStorageSO.", this);
-                _itemDataStorageSO = ScriptableObject.CreateInstance<ItemDataStorageSO>();
+                _itemDataStorageSO = ScriptableObject.CreateInstance<ItemContainerDefinition>();
             }
             _itemDataStorageSO = ScriptableObject.Instantiate(_itemDataStorageSO);
             _itemDataStorageSO.ValidateGuid();

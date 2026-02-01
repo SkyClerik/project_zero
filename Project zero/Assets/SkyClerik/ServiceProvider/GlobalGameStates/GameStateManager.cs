@@ -1,4 +1,3 @@
-using SkyClerik.Inventory;
 using UnityEngine;
 using UnityEngine.Toolbox;
 
@@ -15,10 +14,6 @@ namespace SkyClerik.Utils
 
         private void Awake()
         {
-            //   * Чтобы использовать Addressables: установи SkyClerik.Inventory.SpriteJsonConverter.UseAddressables = true;
-            //   * Чтобы использовать Resources.Load: установи SkyClerik.Inventory.SpriteJsonConverter.UseAddressables = false;
-            //   (и убедись, что все спрайты, которые ты хочешь грузить, находятся в папках Resources/ и их путь в identifier правильный).
-            SpriteJsonConverter.UseAddressables = true;
             ServiceProvider.Register(this);
         }
 

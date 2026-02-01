@@ -156,12 +156,6 @@ MonoBehaviour:
   _rootPanelName: 
   _gridDimensions: {x: 5, y: 5}
   _cellSize: {x: 0, y: 0}
-  _gridWorldRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
   _nextStep: {fileID: 1689564146}
 --- !u!4 &138080786
 Transform:
@@ -403,12 +397,6 @@ MonoBehaviour:
   _rootPanelName: craft_root
   _gridDimensions: {x: 3, y: 4}
   _cellSize: {x: 128, y: 128}
-  _gridWorldRect:
-    serializedVersion: 2
-    x: 1642.6666
-    y: 416
-    width: 384
-    height: 512
 --- !u!114 &627866743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,12 +414,6 @@ MonoBehaviour:
   _rootPanelName: inventory_root
   _gridDimensions: {x: 7, y: 8}
   _cellSize: {x: 128, y: 127.999985}
-  _gridWorldRect:
-    serializedVersion: 2
-    x: 286.66666
-    y: 226.66667
-    width: 896
-    height: 1023.99994
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,6 +741,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nextStep: {fileID: 0}
+--- !u!1 &1920956269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1920956270}
+  - component: {fileID: 1920956271}
+  m_Layer: 0
+  m_Name: ItemDataStorageWrapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1920956270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920956269}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2043587035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1920956271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920956269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a7b9a9e7337ab441b546e700dafa5b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  globalItemsStorageDefinition: {fileID: 11400000, guid: 1ff64ee63619a5b4f85d3f3125d4632b, type: 2}
 --- !u!1 &1923614410
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,6 +851,7 @@ Transform:
   - {fileID: 1276237421}
   - {fileID: 365169865}
   - {fileID: 501412488}
+  - {fileID: 1920956270}
   m_Father: {fileID: 1923614411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2110481934

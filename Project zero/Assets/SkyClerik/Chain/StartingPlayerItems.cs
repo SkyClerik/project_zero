@@ -6,15 +6,18 @@ using SkyClerik.Utils;
 
 namespace SkyClerik
 {
-    public class StartingPlayerItems : ItemContainer, IChain
+    public class StartingPlayerItems : MonoBehaviour, IChain
     {
+        [Header("Хранилище данных")]
+        [SerializeField]
+        private ItemContainerDefinition _itemDataStorageSO;
+
         [SerializeField]
         private MonoBehaviour _nextStep;
         public IChain NextComponent { get; set; }
         
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             if (_nextStep != null && _nextStep is IChain)
                 NextComponent = _nextStep as IChain;
         }
@@ -42,7 +45,7 @@ namespace SkyClerik
         private IEnumerator GiveItemsToPlayer()
         {
             // Сначала проверяем наличие исходных предметов
-            if (ItemDataStorageSO == null || ItemDataStorageSO.Items == null || ItemDataStorageSO.Items.Count == 0)
+            if (_itemDataStorageSO == null || _itemDataStorageSO.Items == null || _itemDataStorageSO.Items.Count == 0)
             {
                 //Debug.Log("Нет стартовых предметов для выдачи в StartingPlayerItems.", this);
                 Next();
@@ -73,7 +76,7 @@ namespace SkyClerik
             }
 
             // Выдаем предметы одной командой, используя новую "умную" логику контейнера
-            var unplacedItems = playerContainer.AddClonedItems(ItemDataStorageSO.Items);
+            var unplacedItems = playerContainer.AddClonedItems(_itemDataStorageSO.Items);
 
             if (unplacedItems.Count > 0)
             {
