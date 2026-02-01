@@ -229,12 +229,12 @@ string rootID)
 
         public virtual PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
-            Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'", _coroutineRunner);
+            //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'", _coroutineRunner);
 
             // Если корневой элемент скрыт или неактивен, считать его недоступным
             if (!_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
-                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Корневой элемент скрыт или неактивен. Conflict: beyondTheGridBoundary", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Корневой элемент скрыт или неактивен. Conflict: beyondTheGridBoundary", _coroutineRunner);
                 return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
             
@@ -243,19 +243,19 @@ string rootID)
             _placementResults = new PlacementResults();
             _placementResults.OverlapItem = null;
 
-            Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: currentHoverGridPosition = {currentHoverGridPosition}, itemGridSize = {itemGridSize}", _coroutineRunner);
+            //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: currentHoverGridPosition = {currentHoverGridPosition}, itemGridSize = {itemGridSize}", _coroutineRunner);
 
             // Проверяем, свободно ли место для размещения предмета
             if (_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize))
             {
                 _placementResults.Conflict = ReasonConflict.None;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
-                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Место свободно. Conflict: None", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Место свободно. Conflict: None", _coroutineRunner);
             }
             else
             {
                 List<ItemVisual> overlappingItems = FindOverlappingItems(currentHoverGridPosition, itemGridSize, draggedItem);
-                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Место занято. Количество пересекающихся предметов: {overlappingItems.Count}", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Место занято. Количество пересекающихся предметов: {overlappingItems.Count}", _coroutineRunner);
 
                 if (overlappingItems.Count == 1)
                 {
@@ -267,12 +267,12 @@ string rootID)
                     if (isSameStackableType)
                     {
                         _placementResults.Conflict = ReasonConflict.StackAvailable;
-                        Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: StackAvailable", _coroutineRunner);
+                        //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: StackAvailable", _coroutineRunner);
                     }
                     else
                     {
                         _placementResults.Conflict = ReasonConflict.SwapAvailable;
-                        Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: SwapAvailable", _coroutineRunner);
+                        //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: SwapAvailable", _coroutineRunner);
                     }
                     _placementResults.OverlapItem = overlapItem;
                     _placementResults.SuggestedGridPosition = currentHoverGridPosition;
@@ -281,7 +281,7 @@ string rootID)
                 {
                     _placementResults.Conflict = ReasonConflict.intersectsObjects;
                     _placementResults.SuggestedGridPosition = currentHoverGridPosition;
-                    Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с несколькими предметами или занято 'пустым' местом. Conflict: intersectsObjects", _coroutineRunner);
+                    //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с несколькими предметами или занято 'пустым' местом. Conflict: intersectsObjects", _coroutineRunner);
                 }
             }
 
@@ -289,21 +289,21 @@ string rootID)
             if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize) && _placementResults.Conflict == ReasonConflict.None)
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
-                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Переопределен Conflict: beyondTheGridBoundary, так как IsGridAreaFree вернул false", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Переопределен Conflict: beyondTheGridBoundary, так как IsGridAreaFree вернул false", _coroutineRunner);
             }
 
             // Управление видимостью телеграфа
             if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary || _placementResults.Conflict == ReasonConflict.intersectsObjects)
             {
                 _telegraph.Hide();
-                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph скрыт из-за конфликта: {_placementResults.Conflict}", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph скрыт из-за конфликта: {_placementResults.Conflict}", _coroutineRunner);
             }
             else
             {
                 var pos = new Vector2(_placementResults.SuggestedGridPosition.x * CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y);
                 _telegraph.SetPosition(pos);
                 _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x, itemGridSize.y * CellSize.y);
-                Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph показан на позиции {pos} с размером {itemGridSize.x * CellSize.x}x{itemGridSize.y * CellSize.y}. Conflict: {_placementResults.Conflict}", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph показан на позиции {pos} с размером {itemGridSize.x * CellSize.x}x{itemGridSize.y * CellSize.y}. Conflict: {_placementResults.Conflict}", _coroutineRunner);
             }
 
             return _placementResults.Init(conflict: _placementResults.Conflict,
@@ -315,18 +315,18 @@ string rootID)
 
         protected Vector2Int CalculateCurrentHoverGridPosition()
         {
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemsPage.MouseUILocalPosition = {_itemsPage.MouseUILocalPosition}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemsPage.MouseUILocalPosition = {_itemsPage.MouseUILocalPosition}");
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: mouseLocalPosition (relative to _inventoryGrid) = {mouseLocalPosition}");
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: CellSize = {CellSize}");
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridDimensions = {_itemContainer.GridDimensions}");
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridWorldRect = {_itemContainer.GridWorldRect}");
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _inventoryGrid.resolvedStyle.width = {_inventoryGrid.resolvedStyle.width}, _inventoryGrid.resolvedStyle.height = {_inventoryGrid.resolvedStyle.height}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: mouseLocalPosition (relative to _inventoryGrid) = {mouseLocalPosition}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: CellSize = {CellSize}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridDimensions = {_itemContainer.GridDimensions}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridWorldRect = {_itemContainer.GridWorldRect}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _inventoryGrid.resolvedStyle.width = {_inventoryGrid.resolvedStyle.width}, _inventoryGrid.resolvedStyle.height = {_inventoryGrid.resolvedStyle.height}");
 
             int gridX = Mathf.FloorToInt(mouseLocalPosition.x / CellSize.x);
             int gridY = Mathf.FloorToInt(mouseLocalPosition.y / CellSize.y);
             
-            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: Calculated gridX = {gridX}, gridY = {gridY}. Expected range: 0-{_itemContainer.GridDimensions.x -1}, 0-{_itemContainer.GridDimensions.y -1}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: Calculated gridX = {gridX}, gridY = {gridY}. Expected range: 0-{_itemContainer.GridDimensions.x -1}, 0-{_itemContainer.GridDimensions.y -1}");
 
             return new Vector2Int(gridX, gridY);
         }

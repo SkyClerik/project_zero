@@ -101,23 +101,23 @@ namespace SkyClerik.Inventory
 
         public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
         {
-            Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
+            //Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
             // Если инвентарь не смог предложить место для размещения (конфликт типа "intersectsObjects" или "beyondTheGridBoundary")
             // тогда проверяем крафт.
             // Если же инвентарь предложил "None", "StackAvailable" или "SwapAvailable", то он "активен".
             if (resultsPage.Conflict == ReasonConflict.None || resultsPage.Conflict == ReasonConflict.StackAvailable || resultsPage.Conflict == ReasonConflict.SwapAvailable)
             {
-                Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
+                //Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
                 _craftPage.Telegraph.Hide();
                 return resultsPage.Init(resultsPage.Conflict, resultsPage.Position, resultsPage.SuggestedGridPosition, resultsPage.OverlapItem, _inventoryPage);
             }
 
-            Debug.Log($"[ЛОГ] Страница инвентаря не подходит. Проверяю страницу крафта ({_craftPage.Root.name}).");
+            //Debug.Log($"[ЛОГ] Страница инвентаря не подходит. Проверяю страницу крафта ({_craftPage.Root.name}).");
 
             if (!_craftAccessible)
             {
-                Debug.Log($"[ЛОГ] Крафт не видимый и мы пропускаем размещение в него");
+                //Debug.Log($"[ЛОГ] Крафт не видимый и мы пропускаем размещение в него");
                 _inventoryPage.Telegraph.Hide();
                 _craftPage.Telegraph.Hide();
                 return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
@@ -127,13 +127,13 @@ namespace SkyClerik.Inventory
                 PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
                 if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
                 {
-                    Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
+                    //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
                     _inventoryPage.Telegraph.Hide();
                     return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
                 }
             }
 
-            Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
+            //Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
             _inventoryPage.Telegraph.Hide();
             _craftPage.Telegraph.Hide();
             return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
@@ -153,7 +153,7 @@ namespace SkyClerik.Inventory
 
             if (sourceContainer == null || targetContainer == null)
             {
-                Debug.LogError("Не удалось найти контейнеры для перемещения предмета!");
+                //Debug.LogError("Не удалось найти контейнеры для перемещения предмета!");
                 return;
             }
 
@@ -166,7 +166,7 @@ namespace SkyClerik.Inventory
 
             if (!addedToTarget)
             {
-                Debug.LogWarning($"Не удалось переместить предмет '{itemToMove.name}' в целевой контейнер на позицию {gridPosition}. Возвращаем в исходный контейнер.");
+                //Debug.LogWarning($"Не удалось переместить предмет '{itemToMove.name}' в целевой контейнер на позицию {gridPosition}. Возвращаем в исходный контейнер.");
                 // Если не удалось добавить в целевой, возвращаем предмет в исходный контейнер
                 // Это может вызвать OnItemAdded в UI исходного контейнера, ItemContainer сам найдет место
                 sourceContainer.AddItems(new List<ItemBaseDefinition>{ itemToMove }); 

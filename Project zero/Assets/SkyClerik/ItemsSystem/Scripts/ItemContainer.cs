@@ -141,14 +141,14 @@ namespace SkyClerik.Inventory
         {
             if (_itemDataStorageSO == null)
             {
-                Debug.LogWarning("ItemDataStorageSO не назначен в ItemContainer. Создаем новый пустой ItemDataStorageSO.", this);
+                //Debug.LogWarning("ItemDataStorageSO не назначен в ItemContainer. Создаем новый пустой ItemDataStorageSO.", this);
                 _itemDataStorageSO = ScriptableObject.CreateInstance<ItemDataStorageSO>();
             }
             _itemDataStorageSO = ScriptableObject.Instantiate(_itemDataStorageSO);
             _itemDataStorageSO.ValidateGuid();
 
             _gridOccupancy = new bool[_gridDimensions.x, _gridDimensions.y];
-            Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
+            //Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
             // Контейнер теперь инициализируется пустым. Предметы добавляются через AddItems/AddClonedItems
         }
                 
@@ -226,15 +226,15 @@ namespace SkyClerik.Inventory
 
         public bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
         {
-            Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.CurrentWidth}x{item.Dimensions.CurrentHeight}) на позицию {gridPosition}.", this);
+            //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.CurrentWidth}x{item.Dimensions.CurrentHeight}) на позицию {gridPosition}.", this);
             if (item == null)
             {
-                Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Предмет равен null.", this);
+                //Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Предмет равен null.", this);
                 return false;
             }
             Vector2Int itemGridSize = new Vector2Int(item.Dimensions.CurrentWidth, item.Dimensions.CurrentHeight);
 
-            Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
+            //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
             if (IsGridAreaFree(gridPosition, itemGridSize))
             {
                 Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
@@ -244,7 +244,7 @@ namespace SkyClerik.Inventory
                 OnItemAdded?.Invoke(item);
                 return true;
             }
-            Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Область занята или выходит за границы.", this);
+            //Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Область занята или выходит за границы.", this);
             return false;
         }
 
@@ -310,7 +310,7 @@ namespace SkyClerik.Inventory
         {
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
             {
-                Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
+                //Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
                 return false; // Out of bounds
             }
             for (int y = 0; y < size.y; y++)
@@ -319,7 +319,7 @@ namespace SkyClerik.Inventory
                 {
                     if (_gridOccupancy[start.x + x, start.y + y])
                     {
-                        Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
+                        //Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
                         return false; // Occupied
                     }
                 }
