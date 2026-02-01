@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Toolbox;
 using System.Collections;
+using System.Linq;
 using SkyClerik.Inventory;
 using SkyClerik.Utils;
 
@@ -72,14 +73,19 @@ namespace SkyClerik
                 yield break;
             }
 
-            // Выдаем предметы
-            foreach (var itemDef in ItemDataStorageSO.Items)
+            // Выдаем предметы одной командой, используя новую "умную" логику контейнера
+            var unplacedItems = playerContainer.AddClonedItems(ItemDataStorageSO.Items);
+
+            if (unplacedItems.Count > 0)
             {
-                if (itemDef != null)
-                    playerContainer.AddItemAsClone(itemDef);
+                Debug.LogWarning($"Не удалось выдать {unplacedItems.Count} стартовых предметов. Не хватило места в инвентаре. Невместившиеся предметы будут уничтожены.");
+                foreach(var item in unplacedItems)
+                {
+                    Destroy(item);
+                }
             }
 
-            Debug.Log("Стартовые предметы успешно переданы в контейнер игрока.", this);
+            Debug.Log("Выдача стартовых предметов завершена.", this);
             Next();
         }
 

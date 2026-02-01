@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
@@ -47,6 +48,8 @@ namespace SkyClerik.Inventory
         private void OnDestroy()
         {
             ServiceProvider.Unregister(this);
+            _inventoryPage?.Dispose();
+            _craftPage?.Dispose();
         }
 
         protected void Start()
@@ -142,22 +145,29 @@ namespace SkyClerik.Inventory
         public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2Int gridPosition)
         {
             var itemToMove = draggedItem.ItemDefinition;
-            //Debug.Log($"[DIAGNOSTIC] TransferItemBetweenContainers: Moving '{itemToMove.name}'. Source is '{sourceInventory.GetType().Name}', Target is '{targetInventory.GetType().Name}'.");
-
             var sourceContainer = (sourceInventory as GridPageElementBase)?.ItemContainer;
             var targetContainer = (targetInventory as GridPageElementBase)?.ItemContainer;
 
             if (sourceContainer == null || targetContainer == null)
             {
-                Debug.LogError("Could not find containers for transfer!");
+                Debug.LogError("Не удалось найти контейнеры для перемещения предмета!");
                 return;
             }
 
-            sourceContainer.RemoveItem(itemToMove, destroy: false);
-            targetContainer.AddItemReference(itemToMove);
-            itemToMove.GridPosition = gridPosition;
+            // 1. Удаляем предмет из исходного контейнера (это вызовет OnItemRemoved в UI)
+            sourceContainer.RemoveItem(itemToMove, destroy: false); 
 
-            targetInventory.Drop(draggedItem, gridPosition);
+            // 2. Пытаемся добавить предмет в целевой контейнер на указанную позицию
+            // Это вызовет OnItemAdded в UI, если успешно
+            bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, gridPosition);
+
+            if (!addedToTarget)
+            {
+                Debug.LogWarning($"Не удалось переместить предмет '{itemToMove.name}' в целевой контейнер на позицию {gridPosition}. Возвращаем в исходный контейнер.");
+                // Если не удалось добавить в целевой, возвращаем предмет в исходный контейнер
+                // Это может вызвать OnItemAdded в UI исходного контейнера, ItemContainer сам найдет место
+                sourceContainer.AddItems(new List<ItemBaseDefinition>{ itemToMove }); 
+            }
         }
 
         public void StartTooltipDelay(ItemVisual itemVisual)

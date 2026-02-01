@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using SkyClerik.CraftingSystem;
 using UnityEngine.Toolbox;
+using System.Collections.Generic;
+using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
 {
@@ -41,53 +43,28 @@ namespace SkyClerik.Inventory
                 return;
             }
 
-            // Собираем все предметы, которые сейчас лежат в сетке крафта
-            var itemsInGridDefinitions = _placedItemsGridData.Keys.Select(visual => visual.ItemDefinition).ToList();
+            // 1. Собираем все предметы, которые сейчас лежат в контейнере крафта
+            var ingredients = _itemContainer.GetItems().ToList();
 
-            if (craftSystem.TryFindRecipe(itemsInGridDefinitions, out var foundRecipe))
+            if (craftSystem.TryFindRecipe(ingredients, out var foundRecipe))
             {
                 Debug.Log($"Найден рецепт! Результат: {foundRecipe.Result.Item.DefinitionName}");
 
-                // 1. Уничтожаем визуальные элементы ингредиентов и освобождаем ячейки
-                var currentItemsInGrid = _placedItemsGridData.ToList();
-                foreach (var entry in currentItemsInGrid)
-                {
-
-                    OccupyGridCells(entry.Value, false);
-                    entry.Key.RemoveFromHierarchy();
-                }
-                _placedItemsGridData.Clear();
+                // 2. Очищаем контейнер крафта. Это удалит все ингредиенты из данных и вызовет событие для UI.
                 _itemContainer.Clear();
 
-                // 2. Создаем результирующий предмет
-                var resultItem = _itemContainer.AddItemAsClone(foundRecipe.Result.Item);
-                resultItem.Stack = foundRecipe.Result.Quantity;
+                // 3. Создаем результирующий предмет как экземпляр
+                var resultItemInstance = UnityEngine.Object.Instantiate(foundRecipe.Result.Item);
+                resultItemInstance.Stack = foundRecipe.Result.Quantity;
 
-                if (resultItem != null)
+                // 4. Добавляем результат в контейнер. Он сам найдет место и вызовет событие для отрисовки.
+                var unplaced = _itemContainer.AddItems(new List<ItemBaseDefinition> { resultItemInstance });
+
+                if (unplaced.Any())
                 {
-                    // 3. Пытаемся разместить результат в сетке
-                    if (TryFindPlacement(resultItem, out Vector2Int gridPosition))
-                    {
-                        ItemGridData newGridData = new ItemGridData(resultItem, gridPosition);
-                        ItemVisual resultVisual = new ItemVisual(
-                            itemsPage: _itemsPage,
-                            ownerInventory: this,
-                            itemDefinition: resultItem,
-                            gridPosition: gridPosition,
-                            gridSize: newGridData.GridSize);
-
-                        _placedItemsGridData.Add(resultVisual, newGridData);
-
-                        resultVisual.UpdatePcs();
-
-                        AddItemToInventoryGrid(resultVisual);
-
-                        resultVisual.SetPosition(new Vector2(gridPosition.x * _cellSize.width, gridPosition.y * _cellSize.height));
-                    }
-                    else
-                    {
-                        Debug.LogError("В сетке крафта нет места для результата! Хотя такого не может быть при правильной логике рецептов.");
-                    }
+                    Debug.LogError("В сетке крафта нет места для результата! Результат уничтожен.");
+                    // Уничтожаем экземпляр, если он не поместился
+                    UnityEngine.Object.Destroy(unplaced.First());
                 }
             }
             else
