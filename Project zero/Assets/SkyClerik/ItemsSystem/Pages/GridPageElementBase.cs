@@ -29,6 +29,7 @@ namespace SkyClerik.Inventory
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
         public LogicalGridVisualizer LogicalGridVisualizer; // Добавляем новое поле
+        private readonly float _gridHoverSnapToBoundaryPixels = 20f; // Размер буферной зоны в пикселях для "притягивания" курсора к границам
 
         // --- Свойства IDropTarget и прочие ---
         public UIDocument GetDocument => _document;
@@ -315,19 +316,34 @@ string rootID)
 
         protected Vector2Int CalculateCurrentHoverGridPosition()
         {
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemsPage.MouseUILocalPosition = {_itemsPage.MouseUILocalPosition}");
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: mouseLocalPosition (relative to _inventoryGrid) = {mouseLocalPosition}");
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: CellSize = {CellSize}");
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridDimensions = {_itemContainer.GridDimensions}");
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridWorldRect = {_itemContainer.GridWorldRect}");
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _inventoryGrid.resolvedStyle.width = {_inventoryGrid.resolvedStyle.width}, _inventoryGrid.resolvedStyle.height = {_inventoryGrid.resolvedStyle.height}");
 
-            int gridX = Mathf.FloorToInt(mouseLocalPosition.x / CellSize.x);
-            int gridY = Mathf.FloorToInt(mouseLocalPosition.y / CellSize.y);
-            
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: Calculated gridX = {gridX}, gridY = {gridY}. Expected range: 0-{_itemContainer.GridDimensions.x -1}, 0-{_itemContainer.GridDimensions.y -1}");
+            float adjustedX = mouseLocalPosition.x;
+            float adjustedY = mouseLocalPosition.y;
 
+            // Если курсор чуть-чуть слева от сетки (в буферной зоне), притягиваем его к 0
+            if (adjustedX < 0 && adjustedX > -_gridHoverSnapToBoundaryPixels)        
+            {
+                adjustedX = 0;
+            }
+            // Если курсор чуть-чуть справа от сетки, притягиваем его к краю
+            else if (adjustedX > _inventoryGrid.localBound.width && adjustedX < _inventoryGrid.localBound.width + _gridHoverSnapToBoundaryPixels)
+            {
+                adjustedX = _inventoryGrid.localBound.width;
+            }
+
+            // Аналогично для Y
+            if (adjustedY < 0 && adjustedY > -_gridHoverSnapToBoundaryPixels)        
+            {
+                adjustedY = 0;
+            }
+            else if (adjustedY > _inventoryGrid.localBound.height && adjustedY < _inventoryGrid.localBound.height + _gridHoverSnapToBoundaryPixels)
+            {
+                adjustedY = _inventoryGrid.localBound.height;
+            }
+
+            int gridX = Mathf.FloorToInt(adjustedX / CellSize.x);
+            int gridY = Mathf.FloorToInt(adjustedY / CellSize.y);
             return new Vector2Int(gridX, gridY);
         }
 
