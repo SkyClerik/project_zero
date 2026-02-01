@@ -289,7 +289,7 @@ string rootID)
             if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize) && _placementResults.Conflict == ReasonConflict.None)
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
-                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Переопределен Conflict: beyondTheGridBoundary, так как IsGridAreaFree вернул false", _coroutineRunner);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Предмет '{draggedItem.ItemDefinition.name}' находится за пределами сетки. Позиция: {currentHoverGridPosition}, Размер: {itemGridSize}", _coroutineRunner);
             }
 
             // Управление видимостью телеграфа
