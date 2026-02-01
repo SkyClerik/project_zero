@@ -26,20 +26,32 @@ namespace SkyClerik.Inventory
         [SerializeField] private string _rootPanelName;
         
         [Tooltip("Рассчитанный размер сетки инвентаря (ширина, высота). Не редактировать вручную.")]
-        [SerializeField] [ReadOnly]
-        private Vector2Int _gridDimensions;
+        [SerializeField] [ReadOnly] private Vector2Int _gridDimensions;
+        [Tooltip("Рассчитанный размер ячейки в пикселях. Не редактировать вручную.")]
+        [SerializeField] [ReadOnly] private Vector2 _cellSize;
+        [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
+        [SerializeField] [ReadOnly] private Rect _gridWorldRect;
+
         public Vector2Int GridDimensions => _gridDimensions;
+        public Vector2 CellSize => _cellSize;
+        public Rect GridWorldRect => _gridWorldRect;
 
         // --- События для UI ---
         public event Action<ItemBaseDefinition> OnItemAdded;
         public event Action<ItemBaseDefinition> OnItemRemoved;
         public event Action OnCleared;
+        public event Action OnGridOccupancyChanged; // Новое событие
 
         // --- Логика сетки ---
         private bool[,] _gridOccupancy;
+
+        public bool[,] GetGridOccupancy()
+        {
+            return _gridOccupancy;
+        }
         
 #if UNITY_EDITOR
-        [ContextMenu("Рассчитать размер сетки из UI")]
+        [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
         public void CalculateGridDimensionsFromUI()
         {
             if (_uiDocument == null || string.IsNullOrEmpty(_rootPanelName))
@@ -51,11 +63,10 @@ namespace SkyClerik.Inventory
             var root = _uiDocument.rootVisualElement;
             if (root == null)
             {
-                Debug.LogError("rootVisualElement не найден. Расчет невозможен.", this);
+                Debug.LogError("rootVisualElement не найден. Убедитесь, что UIDocument активен и его панель видима.", this);
                 return;
             }
 
-            // Откладываем выполнение на 1 кадр редактора, чтобы получить актуальные размеры
             root.schedule.Execute(() =>
             {
                 var rootPanel = root.Q<VisualElement>(_rootPanelName);
@@ -79,28 +90,47 @@ namespace SkyClerik.Inventory
                 }
 
                 var firstCell = inventoryGrid.ElementAt(0);
-                var cellSize = firstCell.resolvedStyle; // Теперь resolvedStyle будет доступен
+                var calculatedCellSize = new Vector2(firstCell.resolvedStyle.width, firstCell.resolvedStyle.height);
 
-                if (cellSize.width > 0 && cellSize.height > 0)
+                if (calculatedCellSize.x > 0 && calculatedCellSize.y > 0)
                 {
                     var gridStyle = inventoryGrid.resolvedStyle;
-                    int widthCount = Mathf.RoundToInt(gridStyle.width / cellSize.width);
-                    int heightCount = Mathf.RoundToInt(gridStyle.height / cellSize.height);
+                    int widthCount = Mathf.RoundToInt(gridStyle.width / calculatedCellSize.x);
+                    int heightCount = Mathf.RoundToInt(gridStyle.height / calculatedCellSize.y);
 
+                    bool changed = false;
                     if (_gridDimensions.x != widthCount || _gridDimensions.y != heightCount)
                     {
                         _gridDimensions = new Vector2Int(widthCount, heightCount);
+                        changed = true;
+                    }
+                    if (_cellSize != calculatedCellSize)
+                    {
+                        _cellSize = calculatedCellSize;
+                        changed = true;
+                    }
+                    if (_gridWorldRect != inventoryGrid.worldBound)
+                    {
+                        _gridWorldRect = inventoryGrid.worldBound;
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
                         EditorUtility.SetDirty(this);
-                        Debug.Log($"Размер сетки для '{name}' успешно рассчитан: {widthCount}x{heightCount}", this);
+                        Debug.Log($"Параметры сетки для '{name}' успешно рассчитаны:\n" +
+                                  $"- Размеры в ячейках: {widthCount}x{heightCount}\n" +
+                                  $"- Размер ячейки (px): {_cellSize.x}x{_cellSize.y}\n" +
+                                  $"- Позиция и размер сетки (world): {_gridWorldRect}", this);
                     }
                     else
                     {
-                        Debug.Log($"Размер сетки для '{name}' уже актуален: {widthCount}x{heightCount}.", this);
+                        Debug.Log($"Параметры сетки для '{name}' уже актуальны.", this);
                     }
                 }
                 else
                 {
-                    Debug.LogWarning($"Не удалось рассчитать размер сетки для '{name}'. Размер ячейки равен нулю.", this);
+                    Debug.LogWarning($"Не удалось рассчитать параметры сетки для '{name}'. Размер ячейки равен нулю. Убедитесь, что UI отрисован и виден.", this);
                 }
 
             }).ExecuteLater(1);
@@ -118,6 +148,7 @@ namespace SkyClerik.Inventory
             _itemDataStorageSO.ValidateGuid();
 
             _gridOccupancy = new bool[_gridDimensions.x, _gridDimensions.y];
+            Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
             // Контейнер теперь инициализируется пустым. Предметы добавляются через AddItems/AddClonedItems
         }
                 
@@ -195,17 +226,25 @@ namespace SkyClerik.Inventory
 
         public bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
         {
-            if (item == null) return false;
+            Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.CurrentWidth}x{item.Dimensions.CurrentHeight}) на позицию {gridPosition}.", this);
+            if (item == null)
+            {
+                Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Предмет равен null.", this);
+                return false;
+            }
             Vector2Int itemGridSize = new Vector2Int(item.Dimensions.CurrentWidth, item.Dimensions.CurrentHeight);
 
+            Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
             if (IsGridAreaFree(gridPosition, itemGridSize))
             {
+                Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
                 item.GridPosition = gridPosition;
                 OccupyGridCells(item, true);
                 _itemDataStorageSO.Items.Add(item);
                 OnItemAdded?.Invoke(item);
                 return true;
             }
+            Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Область занята или выходит за границы.", this);
             return false;
         }
 
@@ -264,21 +303,28 @@ namespace SkyClerik.Inventory
                         _gridOccupancy[gridX, gridY] = occupy;
                 }
             }
+            OnGridOccupancyChanged?.Invoke(); // Вызываем событие после изменения
         }
 
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
         {
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
-                return false;
+            {
+                Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
+                return false; // Out of bounds
+            }
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
                 {
                     if (_gridOccupancy[start.x + x, start.y + y])
-                        return false;
+                    {
+                        Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
+                        return false; // Occupied
+                    }
                 }
             }
-            return true;
+            return true; // All clear
         }
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)

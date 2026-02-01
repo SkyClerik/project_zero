@@ -14,7 +14,7 @@ namespace SkyClerik.Inventory
     {
         // Словарь для хранения связей между визуальными элементами и их логическими данными
         protected Dictionary<ItemVisual, ItemGridData> _visuals = new Dictionary<ItemVisual, ItemGridData>();
-        protected Rect _cellSize;
+        protected Rect _gridRect;
 
         // Зависимости
         protected UIDocument _document;
@@ -28,11 +28,12 @@ namespace SkyClerik.Inventory
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
+        protected LogicalGridVisualizer _logicalGridVisualizer; // Добавляем новое поле
 
         // --- Свойства IDropTarget и прочие ---
         public UIDocument GetDocument => _document;
         public ItemContainer ItemContainer => _itemContainer;
-        public Vector2 CellSize => new Vector2(_cellSize.width, _cellSize.height);
+        public Vector2 CellSize => _itemContainer.CellSize; // Теперь берем из ItemContainer
         public VisualElement Root => _root;
         public Telegraph Telegraph => _telegraph;
 
@@ -52,89 +53,111 @@ string rootID)
         }
 
         // --- Инициализация и подписка на события ---
-        protected IEnumerator Initialize()
-        {
-            yield return _coroutineRunner.StartCoroutine(Configure());
-            yield return new WaitForEndOfFrame();
-            CalculateCellSize();
+                protected IEnumerator Initialize()
+                {
+                    Configure();
+                    yield return new WaitForEndOfFrame();
+                    CalculateCellSize();
+                    CreateGridBoundaryVisualizer(); // Возвращаем создание визуального отладчика
 
-            SubscribeToContainerEvents();
+            // Мой хороший, здесь мы инициализируем наш новый визуализатор
+            _logicalGridVisualizer = new LogicalGridVisualizer();
+            _logicalGridVisualizer.Init(_itemContainer);
+            _document.rootVisualElement.Add(_logicalGridVisualizer); // Добавляем его к корневому элементу UI
 
-            // Загружаем визуальные элементы для предметов, которые уже есть в контейнере
-            LoadInitialVisuals();
-        }
-
-        protected virtual void SubscribeToContainerEvents()
-        {
-            if (_itemContainer == null) return;
-            _itemContainer.OnItemAdded += HandleItemAdded;
-            _itemContainer.OnItemRemoved += HandleItemRemoved;
-            _itemContainer.OnCleared += HandleContainerCleared;
-        }
-
-        protected virtual void UnsubscribeFromContainerEvents()
-        {
-            if (_itemContainer == null) return;
-            _itemContainer.OnItemAdded -= HandleItemAdded;
-            _itemContainer.OnItemRemoved -= HandleItemRemoved;
-            _itemContainer.OnCleared -= HandleContainerCleared;
-        }
-
-        protected IEnumerator Configure()
-        {
-            _telegraph = new Telegraph();
-            // Возвращаем логику, так как Telegraph должен быть частью UI
-            AddItemToInventoryGrid(_telegraph);
-            yield break;
-        }
-
-        // --- Обработчики событий от ItemContainer ---
-
-        private void HandleItemAdded(ItemBaseDefinition item)
-        {
-            var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
-            if (existingVisual != null)
-            {
-                existingVisual.UpdatePcs();
-                // Обновляем позицию, если она изменилась (важно для MoveItem)
-                existingVisual.SetPosition(new Vector2(item.GridPosition.x * _cellSize.width, item.GridPosition.y * _cellSize.height));
-                _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
-            }
-            else
-            {
-                CreateVisualForItem(item);
-            }
-        }
-
-        private void HandleItemRemoved(ItemBaseDefinition item)
-        {
-            var visualToRemove = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
-            if (visualToRemove != null)
-            {
-                UnregisterVisual(visualToRemove);
-                visualToRemove.RemoveFromHierarchy();
-            }
-        }
-
-        private void HandleContainerCleared()
-        {
-            foreach (var visual in _visuals.Keys.ToList())
-            {
-                visual.RemoveFromHierarchy();
-            }
-            _visuals.Clear();
-        }
-
-        // --- Логика UI ---
-
-        private void LoadInitialVisuals()
-        {
-            foreach (var item in _itemContainer.GetItems())
-            {
-                CreateVisualForItem(item);
-            }
-        }
-
+        
+                    SubscribeToContainerEvents();
+                    
+                    LoadInitialVisuals();
+                }
+        
+                protected virtual void SubscribeToContainerEvents()
+                {
+                    if (_itemContainer == null) return;
+                    _itemContainer.OnItemAdded += HandleItemAdded;
+                    _itemContainer.OnItemRemoved += HandleItemRemoved;
+                    _itemContainer.OnCleared += HandleContainerCleared;
+                }
+        
+                protected virtual void UnsubscribeFromContainerEvents()
+                {
+                    if (_itemContainer == null) return;
+                    _itemContainer.OnItemAdded -= HandleItemAdded;
+                    _itemContainer.OnItemRemoved -= HandleItemRemoved;
+                    _itemContainer.OnCleared -= HandleContainerCleared;
+                }
+        
+                protected void Configure()
+                {
+                    _telegraph = new Telegraph();
+                    AddItemToInventoryGrid(_telegraph);
+                }
+        
+                // --- Обработчики событий от ItemContainer ---
+        
+                private void HandleItemAdded(ItemBaseDefinition item)
+                {
+                    var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
+                    if (existingVisual != null)
+                    {
+                        existingVisual.UpdatePcs();
+                        existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
+                        _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
+                    }
+                    else
+                    {
+                        CreateVisualForItem(item);
+                    }
+                }
+        
+                private void HandleItemRemoved(ItemBaseDefinition item)
+                {
+                    var visualToRemove = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
+                    if (visualToRemove != null)
+                    {
+                        UnregisterVisual(visualToRemove);
+                        visualToRemove.RemoveFromHierarchy();
+                    }
+                }
+        
+                private void HandleContainerCleared()
+                {
+                    foreach (var visual in _visuals.Keys.ToList())
+                    {
+                        visual.RemoveFromHierarchy();
+                    }
+                    _visuals.Clear();
+                }
+                
+                private void CreateGridBoundaryVisualizer()
+                {
+                    if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
+        
+                    // Используем данные из ItemContainer для позиционирования
+                    var _gridRect = _itemContainer.GridWorldRect; // Берем готовую мировую позицию сетки
+        
+                    var test1 = new VisualElement();
+                    test1.name = "test1";
+                    test1.style.width = _gridRect.width;
+                    test1.style.height = _gridRect.height;
+                    test1.style.left = _gridRect.x;
+                    test1.style.top = _gridRect.y;
+                    test1.SetBorderColor(Color.blue);
+                    test1.SetBorderWidth(5);
+                    test1.style.position = Position.Absolute;
+                    test1.pickingMode = PickingMode.Ignore;
+                    _document.rootVisualElement.Add(test1);
+                }
+                
+                // --- Логика UI ---
+                
+                private void LoadInitialVisuals()
+                {
+                    foreach(var item in _itemContainer.GetItems())
+                    {
+                        CreateVisualForItem(item);
+                    }
+                }
         private void CreateVisualForItem(ItemBaseDefinition item)
         {
             var newGridData = new ItemGridData(item, item.GridPosition);
@@ -143,25 +166,21 @@ string rootID)
                 ownerInventory: this,
                 itemDefinition: item,
                 gridPosition: item.GridPosition,
-                gridSize: new Vector2Int(item.Dimensions.CurrentWidth, item.Dimensions.CurrentHeight));
+                gridSize: new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight));
 
             RegisterVisual(newItemVisual, newGridData);
             AddItemToInventoryGrid(newItemVisual);
-            newItemVisual.SetPosition(new Vector2(item.GridPosition.x * _cellSize.width, item.GridPosition.y *
-_cellSize.height));
+            newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
         }
 
         protected virtual void CalculateCellSize()
         {
-            if (_itemContainer.GridDimensions.x > 0 && _itemContainer.GridDimensions.y > 0)
+            // Теперь берем размер ячейки из ItemContainer, который уже рассчитан
+            // и имеет приоритет над UI.
+            if (CellSize.x <= 0 || CellSize.y <= 0)
             {
-                _cellSize.width = _inventoryGrid.resolvedStyle.width / _itemContainer.GridDimensions.x;
-                _cellSize.height = _inventoryGrid.resolvedStyle.height / _itemContainer.GridDimensions.y;
+                Debug.LogWarning($"Размер ячейки в ItemContainer не рассчитан или равен нулю для '{_root.name}'. Возможно, CalculateGridDimensionsFromUI не был вызван.", _coroutineRunner);
             }
-            else
-            {
-                Debug.LogWarning($"Не удалось рассчитать размер ячейки для '{_root.name}', т.к. размеры сетки в ItemContainer не заданы.", _coroutineRunner);
-               }
         }
 
         public void AddItemToInventoryGrid(VisualElement item)
@@ -208,6 +227,12 @@ _cellSize.height));
 
         public virtual PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
+            // Если корневой элемент скрыт или неактивен, считать его недоступным
+            if (!_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
+            {
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
+            }
+            
             Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
             Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.CurrentHeight);
             _placementResults = new PlacementResults();
@@ -254,16 +279,16 @@ _placementResults.Conflict == ReasonConflict.None)
             }
             else
             {
-                var pos = new Vector2(_placementResults.SuggestedGridPosition.x * _cellSize.width,
-_placementResults.SuggestedGridPosition.y * _cellSize.height);
+                var pos = new Vector2(_placementResults.SuggestedGridPosition.x * CellSize.x,
+_placementResults.SuggestedGridPosition.y * CellSize.y);
                 _telegraph.SetPosition(pos);
-                _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * _cellSize.width,
-itemGridSize.y * _cellSize.height);
+                _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x,
+itemGridSize.y * CellSize.y);
             }
 
             return _placementResults.Init(conflict: _placementResults.Conflict,
                                           position: new Vector2(_placementResults.SuggestedGridPosition.x *
-_cellSize.width, _placementResults.SuggestedGridPosition.y * _cellSize.height),
+CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y),
                                           suggestedGridPosition: _placementResults.SuggestedGridPosition,
                                           overlapItem: _placementResults.OverlapItem,
                                           targetInventory: this);
@@ -271,9 +296,19 @@ _cellSize.width, _placementResults.SuggestedGridPosition.y * _cellSize.height),
 
         protected Vector2Int CalculateCurrentHoverGridPosition()
         {
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemsPage.MouseUILocalPosition = {_itemsPage.MouseUILocalPosition}");
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
-            int gridX = Mathf.FloorToInt(mouseLocalPosition.x / _cellSize.width);
-            int gridY = Mathf.FloorToInt(mouseLocalPosition.y / _cellSize.height);
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: mouseLocalPosition (relative to _inventoryGrid) = {mouseLocalPosition}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: CellSize = {CellSize}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridDimensions = {_itemContainer.GridDimensions}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _itemContainer.GridWorldRect = {_itemContainer.GridWorldRect}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: _inventoryGrid.resolvedStyle.width = {_inventoryGrid.resolvedStyle.width}, _inventoryGrid.resolvedStyle.height = {_inventoryGrid.resolvedStyle.height}");
+
+            int gridX = Mathf.FloorToInt(mouseLocalPosition.x / CellSize.x);
+            int gridY = Mathf.FloorToInt(mouseLocalPosition.y / CellSize.y);
+            
+            Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: Calculated gridX = {gridX}, gridY = {gridY}");
+
             return new Vector2Int(gridX, gridY);
         }
 
@@ -315,7 +350,10 @@ gridData.GridSize.x, gridData.GridSize.y);
         {
             var itemDef = GetItemDefinition(storedItem);
             if (itemDef != null)
+            {
+                Debug.Log($"[GridPageElementBase:{_root.name}] PickUp: Освобождаем ячейки для предмета '{itemDef.name}' с GridPosition = {itemDef.GridPosition}", _coroutineRunner);
                 _itemContainer.OccupyGridCells(itemDef, false);
+            }
             ItemsPage.CurrentDraggedItem = storedItem;
             storedItem.SetOwnerInventory(this);
         }

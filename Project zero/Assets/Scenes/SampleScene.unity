@@ -152,6 +152,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemDataStorageSO: {fileID: 11400000, guid: ce8e26771577a8a44b52578ecf895127, type: 2}
+  _uiDocument: {fileID: 0}
+  _rootPanelName: 
+  _gridDimensions: {x: 5, y: 5}
+  _cellSize: {x: 0, y: 0}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _nextStep: {fileID: 1689564146}
 --- !u!4 &138080786
 Transform:
@@ -389,6 +399,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemDataStorageSO: {fileID: 11400000, guid: 2827add769d20904eadf88f6dbe78bcd, type: 2}
+  _uiDocument: {fileID: 627866737}
+  _rootPanelName: craft_root
+  _gridDimensions: {x: 3, y: 4}
+  _cellSize: {x: 128, y: 128}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 1642.6666
+    y: 416
+    width: 384
+    height: 512
 --- !u!114 &627866743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,6 +422,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemDataStorageSO: {fileID: 11400000, guid: 597b1778d5825124dad19d8e6353cf28, type: 2}
+  _uiDocument: {fileID: 627866737}
+  _rootPanelName: inventory_root
+  _gridDimensions: {x: 7, y: 8}
+  _cellSize: {x: 128, y: 127.999985}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 286.66666
+    y: 226.66667
+    width: 896
+    height: 1023.99994
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
