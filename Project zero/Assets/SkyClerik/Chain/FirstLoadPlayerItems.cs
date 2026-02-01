@@ -1,6 +1,7 @@
 using SkyClerik.Inventory;
 using SkyClerik.Utils;
 using UnityEngine;
+using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik
@@ -22,24 +23,24 @@ namespace SkyClerik
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager == null)
             {
-                //Debug.LogError("FirstLoadPlayerItems: GameStateManager не найден в ServiceProvider!", this);
+                //Debug.LogError("FirstLoadPlayerItems: GameStateManager    ServiceProvider!", this);
                 Next();
                 return;
             }
 
             if (gameStateManager.GlobalGameState.IsNewGame)
             {
-                //Debug.Log("FirstLoadPlayerItems: Пропускаем шаг, так как это новая игра.");
+                //Debug.Log("FirstLoadPlayerItems:  ,     .");
                 Next();
                 return;
             }
 
-            //Debug.Log("FirstLoadPlayerItems: Начало загрузки предметов для игрока...");
+            //Debug.Log("FirstLoadPlayerItems:     ...");
 
             var itemsPage = ServiceProvider.Get<ItemsPage>();
             if (itemsPage == null)
             {
-                //Debug.LogError("FirstLoadPlayerItems: ItemsPage не найден в ServiceProvider! Невозможно определи контейнеры для загрузки.", this);
+                //Debug.LogError("FirstLoadPlayerItems: ItemsPage    ServiceProvider!     .", this);
 
                 Next();
                 return;
@@ -53,7 +54,7 @@ namespace SkyClerik
 
             gameStateManager.LoadService.LoadAll(gameStateManager.GlobalGameState, containersToLoad);
 
-            //Debug.Log("FirstLoadPlayerItems: Загрузка предметов завершена.");
+            //Debug.Log("FirstLoadPlayerItems:   .");
             Next();
         }
 

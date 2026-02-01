@@ -30,7 +30,7 @@ namespace UnityEngine.DataEditor
 
         [SerializeField]
         [Tooltip("Иконка для отображения в инвентаре, меню навыков и т.д.")]
-        [DrawWithIconField]
+        [JsonIgnore]
         private Sprite _icon;
 
         /// <summary>
