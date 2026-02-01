@@ -172,7 +172,7 @@ namespace SkyClerik.Inventory
             if (!remainingItems.Any()) return new List<ItemBaseDefinition>();
 
             var sortedItems = remainingItems.OrderByDescending(item =>
-                item.Dimensions.CurrentWidth * item.Dimensions.CurrentHeight).ToList();
+                item.Dimensions.DefaultWidth * item.Dimensions.DefaultHeight).ToList();
 
             List<ItemBaseDefinition> unplacedItems = new List<ItemBaseDefinition>();
 
@@ -292,7 +292,7 @@ namespace SkyClerik.Inventory
 
         public void OccupyGridCells(ItemBaseDefinition item, bool occupy)
         {
-            var size = new Vector2Int(item.Dimensions.CurrentWidth, item.Dimensions.CurrentHeight);
+            var size = new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight);
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
@@ -329,7 +329,7 @@ namespace SkyClerik.Inventory
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
-            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.CurrentWidth, item.Dimensions.CurrentHeight);
+            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight);
             for (int y = 0; y <= _gridDimensions.y - itemGridSize.y; y++)
             {
                 for (int x = 0; x <= _gridDimensions.x - itemGridSize.x; x++)
