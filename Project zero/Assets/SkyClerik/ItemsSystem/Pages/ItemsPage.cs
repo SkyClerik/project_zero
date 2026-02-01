@@ -103,17 +103,13 @@ namespace SkyClerik.Inventory
         {
             //Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
-            // Если инвентарь не смог предложить место для размещения (конфликт типа "intersectsObjects" или "beyondTheGridBoundary")
-            // тогда проверяем крафт.
-            // Если же инвентарь предложил "None", "StackAvailable" или "SwapAvailable", то он "активен".
+
             if (resultsPage.Conflict == ReasonConflict.None || resultsPage.Conflict == ReasonConflict.StackAvailable || resultsPage.Conflict == ReasonConflict.SwapAvailable)
             {
                 //Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
                 _craftPage.Telegraph.Hide();
                 return resultsPage.Init(resultsPage.Conflict, resultsPage.Position, resultsPage.SuggestedGridPosition, resultsPage.OverlapItem, _inventoryPage);
             }
-
-            //Debug.Log($"[ЛОГ] Страница инвентаря не подходит. Проверяю страницу крафта ({_craftPage.Root.name}).");
 
             if (!_craftAccessible)
             {
@@ -160,8 +156,7 @@ namespace SkyClerik.Inventory
             // 1. Удаляем предмет из исходного контейнера (это вызовет OnItemRemoved в UI)
             sourceContainer.RemoveItem(itemToMove, destroy: false); 
 
-            // 2. Пытаемся добавить предмет в целевой контейнер на указанную позицию
-            // Это вызовет OnItemAdded в UI, если успешно
+            // 2. Пытаемся добавить предмет в целевой контейнер на указанную позицию Это вызовет OnItemAdded в UI, если успешно
             bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, gridPosition);
 
             if (!addedToTarget)
@@ -217,7 +212,7 @@ namespace SkyClerik.Inventory
             _inventoryPage.Root.SetEnabled(true);
             _document.rootVisualElement.SetVisibility(true);
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
-            _inventoryPage.SetLogicalGridVisualizerActive(false); // Отключаем для инвентаря
+            _inventoryPage.SetLogicalGridVisualizerActive(false);
         }
 
         public void CloseInventory()
@@ -226,7 +221,7 @@ namespace SkyClerik.Inventory
             _inventoryPage.Root.SetEnabled(false);
             _document.rootVisualElement.SetVisibility(false);
             _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
-            _inventoryPage.SetLogicalGridVisualizerActive(false); // Отключаем для инвентаря при закрытии
+            _inventoryPage.SetLogicalGridVisualizerActive(false);
         }
 
         public void OpenCraft()
@@ -236,7 +231,7 @@ namespace SkyClerik.Inventory
             {
                 _craftPage.Root.SetVisibility(true);
                 _craftPage.Root.SetEnabled(true);
-                _craftPage.SetLogicalGridVisualizerActive(true); // Включаем для крафта
+                _craftPage.SetLogicalGridVisualizerActive(false);
             }
         }
 
@@ -244,7 +239,7 @@ namespace SkyClerik.Inventory
         {
             _craftPage.Root.SetVisibility(false);
             _craftPage.Root.SetEnabled(false);
-            _craftPage.SetLogicalGridVisualizerActive(false); // Отключаем для крафта
+            _craftPage.SetLogicalGridVisualizerActive(false);
         }
 
         public void TriggerItemGiveEvent(ItemBaseDefinition item)

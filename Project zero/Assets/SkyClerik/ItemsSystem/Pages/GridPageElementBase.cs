@@ -28,13 +28,13 @@ namespace SkyClerik.Inventory
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
-        public LogicalGridVisualizer LogicalGridVisualizer; // Добавляем новое поле
-        private readonly float _gridHoverSnapToBoundaryPixels = 20f; // Размер буферной зоны в пикселях для "притягивания" курсора к границам
+        public LogicalGridVisualizer LogicalGridVisualizer;
+        private readonly float _gridHoverSnapToBoundaryPixels = 64f;
 
         // --- Свойства IDropTarget и прочие ---
         public UIDocument GetDocument => _document;
         public ItemContainer ItemContainer => _itemContainer;
-        public Vector2 CellSize => _itemContainer.CellSize; // Теперь берем из ItemContainer
+        public Vector2 CellSize => _itemContainer.CellSize;
         public VisualElement Root => _root;
         public Telegraph Telegraph => _telegraph;
 
@@ -54,113 +54,110 @@ string rootID)
         }
 
         // --- Инициализация и подписка на события ---
-                protected IEnumerator Initialize()
-                {
-                    Configure();
-                    yield return new WaitForEndOfFrame();
-                    CalculateCellSize();
-                    CreateGridBoundaryVisualizer(); // Возвращаем создание визуального отладчика
+        protected IEnumerator Initialize()
+        {
+            Configure();
+            yield return new WaitForEndOfFrame();
+            CreateGridBoundaryVisualizer();
 
-            // Мой хороший, здесь мы инициализируем наш новый визуализатор
             LogicalGridVisualizer = new LogicalGridVisualizer();
             LogicalGridVisualizer.Init(_itemContainer);
-            _document.rootVisualElement.Add(LogicalGridVisualizer); // Добавляем его к корневому элементу UI
+            _document.rootVisualElement.Add(LogicalGridVisualizer);
 
-        
-                    SubscribeToContainerEvents();
-                    
-                    LoadInitialVisuals();
-                }
-        
-                protected virtual void SubscribeToContainerEvents()
-                {
-                    if (_itemContainer == null) return;
-                    _itemContainer.OnItemAdded += HandleItemAdded;
-                    _itemContainer.OnItemRemoved += HandleItemRemoved;
-                    _itemContainer.OnCleared += HandleContainerCleared;
-                }
-        
-                protected virtual void UnsubscribeFromContainerEvents()
-                {
-                    if (_itemContainer == null) return;
-                    _itemContainer.OnItemAdded -= HandleItemAdded;
-                    _itemContainer.OnItemRemoved -= HandleItemRemoved;
-                    _itemContainer.OnCleared -= HandleContainerCleared;
-                }
-        
-                protected void Configure()
-                {
-                    _telegraph = new Telegraph();
-                    AddItemToInventoryGrid(_telegraph);
-                }
-        
-                // --- Обработчики событий от ItemContainer ---
-        
-                private void HandleItemAdded(ItemBaseDefinition item)
-                {
-                    var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
-                    if (existingVisual != null)
-                    {
-                        existingVisual.UpdatePcs();
-                        existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
-                        _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
-                    }
-                    else
-                    {
-                        CreateVisualForItem(item);
-                    }
-                }
-        
-                private void HandleItemRemoved(ItemBaseDefinition item)
-                {
-                    var visualToRemove = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
-                    if (visualToRemove != null)
-                    {
-                        UnregisterVisual(visualToRemove);
-                        visualToRemove.RemoveFromHierarchy();
-                    }
-                }
-        
-                private void HandleContainerCleared()
-                {
-                    foreach (var visual in _visuals.Keys.ToList())
-                    {
-                        visual.RemoveFromHierarchy();
-                    }
-                    _visuals.Clear();
-                }
-                
-                private void CreateGridBoundaryVisualizer()
-                {
-                    if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
-        
-                    // Используем данные из ItemContainer для позиционирования
-                    var _gridRect = _itemContainer.GridWorldRect; // Берем готовую мировую позицию сетки
-        
-                    Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
-        
-                    var test1 = new VisualElement();
-                    test1.name = "test1";
-                    test1.style.width = _gridRect.width;
-                    test1.style.height = _gridRect.height;
-                    test1.style.left = _gridRect.x;
-                    test1.style.top = _gridRect.y;
-                    test1.SetBorderColor(Color.blue);
-                    test1.SetBorderWidth(5);
-                    test1.style.position = Position.Absolute;
-                    test1.pickingMode = PickingMode.Ignore;
-                    _document.rootVisualElement.Add(test1);
-                }
-                
-                // --- Логика UI ---
-                
-                private void LoadInitialVisuals()
-                {
-                    foreach(var item in _itemContainer.GetItems())
-                    {
-                        CreateVisualForItem(item);
-                    }
-                }
+
+            SubscribeToContainerEvents();
+
+            LoadInitialVisuals();
+        }
+
+        protected virtual void SubscribeToContainerEvents()
+        {
+            if (_itemContainer == null) return;
+            _itemContainer.OnItemAdded += HandleItemAdded;
+            _itemContainer.OnItemRemoved += HandleItemRemoved;
+            _itemContainer.OnCleared += HandleContainerCleared;
+        }
+
+        protected virtual void UnsubscribeFromContainerEvents()
+        {
+            if (_itemContainer == null) return;
+            _itemContainer.OnItemAdded -= HandleItemAdded;
+            _itemContainer.OnItemRemoved -= HandleItemRemoved;
+            _itemContainer.OnCleared -= HandleContainerCleared;
+        }
+
+        protected void Configure()
+        {
+            _telegraph = new Telegraph();
+            AddItemToInventoryGrid(_telegraph);
+        }
+
+        // --- Обработчики событий от ItemContainer ---
+
+        private void HandleItemAdded(ItemBaseDefinition item)
+        {
+            var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
+            if (existingVisual != null)
+            {
+                existingVisual.UpdatePcs();
+                existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
+                _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
+            }
+            else
+            {
+                CreateVisualForItem(item);
+            }
+        }
+
+        private void HandleItemRemoved(ItemBaseDefinition item)
+        {
+            var visualToRemove = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
+            if (visualToRemove != null)
+            {
+                UnregisterVisual(visualToRemove);
+                visualToRemove.RemoveFromHierarchy();
+            }
+        }
+
+        private void HandleContainerCleared()
+        {
+            foreach (var visual in _visuals.Keys.ToList())
+            {
+                visual.RemoveFromHierarchy();
+            }
+            _visuals.Clear();
+        }
+
+        private void CreateGridBoundaryVisualizer()
+        {
+            if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
+
+            var _gridRect = _itemContainer.GridWorldRect;
+
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
+
+            var test1 = new VisualElement();
+            test1.name = "test1";
+            test1.style.width = _gridRect.width;
+            test1.style.height = _gridRect.height;
+            test1.style.left = _gridRect.x;
+            test1.style.top = _gridRect.y;
+            test1.SetBorderColor(Color.blue);
+            test1.SetBorderWidth(5);
+            test1.style.position = Position.Absolute;
+            test1.pickingMode = PickingMode.Ignore;
+            _document.rootVisualElement.Add(test1);
+        }
+
+        // --- Логика UI ---
+
+        private void LoadInitialVisuals()
+        {
+            foreach (var item in _itemContainer.GetItems())
+            {
+                CreateVisualForItem(item);
+            }
+        }
         private void CreateVisualForItem(ItemBaseDefinition item)
         {
             var newGridData = new ItemGridData(item, item.GridPosition);
@@ -176,16 +173,6 @@ string rootID)
             newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
         }
 
-        protected virtual void CalculateCellSize()
-        {
-            // Теперь берем размер ячейки из ItemContainer, который уже рассчитан
-            // и имеет приоритет над UI.
-            if (CellSize.x <= 0 || CellSize.y <= 0)
-            {
-                Debug.LogWarning($"Размер ячейки в ItemContainer не рассчитан или равен нулю для '{_root.name}'. Возможно, CalculateGridDimensionsFromUI не был вызван.", _coroutineRunner);
-            }
-        }
-
         public void AddItemToInventoryGrid(VisualElement item)
         {
             _inventoryGrid.Add(item);
@@ -199,7 +186,7 @@ string rootID)
             if (unplacedClones.Any())
             {
                 Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
-                   sourceLut.Items.Clear();
+                sourceLut.Items.Clear();
                 sourceLut.Items.AddRange(unplacedClones);
             }
         }
@@ -232,13 +219,12 @@ string rootID)
         {
             //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'", _coroutineRunner);
 
-            // Если корневой элемент скрыт или неактивен, считать его недоступным
             if (!_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
                 //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Корневой элемент скрыт или неактивен. Conflict: beyondTheGridBoundary", _coroutineRunner);
                 return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
-            
+
             Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
             Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.DefaultHeight);
             _placementResults = new PlacementResults();
@@ -246,7 +232,6 @@ string rootID)
 
             //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: currentHoverGridPosition = {currentHoverGridPosition}, itemGridSize = {itemGridSize}", _coroutineRunner);
 
-            // Проверяем, свободно ли место для размещения предмета
             if (_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize))
             {
                 _placementResults.Conflict = ReasonConflict.None;
@@ -264,7 +249,7 @@ string rootID)
                     bool isSameStackableType = draggedItem.ItemDefinition.Stackable &&
                                                overlapItem.ItemDefinition.Stackable &&
                                                draggedItem.ItemDefinition.DefinitionName == overlapItem.ItemDefinition.DefinitionName;
-                    
+
                     if (isSameStackableType)
                     {
                         _placementResults.Conflict = ReasonConflict.StackAvailable;
@@ -286,14 +271,12 @@ string rootID)
                 }
             }
 
-            // Дополнительная проверка на выход за границы, если IsGridAreaFree вернул true, но Conflict остался None (не должно случаться, но для безопасности)
             if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize) && _placementResults.Conflict == ReasonConflict.None)
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
                 //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Предмет '{draggedItem.ItemDefinition.name}' находится за пределами сетки. Позиция: {currentHoverGridPosition}, Размер: {itemGridSize}", _coroutineRunner);
             }
 
-            // Управление видимостью телеграфа
             if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary || _placementResults.Conflict == ReasonConflict.intersectsObjects)
             {
                 _telegraph.Hide();
@@ -321,26 +304,15 @@ string rootID)
             float adjustedX = mouseLocalPosition.x;
             float adjustedY = mouseLocalPosition.y;
 
-            // Если курсор чуть-чуть слева от сетки (в буферной зоне), притягиваем его к 0
-            if (adjustedX < 0 && adjustedX > -_gridHoverSnapToBoundaryPixels)        
-            {
+            if (adjustedX < 0 && adjustedX > -_gridHoverSnapToBoundaryPixels)
                 adjustedX = 0;
-            }
-            // Если курсор чуть-чуть справа от сетки, притягиваем его к краю
             else if (adjustedX > _inventoryGrid.localBound.width && adjustedX < _inventoryGrid.localBound.width + _gridHoverSnapToBoundaryPixels)
-            {
                 adjustedX = _inventoryGrid.localBound.width;
-            }
 
-            // Аналогично для Y
-            if (adjustedY < 0 && adjustedY > -_gridHoverSnapToBoundaryPixels)        
-            {
+            if (adjustedY < 0 && adjustedY > -_gridHoverSnapToBoundaryPixels)
                 adjustedY = 0;
-            }
             else if (adjustedY > _inventoryGrid.localBound.height && adjustedY < _inventoryGrid.localBound.height + _gridHoverSnapToBoundaryPixels)
-            {
                 adjustedY = _inventoryGrid.localBound.height;
-            }
 
             int gridX = Mathf.FloorToInt(adjustedX / CellSize.x);
             int gridY = Mathf.FloorToInt(adjustedY / CellSize.y);
@@ -348,7 +320,7 @@ string rootID)
         }
 
         protected List<ItemVisual> FindOverlappingItems(Vector2Int start, Vector2Int size, ItemVisual draggedItem)
-           {
+        {
             List<ItemVisual> overlappingItems = new List<ItemVisual>();
             RectInt targetRect = new RectInt(start.x, start.y, size.x, size.y);
 
@@ -372,19 +344,13 @@ gridData.GridSize.x, gridData.GridSize.y);
         public void SetLogicalGridVisualizerActive(bool active)
         {
             if (LogicalGridVisualizer != null)
-            {
                 LogicalGridVisualizer.IsEnabled = active;
-            }
             else
-            {
                 Debug.LogWarning($"[GridPageElementBase:{_root.name}] Попытка установить состояние LogicalGridVisualizer до его инициализации.");
-            }
         }
 
         public virtual void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            // Этот метод вызывается, когда предмет из другого инвентаря бросают сюда.
-            // Логика идентична Drop, так как это просто перемещение.
             _itemContainer.MoveItem(storedItem.ItemDefinition, gridPosition);
         }
 
@@ -407,7 +373,6 @@ gridData.GridSize.x, gridData.GridSize.y);
 
         public virtual void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            // Этот метод вызывается, когда предмет бросают в пределах этого же инвентаря.
             _itemContainer.MoveItem(storedItem.ItemDefinition, gridPosition);
         }
 

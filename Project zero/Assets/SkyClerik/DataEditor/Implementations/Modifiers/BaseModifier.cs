@@ -1,7 +1,5 @@
 using System;
 using UnityEngine.Toolbox;
-using Newtonsoft.Json;
-using SkyClerik.Inventory;
 
 namespace UnityEngine.DataEditor
 {
@@ -23,7 +21,6 @@ namespace UnityEngine.DataEditor
 
         [SerializeField]
         [Tooltip("Иконка, представляющая модификатор в UI.")]
-        [JsonConverter(typeof(SpriteJsonConverter))]
         private Sprite _icon;
 
         public string Id => _id;

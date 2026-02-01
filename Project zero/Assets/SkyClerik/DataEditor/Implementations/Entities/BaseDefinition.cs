@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using System;
-using SkyClerik.Inventory;
 
 namespace UnityEngine.DataEditor
 {
@@ -31,7 +30,6 @@ namespace UnityEngine.DataEditor
 
         [SerializeField]
         [Tooltip("Иконка для отображения в инвентаре, меню навыков и т.д.")]
-        [JsonConverter(typeof(SpriteJsonConverter))]
         [DrawWithIconField]
         private Sprite _icon;
 
@@ -73,28 +71,10 @@ namespace UnityEngine.DataEditor
         protected virtual void OnEnable()
         {
             if (string.IsNullOrEmpty(_id))
-            {
                 _id = Guid.NewGuid().ToString();
-                // TODO: Рассмотреть, следует ли раскомментировать эту строку, чтобы
-                // автоматически присваивать DefinitionName имя ассета при создании.
-                // _definitionName = name; // ScriptableObject.name
-            }
-            if (string.IsNullOrEmpty(_definitionName))
-            {
-                _definitionName = name;
-            }
-        }
 
-        /// <summary>
-        /// Устанавливает новое имя для определения.
-        /// </summary>
-        /// <param name="name">Новое имя.</param>
-        public void SetDefinitionName(string name)
-        {
-            // TODO: Рассмотреть удаление этого публичного сеттера, если DefinitionName
-            // должен быть неизменяемым после создания.
-            // Если он необходим, убедиться, что его использование контролируется.
-            _definitionName = name;
+            if (string.IsNullOrEmpty(_definitionName))
+                _definitionName = name;
         }
 
         /// <summary>

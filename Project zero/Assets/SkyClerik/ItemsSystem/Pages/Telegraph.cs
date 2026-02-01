@@ -7,7 +7,7 @@ namespace SkyClerik.Inventory
     {
         private readonly Color _validColor = new Color(0, 1, 0, 0.5f);
         private readonly Color _invalidColor = new Color(1, 0, 0, 0.5f);
-        private readonly Color _swapColor = new Color(1, 0.92f, 0.016f, 0.5f); // Желтый
+        private readonly Color _swapColor = new Color(1, 0.92f, 0.016f, 0.5f);
 
         public Telegraph()
         {

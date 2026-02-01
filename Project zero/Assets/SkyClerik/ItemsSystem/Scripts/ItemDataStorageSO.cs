@@ -62,29 +62,22 @@ namespace SkyClerik.Inventory
                 Converters = { new SpriteJsonConverter() }
             };
 
-            // Deserialize into a temporary, anonymous type to get GUID and item data separately
             var tempAnonObject = JsonConvert.DeserializeAnonymousType(json, new { ContainerGuid = "", Items = new List<object>() }, settings);
 
-            if (tempAnonObject == null) return;
+            if (tempAnonObject == null) 
+                return;
 
             _items.Clear();
             foreach (var itemJson in tempAnonObject.Items)
             {
-                // Serialize itemJson back to string to deserialize into a new instance
-                // This ensures we get a fresh object, not a reference to an existing asset
                 string individualItemJson = JsonConvert.SerializeObject(itemJson, settings);
 
-                // Use TypeNameHandling.Auto for deserializing individual items to correctly create instances of derived types
                 ItemBaseDefinition newItemDefinition = JsonConvert.DeserializeObject<ItemBaseDefinition>(individualItemJson, settings);
 
                 if (newItemDefinition != null)
-                {
                     _items.Add(newItemDefinition);
-                }
                 else
-                {
                     Debug.LogError($"Failed to deserialize ItemBaseDefinition from JSON: {individualItemJson}");
-                }
             }
             _containerGuid = tempAnonObject.ContainerGuid;
         }

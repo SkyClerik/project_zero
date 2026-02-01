@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using UnityEngine;
 using System.Collections.Generic;
 
 namespace UnityEngine.Toolbox

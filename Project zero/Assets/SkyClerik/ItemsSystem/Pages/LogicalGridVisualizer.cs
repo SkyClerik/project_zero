@@ -1,16 +1,15 @@
-using System;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.Toolbox; // Для расширения SetBorderColor, SetBorderWidth
+using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
     public class LogicalGridVisualizer : VisualElement
     {
         private ItemContainer _itemContainer;
-        private const int MIN_VISUAL_CELL_SIZE = 20;
+        private const int _minVisualCallSize = 20;
 
-        private bool _isEnabled = true; // По умолчанию включен
+        private bool _isEnabled = true;
         public bool IsEnabled
         {
             get => _isEnabled;
@@ -18,8 +17,8 @@ namespace SkyClerik.Inventory
             {
                 if (_isEnabled == value) return;
                 _isEnabled = value;
-                style.display = _isEnabled ? DisplayStyle.Flex : DisplayStyle.None; // Скрываем или показываем
-                if (_isEnabled && _itemContainer != null) UpdateVisualizer(); // Обновляем, если включили
+                style.display = _isEnabled ? DisplayStyle.Flex : DisplayStyle.None;
+                if (_isEnabled && _itemContainer != null) UpdateVisualizer();
             }
         }
 
@@ -31,7 +30,7 @@ namespace SkyClerik.Inventory
             style.width = Length.Percent(100);
             style.height = Length.Percent(100);
             style.overflow = Overflow.Hidden;
-            style.display = DisplayStyle.Flex; // Изначально показываем, если IsEnabled по умолчанию true
+            style.display = DisplayStyle.Flex;
         }
 
         public void Init(ItemContainer itemContainer)
@@ -45,19 +44,16 @@ namespace SkyClerik.Inventory
             {
                 _itemContainer.OnGridOccupancyChanged += UpdateVisualizer;
             }
-            // UpdateVisualizer(); // Этот вызов теперь происходит через сеттер IsEnabled, если _isEnabled = true
-            // Так как IsEnabled по умолчанию true, то сеттер вызовет UpdateVisualizer
-            // Если IsEnabled будет установлен в false сразу после Init, то UpdateVisualizer не будет вызван.
         }
 
         private void UpdateVisualizer()
         {
             if (!_isEnabled)
             {
-                Clear(); // Если отключен, очищаем все, чтобы не занимать ресурсы
+                Clear();
                 return;
             }
-            Clear(); // Очищаем старые квадратики
+            Clear();
             
             if (_itemContainer == null || _itemContainer.GridDimensions.x <= 0 || _itemContainer.GridDimensions.y <= 0)
             {
@@ -77,8 +73,8 @@ namespace SkyClerik.Inventory
                     cellVisual.style.position = Position.Absolute;
                     cellVisual.pickingMode = PickingMode.Ignore;
                     
-                    float actualCellWidth = Mathf.Max(cellSizePx.x, MIN_VISUAL_CELL_SIZE);
-                    float actualCellHeight = Mathf.Max(cellSizePx.y, MIN_VISUAL_CELL_SIZE);
+                    float actualCellWidth = Mathf.Max(cellSizePx.x, _minVisualCallSize);
+                    float actualCellHeight = Mathf.Max(cellSizePx.y, _minVisualCallSize);
 
                     cellVisual.style.width = actualCellWidth;
                     cellVisual.style.height = actualCellHeight;

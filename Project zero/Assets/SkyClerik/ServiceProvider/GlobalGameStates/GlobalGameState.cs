@@ -40,9 +40,9 @@ namespace SkyClerik.Utils
         {
             _currentGameState = GameState.NewGame;
             _isNewGame = true;
-            _hasSeenIntro = false; // Сбрасываем флаг вступления при новой игре
-            _playerScore = 0; // Сбрасываем счёт
-            Debug.Log("Global Game State set to New Game.");
+            _hasSeenIntro = false;
+            _playerScore = 0;
+            Debug.Log("Глобальное состояние игры установлено: Новая Игра.");
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace SkyClerik.Utils
         {
             _currentGameState = GameState.LoadGame;
             _isNewGame = false;
-            Debug.Log("Global Game State set to Load Game.");
+            Debug.Log("Глобальное состояние игры установлено: Загрузка Игры.");
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SkyClerik.Utils
         public void SetInGame()
         {
             _currentGameState = GameState.InGame;
-            Debug.Log("Global Game State set to In Game.");
+            Debug.Log("Глобальное состояние игры установлено: В Игре.");
         }
         
         /// <summary>
@@ -70,7 +70,7 @@ namespace SkyClerik.Utils
         public void SetPaused()
         {
             _currentGameState = GameState.Paused;
-            Debug.Log("Global Game State set to Paused.");
+            Debug.Log("Глобальное состояние игры установлено: Пауза.");
         }
 
         /// <summary>
@@ -79,20 +79,20 @@ namespace SkyClerik.Utils
         public void SetGameOver()
         {
             _currentGameState = GameState.GameOver;
-            Debug.Log("Global Game State set to Game Over.");
+            Debug.Log("Глобальное состояние игры установлено: Игра Окончена.");
         }
 
         // Методы для обновления других флагов
         public void SetHasSeenIntro(bool value)
         {
             _hasSeenIntro = value;
-            Debug.Log($"Has Seen Intro: {_hasSeenIntro}");
+            Debug.Log($"Просмотрено Вступление: {_hasSeenIntro}");
         }
 
         public void AddPlayerScore(int amount)
         {
             _playerScore += amount;
-            Debug.Log($"Player Score updated: {_playerScore}");
+            Debug.Log($"Счет игрока обновлен: {_playerScore}");
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace SkyClerik.Utils
         public void SetCurrentSaveSlot(int index)
         {
             _currentSaveSlotIndex = index;
-            Debug.Log($"Current save slot set to: {_currentSaveSlotIndex}");
+            Debug.Log($"Текущий слот сохранения установлен: {_currentSaveSlotIndex}");
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace SkyClerik.Utils
             _hasSeenIntro = false;
             _playerScore = 0;
             _currentSaveSlotIndex = 0;
-            Debug.Log("Global Game State reset to Main Menu defaults.");
+            Debug.Log("Глобальное состояние игры сброшено до значений Главного Меню.");
         }
     }
 }

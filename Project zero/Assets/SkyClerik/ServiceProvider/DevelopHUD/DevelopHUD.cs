@@ -100,8 +100,8 @@ namespace SkyClerik.Utils
         {
             if (_itemsPage?.InventoryPage != null && _developLut != null)
                 _itemsPage.InventoryPage.AddLoot(_developLut);
-            else
-                Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
+            //else
+            //Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
         }
 
         private void _bSave_clicked()
@@ -109,14 +109,14 @@ namespace SkyClerik.Utils
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager == null)
             {
-                Debug.LogError("GameStateManager не найден в ServiceProvider!");
+                //Debug.LogError("GameStateManager не найден в ServiceProvider!");
                 return;
             }
 
             var itemsPage = ServiceProvider.Get<ItemsPage>();
             if (itemsPage == null)
             {
-                Debug.LogError("ItemsPage не найден в ServiceProvider!");
+                //Debug.LogError("ItemsPage не найден в ServiceProvider!");
                 return;
             }
 
@@ -127,7 +127,7 @@ namespace SkyClerik.Utils
             saveService.SaveItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
             saveService.SaveItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
 
-            Debug.Log($"[DevelopHUD] Сохранение контейнеров в слот {globalState.CurrentSaveSlotIndex} завершено.");
+            //Debug.Log($"[DevelopHUD] Сохранение контейнеров в слот {globalState.CurrentSaveSlotIndex} завершено.");
         }
 
         private void _bLoad_clicked()
@@ -135,14 +135,14 @@ namespace SkyClerik.Utils
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager == null)
             {
-                Debug.LogError("GameStateManager не найден в ServiceProvider!");
+                //Debug.LogError("GameStateManager не найден в ServiceProvider!");
                 return;
             }
 
             var itemsPage = ServiceProvider.Get<ItemsPage>();
             if (itemsPage == null)
             {
-                Debug.LogError("ItemsPage не найден в ServiceProvider!");
+                //Debug.LogError("ItemsPage не найден в ServiceProvider!");
                 return;
             }
 
@@ -153,7 +153,7 @@ namespace SkyClerik.Utils
             loadService.LoadItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
             loadService.LoadItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
 
-            Debug.Log($"[DevelopHUD] Загрузка контейнеров из слота {globalState.CurrentSaveSlotIndex} завершена.");
+            //Debug.Log($"[DevelopHUD] Загрузка контейнеров из слота {globalState.CurrentSaveSlotIndex} завершена.");
         }
 
         private void _bExitGame_clicked()

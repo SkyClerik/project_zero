@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Toolbox;
 using System.Collections;
-using System.Linq;
 using SkyClerik.Inventory;
 using SkyClerik.Utils;
 
@@ -25,7 +24,7 @@ namespace SkyClerik
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager == null)
             {
-                Debug.LogError("GameStateManager не найден в ServiceProvider!", this);
+                //Debug.LogError("GameStateManager не найден в ServiceProvider!", this);
                 return;
             }
 
@@ -35,7 +34,7 @@ namespace SkyClerik
             }
             else
             {
-                Debug.Log("StartingPlayerItems: Пропускаем шаг, так как это не новая игра.");
+                //Debug.Log("StartingPlayerItems: Пропускаем шаг, так как это не новая игра.");
                 Next();
             }
         }
@@ -45,7 +44,7 @@ namespace SkyClerik
             // Сначала проверяем наличие исходных предметов
             if (ItemDataStorageSO == null || ItemDataStorageSO.Items == null || ItemDataStorageSO.Items.Count == 0)
             {
-                Debug.Log("Нет стартовых предметов для выдачи в StartingPlayerItems.", this);
+                //Debug.Log("Нет стартовых предметов для выдачи в StartingPlayerItems.", this);
                 Next();
                 yield break;
             }
@@ -68,7 +67,7 @@ namespace SkyClerik
             // Проверяем, нашли ли мы контейнер или вышло время
             if (playerContainer == null)
             {
-                Debug.LogError("Не удалось найти PlayerItemContainer через ServiceProvider в течение 5 секунд.", this);
+                //Debug.LogError("Не удалось найти PlayerItemContainer через ServiceProvider в течение 5 секунд.", this);
                 Next();
                 yield break;
             }
@@ -78,14 +77,14 @@ namespace SkyClerik
 
             if (unplacedItems.Count > 0)
             {
-                Debug.LogWarning($"Не удалось выдать {unplacedItems.Count} стартовых предметов. Не хватило места в инвентаре. Невместившиеся предметы будут уничтожены.");
+                //Debug.LogWarning($"Не удалось выдать {unplacedItems.Count} стартовых предметов. Не хватило места в инвентаре. Невместившиеся предметы будут уничтожены.");
                 foreach(var item in unplacedItems)
                 {
                     Destroy(item);
                 }
             }
 
-            Debug.Log("Выдача стартовых предметов завершена.", this);
+            //Debug.Log("Выдача стартовых предметов завершена.", this);
             Next();
         }
 

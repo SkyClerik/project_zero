@@ -73,13 +73,5 @@ namespace SkyClerik.Inventory
             }
         }
 
-        //protected override void CalculateGridRect()
-        //{
-        //    _gridRect = _inventoryGrid.worldBound;
-        //    _gridRect.width = (_cellSize.width * _inventoryDimensions.width) + (_cellSize.width / 2);
-        //    _gridRect.height = (_cellSize.height * _inventoryDimensions.height) + (_cellSize.height / 2);
-        //    _gridRect.x -= (_cellSize.width / 4);
-        //    _gridRect.y -= (_cellSize.height / 4);
-        //}
     }
 }

@@ -6,10 +6,6 @@ using UnityEngine.DataEditor;
 using UnityEngine.UIElements;
 using UnityEngine.Toolbox;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace SkyClerik.Inventory
 {
     public class ItemContainer : MonoBehaviour
@@ -24,13 +20,19 @@ namespace SkyClerik.Inventory
         [SerializeField] private UIDocument _uiDocument;
         [Tooltip("Имя корневой панели в UI документе, внутри которой находится элемент 'grid'.")]
         [SerializeField] private string _rootPanelName;
-        
+
         [Tooltip("Рассчитанный размер сетки инвентаря (ширина, высота). Не редактировать вручную.")]
-        [SerializeField] [ReadOnly] private Vector2Int _gridDimensions;
+        [SerializeField]
+        [ReadOnly]
+        [Space]
+        private Vector2Int _gridDimensions;
         [Tooltip("Рассчитанный размер ячейки в пикселях. Не редактировать вручную.")]
-        [SerializeField] [ReadOnly] private Vector2 _cellSize;
+        [SerializeField]
+        [ReadOnly]
+        [Space]
+        private Vector2 _cellSize;
         [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
-        [SerializeField] [ReadOnly] private Rect _gridWorldRect;
+        private Rect _gridWorldRect;
 
         public Vector2Int GridDimensions => _gridDimensions;
         public Vector2 CellSize => _cellSize;
@@ -40,7 +42,7 @@ namespace SkyClerik.Inventory
         public event Action<ItemBaseDefinition> OnItemAdded;
         public event Action<ItemBaseDefinition> OnItemRemoved;
         public event Action OnCleared;
-        public event Action OnGridOccupancyChanged; // Новое событие
+        public event Action OnGridOccupancyChanged;
 
         // --- Логика сетки ---
         private bool[,] _gridOccupancy;
@@ -49,7 +51,7 @@ namespace SkyClerik.Inventory
         {
             return _gridOccupancy;
         }
-        
+
 #if UNITY_EDITOR
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
         public void CalculateGridDimensionsFromUI()
@@ -59,7 +61,7 @@ namespace SkyClerik.Inventory
                 Debug.LogError("UIDocument или Root Panel Name не назначены. Расчет невозможен.", this);
                 return;
             }
-            
+
             var root = _uiDocument.rootVisualElement;
             if (root == null)
             {
@@ -82,7 +84,7 @@ namespace SkyClerik.Inventory
                     Debug.LogError($"Элемент с именем 'grid' не найден внутри '{_rootPanelName}'.", this);
                     return;
                 }
-                
+
                 if (inventoryGrid.childCount == 0)
                 {
                     Debug.LogWarning($"Сетка '{inventoryGrid.name}' не содержит дочерних элементов (ячеек). Невозможно определить размер ячейки.", this);
@@ -117,7 +119,7 @@ namespace SkyClerik.Inventory
 
                     if (changed)
                     {
-                        EditorUtility.SetDirty(this);
+                        UnityEditor.EditorUtility.SetDirty(this);
                         Debug.Log($"[ItemContainer:{name}] Параметры сетки для '{_rootPanelName}' успешно рассчитаны:\n" +
                                   $"- Размеры в ячейках: {widthCount}x{heightCount}\n" +
                                   $"- Размер ячейки (px): {_cellSize.x}x{_cellSize.y}\n" +
@@ -149,11 +151,10 @@ namespace SkyClerik.Inventory
 
             _gridOccupancy = new bool[_gridDimensions.x, _gridDimensions.y];
             //Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
-            // Контейнер теперь инициализируется пустым. Предметы добавляются через AddItems/AddClonedItems
         }
-                
+
         #region Public API
-        
+
         public List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
             if (itemTemplates == null || !itemTemplates.Any())
@@ -213,12 +214,12 @@ namespace SkyClerik.Inventory
             _itemDataStorageSO.Items.Clear();
             if (_gridOccupancy != null)
                 Array.Clear(_gridOccupancy, 0, _gridOccupancy.Length);
-            
+
             OnCleared?.Invoke();
 
-            foreach(var item in itemsCopy) Destroy(item);
+            foreach (var item in itemsCopy) Destroy(item);
         }
-        
+
         public IReadOnlyList<ItemBaseDefinition> GetItems()
         {
             return _itemDataStorageSO.Items.AsReadOnly();
@@ -237,7 +238,7 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
             if (IsGridAreaFree(gridPosition, itemGridSize))
             {
-                Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
+                //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
                 item.GridPosition = gridPosition;
                 OccupyGridCells(item, true);
                 _itemDataStorageSO.Items.Add(item);
@@ -250,15 +251,9 @@ namespace SkyClerik.Inventory
 
         public void MoveItem(ItemBaseDefinition item, Vector2Int newPosition)
         {
-            // Освобождаем старое место
             OccupyGridCells(item, false);
-            // Устанавливаем новую позицию
             item.GridPosition = newPosition;
-            // Занимаем новое место
             OccupyGridCells(item, true);
-
-            // Уведомляем UI, что предмет был удален (со старого места) и добавлен (на новое)
-            // Это заставит UI перерисовать предмет в правильном месте
             OnItemRemoved?.Invoke(item);
             OnItemAdded?.Invoke(item);
         }
@@ -266,7 +261,7 @@ namespace SkyClerik.Inventory
         #endregion
 
         #region Grid Logic
-        
+
         private void HandleStacking(List<ItemBaseDefinition> itemsToAdd)
         {
             foreach (var item in itemsToAdd)
@@ -303,7 +298,7 @@ namespace SkyClerik.Inventory
                         _gridOccupancy[gridX, gridY] = occupy;
                 }
             }
-            OnGridOccupancyChanged?.Invoke(); // Вызываем событие после изменения
+            OnGridOccupancyChanged?.Invoke();
         }
 
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
@@ -311,7 +306,7 @@ namespace SkyClerik.Inventory
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
             {
                 //Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
-                return false; // Out of bounds
+                return false;
             }
             for (int y = 0; y < size.y; y++)
             {
@@ -320,11 +315,11 @@ namespace SkyClerik.Inventory
                     if (_gridOccupancy[start.x + x, start.y + y])
                     {
                         //Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
-                        return false; // Occupied
+                        return false;
                     }
                 }
             }
-            return true; // All clear
+            return true;
         }
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
@@ -345,34 +340,7 @@ namespace SkyClerik.Inventory
             suggestedGridPosition = Vector2Int.zero;
             return false;
         }
-        
-        #endregion
-        
-        #region Obsolete Methods
-        
-        [Obsolete("Используйте AddItems или AddClonedItems для правильного размещения в сетке.")]
-        public ItemBaseDefinition AddItemAsClone(ItemBaseDefinition item)
-        {
-            var unplaced = AddClonedItems(new List<ItemBaseDefinition> { item });
-            return unplaced.Any() ? null : item;
-        }
 
-        [Obsolete("Используйте AddItems или AddClonedItems для правильного размещения в сетке.")]
-        public void AddItem(ItemBaseDefinition item)
-        {
-            AddItems(new List<ItemBaseDefinition> { item });
-        }
-        
-        [Obsolete("Этот метод не учитывает логику сетки. Не использовать.")]
-        public void AddItemReference(ItemBaseDefinition item)
-        {
-            if (item != null)
-            {
-                _itemDataStorageSO.Items.Add(item);
-                OnItemAdded?.Invoke(item);
-            }
-        }
-        
         #endregion
     }
 }
