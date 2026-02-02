@@ -195,6 +195,12 @@ namespace SkyClerik.Inventory
 
                 _placementResults = _itemsPage.HandleItemPlacement(this);
 
+                if (_placementResults.Conflict == ReasonConflict.SwapAvailable)
+                {
+                    HandleSwap();
+                    return;
+                }
+
                 if (_placementResults.Conflict == ReasonConflict.StackAvailable)
                 {
                     var targetItemVisual = _placementResults.OverlapItem;
@@ -238,11 +244,6 @@ namespace SkyClerik.Inventory
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
-                        Placement(_placementResults.SuggestedGridPosition);
-                        break;
-                    case ReasonConflict.SwapAvailable:
-                        var itemToSwap = _placementResults.OverlapItem;
-                        itemToSwap.PickUp(isSwap: true);
                         Placement(_placementResults.SuggestedGridPosition);
                         break;
                     default:
@@ -307,7 +308,6 @@ namespace SkyClerik.Inventory
             }
 
             _saveAngle = _itemDefinition.Dimensions.Angle;
-            Debug.Log($"_saveAngle: {_saveAngle}");
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.Width, _itemDefinition.Dimensions.Height);
 
             _itemsPage.StopTooltipDelayAndHideTooltip();
@@ -330,6 +330,17 @@ namespace SkyClerik.Inventory
         private void Placement(Vector2Int gridPosition)
         {
             _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
+        }
+
+        private void HandleSwap()
+        {
+            var itemToSwap = _placementResults.OverlapItem;
+            var targetInventory = _placementResults.TargetInventory;
+            var swapPosition = _placementResults.SuggestedGridPosition;
+
+            itemToSwap.PickUp(isSwap: true);
+            _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, targetInventory, swapPosition);
+            targetInventory.FinalizeDrag();
         }
 
         public void UpdatePcs()

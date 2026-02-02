@@ -311,25 +311,43 @@ namespace SkyClerik.Inventory
 
         public void OccupyGridCells(ItemBaseDefinition item, bool occupy)
         {
+            if (item.GridPosition.x < 0 || item.GridPosition.y < 0) return;
+
             var size = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
+            Debug.Log($"[ItemContainer] OccupyGridCells вызван для '{item.DefinitionName}'. Действие: {(occupy ? "ЗАНЯТЬ" : "ОСВОБОДИТЬ")}. Позиция: {item.GridPosition}, Размер: {size}");
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
                 {
                     int gridX = item.GridPosition.x + x;
                     int gridY = item.GridPosition.y + y;
-                    if (gridX < _gridDimensions.x && gridY < _gridDimensions.y)
+                    if (gridX < _gridDimensions.x && gridY < _gridDimensions.y && gridX >= 0 && gridY >= 0)
                         _gridOccupancy[gridX, gridY] = occupy;
                 }
             }
+            LogGridState();
             OnGridOccupancyChanged?.Invoke();
+        }
+
+        private void LogGridState()
+        {
+            Debug.Log($"--- Состояние логической сетки ({name}) {_gridDimensions.x}x{_gridDimensions.y} ---");
+            for (int y = _gridDimensions.y - 1; y >= 0; y--)
+            {
+                string row = "";
+                for (int x = 0; x < _gridDimensions.x; x++)
+                {
+                    row += _gridOccupancy[x, y] ? "1 " : "0 ";
+                }
+                Debug.Log(row);
+            }
+            Debug.Log("-----------------------------------------");
         }
 
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
         {
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
             {
-                //Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
                 return false;
             }
             for (int y = 0; y < size.y; y++)
