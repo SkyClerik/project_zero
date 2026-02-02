@@ -12,13 +12,13 @@ namespace SkyClerik.Inventory
         private ItemBaseDefinition _itemDefinition;
         private Vector2 _originalPosition;
         private Vector2Int _originalScale;
-        private float _originalRotate;
         private bool _isDragging;
         private bool _hasNoHome = false;
         private PlacementResults _placementResults;
         private VisualElement _icon;
         private Label _pcsText;
         private bool _singleRotationMode;
+        private float _saveAngle;
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
 
@@ -55,6 +55,7 @@ namespace SkyClerik.Inventory
             };
 
             SetSize();
+            UpdateIconLayout();
 
             if (_itemDefinition.Stackable && _itemDefinition.ViewStackable)
             {
@@ -123,6 +124,7 @@ namespace SkyClerik.Inventory
 
             _itemDefinition.Dimensions.Swap();
             SetSize();
+            UpdateIconLayout();
             RotateIconRight();
         }
 
@@ -130,8 +132,6 @@ namespace SkyClerik.Inventory
         {
             this.style.width = _itemDefinition.Dimensions.Width * _ownerInventory.CellSize.x;
             this.style.height = _itemDefinition.Dimensions.Height * _ownerInventory.CellSize.y;
-
-            UpdateIconLayout();
         }
 
         private void UpdateIconLayout()
@@ -139,8 +139,22 @@ namespace SkyClerik.Inventory
             var parentWidth = this.style.width.value.value;
             var parentHeight = this.style.height.value.value;
 
-            var iconWidth = _itemDefinition.Dimensions.Width * _ownerInventory.CellSize.x;
-            var iconHeight = _itemDefinition.Dimensions.Height * _ownerInventory.CellSize.y;
+            float angle = _itemDefinition.Dimensions.Angle;
+            int logicalWidth = _itemDefinition.Dimensions.Width;
+            int logicalHeight = _itemDefinition.Dimensions.Height;
+
+            float iconWidth, iconHeight;
+
+            if (angle == 90 || angle == 270)
+            {
+                iconWidth = logicalHeight * _ownerInventory.CellSize.x;
+                iconHeight = logicalWidth * _ownerInventory.CellSize.y;
+            }
+            else
+            {
+                iconWidth = logicalWidth * _ownerInventory.CellSize.x;
+                iconHeight = logicalHeight * _ownerInventory.CellSize.y;
+            }
 
             _icon.style.width = iconWidth;
             _icon.style.height = iconHeight;
@@ -165,21 +179,12 @@ namespace SkyClerik.Inventory
 
             RotateIcon(angle);
             SaveCurrentAngle(angle);
+            UpdateIconLayout();
         }
 
         private void RotateIcon(float angle) => _icon.style.rotate = new Rotate(angle);
 
         private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.Angle = angle;
-
-        private void RestoreSizeAndRotate()
-        {
-            _itemDefinition.Dimensions.Angle = _originalRotate;
-            _itemDefinition.Dimensions.Width = _originalScale.x;
-            _itemDefinition.Dimensions.Height = _originalScale.y;
-
-            SetSize();
-            RotateIcon(_itemDefinition.Dimensions.Angle);
-        }
 
         private void OnMouseUp(MouseUpEvent mouseEvent)
         {
@@ -301,7 +306,8 @@ namespace SkyClerik.Inventory
                     _originalPosition = Vector2.zero;
             }
 
-            _originalRotate = _itemDefinition.Dimensions.Angle;
+            _saveAngle = _itemDefinition.Dimensions.Angle;
+            Debug.Log($"_saveAngle: {_saveAngle}");
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.Width, _itemDefinition.Dimensions.Height);
 
             _itemsPage.StopTooltipDelayAndHideTooltip();
@@ -340,14 +346,30 @@ namespace SkyClerik.Inventory
                 return;
             }
 
+            RestoreSizeAndRotate();
+
             Vector2Int originalGridPosition = new Vector2Int(
                 Mathf.RoundToInt(_originalPosition.x / _ownerInventory.CellSize.x),
                 Mathf.RoundToInt(_originalPosition.y / _ownerInventory.CellSize.y)
             );
-
+            
             _ownerInventory.Drop(this, originalGridPosition);
             SetPosition(_originalPosition);
-            RestoreSizeAndRotate();
+        }
+
+        private void RestoreSizeAndRotate()
+        {
+            // 1. Восстанавливаем данные в модели до исходного состояния
+            _itemDefinition.Dimensions.Angle = _saveAngle;
+            _itemDefinition.Dimensions.Width = _originalScale.x;
+            _itemDefinition.Dimensions.Height = _originalScale.y;
+
+            // 2. Применяем восстановленные данные к UI, используя твою новую раздельную логику
+            SetSize();
+            UpdateIconLayout();
+
+            // 3. Восстанавливаем визуальный поворот
+            RotateIcon(_saveAngle);
         }
     }
 }
