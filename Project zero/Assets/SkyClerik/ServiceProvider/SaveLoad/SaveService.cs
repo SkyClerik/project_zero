@@ -2,6 +2,7 @@ using UnityEngine;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
+using UnityEngine.DataEditor; // Добавлено для доступа к DefinitionName и другим свойствам BaseDefinition
 
 namespace SkyClerik.Utils
 {
@@ -66,6 +67,21 @@ namespace SkyClerik.Utils
             string json = Inventory.JsonScriptableObjectSerializer.SerializeScriptableObject(itemContainer.ItemDataStorageSO);
             File.WriteAllText(filePath, json);
             Debug.Log($"Контейнер '{itemContainer.ItemDataStorageSO.ContainerGuid}' сохранен в: {filePath}");
+            Debug.Log($"[SaveService] Сериализован контейнер '{itemContainer.ItemDataStorageSO.name}' с {itemContainer.ItemDataStorageSO.Items.Count} предметами.");
+
+            int itemIndex = 0;
+            foreach (var item in itemContainer.ItemDataStorageSO.Items)
+            {
+                if (item != null)
+                {
+                    Debug.Log($"[SaveService]   Предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.WrapperIndex}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
+                }
+                else
+                {
+                    Debug.Log($"[SaveService]   Предмет {itemIndex}: NULL (Возможно, потеряна ссылка)");
+                }
+                itemIndex++;
+            }
         }
 
         /// <summary>

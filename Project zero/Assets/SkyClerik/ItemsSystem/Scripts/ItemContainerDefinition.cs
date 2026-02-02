@@ -25,6 +25,7 @@ namespace SkyClerik.Inventory
         [SerializeReference] // Указываем Unity, что это полиморфный список
         private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
+        [JsonIgnore] // Добавлено для игнорирования публичного свойства при сериализации Newtonsoft.Json
         public List<ItemBaseDefinition> Items => _items;
 
         public void SetDataFromOtherContainer(ItemContainerDefinition otherContainer)

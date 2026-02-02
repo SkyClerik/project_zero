@@ -2,6 +2,7 @@ using UnityEngine;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
+using UnityEngine.DataEditor; // Добавлено для доступа к DefinitionName и другим свойствам BaseDefinition
 
 namespace SkyClerik.Utils
 {
@@ -85,10 +86,25 @@ namespace SkyClerik.Utils
 
                 if (loadedContainerDefinition != null)
                 {
+                    Debug.Log($"Контейнер '{containerGuid}' загружен из: {filePath}. Десериализовано {loadedContainerDefinition.Items.Count} предметов.");
+
+                    int itemIndex = 0;
+                    foreach (var item in loadedContainerDefinition.Items)
+                    {
+                        if (item != null)
+                        {
+                            Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.WrapperIndex}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
+                        }
+                        else
+                        {
+                            Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: NULL (Возможно, потеряна ссылка)");
+                        }
+                        itemIndex++;
+                    }
+
                     // Копируем данные из загруженного определения в существующее
                     // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
                     targetContainer.ItemDataStorageSO.SetDataFromOtherContainer(loadedContainerDefinition);
-                    Debug.Log($"Контейнер '{containerGuid}' загружен из: {filePath}");
                 }
                 else
                 {

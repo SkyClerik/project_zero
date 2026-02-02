@@ -1,4 +1,5 @@
 using SkyClerik.Inventory;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
@@ -166,6 +167,7 @@ namespace SkyClerik.Utils
             loadService.LoadItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
 
             //Debug.Log($"[DevelopHUD] Загрузка контейнеров из слота {globalState.CurrentSaveSlotIndex} завершена.");
+
         }
 
         private void TestJsonUtilityScenario()
