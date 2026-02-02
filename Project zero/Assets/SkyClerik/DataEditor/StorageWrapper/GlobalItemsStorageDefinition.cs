@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
-using Newtonsoft.Json;
+// using Newtonsoft.Json; // Удалено, так как больше не используется для клонирования
 
 namespace SkyClerik.Inventory
 {
@@ -34,7 +34,8 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Клонирует ItemBaseDefinition с использованием NewtonSoft.Json для глубокого копирования.
+        /// Клонирует ItemBaseDefinition с использованием ScriptableObject.Instantiate() для создания независимого экземпляра.
+        /// Затем вручную копирует необходимые поля.
         /// </summary>
         /// <param name="original">Оригинальный ItemBaseDefinition для клонирования.</param>
         /// <returns>Клонированный ItemBaseDefinition или null, если оригинал null.</returns>
@@ -46,16 +47,48 @@ namespace SkyClerik.Inventory
                 return null;
             }
 
-            try
+            // Создаем новый, независимый экземпляр ScriptableObject
+            ItemBaseDefinition clonedItem = Instantiate(original);
+            clonedItem.name = original.name; // Instatiate добавляет "(Clone)", убираем это.
+
+            // Копируем все необходимые поля вручную, так как Instantiate создает "чистый" клон
+            // и не копирует напрямую приватные поля или свойства с protected set.
+            // Примечание: Stack и GridPosition копируются позже в ItemContainerDefinition.SetDataFromOtherContainer
+            // из десериализованных данных. Здесь копируем базовые данные, не изменяющиеся экземпляром.
+
+            // Копируем поля из BaseDefinition
+            clonedItem.ID = original.ID;
+            clonedItem.DefinitionName = original.DefinitionName;
+            clonedItem.Description = original.Description;
+            clonedItem.Icon = original.Icon;
+
+            // Копируем поля из ItemBaseDefinition
+            clonedItem.WrapperIndex = original.WrapperIndex;
+            clonedItem.Price = original.Price;
+            clonedItem.MaxStack = original.MaxStack;
+            clonedItem.Stackable = original.Stackable;
+            clonedItem.ViewStackable = original.ViewStackable;
+
+            // Если ItemDimensions - это class, который должен быть глубоко скопирован, а не просто ссылкой:
+            if (original.Dimensions != null)
             {
-                string json = JsonConvert.SerializeObject(original);
-                return JsonConvert.DeserializeObject(json, original.GetType()) as ItemBaseDefinition;
+                clonedItem.Dimensions = new ItemDimensions
+                {
+                    DefaultWidth = original.Dimensions.DefaultWidth,
+                    DefaultHeight = original.Dimensions.DefaultHeight,
+                    DefaultAngle = original.Dimensions.DefaultAngle,
+                    CurrentWidth = original.Dimensions.CurrentWidth,
+                    CurrentHeight = original.Dimensions.CurrentHeight,
+                    CurrentAngle = original.Dimensions.CurrentAngle
+                };
+            } else {
+                clonedItem.Dimensions = null;
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Ошибка при клонировании ItemBaseDefinition '{original.name}': {ex.Message}");
-                return null;
-            }
+            
+            // Stack и GridPosition не копируются здесь, так как они будут установлены из десериализованных данных
+            // в ItemContainerDefinition.SetDataFromOtherContainer.
+
+            return clonedItem;
         }
 
         /// <summary>

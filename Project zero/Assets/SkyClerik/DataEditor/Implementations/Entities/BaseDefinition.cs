@@ -16,27 +16,27 @@ namespace UnityEngine.DataEditor
         [JsonProperty]
         [SerializeField]
         [Tooltip("Уникальный идентификатор. Может быть числом или строкой.")]
-        private string _id;
+        protected string _id;
 
         [JsonProperty]
         [SerializeField]
         [Tooltip("Имя, отображаемое в игре. Используем другое имя, чтобы избежать конфликта с 'name' из ScriptableObject.")]
-        private string _definitionName;
+        protected string _definitionName;
 
         [JsonProperty]
         [SerializeField, TextArea(3, 10)]
         [Tooltip("Подробное описание, которое может отображаться в UI.")]
-        private string _description;
+        protected string _description;
 
         [SerializeField]
         [Tooltip("Иконка для отображения в инвентаре, меню навыков и т.д.")]
         [JsonIgnore]
-        private Sprite _icon;
+        protected Sprite _icon;
 
         /// <summary>
         /// Уникальный идентификатор определения.
         /// </summary>
-        public string ID => _id;
+        public string ID { get => _id; set => _id = value; } // Изменено на public set
 
         /// <summary>
         /// Генерирует новый уникальный ID для этого определения.
@@ -45,24 +45,24 @@ namespace UnityEngine.DataEditor
         [ContextMenu("Regenerate ID")]
         public void RegenerateID()
         {
-            _id = Guid.NewGuid().ToString();
-            Debug.Log($"[BaseDefinition] ID для '{_definitionName}' пересоздан: {_id}");
+            ID = Guid.NewGuid().ToString(); // Используем сеттер
+            Debug.Log($"[BaseDefinition] ID для '{DefinitionName}' пересоздан: {ID}");
         }
 
         /// <summary>
         /// Имя определения, отображаемое в игре.
         /// </summary>
-        public string DefinitionName => _definitionName;
+        public string DefinitionName { get => _definitionName; set => _definitionName = value; } // Изменено на public set
 
         /// <summary>
         /// Подробное описание определения.
         /// </summary>
-        public string Description => _description;
+        public string Description { get => _description; set => _description = value; } // Изменено на public set
 
         /// <summary>
         /// Иконка определения.
         /// </summary>
-        public Sprite Icon => _icon;
+        public Sprite Icon { get => _icon; set => _icon = value; } // Изменено на public set
 
         /// <summary>
         /// Вызывается при загрузке объекта.
@@ -83,7 +83,7 @@ namespace UnityEngine.DataEditor
         /// <returns>Имя определения.</returns>
         public override string ToString()
         {
-            return string.IsNullOrEmpty(_definitionName) ? name : _definitionName;
+            return string.IsNullOrEmpty(DefinitionName) ? name : DefinitionName;
         }
     }
 }
