@@ -28,6 +28,33 @@ namespace UnityEngine.DataEditor
         protected int _curStack;
         public int Stack { get => _curStack; set => _curStack = value; }
 
+        [JsonProperty]
+        [SerializeField]
+        [Tooltip("Максимальное кол-во")]
+        protected int _maxStack;
+        public int MaxStack { get => _maxStack; set => _maxStack = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        protected bool _stackable = true;
+        public bool Stackable { get => _stackable; set => _stackable = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        protected bool _viewStackable = true;
+        public bool ViewStackable { get => _viewStackable; set => _viewStackable = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        [Tooltip("Размер и поворот предмета")]
+        protected ItemDimensions _dimensions;
+        public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        protected Vector2Int _gridPosition;
+        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
+
         /// <summary>
         /// Добавляет предметы в стак.
         /// </summary>
@@ -70,33 +97,6 @@ namespace UnityEngine.DataEditor
             _curStack -= amount;
             return amount;
         }
-
-        [JsonProperty]
-        [SerializeField]
-        [Tooltip("Максимальное кол-во")]
-        protected int _maxStack;
-        public int MaxStack { get => _maxStack; set => _maxStack = value; }
-
-        [JsonProperty]
-        [SerializeField]
-        protected bool _stackable = true;
-        public bool Stackable { get => _stackable; set => _stackable = value; }
-
-        [JsonProperty]
-        [SerializeField]
-        protected bool _viewStackable = true;
-        public bool ViewStackable { get => _viewStackable; set => _viewStackable = value; }
-
-        [JsonProperty]
-        [SerializeField]
-        [Tooltip("Размер и поворот предмета")]
-        protected ItemDimensions _dimensions;
-        public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
-
-        [JsonProperty]
-        [SerializeField]
-        protected Vector2Int _gridPosition;
-        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
     }
 
     [Serializable]

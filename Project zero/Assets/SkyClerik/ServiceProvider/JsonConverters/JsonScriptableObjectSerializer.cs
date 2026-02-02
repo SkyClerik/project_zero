@@ -1,5 +1,5 @@
-using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace SkyClerik.Inventory
@@ -11,7 +11,7 @@ namespace SkyClerik.Inventory
     public static class JsonScriptableObjectSerializer
     {
         // Рекомендуется кэшировать ContractResolver для лучшей производительности.
-        private static readonly ScriptableObjectContractResolver _resolver = new ScriptableObjectContractResolver();
+        private static readonly DefaultContractResolver _resolver = new DefaultContractResolver();
 
         /// <summary>
         /// Десериализует JSON-строку в экземпляр ScriptableObject,

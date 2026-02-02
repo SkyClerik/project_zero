@@ -47,10 +47,7 @@ namespace SkyClerik.Inventory
         // --- Логика сетки ---
         private bool[,] _gridOccupancy;
 
-        public bool[,] GetGridOccupancy()
-        {
-            return _gridOccupancy;
-        }
+        public bool[,] GetGridOccupancy => _gridOccupancy;
 
 #if UNITY_EDITOR
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]

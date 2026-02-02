@@ -12,6 +12,7 @@ namespace SkyClerik.Inventory
     /// </summary>
     [CreateAssetMenu(fileName = "ItemContainerDefinition", menuName = "SkyClerik/Inventory/Item Container Definition")]
     [System.Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public class ItemContainerDefinition : ScriptableObject
     {
         [JsonProperty]
@@ -20,12 +21,11 @@ namespace SkyClerik.Inventory
         private string _containerGuid;
         public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
 
-        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)] // Явно указываем, как обрабатывать типы элементов в списке
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
         [SerializeField]
-        [SerializeReference] // Указываем Unity, что это полиморфный список
+        [SerializeReference]
         private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
-        [JsonIgnore] // Добавлено для игнорирования публичного свойства при сериализации Newtonsoft.Json
         public List<ItemBaseDefinition> Items => _items;
 
         public void SetDataFromOtherContainer(ItemContainerDefinition otherContainer)
@@ -46,7 +46,7 @@ namespace SkyClerik.Inventory
                 return;
             }
 
-            _items.Clear(); // Очищаем текущий список предметов
+            _items.Clear();
 
             foreach (var deserializedItem in otherContainer.Items)
             {
@@ -64,12 +64,15 @@ namespace SkyClerik.Inventory
                 {
                     Debug.Log($"[SetDataFromOtherContainer] Original Clone GetInstanceID(): {originalClone.GetInstanceID()}, Name: {originalClone.DefinitionName}");
 
+                    JsonScriptableObjectSerializer.CopyJsonProperties(deserializedItem, originalClone);
+
                     // Копируем данные, которые должны быть специфичными для этого экземпляра предмета
-                    originalClone.Stack = deserializedItem.Stack;
-                    originalClone.GridPosition = deserializedItem.GridPosition;
+                    //originalClone.WrapperIndex = deserializedItem.WrapperIndex;
+                    //originalClone.Stack = deserializedItem.Stack;
+                    //originalClone.GridPosition = deserializedItem.GridPosition;
                     // TODO: Добавьте сюда копирование других специфичных для экземпляра полей, если они есть
 
-                    _items.Add(originalClone); // Добавляем инициализированный клон в список
+                    _items.Add(originalClone);
                 }
                 else
                 {

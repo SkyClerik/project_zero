@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
-using UnityEngine.Toolbox; // Добавлено для доступа к JsonScriptableObjectSerializer
+using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
@@ -31,36 +31,6 @@ namespace SkyClerik.Inventory
                     Debug.LogError($"AnyItemsStorageWrapper: Обнаружен дубликат ID (индекса) '{i}' при инициализации. Этого не должно быть.");
             }
         }
-
-        /// <summary>
-        /// Клонирует ItemBaseDefinition с использованием ScriptableObject.Instantiate() для создания независимого экземпляра.
-        /// Затем использует JsonScriptableObjectSerializer.CopyJsonProperties для копирования всех полей, помеченных [JsonProperty].
-        /// </summary>
-        /// <param name="original">Оригинальный ItemBaseDefinition для клонирования.</param>
-        /// <returns>Клонированный ItemBaseDefinition или null, если оригинал null.</returns>
-        //private ItemBaseDefinition CloneItem(ItemBaseDefinition original)
-        //{
-        //    if (original == null)
-        //    {
-        //        Debug.LogWarning("Попытка клонировать null ItemBaseDefinition.");
-        //        return null;
-        //    }
-        //    Debug.Log($"[CloneItem] Original GetInstanceID(): {original.GetInstanceID()}, Name: {original.name}");
-
-        //    // Создаем новый, независимый экземпляр ScriptableObject
-        //    ItemBaseDefinition clonedItem = Instantiate(original);
-        //    //clonedItem.name = original.name; // Instantiate добавляет "(Clone)", убираем это.
-
-        //    // Используем универсальный метод для копирования всех полей, помеченных [JsonProperty]
-        //    JsonScriptableObjectSerializer.CopyJsonProperties(original, clonedItem);
-
-        //    Debug.Log($"[CloneItem] Cloned GetInstanceID(): {clonedItem.GetInstanceID()}, Name: {clonedItem.name}");
-
-        //    // Stack и GridPosition не копируются здесь, так как они будут установлены из десериализованных данных
-        //    // в ItemContainerDefinition.SetDataFromOtherContainer.
-
-        //    return clonedItem;
-        //}
 
         /// <summary>
         /// Возвращает клонированный ItemBaseDefinition по его индексу (id) в списке.

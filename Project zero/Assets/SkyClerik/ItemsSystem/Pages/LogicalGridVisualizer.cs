@@ -36,14 +36,11 @@ namespace SkyClerik.Inventory
         public void Init(ItemContainer itemContainer)
         {
             if (_itemContainer != null)
-            {
                 _itemContainer.OnGridOccupancyChanged -= UpdateVisualizer;
-            }
+
             _itemContainer = itemContainer;
             if (_itemContainer != null)
-            {
                 _itemContainer.OnGridOccupancyChanged += UpdateVisualizer;
-            }
         }
 
         private void UpdateVisualizer()
@@ -54,15 +51,13 @@ namespace SkyClerik.Inventory
                 return;
             }
             Clear();
-            
+
             if (_itemContainer == null || _itemContainer.GridDimensions.x <= 0 || _itemContainer.GridDimensions.y <= 0)
-            {
                 return;
-            }
 
             Vector2 cellSizePx = _itemContainer.CellSize;
             Rect gridWorldRect = _itemContainer.GridWorldRect;
-            bool[,] occupancy = _itemContainer.GetGridOccupancy();
+            bool[,] occupancy = _itemContainer.GetGridOccupancy;
 
             for (int y = 0; y < _itemContainer.GridDimensions.y; y++)
             {
@@ -72,25 +67,22 @@ namespace SkyClerik.Inventory
                     cellVisual.name = $"Cell_{x}_{y}";
                     cellVisual.style.position = Position.Absolute;
                     cellVisual.pickingMode = PickingMode.Ignore;
-                    
+
                     float actualCellWidth = Mathf.Max(cellSizePx.x, _minVisualCallSize);
                     float actualCellHeight = Mathf.Max(cellSizePx.y, _minVisualCallSize);
 
                     cellVisual.style.width = actualCellWidth;
                     cellVisual.style.height = actualCellHeight;
-                    
+
                     cellVisual.style.left = gridWorldRect.x + x * cellSizePx.x;
                     cellVisual.style.top = gridWorldRect.y + y * cellSizePx.y;
 
 
                     if (x < occupancy.GetLength(0) && y < occupancy.GetLength(1) && occupancy[x, y])
-                    {
                         cellVisual.style.backgroundColor = new Color(1.0f, 0.0f, 0.0f, 0.3f);
-                    }
                     else
-                    {
                         cellVisual.style.backgroundColor = new Color(0.0f, 1.0f, 0.0f, 0.3f);
-                    }
+
                     cellVisual.SetBorderColor(Color.black);
                     cellVisual.SetBorderWidth(1);
 

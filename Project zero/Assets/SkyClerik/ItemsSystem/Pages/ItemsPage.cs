@@ -32,7 +32,7 @@ namespace SkyClerik.Inventory
 
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
         public InventoryPageElement InventoryPage => _inventoryPage;
-        public CraftPageElement CraftPage => _craftPage; // Добавлено публичное свойство для CraftPage
+        public CraftPageElement CraftPage => _craftPage;
         public ItemBaseDefinition GiveItem => _givenItem;
         public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
         public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
