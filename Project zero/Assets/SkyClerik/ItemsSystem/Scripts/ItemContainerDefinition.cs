@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
+using SkyClerik.Utils; // Добавлено для доступа к ServiceProvider
 
 namespace SkyClerik.Inventory
 {
@@ -38,11 +39,42 @@ namespace SkyClerik.Inventory
 
             _containerGuid = otherContainer.ContainerGuid;
 
-            _items.Clear();
-            _items.AddRange(otherContainer.Items);
+            // Получаем GlobalItemStorage для доступа к оригинальным предметам
+            GlobalItemStorage globalItemStorage = ServiceProvider.Get<GlobalItemStorage>();
+            if (globalItemStorage == null)
+            {
+                Debug.LogError("GlobalItemStorage не найден в ServiceProvider! Невозможно загрузить предметы.");
+                return;
+            }
+
+            _items.Clear(); // Очищаем текущий список предметов
+
+            foreach (var deserializedItem in otherContainer.Items)
+            {
+                if (deserializedItem == null)
+                {
+                    Debug.LogWarning("Десериализованный предмет является null, пропускаем.");
+                    continue;
+                }
+
+                // Используем WrapperIndex для получения клона оригинального предмета из GlobalItemStorage
+                ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItemByIndex(deserializedItem.WrapperIndex);
+
+                if (originalClone != null)
+                {
+                    // Копируем данные, которые должны быть специфичными для этого экземпляра предмета
+                    originalClone.Stack = deserializedItem.Stack;
+                    originalClone.GridPosition = deserializedItem.GridPosition;
+                    // TODO: Добавьте сюда копирование других специфичных для экземпляра полей, если они есть
+                    
+                    _items.Add(originalClone); // Добавляем инициализированный клон в список
+                }
+                else
+                {
+                    Debug.LogError($"Не удалось получить клон предмета с WrapperIndex '{deserializedItem.WrapperIndex}' из GlobalItemStorage. Предмет '{deserializedItem.DefinitionName}' будет отсутствовать.");
+                }
+            }
         }
-
-
 
         /// <summary>
         /// Проверяет и генерирует GUID для контейнера, если он отсутствует.
