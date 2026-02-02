@@ -4,8 +4,8 @@ using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory.Editor
 {
-    [CustomEditor(typeof(GlobalItemsStorageDefinition))]
-    public class GlobalItemsStorageDefinitionEditor : UnityEditor.Editor
+    [CustomEditor(typeof(ItemsDataStorageDefinition))]
+    public class ItemsDataStorageDefinitionEditor : UnityEditor.Editor
     {
         private SerializedProperty _baseDefinitionsProperty;
         private GUIStyle _dirtyButtonStyle;
@@ -17,39 +17,28 @@ namespace SkyClerik.Inventory.Editor
             _baseDefinitionsProperty = serializedObject.FindProperty("_baseDefinitions");
             // Инициализируем хэш при активации инспектора, чтобы отслеживать изменения данных.
             // Это предотвращает ложное срабатывание "грязного" состояния при первом отображении инспектора.
-            GlobalItemsStorageDefinition storage = (GlobalItemsStorageDefinition)target;
+            ItemsDataStorageDefinition storage = (ItemsDataStorageDefinition)target;
             _lastKnownHash = CalculateCurrentHash(storage);
         }
 
         public override void OnInspectorGUI()
         {
-            serializedObject.Update(); // Обновляем SerializedObject перед использованием свойств
-
-            GlobalItemsStorageDefinition storage = (GlobalItemsStorageDefinition)target;
-
-            InitializeStyles(); // Инициализируем стили кнопок
-
-            // Рисуем поле _baseDefinitions
-            EditorGUILayout.PropertyField(_baseDefinitionsProperty, true); // true, чтобы рисовать дочерние элементы списка
-
-            // Вместо использования CalculateCurrentHash для CheckIfDirty, будем более явно проверять изменения
+            serializedObject.Update();
+            ItemsDataStorageDefinition storage = (ItemsDataStorageDefinition)target;
+            InitializeStyles();
+            EditorGUILayout.PropertyField(_baseDefinitionsProperty, true);
             bool isDirty = CheckIfDirtyState(storage); 
-
             GUIStyle currentButtonStyle = isDirty ? _dirtyButtonStyle : _cleanButtonStyle;
-
-            // Добавляем немного отступа
             EditorGUILayout.Space();
 
             if (GUILayout.Button(isDirty ? "ОБНОВИТЬ WRAPPER INDEXES (СРОЧНО!)" : "Обновить Wrapper Indexes", currentButtonStyle))
             {
                 UpdateWrapperIndexes(storage);
-                // После обновления индексов, пересчитываем хэш, чтобы кнопка стала "чистой"
-                _lastKnownHash = CalculateCurrentHash(storage); // Обновляем _lastKnownHash после успешного обновления
-                // Сразу помечаем объект как чистый после нажатия
+                _lastKnownHash = CalculateCurrentHash(storage);
                 isDirty = false; 
             }
 
-            serializedObject.ApplyModifiedProperties(); // Применяем изменения к SerializedObject
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void InitializeStyles()
@@ -65,7 +54,7 @@ namespace SkyClerik.Inventory.Editor
                 _dirtyButtonStyle.active.background = MakeTex(2, 2, new Color(0.7f, 0.1f, 0.1f, 1f));
                 _dirtyButtonStyle.fontStyle = FontStyle.Bold;
                 _dirtyButtonStyle.fontSize = 12;
-                _dirtyButtonStyle.fixedHeight = 30; // Увеличим высоту кнопки
+                _dirtyButtonStyle.fixedHeight = 30;
             }
 
             if (_cleanButtonStyle == null)
@@ -79,13 +68,10 @@ namespace SkyClerik.Inventory.Editor
                 _cleanButtonStyle.active.background = MakeTex(2, 2, new Color(0.1f, 0.5f, 0.1f, 1f));
                 _cleanButtonStyle.fontStyle = FontStyle.Normal;
                 _cleanButtonStyle.fontSize = 12;
-                _cleanButtonStyle.fixedHeight = 30; // Увеличим высоту кнопки
+                _cleanButtonStyle.fixedHeight = 30;
             }
         }
 
-        /// <summary>
-        /// Создает текстуру заданного цвета и размера.
-        /// </summary>
         private Texture2D MakeTex(int width, int height, Color col)
         {
             Color[] pix = new Color[width * height];
@@ -99,17 +85,11 @@ namespace SkyClerik.Inventory.Editor
             return result;
         }
         
-        // Новый метод для более точной проверки "грязного" состояния
-        private bool CheckIfDirtyState(GlobalItemsStorageDefinition storage)
+        private bool CheckIfDirtyState(ItemsDataStorageDefinition storage)
         {
-            // Проверяем, изменился ли список _baseDefinitions (количество элементов, порядок, или ссылки на объекты)
-            // Это будет отслеживаться через CalculateCurrentHash
             if (CalculateCurrentHash(storage) != _lastKnownHash)
-            {
                 return true;
-            }
 
-            // Проверяем, корректны ли WrapperIndex относительно их позиции в списке
             for (int i = 0; i < _baseDefinitionsProperty.arraySize; i++)
             {
                 SerializedProperty itemProperty = _baseDefinitionsProperty.GetArrayElementAtIndex(i);
@@ -117,21 +97,9 @@ namespace SkyClerik.Inventory.Editor
 
                 if (item != null)
                 {
-                    // Для доступа к WrapperIndex через SerializedProperty нужно его найти.
-                    // Однако, WrapperIndex - это не свойство GlobalItemsStorageDefinition,
-                    // а свойство ItemBaseDefinition. Мы не можем напрямую найти SerializedProperty
-                    // для WrapperIndex здесь, так как item является отдельным ScriptableObject.
-                    // Доступ к item.WrapperIndex возможен напрямую, если ItemBaseDefinition не приватный.
-                    // Если item.WrapperIndex является приватным, тогда нужно будет создавать CustomEditor для ItemBaseDefinition
-                    // или использовать рефлексию, но пока будем считать его публичным или [SerializeField].
-
-                    // Если ItemBaseDefinition.WrapperIndex не является [SerializeField] или public,
-                    // этот прямой доступ вызовет ошибку, как в GlobalItemsStorageDefinition
-                    // где _baseDefinitions был приватным.
-                    // Я предполагаю, что WrapperIndex является публичным или [SerializeField].
                     if (item.WrapperIndex != i)
                     {
-                        return true; // Индекс не соответствует позиции
+                        return true;
                     }
                 }
             }
@@ -139,16 +107,13 @@ namespace SkyClerik.Inventory.Editor
         }
 
 
-        private int CalculateCurrentHash(GlobalItemsStorageDefinition storage)
+        private int CalculateCurrentHash(ItemsDataStorageDefinition storage)
         {
             unchecked // Разрешает переполнение для int, что хорошо для хэширования
             {
-                int hash = 17; // Начальное число для хэша
-
-                // Добавляем количество элементов в хэш
+                int hash = 17;
                 hash = hash * 23 + _baseDefinitionsProperty.arraySize.GetHashCode();
 
-                // Добавляем хэш каждого элемента.
                 for (int i = 0; i < _baseDefinitionsProperty.arraySize; i++)
                 {
                     SerializedProperty itemProperty = _baseDefinitionsProperty.GetArrayElementAtIndex(i);
@@ -156,7 +121,6 @@ namespace SkyClerik.Inventory.Editor
 
                     if (itemObject != null)
                     {
-                        // Используем GUID ассета для стабильного хэширования
                         string assetPath = AssetDatabase.GetAssetPath(itemObject);
                         if (!string.IsNullOrEmpty(assetPath))
                         {
@@ -164,14 +128,12 @@ namespace SkyClerik.Inventory.Editor
                         }
                         else
                         {
-                            // Если это не ассет (например, вложенный объект или временный),
-                            // используем его собственный GetHashCode().
                             hash = hash * 23 + itemObject.GetHashCode();
                         }
                     }
                     else
                     {
-                        hash = hash * 23 + 0; // Для null-элементов
+                        hash = hash * 23 + 0;
                     }
                 }
                 
@@ -179,9 +141,9 @@ namespace SkyClerik.Inventory.Editor
             }
         }
 
-        private void UpdateWrapperIndexes(GlobalItemsStorageDefinition storage)
+        private void UpdateWrapperIndexes(ItemsDataStorageDefinition storage)
         {
-            Undo.RecordObject(storage, "Update Wrapper Indexes"); // Для возможности отмены действия
+            Undo.RecordObject(storage, "Update Wrapper Indexes");
 
             bool changed = false;
             for (int i = 0; i < _baseDefinitionsProperty.arraySize; i++)
@@ -191,14 +153,10 @@ namespace SkyClerik.Inventory.Editor
 
                 if (item != null)
                 {
-                    // Чтобы изменять WrapperIndex, нам нужно убедиться, что он доступен.
-                    // Он должен быть публичным или [SerializeField] в ItemBaseDefinition.
-                    // Если он приватный и не [SerializeField], то его нельзя будет изменить напрямую.
-                    // Если ItemBaseDefinition является ScriptableObject, то нужно помечать его как dirty.
-                    if (item.WrapperIndex != i) // Обновляем только если индекс изменился
+                    if (item.WrapperIndex != i) 
                     {
                         item.WrapperIndex = i;
-                        EditorUtility.SetDirty(item); // Помечаем ассет как измененный
+                        EditorUtility.SetDirty(item);
                         changed = true;
                     }
                 }
@@ -206,8 +164,8 @@ namespace SkyClerik.Inventory.Editor
 
             if (changed)
             {
-                EditorUtility.SetDirty(storage); // Помечаем сам ScriptableObject как измененный
-                AssetDatabase.SaveAssets(); // Сохраняем изменения
+                EditorUtility.SetDirty(storage);
+                AssetDatabase.SaveAssets();
                 Debug.Log("Wrapper Indexes обновлены!");
             }
             else

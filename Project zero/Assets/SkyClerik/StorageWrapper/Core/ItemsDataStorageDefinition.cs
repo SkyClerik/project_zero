@@ -6,47 +6,33 @@ using UnityEngine.Toolbox;
 namespace SkyClerik.Inventory
 {
     [CreateAssetMenu(fileName = "Global Items Storage Definition", menuName = "SkyClerik/Inventory/Global Items Storage Definition")]
-    public class GlobalItemsStorageDefinition : ScriptableObject
+    public class ItemsDataStorageDefinition : ScriptableObject
     {
         [SerializeField]
         private List<ItemBaseDefinition> _baseDefinitions = new List<ItemBaseDefinition>();
-        private Dictionary<int, ItemBaseDefinition> _itemsById = new Dictionary<int, ItemBaseDefinition>();
 
-        private void Awake()
-        {
-            _itemsById.Clear();
-
-            for (int i = 0; i < _baseDefinitions.Count; i++)
-            {
-                var item = _baseDefinitions[i];
-                if (item == null)
-                {
-                    Debug.LogWarning($"AnyItemsStorageWrapper: Элемент в _baseDefinitions под индексом {i} является null. Пропускаем его.");
-                    continue;
-                }
-
-                if (!_itemsById.ContainsKey(i))
-                    _itemsById.Add(i, item);
-                else
-                    Debug.LogError($"AnyItemsStorageWrapper: Обнаружен дубликат ID (индекса) '{i}' при инициализации. Этого не должно быть.");
-            }
-        }
+        // Awake больше не нужен, так как словарь _itemsById удален.
+        // public void Awake() {}
 
         /// <summary>
         /// Возвращает клонированный ItemBaseDefinition по его индексу (id) в списке.
         /// </summary>
         /// <param name="id">Индекс (id) искомого предмета.</param>
-        /// <returns>Клонированный ItemBaseDefinition или null, если предмет не найден.</returns>
+        /// <returns>Клонированный ItemBaseDefinition или null, если предмет не найден или индекс вне диапазона.</returns>
         public ItemBaseDefinition GetItem(int id)
         {
-            if (_itemsById.TryGetValue(id, out ItemBaseDefinition originalItem))
+            if (id >= 0 && id < _baseDefinitions.Count)
             {
-                //var clonedItem = CloneItem(originalItem);
-                //return clonedItem;
-                return originalItem.Clone();
+                ItemBaseDefinition originalItem = _baseDefinitions[id];
+                if (originalItem != null)
+                {
+                    return originalItem.Clone();
+                }
+                Debug.LogWarning($"[ItemsDataStorageDefinition] Предмет по ID '{id}' найден, но его определение равно null.");
+                return null;
             }
 
-            Debug.LogWarning($"Искомый предмет с ID '{id}' не найден в словаре _itemsById.");
+            Debug.LogWarning($"[ItemsDataStorageDefinition] Искомый предмет с ID '{id}' не найден (индекс вне диапазона).");
             return null;
         }
 
@@ -65,16 +51,8 @@ namespace SkyClerik.Inventory
                 return null;
             }
 
-            int index = _baseDefinitions.IndexOf(item);
-            if (index == -1)
-            {
-                Debug.LogWarning($"Искомый предмет '{item.name}' не найден в базовых определениях.");
-                return null;
-            }
-
-            //var clonedItem = CloneItem(item);
-            //return clonedItem;
-            return item.Clone();
+            // Теперь этот метод может просто использовать WrapperIndex для получения элемента
+            return GetItemByWrapperIndex(item);
         }
 
         /// <summary>
@@ -91,7 +69,7 @@ namespace SkyClerik.Inventory
                 Debug.LogWarning("Попытка получить предмет по null ссылке.");
                 return null;
             }
-
+            // Теперь просто вызываем GetItem(int id)
             return GetItem(item.WrapperIndex);
         }
 
@@ -109,7 +87,7 @@ namespace SkyClerik.Inventory
             {
                 return _baseDefinitions[index];
             }
-            Debug.LogWarning($"GlobalItemsStorageDefinition: Индекс {index} находится вне диапазона для _baseDefinitions.");
+            Debug.LogWarning($"[ItemsDataStorageDefinition] Индекс {index} находится вне диапазона для _baseDefinitions.");
             return null;
         }
 
@@ -128,12 +106,10 @@ namespace SkyClerik.Inventory
                 ItemBaseDefinition originalItem = _baseDefinitions[index];
                 if (originalItem != null)
                 {
-                    //var clonedItem = CloneItem(originalItem);
-                    //return clonedItem;
                     return originalItem.Clone();
                 }
             }
-            Debug.LogWarning($"GlobalItemsStorageDefinition: Индекс {index} находится вне диапазона или предмет по этому индексу null.");
+            Debug.LogWarning($"[ItemsDataStorageDefinition] Индекс {index} находится вне диапазона или предмет по этому индексу null.");
             return null;
         }
     }

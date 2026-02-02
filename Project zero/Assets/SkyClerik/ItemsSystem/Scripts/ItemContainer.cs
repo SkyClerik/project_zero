@@ -158,14 +158,10 @@ namespace SkyClerik.Inventory
         public void SetupLoadedItemsGrid()
         {
             if (_gridDimensions.x <= 0 || _gridDimensions.y <= 0)
-            {
-                Debug.LogError($"[ItemContainer:{name}] Grid dimensions are not set. Cannot setup loaded items grid.", this);
                 return;
-            }
 
-            // Очищаем текущую логическую матрицу
             _gridOccupancy = new bool[_gridDimensions.x, _gridDimensions.y];
-            Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Очищена логическая сетка. Размеры: {_gridDimensions.x}x{_gridDimensions.y}.", this);
+            //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Очищена логическая сетка. Размеры: {_gridDimensions.x}x{_gridDimensions.y}.", this);
 
             // Проходим по всем предметам и помечаем занятые ячейки
             foreach (var item in _itemDataStorageSO.Items)
@@ -173,11 +169,11 @@ namespace SkyClerik.Inventory
                 if (item != null)
                 {
                     OccupyGridCells(item, true);
-                    Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Предмет '{item.DefinitionName}' установлен на позицию {item.GridPosition}.");
+                    //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Предмет '{item.DefinitionName}' установлен на позицию {item.GridPosition}.");
                 }
             }
             OnGridOccupancyChanged?.Invoke();
-            Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Логическая сетка инвентаря перестроена для {ItemDataStorageSO.Items.Count} предметов.", this);
+            //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Логическая сетка инвентаря перестроена для {ItemDataStorageSO.Items.Count} предметов.", this);
         }
 
         public List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
@@ -325,24 +321,24 @@ namespace SkyClerik.Inventory
                         _gridOccupancy[gridX, gridY] = occupy;
                 }
             }
-            LogGridState();
+            //LogGridState();
             OnGridOccupancyChanged?.Invoke();
         }
 
-        private void LogGridState()
-        {
-            Debug.Log($"--- Состояние логической сетки ({name}) {_gridDimensions.x}x{_gridDimensions.y} ---");
-            for (int y = _gridDimensions.y - 1; y >= 0; y--)
-            {
-                string row = "";
-                for (int x = 0; x < _gridDimensions.x; x++)
-                {
-                    row += _gridOccupancy[x, y] ? "1 " : "0 ";
-                }
-                Debug.Log(row);
-            }
-            Debug.Log("-----------------------------------------");
-        }
+        //private void LogGridState()
+        //{
+        //    Debug.Log($"--- Состояние логической сетки ({name}) {_gridDimensions.x}x{_gridDimensions.y} ---");
+        //    for (int y = _gridDimensions.y - 1; y >= 0; y--)
+        //    {
+        //        string row = "";
+        //        for (int x = 0; x < _gridDimensions.x; x++)
+        //        {
+        //            row += _gridOccupancy[x, y] ? "1 " : "0 ";
+        //        }
+        //        Debug.Log(row);
+        //    }
+        //    Debug.Log("-----------------------------------------");
+        //}
 
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
         {

@@ -45,7 +45,6 @@ namespace UnityEngine.DataEditor
                 }
             }
 
-            // Apply skills from state (assuming they have passive Apply logic)
             if (_stateSkills != null)
             {
                 foreach (SkillBaseDefinition skill in _stateSkills)
@@ -62,7 +61,6 @@ namespace UnityEngine.DataEditor
             // Деактивация трейтов и навыков, даваемых состоянием.
             Debug.Log($"Снято состояние '{name}' с юнита '{unit}'.");
 
-            // Remove unique traits from state
             if (_modifier != null)
             {
                 foreach (BaseModifier modifier in _modifier)
@@ -71,7 +69,6 @@ namespace UnityEngine.DataEditor
                 }
             }
 
-            // Remove skills from state
             if (_stateSkills != null)
             {
                 foreach (SkillBaseDefinition skill in _stateSkills)

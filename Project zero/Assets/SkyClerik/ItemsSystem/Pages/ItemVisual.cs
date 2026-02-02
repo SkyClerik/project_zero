@@ -34,7 +34,6 @@ namespace SkyClerik.Inventory
             style.position = Position.Absolute;
             this.SetPadding(IconPadding);
 
-            // Устанавливаем начальную позицию и размер на основе gridPosition, gridSize и CellSize владельца
             style.left = gridPosition.x * _ownerInventory.CellSize.x;
             style.top = gridPosition.y * _ownerInventory.CellSize.y;
             style.width = gridSize.x * _ownerInventory.CellSize.x;
@@ -363,23 +362,19 @@ namespace SkyClerik.Inventory
                 Mathf.RoundToInt(_originalPosition.x / _ownerInventory.CellSize.x),
                 Mathf.RoundToInt(_originalPosition.y / _ownerInventory.CellSize.y)
             );
-            
+
             _ownerInventory.Drop(this, originalGridPosition);
             SetPosition(_originalPosition);
         }
 
         private void RestoreSizeAndRotate()
         {
-            // 1. Восстанавливаем данные в модели до исходного состояния
             _itemDefinition.Dimensions.Angle = _saveAngle;
             _itemDefinition.Dimensions.Width = _originalScale.x;
             _itemDefinition.Dimensions.Height = _originalScale.y;
 
-            // 2. Применяем восстановленные данные к UI, используя твою новую раздельную логику
             SetSize();
             UpdateIconLayout();
-
-            // 3. Восстанавливаем визуальный поворот
             RotateIcon(_saveAngle);
         }
     }

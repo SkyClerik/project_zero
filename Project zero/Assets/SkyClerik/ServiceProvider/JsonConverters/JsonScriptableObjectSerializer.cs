@@ -11,7 +11,7 @@ namespace SkyClerik.Inventory
     /// </summary>
     public static class JsonScriptableObjectSerializer
     {
-        // Рекомендуется кэшировать ContractResolver для лучшей производительности.
+        // Кеширую ContractResolver для лучшей производительности.
         private static readonly DefaultContractResolver _resolver = new DefaultContractResolver();
 
         /// <summary>
@@ -27,7 +27,6 @@ namespace SkyClerik.Inventory
             {
                 // TypeNameHandling.Auto добавляет $type только если тип отличается от объявленного.
                 // TypeNameHandling.Objects всегда добавляет $type.
-                // Будь осторожен с безопасностью при десериализации из недоверенных источников!
                 TypeNameHandling = TypeNameHandling.Auto,
                 ContractResolver = _resolver
             };
@@ -46,8 +45,7 @@ namespace SkyClerik.Inventory
         {
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
-                // Для сериализации лучше использовать TypeNameHandling.Objects,
-                // чтобы информация о типе всегда присутствовала для десериализации.
+                // Для сериализации лучше использовать TypeNameHandling.Objects, чтобы информация о типе всегда присутствовала для десериализации.
                 TypeNameHandling = TypeNameHandling.Objects,
                 ContractResolver = _resolver
             };

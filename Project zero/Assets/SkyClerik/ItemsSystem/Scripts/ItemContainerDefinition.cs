@@ -62,13 +62,6 @@ namespace SkyClerik.Inventory
                 if (originalClone != null)
                 {
                     JsonScriptableObjectSerializer.CopyJsonProperties(deserializedItem, originalClone);
-
-                    // Копируем данные, которые должны быть специфичными для этого экземпляра предмета
-                    //originalClone.WrapperIndex = deserializedItem.WrapperIndex;
-                    //originalClone.Stack = deserializedItem.Stack;
-                    //originalClone.GridPosition = deserializedItem.GridPosition;
-                    // TODO: Добавьте сюда копирование других специфичных для экземпляра полей, если они есть
-
                     _items.Add(originalClone);
                 }
                 else

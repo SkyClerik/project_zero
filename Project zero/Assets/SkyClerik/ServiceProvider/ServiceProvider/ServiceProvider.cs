@@ -22,7 +22,6 @@ namespace UnityEngine.Toolbox
             var serviceType = typeof(T);
             if (_services.ContainsKey(serviceType))
             {
-                // Если сервис уже есть, лучше предупредить об этом, чтобы избежать неожиданного поведения.
                 Debug.LogWarning($"[ServiceProvider] Сервис типа '{serviceType.Name}' уже зарегистрирован. Предыдущий экземпляр будет перезаписан.");
                 _services[serviceType] = service;
             }
@@ -45,8 +44,6 @@ namespace UnityEngine.Toolbox
                 return (T)service;
             }
 
-            // Если сервис не найден, возвращаем null и выводим ошибку.
-            // Можно было бы бросить исключение, но возврат null более безопасен в Unity.
             Debug.LogError($"[ServiceProvider] Сервис типа '{serviceType.Name}' не найден.");
             return default; // default для обобщенного типа T будет null для ссылочных типов.
         }
@@ -61,8 +58,12 @@ namespace UnityEngine.Toolbox
             var serviceType = typeof(T);
             if (!_services.Remove(serviceType))
             {
-                // Это не критичная ошибка, но может помочь в отладке.
-                Debug.LogWarning($"[ServiceProvider] Попытка отменить регистрацию для незарегистрированного сервиса типа '{serviceType.Name}'.");
+                // Выводим предупреждение только если сервис не был найден И словарь не пуст.
+                // Если словарь пуст, это, скорее всего, означает, что ServiceProviderCleaner уже очистил все.
+                if (_services.Count > 0)
+                {
+                    Debug.LogWarning($"[ServiceProvider] Попытка отменить регистрацию для незарегистрированного сервиса типа '{serviceType.Name}'.");
+                }
             }
         }
 
@@ -81,17 +82,12 @@ namespace UnityEngine.Toolbox
                 return;
             }
 
-            // Используем список для сбора ключей, которые нужно удалить,
-            // чтобы избежать изменения коллекции во время итерации.
             List<Type> keysToRemove = new List<Type>();
 
             foreach (var entry in _services)
             {
-                // Проверяем, является ли значение в словаре тем же экземпляром, что и serviceInstance.
                 if (ReferenceEquals(entry.Value, serviceInstance))
-                {
                     keysToRemove.Add(entry.Key);
-                }
             }
 
             foreach (Type key in keysToRemove)

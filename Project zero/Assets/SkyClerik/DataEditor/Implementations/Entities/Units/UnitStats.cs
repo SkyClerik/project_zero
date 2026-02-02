@@ -103,12 +103,9 @@ namespace UnityEngine.DataEditor
             StatModifiers = new ReadOnlyCollection<StatModifier>(_statModifiers);
         }
 
-        // Copy constructor
-        public Stat(Stat original) : this() // Call default constructor to initialize ReadOnlyCollection
+        public Stat(Stat original) : this()
         {
             BaseValue = original.BaseValue;
-            // Modifiers are typically not copied this way, they are applied dynamically
-            // _statModifiers.AddRange(original._statModifiers); // Only if modifiers should be copied
         }
 
         public virtual float Value
@@ -191,23 +188,20 @@ namespace UnityEngine.DataEditor
     {
         [SerializeField] private float _currentValue;
 
-        public ResourceStat() : base() { } // Default constructor
+        public ResourceStat() : base() { }
 
-        // Copy constructor from ResourceStat
         public ResourceStat(ResourceStat original) : base(original)
         {
             _currentValue = original._currentValue;
         }
 
-        // Copy constructor from base Stat (if you want to create a ResourceStat from a regular Stat)
         public ResourceStat(Stat original) : base(original)
         {
-            // Initial current value to base value
             _currentValue = original.BaseValue;
         }
 
         [NonSerialized]
-        public Action<float, float> OnValueChanged; // Current, Max
+        public Action<float, float> OnValueChanged;
 
         public float CurrentValue
         {
@@ -223,7 +217,7 @@ namespace UnityEngine.DataEditor
             }
         }
 
-        public override float Value // For ResourceStat, Value is MaxValue
+        public override float Value
         {
             get { return base.Value; }
         }
@@ -251,7 +245,6 @@ namespace UnityEngine.DataEditor
         [field: SerializeField] public Stat Accuracy { get; private set; } = new Stat();
         [field: SerializeField] public Stat Resistance { get; private set; } = new Stat();
 
-        // New stats from GameParameterType
         [field: SerializeField] public Stat MagicAttack { get; private set; } = new Stat();
         [field: SerializeField] public Stat MagicDefense { get; private set; } = new Stat();
         [field: SerializeField] public Stat Luck { get; private set; } = new Stat();
@@ -261,7 +254,6 @@ namespace UnityEngine.DataEditor
 
         public StatsContainer()
         {
-            // Предоставляем разумные ненулевые значения по умолчанию. Их можно переопределить в Инспекторе.
             Health.BaseValue = 100;
             Energy.BaseValue = 50;
             Strength.BaseValue = 10;
@@ -275,7 +267,6 @@ namespace UnityEngine.DataEditor
             Accuracy.BaseValue = 0;
             Resistance.BaseValue = 0;
 
-            // New stats default values
             MagicAttack.BaseValue = 10;
             MagicDefense.BaseValue = 5;
             Luck.BaseValue = 0;
@@ -283,8 +274,7 @@ namespace UnityEngine.DataEditor
             RegisterEventHandlers();
         }
 
-        // Copy constructor
-        public StatsContainer(StatsContainer original) : this() // Call default constructor for initial values
+        public StatsContainer(StatsContainer original) : this()
         {
             CopyFrom(original);
         }
@@ -293,7 +283,6 @@ namespace UnityEngine.DataEditor
         {
             if (original == null) return;
 
-            // Deep copy each stat
             Health = new ResourceStat(original.Health);
             Energy = new ResourceStat(original.Energy);
             Strength = new Stat(original.Strength);
@@ -307,7 +296,6 @@ namespace UnityEngine.DataEditor
             Accuracy = new Stat(original.Accuracy);
             Resistance = new Stat(original.Resistance);
 
-            // New stats copy
             MagicAttack = new Stat(original.MagicAttack);
             MagicDefense = new Stat(original.MagicDefense);
             Luck = new Stat(original.Luck);
@@ -327,7 +315,6 @@ namespace UnityEngine.DataEditor
 
         private void RegisterEventHandlers()
         {
-            // Clear existing listeners to prevent duplicates, especially after deserialization
             if (Health != null) Health.OnValueChanged = null;
             if (Energy != null) Energy.OnValueChanged = null;
 
@@ -377,8 +364,7 @@ namespace UnityEngine.DataEditor
                 case StatType.CritRate: return CritRate;
                 case StatType.CritDamage: return CritDamage;
                 case StatType.Accuracy: return Accuracy;
-                case StatType.Resistance: return Resistance;
-                // New stats
+                case StatType.Resistance: return Resistance;                
                 case StatType.MagicAttack: return MagicAttack;
                 case StatType.MagicDefense: return MagicDefense;
                 case StatType.Luck: return Luck;

@@ -1,7 +1,6 @@
 using SkyClerik.Inventory;
 using SkyClerik.Utils;
 using UnityEngine;
-using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik
@@ -23,25 +22,19 @@ namespace SkyClerik
             var gameStateManager = ServiceProvider.Get<GameStateManager>();
             if (gameStateManager == null)
             {
-                //Debug.LogError("FirstLoadPlayerItems: GameStateManager    ServiceProvider!", this);
                 Next();
                 return;
             }
 
             if (gameStateManager.GlobalGameState.IsNewGame)
             {
-                //Debug.Log("FirstLoadPlayerItems:  ,     .");
                 Next();
                 return;
             }
 
-            //Debug.Log("FirstLoadPlayerItems:     ...");
-
             var itemsPage = ServiceProvider.Get<ItemsPage>();
             if (itemsPage == null)
             {
-                //Debug.LogError("FirstLoadPlayerItems: ItemsPage    ServiceProvider!     .", this);
-
                 Next();
                 return;
             }
@@ -52,9 +45,7 @@ namespace SkyClerik
                    itemsPage.CraftItemContainer
             };
 
-            gameStateManager.LoadService.LoadAll(gameStateManager.GlobalGameState, containersToLoad);
-
-            //Debug.Log("FirstLoadPlayerItems:   .");
+            LoadItems();
             Next();
         }
 
@@ -62,6 +53,26 @@ namespace SkyClerik
         {
             NextComponent?.ExecuteStep();
             Destroy(this);
+        }
+
+        private void LoadItems()
+        {
+            var gameStateManager = ServiceProvider.Get<GameStateManager>();
+            if (gameStateManager == null)
+                return;
+
+            var itemsPage = ServiceProvider.Get<ItemsPage>();
+            if (itemsPage == null)
+                return;
+
+            var loadService = gameStateManager.LoadService;
+            var globalState = gameStateManager.GlobalGameState;
+            string slotFolderPath = loadService.GetSaveSlotFolderPath(globalState.CurrentSaveSlotIndex);
+
+            loadService.LoadItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
+            loadService.LoadItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
+
+            Debug.Log($"[DevelopHUD] «агрузка контейнеров из слота {globalState.CurrentSaveSlotIndex} завершена.");
         }
     }
 }
