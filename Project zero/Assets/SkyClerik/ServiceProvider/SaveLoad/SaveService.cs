@@ -2,7 +2,6 @@ using UnityEngine;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
-using UnityEngine.DataEditor; // Добавлено для доступа к DefinitionName и другим свойствам BaseDefinition
 
 namespace SkyClerik.Utils
 {

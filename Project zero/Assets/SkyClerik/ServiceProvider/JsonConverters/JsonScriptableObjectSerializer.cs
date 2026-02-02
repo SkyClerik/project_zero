@@ -53,5 +53,37 @@ namespace SkyClerik.Inventory
 
             return JsonConvert.SerializeObject(obj, settings);
         }
+
+        /// <summary>
+        /// Копирует значения всех полей, помеченных [JsonProperty], из исходного объекта в целевой.
+        /// Использует сериализацию/десериализацию Newtonsoft.Json для глубокого копирования только помеченных полей.
+        /// </summary>
+        /// <typeparam name="T">Тип объекта ScriptableObject.</typeparam>
+        /// <param name="source">Исходный объект, из которого копируются данные.</param>
+        /// <param name="destination">Целевой объект, в который копируются данные.</param>
+        public static void CopyJsonProperties<T>(T source, T destination) where T : ScriptableObject
+        {
+            if (source == null || destination == null)
+            {
+                Debug.LogWarning("Попытка скопировать свойства между null объектами.");
+                return;
+            }
+
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                // Используем TypeNameHandling.Objects, чтобы корректно копировать полиморфные типы, если они присутствуют в полях
+                TypeNameHandling = TypeNameHandling.Objects,
+                ContractResolver = _resolver,
+                // Игнорируем ReferenceLoopHandling, так как мы копируем свойства, а не ссылки
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+
+            // Сериализуем исходный объект в JSON
+            string json = JsonConvert.SerializeObject(source, settings);
+
+            // Десериализуем JSON поверх целевого объекта
+            // Это обновит только те поля, которые присутствуют в JSON (т.е., помечены [JsonProperty])
+            JsonConvert.PopulateObject(json, destination, settings);
+        }
     }
 }

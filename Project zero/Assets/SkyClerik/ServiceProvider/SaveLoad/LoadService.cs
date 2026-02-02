@@ -121,7 +121,7 @@ namespace SkyClerik.Utils
                         }
                         else if (targetContainer == itemsPage.CraftItemContainer)
                         {
-                            targetGridPage = itemsPage.CraftPage; // Исправлено на правильное имя свойства
+                            targetGridPage = itemsPage.CraftPage;
                         }
 
                         if (targetGridPage != null)

@@ -14,18 +14,18 @@ namespace UnityEngine.DataEditor
         [SerializeField]
         [Tooltip("Уникальный идентификатор. Индекс полученный от общей базы предметов")]
         protected int _wrapperIndex;
-        public int WrapperIndex { get => _wrapperIndex; set => _wrapperIndex = value; } // Изменено на public set
+        public int WrapperIndex { get => _wrapperIndex; set => _wrapperIndex = value; }
 
         [JsonProperty]
         [SerializeField]
         [Tooltip("Цена предмета в магазинах.")]
         protected int _price;
-        public int Price { get => _price; set => _price = value; } // Изменено на public set
+        public int Price { get => _price; set => _price = value; }
 
         [JsonProperty]
         [SerializeField]
         [Tooltip("Текущее кол-во")]
-        protected int _curStack; // Изменено на protected
+        protected int _curStack;
         public int Stack { get => _curStack; set => _curStack = value; }
 
         /// <summary>
@@ -75,28 +75,28 @@ namespace UnityEngine.DataEditor
         [SerializeField]
         [Tooltip("Максимальное кол-во")]
         protected int _maxStack;
-        public int MaxStack { get => _maxStack; set => _maxStack = value; } // Изменено на public set
+        public int MaxStack { get => _maxStack; set => _maxStack = value; }
 
         [JsonProperty]
         [SerializeField]
         protected bool _stackable = true;
-        public bool Stackable { get => _stackable; set => _stackable = value; } // Изменено на public set
+        public bool Stackable { get => _stackable; set => _stackable = value; }
 
         [JsonProperty]
         [SerializeField]
         protected bool _viewStackable = true;
-        public bool ViewStackable { get => _viewStackable; set => _viewStackable = value; } // Изменено на public set
+        public bool ViewStackable { get => _viewStackable; set => _viewStackable = value; }
 
         [JsonProperty]
         [SerializeField]
         [Tooltip("Размер и поворот предмета")]
         protected ItemDimensions _dimensions;
-        public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; } // Изменено на public set
+        public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
 
         [JsonProperty]
         [SerializeField]
         protected Vector2Int _gridPosition;
-        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; } // GridPosition остается публичным set
+        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
     }
 
     [Serializable]
@@ -122,12 +122,12 @@ namespace UnityEngine.DataEditor
         [SerializeField]
         private float currentAngle = 0;
 
-        public int DefaultWidth { get => defaultWidth; set => defaultWidth = value; } // Изменено на public set
-        public int DefaultHeight { get => defaultHeight; set => defaultHeight = value; } // Изменено на public set
-        public float DefaultAngle { get => defaultAngle; set => defaultAngle = value; } // Изменено на public set
-        public int CurrentHeight { get => currentHeight; set => currentHeight = value; } // Изменено на public set
-        public int CurrentWidth { get => currentWidth; set => currentWidth = value; } // Изменено на public set
-        public float CurrentAngle { get => currentAngle; set => currentAngle = value; } // Изменено на public set
+        public int DefaultWidth { get => defaultWidth; set => defaultWidth = value; }
+        public int DefaultHeight { get => defaultHeight; set => defaultHeight = value; }
+        public float DefaultAngle { get => defaultAngle; set => defaultAngle = value; }
+        public int CurrentHeight { get => currentHeight; set => currentHeight = value; }
+        public int CurrentWidth { get => currentWidth; set => currentWidth = value; }
+        public float CurrentAngle { get => currentAngle; set => currentAngle = value; }
 
         public ItemDimensions()
         {

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
-using SkyClerik.Utils; // Добавлено для доступа к ServiceProvider
 
 namespace SkyClerik.Inventory
 {
@@ -56,17 +55,20 @@ namespace SkyClerik.Inventory
                     Debug.LogWarning("Десериализованный предмет является null, пропускаем.");
                     continue;
                 }
+                Debug.Log($"[SetDataFromOtherContainer] Deserialized Item GetInstanceID(): {deserializedItem.GetInstanceID()}, Name: {deserializedItem.DefinitionName}, WrapperIndex: {deserializedItem.WrapperIndex}");
 
                 // Используем WrapperIndex для получения клона оригинального предмета из GlobalItemStorage
                 ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItemByIndex(deserializedItem.WrapperIndex);
 
                 if (originalClone != null)
                 {
+                    Debug.Log($"[SetDataFromOtherContainer] Original Clone GetInstanceID(): {originalClone.GetInstanceID()}, Name: {originalClone.DefinitionName}");
+
                     // Копируем данные, которые должны быть специфичными для этого экземпляра предмета
                     originalClone.Stack = deserializedItem.Stack;
                     originalClone.GridPosition = deserializedItem.GridPosition;
                     // TODO: Добавьте сюда копирование других специфичных для экземпляра полей, если они есть
-                    
+
                     _items.Add(originalClone); // Добавляем инициализированный клон в список
                 }
                 else

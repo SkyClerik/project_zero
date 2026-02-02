@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
-// using Newtonsoft.Json; // Удалено, так как больше не используется для клонирования
+using UnityEngine.Toolbox; // Добавлено для доступа к JsonScriptableObjectSerializer
 
 namespace SkyClerik.Inventory
 {
@@ -35,61 +34,33 @@ namespace SkyClerik.Inventory
 
         /// <summary>
         /// Клонирует ItemBaseDefinition с использованием ScriptableObject.Instantiate() для создания независимого экземпляра.
-        /// Затем вручную копирует необходимые поля.
+        /// Затем использует JsonScriptableObjectSerializer.CopyJsonProperties для копирования всех полей, помеченных [JsonProperty].
         /// </summary>
         /// <param name="original">Оригинальный ItemBaseDefinition для клонирования.</param>
         /// <returns>Клонированный ItemBaseDefinition или null, если оригинал null.</returns>
-        private ItemBaseDefinition CloneItem(ItemBaseDefinition original)
-        {
-            if (original == null)
-            {
-                Debug.LogWarning("Попытка клонировать null ItemBaseDefinition.");
-                return null;
-            }
+        //private ItemBaseDefinition CloneItem(ItemBaseDefinition original)
+        //{
+        //    if (original == null)
+        //    {
+        //        Debug.LogWarning("Попытка клонировать null ItemBaseDefinition.");
+        //        return null;
+        //    }
+        //    Debug.Log($"[CloneItem] Original GetInstanceID(): {original.GetInstanceID()}, Name: {original.name}");
 
-            // Создаем новый, независимый экземпляр ScriptableObject
-            ItemBaseDefinition clonedItem = Instantiate(original);
-            clonedItem.name = original.name; // Instatiate добавляет "(Clone)", убираем это.
+        //    // Создаем новый, независимый экземпляр ScriptableObject
+        //    ItemBaseDefinition clonedItem = Instantiate(original);
+        //    //clonedItem.name = original.name; // Instantiate добавляет "(Clone)", убираем это.
 
-            // Копируем все необходимые поля вручную, так как Instantiate создает "чистый" клон
-            // и не копирует напрямую приватные поля или свойства с protected set.
-            // Примечание: Stack и GridPosition копируются позже в ItemContainerDefinition.SetDataFromOtherContainer
-            // из десериализованных данных. Здесь копируем базовые данные, не изменяющиеся экземпляром.
+        //    // Используем универсальный метод для копирования всех полей, помеченных [JsonProperty]
+        //    JsonScriptableObjectSerializer.CopyJsonProperties(original, clonedItem);
 
-            // Копируем поля из BaseDefinition
-            clonedItem.ID = original.ID;
-            clonedItem.DefinitionName = original.DefinitionName;
-            clonedItem.Description = original.Description;
-            clonedItem.Icon = original.Icon;
+        //    Debug.Log($"[CloneItem] Cloned GetInstanceID(): {clonedItem.GetInstanceID()}, Name: {clonedItem.name}");
 
-            // Копируем поля из ItemBaseDefinition
-            clonedItem.WrapperIndex = original.WrapperIndex;
-            clonedItem.Price = original.Price;
-            clonedItem.MaxStack = original.MaxStack;
-            clonedItem.Stackable = original.Stackable;
-            clonedItem.ViewStackable = original.ViewStackable;
+        //    // Stack и GridPosition не копируются здесь, так как они будут установлены из десериализованных данных
+        //    // в ItemContainerDefinition.SetDataFromOtherContainer.
 
-            // Если ItemDimensions - это class, который должен быть глубоко скопирован, а не просто ссылкой:
-            if (original.Dimensions != null)
-            {
-                clonedItem.Dimensions = new ItemDimensions
-                {
-                    DefaultWidth = original.Dimensions.DefaultWidth,
-                    DefaultHeight = original.Dimensions.DefaultHeight,
-                    DefaultAngle = original.Dimensions.DefaultAngle,
-                    CurrentWidth = original.Dimensions.CurrentWidth,
-                    CurrentHeight = original.Dimensions.CurrentHeight,
-                    CurrentAngle = original.Dimensions.CurrentAngle
-                };
-            } else {
-                clonedItem.Dimensions = null;
-            }
-            
-            // Stack и GridPosition не копируются здесь, так как они будут установлены из десериализованных данных
-            // в ItemContainerDefinition.SetDataFromOtherContainer.
-
-            return clonedItem;
-        }
+        //    return clonedItem;
+        //}
 
         /// <summary>
         /// Возвращает клонированный ItemBaseDefinition по его индексу (id) в списке.
@@ -100,12 +71,9 @@ namespace SkyClerik.Inventory
         {
             if (_itemsById.TryGetValue(id, out ItemBaseDefinition originalItem))
             {
-                var clonedItem = CloneItem(originalItem);
-                if (clonedItem != null)
-                {
-                    clonedItem.WrapperIndex = id;
-                }
-                return clonedItem;
+                //var clonedItem = CloneItem(originalItem);
+                //return clonedItem;
+                return originalItem.Clone();
             }
 
             Debug.LogWarning($"Искомый предмет с ID '{id}' не найден в словаре _itemsById.");
@@ -134,12 +102,9 @@ namespace SkyClerik.Inventory
                 return null;
             }
 
-            var clonedItem = CloneItem(item);
-            if (clonedItem != null)
-            {
-                clonedItem.WrapperIndex = index;
-            }
-            return clonedItem;
+            //var clonedItem = CloneItem(item);
+            //return clonedItem;
+            return item.Clone();
         }
 
         /// <summary>
@@ -154,12 +119,6 @@ namespace SkyClerik.Inventory
             if (item == null)
             {
                 Debug.LogWarning("Попытка получить предмет по null ссылке.");
-                return null;
-            }
-
-            if (item.WrapperIndex < 0)
-            {
-                Debug.LogWarning($"AnyItemsStorageWrapper: Невалидный WrapperIndex ({item.WrapperIndex}) у переданного ItemBaseDefinition для GetItemByWrapperIndex.");
                 return null;
             }
 
@@ -199,12 +158,9 @@ namespace SkyClerik.Inventory
                 ItemBaseDefinition originalItem = _baseDefinitions[index];
                 if (originalItem != null)
                 {
-                    var clonedItem = CloneItem(originalItem);
-                    if (clonedItem != null)
-                    {
-                        clonedItem.WrapperIndex = index; // Устанавливаем WrapperIndex для клонированного элемента
-                    }
-                    return clonedItem;
+                    //var clonedItem = CloneItem(originalItem);
+                    //return clonedItem;
+                    return originalItem.Clone();
                 }
             }
             Debug.LogWarning($"GlobalItemsStorageDefinition: Индекс {index} находится вне диапазона или предмет по этому индексу null.");
