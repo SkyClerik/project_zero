@@ -1,11 +1,12 @@
-using System;
 using Newtonsoft.Json;
+using System;
 
 namespace UnityEngine.DataEditor
 {
     /// <summary>
     /// Абстрактный базовый класс для всех предметов.
     /// </summary>
+    [System.Serializable]
     [JsonObject(MemberSerialization.Fields)]
     public abstract class ItemBaseDefinition : BaseDefinition
     {
@@ -109,16 +110,16 @@ namespace UnityEngine.DataEditor
         [SerializeField]
         private int defaultHeight = 1;
         [JsonProperty]
-        //[SerializeField]
+        [SerializeField]
         private float defaultAngle = 0;
         [JsonProperty]
-        //[SerializeField]
+        [SerializeField]
         private int currentHeight = 0;
         [JsonProperty]
-        //[SerializeField]
+        [SerializeField]
         private int currentWidth = 0;
         [JsonProperty]
-        //[SerializeField]
+        [SerializeField]
         private float currentAngle = 0;
 
         public int DefaultWidth { get => defaultWidth; set => defaultWidth = value; }

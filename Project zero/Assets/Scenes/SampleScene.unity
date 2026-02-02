@@ -152,10 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemDataStorageSO: {fileID: 11400000, guid: ce8e26771577a8a44b52578ecf895127, type: 2}
-  _uiDocument: {fileID: 0}
-  _rootPanelName: 
-  _gridDimensions: {x: 5, y: 5}
-  _cellSize: {x: 0, y: 0}
   _nextStep: {fileID: 1689564146}
 --- !u!4 &138080786
 Transform:
@@ -219,7 +215,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _developHudUiDocument: {fileID: 365169867}
-  _developLut: {fileID: 814471014}
+  _developLut: {fileID: 11400000, guid: 2827add769d20904eadf88f6dbe78bcd, type: 2}
+  _developLut2: {fileID: 11400000, guid: 597b1778d5825124dad19d8e6353cf28, type: 2}
 --- !u!114 &365169867
 MonoBehaviour:
   m_ObjectHideFlags: 0

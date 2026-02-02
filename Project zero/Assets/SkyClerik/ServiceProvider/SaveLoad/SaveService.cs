@@ -63,7 +63,7 @@ namespace SkyClerik.Utils
             string fileName = $"{itemContainer.ItemDataStorageSO.ContainerGuid}.json";
             string filePath = Path.Combine(slotFolderPath, fileName);
 
-            string json = itemContainer.ItemDataStorageSO.SaveItemsToJson();
+            string json = Inventory.JsonScriptableObjectSerializer.SerializeScriptableObject(itemContainer.ItemDataStorageSO);
             File.WriteAllText(filePath, json);
             Debug.Log($"Контейнер '{itemContainer.ItemDataStorageSO.ContainerGuid}' сохранен в: {filePath}");
         }

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using UnityEngine;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
@@ -11,6 +11,7 @@ namespace SkyClerik.Inventory
     /// ScriptableObject для хранения списка ItemBaseDefinition и GUID контейнера.
     /// </summary>
     [CreateAssetMenu(fileName = "ItemContainerDefinition", menuName = "SkyClerik/Inventory/Item Container Definition")]
+    [System.Serializable]
     public class ItemContainerDefinition : ScriptableObject
     {
         [JsonProperty]
@@ -19,10 +20,28 @@ namespace SkyClerik.Inventory
         private string _containerGuid;
         public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
 
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)] // Явно указываем, как обрабатывать типы элементов в списке
         [SerializeField]
+        [SerializeReference] // Указываем Unity, что это полиморфный список
         private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
         public List<ItemBaseDefinition> Items => _items;
+
+        public void SetDataFromOtherContainer(ItemContainerDefinition otherContainer)
+        {
+            if (otherContainer == null)
+            {
+                Debug.LogWarning("Попытка установить данные из пустого (null) контейнера.");
+                return;
+            }
+
+            _containerGuid = otherContainer.ContainerGuid;
+
+            _items.Clear();
+            _items.AddRange(otherContainer.Items);
+        }
+
+
 
         /// <summary>
         /// Проверяет и генерирует GUID для контейнера, если он отсутствует.
@@ -40,46 +59,6 @@ namespace SkyClerik.Inventory
             {
                 Debug.Log($"GUID контейнера уже существует: {_containerGuid}");
             }
-        }
-
-        public string SaveItemsToJson()
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                Formatting = Formatting.Indented,
-                TypeNameHandling = TypeNameHandling.Auto,
-                //Converters = { new SpriteJsonConverter() }
-            };
-            return JsonConvert.SerializeObject(this, settings);
-        }
-
-        public void LoadItemsFromJson(string json)
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-                //Converters = { new SpriteJsonConverter() }
-            };
-
-            var tempAnonObject = JsonConvert.DeserializeAnonymousType(json, new { ContainerGuid = "", Items = new List<object>() }, settings);
-
-            if (tempAnonObject == null) 
-                return;
-
-            _items.Clear();
-            foreach (var itemJson in tempAnonObject.Items)
-            {
-                string individualItemJson = JsonConvert.SerializeObject(itemJson, settings);
-
-                ItemBaseDefinition newItemDefinition = JsonConvert.DeserializeObject<ItemBaseDefinition>(individualItemJson, settings);
-
-                if (newItemDefinition != null)
-                    _items.Add(newItemDefinition);
-                else
-                    Debug.LogError($"Failed to deserialize ItemBaseDefinition from JSON: {individualItemJson}");
-            }
-            _containerGuid = tempAnonObject.ContainerGuid;
         }
     }
 }

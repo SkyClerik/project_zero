@@ -8,6 +8,7 @@
                 <ui:Button text="Добавить лут" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_add_item" />
                 <ui:Button text="Сохранить в слот 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_save" />
                 <ui:Button text="Загрузить слот 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_load" />
+                <ui:Button text="тест" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test" />
             </ui:VisualElement>
             <ui:VisualElement name="button_group" picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; height: 100%;">
                 <ui:Button text="Выход из игры" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_exit_game" />

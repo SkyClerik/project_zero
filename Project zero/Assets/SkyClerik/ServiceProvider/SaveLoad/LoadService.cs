@@ -80,8 +80,20 @@ namespace SkyClerik.Utils
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
-                targetContainer.ItemDataStorageSO.LoadItemsFromJson(json);
-                Debug.Log($"Контейнер '{containerGuid}' загружен из: {filePath}");
+                // Десериализуем JSON в новый временный ItemContainerDefinition
+                ItemContainerDefinition loadedContainerDefinition = Inventory.JsonScriptableObjectSerializer.DeserializeScriptableObject<ItemContainerDefinition>(json);
+
+                if (loadedContainerDefinition != null)
+                {
+                    // Копируем данные из загруженного определения в существующее
+                    // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
+                    targetContainer.ItemDataStorageSO.SetDataFromOtherContainer(loadedContainerDefinition);
+                    Debug.Log($"Контейнер '{containerGuid}' загружен из: {filePath}");
+                }
+                else
+                {
+                    Debug.LogError($"Не удалось десериализовать ItemContainerDefinition из файла: {filePath}");
+                }
             }
             else
             {

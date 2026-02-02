@@ -30,4 +30,4 @@ MonoBehaviour:
   _dimensions:
     defaultWidth: 1
     defaultHeight: 2
-  _gridPosition: {x: 0, y: 0}
+  _gridPosition: {x: 2, y: 0}

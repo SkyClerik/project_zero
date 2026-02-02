@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: CraftContainerEmpty
   m_EditorClassIdentifier: 
   _containerGuid: ce197b02-ebd4-4559-82fb-3aa15b984ed5
-  _items: []
+  _items:
+  - {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
