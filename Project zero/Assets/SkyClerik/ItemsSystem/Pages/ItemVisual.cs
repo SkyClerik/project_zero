@@ -10,7 +10,6 @@ namespace SkyClerik.Inventory
         private ItemsPage _itemsPage;
         private IDropTarget _ownerInventory;
         private ItemBaseDefinition _itemDefinition;
-        private Vector2 _startDraggedPosition;
         private Vector2 _originalPosition;
         private Vector2Int _originalScale;
         private float _originalRotate;
@@ -35,11 +34,6 @@ namespace SkyClerik.Inventory
             style.position = Position.Absolute;
             this.SetPadding(IconPadding);
 
-            // Инициализация ItemBaseDefinition.Dimensions.Current...
-            _itemDefinition.Dimensions.CurrentAngle = _itemDefinition.Dimensions.DefaultAngle;
-            _itemDefinition.Dimensions.CurrentWidth = itemDefinition.Dimensions.DefaultWidth;
-            _itemDefinition.Dimensions.CurrentHeight = itemDefinition.Dimensions.DefaultHeight;
-
             // Устанавливаем начальную позицию и размер на основе gridPosition, gridSize и CellSize владельца
             style.left = gridPosition.x * _ownerInventory.CellSize.x;
             style.top = gridPosition.y * _ownerInventory.CellSize.y;
@@ -55,7 +49,7 @@ namespace SkyClerik.Inventory
                 style =
                 {
                     backgroundImage = new StyleBackground(_itemDefinition.Icon),
-                    rotate = new Rotate(_itemDefinition.Dimensions.CurrentAngle),
+                    rotate = new Rotate(_itemDefinition.Dimensions.Angle),
                     position = Position.Absolute,
                 }
             };
@@ -68,8 +62,8 @@ namespace SkyClerik.Inventory
                 {
                     style =
                     {
-                        width = _itemDefinition.Dimensions.DefaultWidth * _ownerInventory.CellSize.x,
-                        height = _itemDefinition.Dimensions.DefaultHeight * _ownerInventory.CellSize.y,
+                        width = _itemDefinition.Dimensions.Width * _ownerInventory.CellSize.x,
+                        height = _itemDefinition.Dimensions.Height * _ownerInventory.CellSize.y,
                         fontSize = 40,
                         color = new StyleColor(Color.blue),
                         alignItems = Align.FlexStart,
@@ -124,7 +118,7 @@ namespace SkyClerik.Inventory
 
         public void Rotate()
         {
-            if (_itemDefinition.Dimensions.DefaultWidth == _itemDefinition.Dimensions.DefaultHeight)
+            if (_itemDefinition.Dimensions.Width == _itemDefinition.Dimensions.Height)
                 return;
 
             _itemDefinition.Dimensions.Swap();
@@ -134,8 +128,8 @@ namespace SkyClerik.Inventory
 
         private void SetSize()
         {
-            this.style.width = _itemDefinition.Dimensions.CurrentWidth * _ownerInventory.CellSize.x;
-            this.style.height = _itemDefinition.Dimensions.CurrentHeight * _ownerInventory.CellSize.y;
+            this.style.width = _itemDefinition.Dimensions.Width * _ownerInventory.CellSize.x;
+            this.style.height = _itemDefinition.Dimensions.Height * _ownerInventory.CellSize.y;
 
             UpdateIconLayout();
         }
@@ -145,8 +139,8 @@ namespace SkyClerik.Inventory
             var parentWidth = this.style.width.value.value;
             var parentHeight = this.style.height.value.value;
 
-            var iconWidth = _itemDefinition.Dimensions.DefaultWidth * _ownerInventory.CellSize.x;
-            var iconHeight = _itemDefinition.Dimensions.DefaultHeight * _ownerInventory.CellSize.y;
+            var iconWidth = _itemDefinition.Dimensions.Width * _ownerInventory.CellSize.x;
+            var iconHeight = _itemDefinition.Dimensions.Height * _ownerInventory.CellSize.y;
 
             _icon.style.width = iconWidth;
             _icon.style.height = iconHeight;
@@ -160,11 +154,11 @@ namespace SkyClerik.Inventory
             float angle;
             if (_singleRotationMode)
             {
-                angle = (_itemDefinition.Dimensions.CurrentAngle == 0) ? 90 : 0;
+                angle = (_itemDefinition.Dimensions.Angle == 0) ? 90 : 0;
             }
             else
             {
-                angle = _itemDefinition.Dimensions.CurrentAngle + 90;
+                angle = _itemDefinition.Dimensions.Angle + 90;
                 if (angle >= 360)
                     angle = 0;
             }
@@ -175,16 +169,16 @@ namespace SkyClerik.Inventory
 
         private void RotateIcon(float angle) => _icon.style.rotate = new Rotate(angle);
 
-        private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.CurrentAngle = angle;
+        private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.Angle = angle;
 
         private void RestoreSizeAndRotate()
         {
-            _itemDefinition.Dimensions.CurrentAngle = _originalRotate;
-            _itemDefinition.Dimensions.CurrentWidth = _originalScale.x;
-            _itemDefinition.Dimensions.CurrentHeight = _originalScale.y;
+            _itemDefinition.Dimensions.Angle = _originalRotate;
+            _itemDefinition.Dimensions.Width = _originalScale.x;
+            _itemDefinition.Dimensions.Height = _originalScale.y;
 
             SetSize();
-            RotateIcon(_itemDefinition.Dimensions.CurrentAngle);
+            RotateIcon(_itemDefinition.Dimensions.Angle);
         }
 
         private void OnMouseUp(MouseUpEvent mouseEvent)
@@ -307,8 +301,8 @@ namespace SkyClerik.Inventory
                     _originalPosition = Vector2.zero;
             }
 
-            _originalRotate = _itemDefinition.Dimensions.CurrentAngle;
-            _originalScale = new Vector2Int(_itemDefinition.Dimensions.CurrentWidth, _itemDefinition.Dimensions.CurrentHeight);
+            _originalRotate = _itemDefinition.Dimensions.Angle;
+            _originalScale = new Vector2Int(_itemDefinition.Dimensions.Width, _itemDefinition.Dimensions.Height);
 
             _itemsPage.StopTooltipDelayAndHideTooltip();
 

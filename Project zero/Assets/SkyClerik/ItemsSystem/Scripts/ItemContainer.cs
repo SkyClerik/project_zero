@@ -198,7 +198,7 @@ namespace SkyClerik.Inventory
             if (!remainingItems.Any()) return new List<ItemBaseDefinition>();
 
             var sortedItems = remainingItems.OrderByDescending(item =>
-                item.Dimensions.DefaultWidth * item.Dimensions.DefaultHeight).ToList();
+                item.Dimensions.Width * item.Dimensions.Height).ToList();
 
             List<ItemBaseDefinition> unplacedItems = new List<ItemBaseDefinition>();
 
@@ -258,7 +258,7 @@ namespace SkyClerik.Inventory
                 //Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Предмет равен null.", this);
                 return false;
             }
-            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.CurrentWidth, item.Dimensions.CurrentHeight);
+            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
 
             //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
             if (IsGridAreaFree(gridPosition, itemGridSize))
@@ -311,7 +311,7 @@ namespace SkyClerik.Inventory
 
         public void OccupyGridCells(ItemBaseDefinition item, bool occupy)
         {
-            var size = new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight);
+            var size = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
@@ -348,7 +348,7 @@ namespace SkyClerik.Inventory
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
-            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight);
+            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
             for (int y = 0; y <= _gridDimensions.y - itemGridSize.y; y++)
             {
                 for (int x = 0; x <= _gridDimensions.x - itemGridSize.x; x++)

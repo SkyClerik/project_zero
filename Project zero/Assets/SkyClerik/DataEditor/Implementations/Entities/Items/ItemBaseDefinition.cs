@@ -105,40 +105,28 @@ namespace UnityEngine.DataEditor
     {
         [JsonProperty]
         [SerializeField]
-        private int defaultWidth = 1;
+        private int width = 1;
         [JsonProperty]
         [SerializeField]
-        private int defaultHeight = 1;
+        private int height = 1;
         [JsonProperty]
         [SerializeField]
-        private float defaultAngle = 0;
-        [JsonProperty]
-        [SerializeField]
-        private int currentHeight = 0;
-        [JsonProperty]
-        [SerializeField]
-        private int currentWidth = 0;
-        [JsonProperty]
-        [SerializeField]
-        private float currentAngle = 0;
+        private float angle = 0;
 
-        public int DefaultWidth { get => defaultWidth; set => defaultWidth = value; }
-        public int DefaultHeight { get => defaultHeight; set => defaultHeight = value; }
-        public float DefaultAngle { get => defaultAngle; set => defaultAngle = value; }
-        public int CurrentHeight { get => currentHeight; set => currentHeight = value; }
-        public int CurrentWidth { get => currentWidth; set => currentWidth = value; }
-        public float CurrentAngle { get => currentAngle; set => currentAngle = value; }
+        public int Width { get => width; set => width = value; }
+        public int Height { get => height; set => height = value; }
+        public float Angle { get => angle; set => angle = value; }
 
         public ItemDimensions()
         {
-            currentWidth = defaultWidth;
-            currentHeight = defaultHeight;
-            currentAngle = defaultAngle;
+            width = 1;
+            height = 1;
+            angle = 0;
         }
 
         public void Swap()
         {
-            (currentWidth, currentHeight) = (currentHeight, currentWidth);
+            (width, height) = (height, width);
         }
     }
 }

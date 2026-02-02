@@ -7,7 +7,7 @@ namespace SkyClerik.Inventory
     public class ItemGridData
     {
         [SerializeField]
-        private ItemBaseDefinition _itemDefinition; 
+        private ItemBaseDefinition _itemDefinition;
         [SerializeField]
         private Vector2Int _gridPosition;
 
@@ -18,7 +18,7 @@ namespace SkyClerik.Inventory
             set => _gridPosition = value;
         }
 
-        public Vector2Int GridSize => new Vector2Int(ItemDefinition.Dimensions.CurrentWidth, ItemDefinition.Dimensions.CurrentHeight);
+        public Vector2Int GridSize => new Vector2Int(ItemDefinition.Dimensions.Width, ItemDefinition.Dimensions.Height);
 
         public ItemGridData(ItemBaseDefinition item, Vector2Int position)
         {

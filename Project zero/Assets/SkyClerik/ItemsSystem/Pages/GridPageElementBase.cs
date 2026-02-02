@@ -166,7 +166,7 @@ string rootID)
                 ownerInventory: this,
                 itemDefinition: item,
                 gridPosition: item.GridPosition,
-                gridSize: new Vector2Int(item.Dimensions.DefaultWidth, item.Dimensions.DefaultHeight));
+                gridSize: new Vector2Int(item.Dimensions.Width, item.Dimensions.Height));
 
             RegisterVisual(newItemVisual, newGridData);
             AddItemToInventoryGrid(newItemVisual);
@@ -226,7 +226,7 @@ string rootID)
             }
 
             Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
-            Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.CurrentWidth, draggedItem.ItemDefinition.Dimensions.DefaultHeight);
+            Vector2Int itemGridSize = new Vector2Int(draggedItem.ItemDefinition.Dimensions.Width, draggedItem.ItemDefinition.Dimensions.Height);
             _placementResults = new PlacementResults();
             _placementResults.OverlapItem = null;
 
