@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Reflection;
 using UnityEngine;
 
 namespace SkyClerik.Inventory
@@ -56,12 +57,12 @@ namespace SkyClerik.Inventory
 
         /// <summary>
         /// Копирует значения всех полей, помеченных [JsonProperty], из исходного объекта в целевой.
-        /// Использует сериализацию/десериализацию Newtonsoft.Json для глубокого копирования только помеченных полей.
+        /// Использует рефлексию для прямого копирования значений полей.
         /// </summary>
-        /// <typeparam name="T">Тип объекта ScriptableObject.</typeparam>
+        /// <typeparam name="T">Тип объекта.</typeparam>
         /// <param name="source">Исходный объект, из которого копируются данные.</param>
         /// <param name="destination">Целевой объект, в который копируются данные.</param>
-        public static void CopyJsonProperties<T>(T source, T destination) where T : ScriptableObject
+        public static void CopyJsonProperties<T>(T source, T destination) where T : class
         {
             if (source == null || destination == null)
             {
@@ -69,21 +70,31 @@ namespace SkyClerik.Inventory
                 return;
             }
 
-            JsonSerializerSettings settings = new JsonSerializerSettings
+            var type = source.GetType();
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            // Проходим по всем полям, включая поля базовых классов
+            while (type != null)
             {
-                // Используем TypeNameHandling.Objects, чтобы корректно копировать полиморфные типы, если они присутствуют в полях
-                TypeNameHandling = TypeNameHandling.Objects,
-                ContractResolver = _resolver,
-                // Игнорируем ReferenceLoopHandling, так как мы копируем свойства, а не ссылки
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            };
-
-            // Сериализуем исходный объект в JSON
-            string json = JsonConvert.SerializeObject(source, settings);
-
-            // Десериализуем JSON поверх целевого объекта
-            // Это обновит только те поля, которые присутствуют в JSON (т.е., помечены [JsonProperty])
-            JsonConvert.PopulateObject(json, destination, settings);
+                foreach (var field in type.GetFields(flags))
+                {
+                    // Проверяем наличие атрибута [JsonProperty]
+                    if (field.GetCustomAttribute<JsonPropertyAttribute>() != null)
+                    {
+                        try
+                        {
+                            var value = field.GetValue(source);
+                            field.SetValue(destination, value);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Debug.LogError($"Не удалось скопировать поле '{field.Name}' из {source.GetType().Name} в {destination.GetType().Name}. Ошибка: {ex.Message}");
+                        }
+                    }
+                }
+                // Переходим к базовому типу
+                type = type.BaseType;
+            }
         }
     }
 }

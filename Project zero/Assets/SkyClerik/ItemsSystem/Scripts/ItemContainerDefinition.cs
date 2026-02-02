@@ -55,15 +55,12 @@ namespace SkyClerik.Inventory
                     Debug.LogWarning("Десериализованный предмет является null, пропускаем.");
                     continue;
                 }
-                Debug.Log($"[SetDataFromOtherContainer] Deserialized Item GetInstanceID(): {deserializedItem.GetInstanceID()}, Name: {deserializedItem.DefinitionName}, WrapperIndex: {deserializedItem.WrapperIndex}");
 
                 // Используем WrapperIndex для получения клона оригинального предмета из GlobalItemStorage
                 ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItemByIndex(deserializedItem.WrapperIndex);
 
                 if (originalClone != null)
                 {
-                    Debug.Log($"[SetDataFromOtherContainer] Original Clone GetInstanceID(): {originalClone.GetInstanceID()}, Name: {originalClone.DefinitionName}");
-
                     JsonScriptableObjectSerializer.CopyJsonProperties(deserializedItem, originalClone);
 
                     // Копируем данные, которые должны быть специфичными для этого экземпляра предмета

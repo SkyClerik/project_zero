@@ -8,7 +8,7 @@ namespace UnityEngine.DataEditor
     /// </summary>
     [System.Serializable]
     [JsonObject(MemberSerialization.Fields)]
-    public abstract class ItemBaseDefinition : BaseDefinition
+    public class ItemBaseDefinition : BaseDefinition
     {
         [JsonProperty]
         [SerializeField]
