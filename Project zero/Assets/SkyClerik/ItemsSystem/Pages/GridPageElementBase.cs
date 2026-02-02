@@ -382,6 +382,23 @@ gridData.GridSize.x, gridData.GridSize.y);
             return gridData?.ItemDefinition;
         }
 
+        /// <summary>
+        /// Очищает существующие визуальные элементы и пересоздает их на основе текущих данных в ItemContainer.
+        /// </summary>
+        public void RefreshVisuals()
+        {
+            // Удаляем все существующие визуальные элементы из UI
+            foreach (var visual in _visuals.Keys.ToList())
+            {
+                visual.RemoveFromHierarchy();
+            }
+            _visuals.Clear(); // Очищаем словарь связей
+
+            // Пересоздаем визуальные элементы на основе текущих данных в контейнере
+            LoadInitialVisuals();
+            Debug.Log($"[GridPageElementBase:{_root.name}] Visuals refreshed. Recreated {_visuals.Count} items.", _coroutineRunner);
+        }
+
         public virtual void Dispose()
         {
             UnsubscribeFromContainerEvents();

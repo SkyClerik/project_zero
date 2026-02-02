@@ -2,7 +2,8 @@ using UnityEngine;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
-using UnityEngine.DataEditor; // Добавлено для доступа к DefinitionName и другим свойствам BaseDefinition
+using UnityEngine.DataEditor;
+using UnityEngine.Toolbox; // Добавлено для доступа к ServiceProvider
 
 namespace SkyClerik.Utils
 {
@@ -108,6 +109,34 @@ namespace SkyClerik.Utils
                     
                     // После загрузки данных в ItemDataStorageSO, настраиваем логическую сетку контейнера
                     targetContainer.SetupLoadedItemsGrid();
+
+                    // Обновляем визуальные элементы
+                    ItemsPage itemsPage = ServiceProvider.Get<ItemsPage>();
+                    if (itemsPage != null)
+                    {
+                        GridPageElementBase targetGridPage = null;
+                        if (targetContainer == itemsPage.InventoryItemContainer)
+                        {
+                            targetGridPage = itemsPage.InventoryPage;
+                        }
+                        else if (targetContainer == itemsPage.CraftItemContainer)
+                        {
+                            targetGridPage = itemsPage.CraftPage; // Исправлено на правильное имя свойства
+                        }
+
+                        if (targetGridPage != null)
+                        {
+                            targetGridPage.RefreshVisuals();
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[LoadService] Не удалось найти соответствующий GridPageElementBase для контейнера '{targetContainer.name}'. Визуальные элементы не будут обновлены.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("[LoadService] ItemsPage не найден в ServiceProvider. Невозможно обновить визуальные элементы инвентаря.");
+                    }
                 }
                 else
                 {
