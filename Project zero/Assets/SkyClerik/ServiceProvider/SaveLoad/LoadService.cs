@@ -105,6 +105,9 @@ namespace SkyClerik.Utils
                     // Копируем данные из загруженного определения в существующее
                     // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
                     targetContainer.ItemDataStorageSO.SetDataFromOtherContainer(loadedContainerDefinition);
+                    
+                    // После загрузки данных в ItemDataStorageSO, настраиваем логическую сетку контейнера
+                    targetContainer.SetupLoadedItemsGrid();
                 }
                 else
                 {

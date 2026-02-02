@@ -153,7 +153,35 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
         }
 
-        #region Public API
+
+        /// <summary>
+        /// Перестраивает логическую сетку инвентаря и помечает занятые ячейки на основе загруженных предметов.
+        /// Вызывается после загрузки данных из сохранения.
+        /// </summary>
+        public void SetupLoadedItemsGrid()
+        {
+            if (_gridDimensions.x <= 0 || _gridDimensions.y <= 0)
+            {
+                Debug.LogError($"[ItemContainer:{name}] Grid dimensions are not set. Cannot setup loaded items grid.", this);
+                return;
+            }
+
+            // Очищаем текущую логическую матрицу
+            _gridOccupancy = new bool[_gridDimensions.x, _gridDimensions.y];
+            Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Очищена логическая сетка. Размеры: {_gridDimensions.x}x{_gridDimensions.y}.", this);
+
+            // Проходим по всем предметам и помечаем занятые ячейки
+            foreach (var item in _itemDataStorageSO.Items)
+            {
+                if (item != null)
+                {
+                    OccupyGridCells(item, true);
+                    Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Предмет '{item.DefinitionName}' установлен на позицию {item.GridPosition}.");
+                }
+            }
+            OnGridOccupancyChanged?.Invoke();
+            Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Логическая сетка инвентаря перестроена для {ItemDataStorageSO.Items.Count} предметов.", this);
+        }
 
         public List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
@@ -258,7 +286,6 @@ namespace SkyClerik.Inventory
             OnItemAdded?.Invoke(item);
         }
 
-        #endregion
 
         #region Grid Logic
 
