@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
 {
     /// <summary>
-    /// Представляет собой связку между уникальным ID предмета и его префабом для размещения в игровом мире.
+    /// Представляет собой связку между уникальным ID предмета и его префабом для размещения в игровом мире. Может иметь ссылку на данные.
     /// </summary>
     [System.Serializable]
     public class ItemPrefabMapping
@@ -25,6 +26,11 @@ namespace SkyClerik.Inventory
         /// </summary>
         public GameObject WorldPrefab => _worldPrefab;
 
+        [SerializeField]
+        [Tooltip("Данные для этого объекта. (Не обязательно имеют ID этого предмета)")]
+        private ItemBaseDefinition _definition;
+        public ItemBaseDefinition Definition { get => _definition; set => _definition = value; }
+
         /// <summary>
         /// Внутренний метод для установки ID из редактора.
         /// </summary>
@@ -43,7 +49,7 @@ namespace SkyClerik.Inventory
     {
         [SerializeField]
         private List<ItemPrefabMapping> _prefabMappings = new List<ItemPrefabMapping>();
-        
+
         /// <summary>
         /// Присваивает каждому элементу в списке ID, равный его индексу. Вызывается из редактора.
         /// </summary>

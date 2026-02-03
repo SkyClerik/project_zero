@@ -92,7 +92,7 @@ namespace SkyClerik.Utils
             else
             {
                 _itemsPage.OpenInventoryNormal();
-                _itemsPage.OpenCraft();
+                //_itemsPage.OpenCraft();
             }
         }
 

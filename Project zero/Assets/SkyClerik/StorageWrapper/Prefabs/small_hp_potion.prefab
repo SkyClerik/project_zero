@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 450660402820602539}
   - component: {fileID: 8436583536483517173}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: small_hp_potion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

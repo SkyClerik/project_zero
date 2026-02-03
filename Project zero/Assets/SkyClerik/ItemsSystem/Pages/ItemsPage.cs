@@ -380,6 +380,8 @@ namespace SkyClerik.Inventory
             _inventoryPage.Root.SetEnabled(true);
 
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+
+            OpenCraft();
         }
 
         /// <summary>
@@ -400,7 +402,6 @@ namespace SkyClerik.Inventory
         public void OpenCraft()
         {
             _craftPage.Root.SetDisplay(true);
-            _craftPage.Root.SetVisibility(false);
             if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
                 SetDisplaySelfPage(_craftPage);
         }

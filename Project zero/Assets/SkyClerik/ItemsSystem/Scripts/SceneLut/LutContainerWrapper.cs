@@ -7,7 +7,7 @@ namespace SkyClerik.Inventory
     public class LutContainerWrapper
     {
         private ItemsList _itemsList;
-
+        //TODO ÏÐÎÂÅÐÈÒÜ ÐÀÁÎÒÓ, ÿ ודמ גממבשו םו ןנמגונÿכ
         public LutContainerWrapper(List<int> wrapperItemIndexes)
         {
             var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();

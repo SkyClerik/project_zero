@@ -441,7 +441,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemsList:
-    _items: []
+    _items:
+    - {fileID: 11400000, guid: 88489747f7fd53241b74a6fe84ba76a1, type: 2}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
