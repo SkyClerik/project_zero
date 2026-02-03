@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SkyClerik.Inventory;
 using System.IO;
 using UnityEngine;
@@ -85,7 +85,7 @@ namespace SkyClerik.Utils
             {
                 if (item != null)
                 {
-                    Debug.Log($"[SaveService]   Предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.WrapperIndex}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
+                    Debug.Log($"[SaveService]   Предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.ID}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
                 }
                 else
                 {

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
@@ -100,7 +100,7 @@ namespace SkyClerik.Utils
                     {
                         if (item != null)
                         {
-                            Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.WrapperIndex}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
+                            Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.ID}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
                         }
                         else
                         {

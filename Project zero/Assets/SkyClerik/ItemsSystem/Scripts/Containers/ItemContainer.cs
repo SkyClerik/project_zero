@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -322,7 +322,7 @@ namespace SkyClerik.Inventory
 
             foreach (var item in _itemDataStorageSO.Items)
             {
-                if (item != null && item.WrapperIndex == wrapperIndex)
+                if (item != null && item.ID == wrapperIndex)
                 {
                     return item;
                 }

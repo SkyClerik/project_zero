@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,7 +68,7 @@ namespace SkyClerik.Inventory
                 }
 
                 // Используем WrapperIndex для получения клона оригинального предмета из GlobalItemStorage
-                ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItemByIndex(deserializedItem.WrapperIndex);
+                ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItemByIndex(deserializedItem.ID);
 
                 if (originalClone != null)
                 {
@@ -77,7 +77,7 @@ namespace SkyClerik.Inventory
                 }
                 else
                 {
-                    Debug.LogError($"Не удалось получить клон предмета с WrapperIndex '{deserializedItem.WrapperIndex}' из GlobalItemStorage. Предмет '{deserializedItem.DefinitionName}' будет отсутствовать.");
+                    Debug.LogError($"Не удалось получить клон предмета с WrapperIndex '{deserializedItem.ID}' из GlobalItemStorage. Предмет '{deserializedItem.DefinitionName}' будет отсутствовать.");
                 }
             }
         }

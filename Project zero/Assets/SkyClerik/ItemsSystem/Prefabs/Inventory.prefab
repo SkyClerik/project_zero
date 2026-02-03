@@ -132,7 +132,7 @@ MonoBehaviour:
   _itemDataStorageSO: {fileID: 11400000, guid: c2c261aa040c3514e9351b17bbb6bbc6, type: 2}
   _uiDocument: {fileID: 807833916544114362}
   _rootPanelName: cheast_root
-  _gridDimensions: {x: 4, y: 5}
+  _gridDimensions: {x: 7, y: 5}
   _cellSize: {x: 128, y: 128}
 --- !u!114 &8572603436829135497
 MonoBehaviour:

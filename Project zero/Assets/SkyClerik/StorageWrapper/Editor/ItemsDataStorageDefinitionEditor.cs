@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.DataEditor;
@@ -107,7 +107,7 @@ namespace SkyClerik.Inventory.Editor
 
                 if (item != null)
                 {
-                    if (item.WrapperIndex != i)
+                    if (item.ID != i)
                     {
                         return true;
                     }
@@ -163,9 +163,9 @@ namespace SkyClerik.Inventory.Editor
 
                 if (item != null)
                 {
-                    if (item.WrapperIndex != i) 
+                    if (item.ID != i) 
                     {
-                        item.WrapperIndex = i;
+                        item.ID = i;
                         EditorUtility.SetDirty(item);
                         changed = true;
                     }

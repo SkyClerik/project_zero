@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
@@ -74,7 +74,7 @@ namespace SkyClerik.Inventory
                 return null;
             }
             // Теперь просто вызываем GetItem(int id)
-            return GetItem(item.WrapperIndex);
+            return GetItem(item.ID);
         }
 
         /// <summary>

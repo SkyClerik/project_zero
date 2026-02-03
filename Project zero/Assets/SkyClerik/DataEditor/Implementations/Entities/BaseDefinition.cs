@@ -1,5 +1,6 @@
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
+using UnityEngine.Toolbox;
+//using System;
 
 namespace UnityEngine.DataEditor
 {
@@ -15,8 +16,9 @@ namespace UnityEngine.DataEditor
 
         [JsonProperty]
         [SerializeField]
-        [Tooltip("Уникальный идентификатор. Может быть числом или строкой.")]
-        protected string _id;
+        [Tooltip("Уникальный идентификатор. Индекс полученный от общей базы предметов")]
+        [ReadOnly]
+        protected int _id;
 
         [JsonProperty]
         [SerializeField]
@@ -33,21 +35,7 @@ namespace UnityEngine.DataEditor
         [JsonIgnore]
         protected Sprite _icon;
 
-        /// <summary>
-        /// Уникальный идентификатор определения.
-        /// </summary>
-        public string ID { get => _id; set => _id = value; } // Изменено на public set
-
-        /// <summary>
-        /// Генерирует новый уникальный ID для этого определения.
-        /// Вызывается из контекстного меню в Инспекторе.
-        /// </summary>
-        [ContextMenu("Regenerate ID")]
-        public void RegenerateID()
-        {
-            ID = Guid.NewGuid().ToString(); // Используем сеттер
-            Debug.Log($"[BaseDefinition] ID для '{DefinitionName}' пересоздан: {ID}");
-        }
+        public int ID { get => _id; set => _id = value; }
 
         /// <summary>
         /// Имя определения, отображаемое в игре.
@@ -63,19 +51,6 @@ namespace UnityEngine.DataEditor
         /// Иконка определения.
         /// </summary>
         public Sprite Icon { get => _icon; set => _icon = value; } // Изменено на public set
-
-        /// <summary>
-        /// Вызывается при загрузке объекта.
-        /// Гарантирует, что у объекта есть ID и имя.
-        /// </summary>
-        protected virtual void OnEnable()
-        {
-            if (string.IsNullOrEmpty(_id))
-                _id = Guid.NewGuid().ToString();
-
-            if (string.IsNullOrEmpty(_definitionName))
-                _definitionName = name;
-        }
 
         /// <summary>
         /// Возвращает строковое представление объекта, используя его игровое имя.

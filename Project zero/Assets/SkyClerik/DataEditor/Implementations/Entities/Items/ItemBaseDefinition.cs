@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace UnityEngine.DataEditor
@@ -10,12 +10,6 @@ namespace UnityEngine.DataEditor
     [JsonObject(MemberSerialization.Fields)]
     public class ItemBaseDefinition : BaseDefinition
     {
-        [JsonProperty]
-        [SerializeField]
-        [Tooltip("Уникальный идентификатор. Индекс полученный от общей базы предметов")]
-        protected int _wrapperIndex;
-        public int WrapperIndex { get => _wrapperIndex; set => _wrapperIndex = value; }
-
         [JsonProperty]
         [SerializeField]
         [Tooltip("Цена предмета в магазинах.")]

@@ -259,7 +259,7 @@ namespace Febucci.HierarchyData
 
             if (data != null)
             {
-                Debug.Log($"Загружен актив HierarchyData для текущего пользователя '{currentUser}': {AssetDatabase.GetAssetPath(data)}");
+                //Debug.Log($"Загружен актив HierarchyData для текущего пользователя '{currentUser}': {AssetDatabase.GetAssetPath(data)}");
                 return true;
             }
             else
