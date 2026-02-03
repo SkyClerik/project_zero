@@ -4,18 +4,55 @@ using UnityEngine.DataEditor; // Для ItemBaseDefinition
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Интерфейс, определяющий контракт для объектов, которые могут принимать перетаскиваемые предметы (UI сетки инвентаря).
+    /// </summary>
     public interface IDropTarget
     {
+        /// <summary>
+        /// Возвращает UIDocument, к которому принадлежит цель перетаскивания.
+        /// </summary>
         UIDocument GetDocument { get; }
+        /// <summary>
+        /// Показывает целевую область для размещения перетаскиваемого предмета,
+        /// а также определяет возможные конфликты размещения.
+        /// </summary>
+        /// <param name="itemVisual">Перетаскиваемый визуальный элемент предмета.</param>
+        /// <returns>Результаты размещения, включающие информацию о конфликте и предложенной позиции.</returns>
         PlacementResults ShowPlacementTarget(ItemVisual itemVisual);
+        /// <summary>
+        /// Завершает операцию перетаскивания.
+        /// </summary>
         void FinalizeDrag();
 
+        /// <summary>
+        /// Добавляет хранящийся предмет в сетку.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета.</param>
+        /// <param name="gridPosition">Позиция в сетке.</param>
         void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition);
+        /// <summary>
+        /// Удаляет хранящийся предмет из сетки.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета.</param>
         void RemoveStoredItem(ItemVisual storedItem);
 
+        /// <summary>
+        /// Поднимает предмет из сетки.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета.</param>
         void PickUp(ItemVisual storedItem);
+        /// <summary>
+        /// Отпускает предмет в сетку.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета.</param>
+        /// <param name="gridPosition">Позиция в сетке.</param>
         void Drop(ItemVisual storedItem, Vector2Int gridPosition);
 
+        /// <summary>
+        /// Добавляет визуальный элемент предмета в сетку инвентаря.
+        /// </summary>
+        /// <param name="item">Визуальный элемент, который нужно добавить.</param>
         void AddItemToInventoryGrid(VisualElement item);
 
         /// <summary>
@@ -47,6 +84,9 @@ namespace SkyClerik.Inventory
         /// <param name="visual">Визуальный элемент предмета.</param>
         void UnregisterVisual(ItemVisual visual);
 
+        /// <summary>
+        /// Возвращает размер одной ячейки сетки в пикселях.
+        /// </summary>
         Vector2 CellSize { get; }
     }
 }

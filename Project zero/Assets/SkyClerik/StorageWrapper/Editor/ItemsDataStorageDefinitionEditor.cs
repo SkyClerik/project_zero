@@ -1,9 +1,15 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory.Editor
 {
+    /// <summary>
+    /// Пользовательский редактор для <see cref="ItemsDataStorageDefinition"/>.
+    /// Добавляет функциональность для автоматического обновления <c>WrapperIndex</c>
+    /// у всех <see cref="ItemBaseDefinition"/> в списке на основе их позиции.
+    /// </summary>
     [CustomEditor(typeof(ItemsDataStorageDefinition))]
     public class ItemsDataStorageDefinitionEditor : UnityEditor.Editor
     {
@@ -21,6 +27,10 @@ namespace SkyClerik.Inventory.Editor
             _lastKnownHash = CalculateCurrentHash(storage);
         }
 
+        /// <summary>
+        /// Переопределяет метод отрисовки инспектора для <see cref="ItemsDataStorageDefinition"/>.
+        /// Отображает список базовых определений предметов и кнопку для обновления их <c>WrapperIndex</c>.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -175,3 +185,4 @@ namespace SkyClerik.Inventory.Editor
         }
     }
 }
+#endif

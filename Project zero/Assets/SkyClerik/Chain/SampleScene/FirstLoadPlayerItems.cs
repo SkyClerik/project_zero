@@ -1,4 +1,3 @@
-using SkyClerik.Inventory;
 using SkyClerik.Utils;
 using UnityEngine;
 using UnityEngine.Toolbox;

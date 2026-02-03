@@ -35,7 +35,7 @@ namespace UnityEngine.Toolbox
         /// Получает зарегистрированный сервис.
         /// </summary>
         /// <typeparam name="T">Тип запрашиваемого интерфейса сервиса.</typeparam>
-        /// <returns>Возвращает реализацию сервиса, если она найдена.</returns>
+        /// <returns>Возвращает реализацию сервиса, если она найдена; иначе <c>default</c> (null для ссылочных типов).</returns>
         public static T Get<T>()
         {
             var serviceType = typeof(T);
@@ -49,7 +49,7 @@ namespace UnityEngine.Toolbox
         }
 
         /// <summary>
-        /// Отменяет регистрацию сервиса.
+        /// Отменяет регистрацию сервиса по его типу.
         /// Полезно вызывать в OnDestroy() для сервисов, которые являются MonoBehaviour.
         /// </summary>
         /// <typeparam name="T">Тип интерфейса сервиса, регистрацию которого нужно отменить.</typeparam>

@@ -5,6 +5,11 @@ using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Представляет визуальный элемент предмета в UI сетке.
+    /// Отвечает за отображение предмета, его взаимодействие с мышью (перетаскивание, поворот)
+    /// и координацию с логикой размещения на странице.
+    /// </summary>
     public class ItemVisual : VisualElement
     {
         private ItemsPage _itemsPage;
@@ -22,8 +27,20 @@ namespace SkyClerik.Inventory
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
 
+        /// <summary>
+        /// Возвращает определение предмета (<see cref="ItemBaseDefinition"/>), связанное с этим визуальным элементом.
+        /// </summary>
         public ItemBaseDefinition ItemDefinition => _itemDefinition;
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="ItemVisual"/>.
+        /// </summary>
+        /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
+        /// <param name="ownerInventory">Инвентарь-владелец, которому принадлежит этот визуальный предмет.</param>
+        /// <param name="itemDefinition">Определение предмета, связанное с этим визуальным элементом.</param>
+        /// <param name="gridPosition">Начальная позиция предмета в сетке.</param>
+        /// <param name="gridSize">Размер предмета в ячейках сетки.</param>
+        /// <param name="singleRotationMode">Если true, предмет поворачивается только на 90 градусов (вертикально/горизонтально).</param>
         public ItemVisual(ItemsPage itemsPage, IDropTarget ownerInventory, ItemBaseDefinition itemDefinition, Vector2Int gridPosition, Vector2Int gridSize, bool singleRotationMode = true)
         {
             _itemsPage = itemsPage;
@@ -95,12 +112,19 @@ namespace SkyClerik.Inventory
             UnregisterCallback<MouseLeaveEvent>(OnMouseLeave);
         }
 
+        /// <summary>
+        /// Устанавливает позицию визуального элемента предмета на UI.
+        /// </summary>
+        /// <param name="pos">Новая позиция элемента (top, left).</param>
         public void SetPosition(Vector2 pos)
         {
             style.top = pos.y;
             style.left = pos.x;
         }
 
+        /// <summary>
+        /// Возвращает текущую позицию визуального элемента предмета на UI.
+        /// </summary>
         public Vector2 GetPosition => new Vector2(style.top.value.value, style.left.value.value);
 
         private void OnMouseEnter(MouseEnterEvent evt)
@@ -116,6 +140,9 @@ namespace SkyClerik.Inventory
             _itemsPage.StopTooltipDelayAndHideTooltip();
         }
 
+        /// <summary>
+        /// Поворачивает визуальный элемент предмета, если его ширина и высота не равны.
+        /// </summary>
         public void Rotate()
         {
             if (_itemDefinition.Dimensions.Width == _itemDefinition.Dimensions.Height)
@@ -307,6 +334,10 @@ namespace SkyClerik.Inventory
             _placementResults = _itemsPage.HandleItemPlacement(this);
         }
 
+        /// <summary>
+        /// Поднимает визуальный элемент предмета, инициируя процесс перетаскивания.
+        /// </summary>
+        /// <param name="isSwap">Указывает, является ли подъем частью операции обмена.</param>
         public void PickUp(bool isSwap = false)
         {
             _isDragging = true;
@@ -337,6 +368,10 @@ namespace SkyClerik.Inventory
             _placementResults = _itemsPage.HandleItemPlacement(this);
         }
 
+        /// <summary>
+        /// Устанавливает инвентарь-владелец для этого визуального элемента предмета.
+        /// </summary>
+        /// <param name="dropTarget">Новый инвентарь-владелец.</param>
         public void SetOwnerInventory(IDropTarget dropTarget)
         {
             _ownerInventory = dropTarget;
@@ -358,6 +393,9 @@ namespace SkyClerik.Inventory
             targetInventory.FinalizeDrag();
         }
 
+        /// <summary>
+        /// Обновляет отображение количества стаков предмета (PCS - Pieces).
+        /// </summary>
         public void UpdatePcs()
         {
             if (_pcsText != null)

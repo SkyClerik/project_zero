@@ -19,6 +19,9 @@ namespace SkyClerik.Inventory
         [SerializeField]
         [ReadOnly]
         private string _containerGuid;
+        /// <summary>
+        /// Уникальный идентификатор контейнера.
+        /// </summary>
         public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
 
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
@@ -26,8 +29,16 @@ namespace SkyClerik.Inventory
         [SerializeReference]
         private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
 
+        /// <summary>
+        /// Список предметов, хранящихся в данном контейнере.
+        /// </summary>
         public List<ItemBaseDefinition> Items => _items;
 
+        /// <summary>
+        /// Копирует данные о предметах и GUID из другого <see cref="ItemContainerDefinition"/> в текущий.
+        /// Используется для загрузки состояния контейнера, сохраняя ссылки на ScriptableObject.
+        /// </summary>
+        /// <param name="otherContainer">Контейнер-источник, данные которого будут скопированы.</param>
         public void SetDataFromOtherContainer(ItemContainerDefinition otherContainer)
         {
             if (otherContainer == null)

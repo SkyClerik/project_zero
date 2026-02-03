@@ -8,6 +8,10 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Представляет собой связку между экземпляром контейнера предметов и его UI-страницей.
+    /// Используется для унификации управления страницами инвентаря.
+    /// </summary>
     public class ContainerAndPage
     {
         [SerializeField]
@@ -15,9 +19,20 @@ namespace SkyClerik.Inventory
         [SerializeField]
         private GridPageElementBase _page;
 
+        /// <summary>
+        /// Возвращает связанный контейнер предметов.
+        /// </summary>
         public ItemContainer Container => _container;
+        /// <summary>
+        /// Возвращает связанную UI-страницу сетки.
+        /// </summary>
         public GridPageElementBase Page => _page;
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="ContainerAndPage"/>.
+        /// </summary>
+        /// <param name="itemContainer">Контейнер предметов.</param>
+        /// <param name="gridPageElementBase">UI-страница сетки.</param>
         public ContainerAndPage(ItemContainer itemContainer, GridPageElementBase gridPageElementBase)
         {
             _container = itemContainer;
@@ -25,15 +40,25 @@ namespace SkyClerik.Inventory
         }
     }
 
+    /// <summary>
+    /// Главный контроллер всех страниц UI инвентаря (инвентарь, крафт, сундук, лут).
+    /// Отвечает за координацию отображения, перетаскивания предметов и взаимодействие с глобальными игровыми состояниями.
+    /// </summary>
     public class ItemsPage : MonoBehaviour
     {
         private UIDocument _document;
         private Vector2 _mousePositionOffset;
 
         private Vector2 _mouseUILocalPosition;
+        /// <summary>
+        /// Текущая локальная позиция мыши в пространстве UI.
+        /// </summary>
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
 
         private static ItemVisual _currentDraggedItem = null;
+        /// <summary>
+        /// Статический экземпляр текущего перетаскиваемого визуального предмета.
+        /// </summary>
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
         private ItemTooltip _itemTooltip;
@@ -44,31 +69,61 @@ namespace SkyClerik.Inventory
         private ItemContainer _inventoryItemContainer;
         private InventoryPageElement _inventoryPage;
         private ItemBaseDefinition _givenItem = null;
+        /// <summary>
+        /// Предмет, который был выбран для отдачи (например, при передаче NPC).
+        /// </summary>
         public ItemBaseDefinition GiveItem => _givenItem;
+        //TODO удалить GiveItem передать его в ItemPage например
+        /// <summary>
+        /// Определяет, виден ли UI инвентаря.
+        /// </summary>
         public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _craftItemContainer;
         private CraftPageElement _craftPage;
+        /// <summary>
+        /// Определяет, виден ли UI страницы крафта.
+        /// </summary>
         public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _cheastItemContainer;
         private CheastPageElement _cheastPage;
+        /// <summary>
+        /// Определяет, виден ли UI страницы сундука.
+        /// </summary>
         public bool IsCheastVisible { get => _cheastPage.Root.enabledSelf; set => _cheastPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _lutItemContainer;
         private LutPageElement _lutPage;
+        /// <summary>
+        /// Определяет, виден ли UI страницы лута.
+        /// </summary>
         public bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
 
         private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
+        /// <summary>
+        /// Список всех зарегистрированных связок контейнеров и их UI-страниц.
+        /// </summary>
         public List<ContainerAndPage> ContainersAndPages => _containersAndPages;
 
         private GlobalGameProperty _globalGameProperty;
 
+        /// <summary>
+        /// Делегат для события "предмет отдан".
+        /// </summary>
+        /// <param name="item">Предмет, который был отдан.</param>
         public delegate void OnItemGivenDelegate(ItemBaseDefinition item);
+        /// <summary>
+        /// Событие, вызываемое при отдаче предмета (например, при взаимодействии с NPC).
+        /// </summary>
         public event OnItemGivenDelegate OnItemGiven;
+        /// <summary>
+        /// Вызывает событие <see cref="OnItemGiven"/>.
+        /// </summary>
+        /// <param name="item">Предмет, который был отдан.</param>
         public void RiseItemGiveEvent(ItemBaseDefinition item)
         {
             Debug.Log($"TriggerItemGiveEvent: {item}");
@@ -137,6 +192,9 @@ namespace SkyClerik.Inventory
             SetDraggedItemPosition();
         }
 
+        /// <summary>
+        /// Устанавливает позицию перетаскиваемого предмета на UI в соответствии с положением мыши.
+        /// </summary>
         public void SetDraggedItemPosition()
         {
             _mousePositionOffset.x = _mouseUILocalPosition.x - (_currentDraggedItem.resolvedStyle.width / 2);
@@ -144,6 +202,12 @@ namespace SkyClerik.Inventory
             _currentDraggedItem.SetPosition(_mousePositionOffset);
         }
 
+        /// <summary>
+        /// Обрабатывает логику размещения перетаскиваемого предмета над различными контейнерами.
+        /// Определяет возможные конфликты и предлагает позицию для размещения.
+        /// </summary>
+        /// <param name="draggedItem">Визуальный элемент перетаскиваемого предмета.</param>
+        /// <returns>Результаты размещения, включающие информацию о конфликте и предложенной позиции.</returns>
         public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
         {
             //Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
@@ -205,6 +269,10 @@ namespace SkyClerik.Inventory
             return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
 
+        /// <summary>
+        /// Завершает операцию перетаскивания для всех страниц.
+        /// </summary>
+        /// <param name="draggedItem">Визуальный элемент перетаскиваемого предмета.</param>
         public void FinalizeDragOfItem(ItemVisual draggedItem)
         {
             _inventoryPage.FinalizeDrag();
@@ -213,6 +281,13 @@ namespace SkyClerik.Inventory
             _lutPage.FinalizeDrag();
         }
 
+        /// <summary>
+        /// Перемещает предмет между контейнерами.
+        /// </summary>
+        /// <param name="draggedItem">Визуальный элемент перетаскиваемого предмета.</param>
+        /// <param name="sourceInventory">Исходный контейнер (инвентарь, откуда был взят предмет).</param>
+        /// <param name="targetInventory">Целевой контейнер (инвентарь, куда помещается предмет).</param>
+        /// <param name="gridPosition">Позиция в сетке целевого контейнера.</param>
         public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2Int gridPosition)
         {
             var itemToMove = draggedItem.ItemDefinition;
@@ -240,6 +315,10 @@ namespace SkyClerik.Inventory
             }
         }
 
+        /// <summary>
+        /// Запускает задержку перед показом всплывающей подсказки для предмета.
+        /// </summary>
+        /// <param name="itemVisual">Визуальный элемент предмета, для которого показывается подсказка.</param>
         public void StartTooltipDelay(ItemVisual itemVisual)
         {
             if (CurrentDraggedItem != null)
@@ -249,6 +328,9 @@ namespace SkyClerik.Inventory
             _tooltipShowCoroutine = StartCoroutine(ShowTooltipCoroutine(itemVisual));
         }
 
+        /// <summary>
+        /// Останавливает задержку показа всплывающей подсказки и скрывает её.
+        /// </summary>
         public void StopTooltipDelayAndHideTooltip()
         {
             if (_tooltipShowCoroutine != null)
@@ -266,9 +348,10 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Откроет инвентарь для выбора предмета который найдет по индексу, если не найдет то и не откроет инвентарь
+        /// Откроет инвентарь для выбора предмета, который найдет по индексу.
+        /// Если предмет не будет найден, инвентарь не откроется.
         /// </summary>
-        /// <param name="wrapperIndex"></param>
+        /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
         public void OpenInventoryFromGiveItem(int wrapperIndex)
         {
             _givenItem = _inventoryItemContainer.GetItemByWrapperIndex(wrapperIndex);
@@ -277,9 +360,10 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Откроет инвентарь для выбора указанного предмета. Не откроет если ссылка null
+        /// Откроет инвентарь для выбора указанного предмета.
+        /// Если ссылка на предмет null, инвентарь не откроется.
         /// </summary>
-        /// <param name="wrapperIndex"></param>
+        /// <param name="item">Предмет, который нужно выбрать.</param>
         public void OpenInventoryGiveItem(ItemBaseDefinition item)
         {
             _givenItem = item;
@@ -287,15 +371,20 @@ namespace SkyClerik.Inventory
                 OpenInventoryNormal();
         }
 
+        /// <summary>
+        /// Открывает обычный режим отображения инвентаря.
+        /// </summary>
         public void OpenInventoryNormal()
         {
             _document.rootVisualElement.SetVisibility(true);
             _inventoryPage.Root.SetEnabled(true);
 
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
-            //_inventoryPage.SetLogicalGridVisualizerActive(false);
         }
 
+        /// <summary>
+        /// Закрывает инвентарь.
+        /// </summary>
         public void CloseInventory()
         {
             _givenItem = null;
@@ -305,6 +394,9 @@ namespace SkyClerik.Inventory
             _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
 
+        /// <summary>
+        /// Открывает страницу крафта. Доступность зависит от глобального свойства <see cref="GlobalGameProperty.MakeCraftAccessible"/>.
+        /// </summary>
         public void OpenCraft()
         {
             _craftPage.Root.SetDisplay(true);
@@ -313,34 +405,52 @@ namespace SkyClerik.Inventory
                 SetDisplaySelfPage(_craftPage);
         }
 
+        /// <summary>
+        /// Закрывает страницу крафта.
+        /// </summary>
         public void CloseCraft()
         {
             _craftPage.Root.SetVisibility(false);
             _craftPage.Root.SetEnabled(false);
         }
 
+        /// <summary>
+        /// Открывает страницу сундука.
+        /// </summary>
         public void OpenCheast()
         {
             SetDisplaySelfPage(_cheastPage);
         }
 
+        /// <summary>
+        /// Закрывает страницу сундука.
+        /// </summary>
         public void CloseCheast()
         {
             _cheastPage.Root.SetVisibility(false);
             _cheastPage.Root.SetEnabled(false);
         }
 
+        /// <summary>
+        /// Открывает страницу лута.
+        /// </summary>
         public void OpenLut()
         {
             SetDisplaySelfPage(_lutPage);
         }
 
+        /// <summary>
+        /// Закрывает страницу лута.
+        /// </summary>
         public void CloseLut()
         {
             _lutPage.Root.SetVisibility(false);
             _lutPage.Root.SetEnabled(false);
         }
 
+        /// <summary>
+        /// Закрывает все страницы инвентаря.
+        /// </summary>
         public void CloseAll()
         {
             CloseInventory();
@@ -349,6 +459,10 @@ namespace SkyClerik.Inventory
             CloseLut();
         }
 
+        /// <summary>
+        /// Устанавливает видимость и активность для указанной страницы, скрывая остальные страницы (крафт, сундук, лут).
+        /// </summary>
+        /// <param name="page">Страница, которую необходимо сделать активной.</param>
         private void SetDisplaySelfPage(GridPageElementBase page)
         {
             _craftPage.Root.SetDisplay(false);

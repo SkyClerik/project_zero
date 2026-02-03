@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace SkyClerik.Utils
 {
+    /// <summary>
+    /// Содержит глобальные свойства и состояние игры, которые сохраняются и загружаются.
+    /// Включает текущее игровое состояние, флаги прогресса игрока, счет и настройки доступности.
+    /// </summary>
     [System.Serializable]
     public class GlobalGameProperty
     {
@@ -9,39 +13,60 @@ namespace SkyClerik.Utils
         [Tooltip("Текущее состояние игры (например, в главном меню, в игре, на паузе).")]
         [SerializeField]
         private GameState _currentGameState = GameState.MainMenu;
+        /// <summary>
+        /// Возвращает текущее состояние игры.
+        /// </summary>
         public GameState CurrentGameState => _currentGameState;
 
         [Tooltip("Установлено в 'true', если это новая игра. 'false' - если загруженная.")]
         [SerializeField]
         private bool _isNewGame = true;
+        /// <summary>
+        /// Возвращает True, если игра является новой; False, если загруженной.
+        /// </summary>
         public bool IsNewGame => _isNewGame;
 
         [Header("Глобальные флаги")]
         [Tooltip("Установлено в 'true', если игрок уже посмотрел вступительный ролик/обучение.")]
         [SerializeField]
         private bool _hasSeenIntro = false;
+        /// <summary>
+        /// Возвращает True, если игрок уже просмотрел вступительный ролик/обучение.
+        /// </summary>
         public bool HasSeenIntro => _hasSeenIntro;
 
         [Tooltip("Установлено в 'true', если игрок не хочет видеть автоматические подсказки.")]
         [SerializeField]
         private bool _hasInfomatron = false;
+        /// <summary>
+        /// Возвращает True, если игрок не хочет видеть автоматические подсказки.
+        /// </summary>
         public bool HasInfomatron => _hasInfomatron;
 
         [Tooltip("Текущий счет или очки игрока.")]
         [SerializeField]
         private int _playerScore = 0;
+        /// <summary>
+        /// Возвращает текущий счет или очки игрока.
+        /// </summary>
         public int PlayerScore => _playerScore;
 
         [Header("Сохранение")]
         [Tooltip("Установлено в 'true', если игроку разрешено открыть окно крафта")]
         [SerializeField]
         private bool _craftAccessible = false;
+        /// <summary>
+        /// Возвращает или устанавливает значение, определяющее, доступен ли крафт для игрока.
+        /// </summary>
         public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
 
         [Header("Сохранение")]
         [Tooltip("Индекс текущего слота сохранения (например, 0, 1, 2).")]
         [SerializeField]
         private int _currentSaveSlotIndex = 0;
+        /// <summary>
+        /// Возвращает индекс текущего слота сохранения.
+        /// </summary>
         public int CurrentSaveSlotIndex => _currentSaveSlotIndex;
 
         /// <summary>
@@ -94,12 +119,20 @@ namespace SkyClerik.Utils
         }
 
         // Методы для обновления других флагов
+        /// <summary>
+        /// Устанавливает флаг, указывающий, просмотрен ли вступительный ролик/обучение.
+        /// </summary>
+        /// <param name="value">Значение флага (true - просмотрено, false - нет).</param>
         public void SetHasSeenIntro(bool value)
         {
             _hasSeenIntro = value;
             Debug.Log($"Просмотрено Вступление: {_hasSeenIntro}");
         }
 
+        /// <summary>
+        /// Добавляет указанное количество очков к текущему счету игрока.
+        /// </summary>
+        /// <param name="amount">Количество очков для добавления.</param>
         public void AddPlayerScore(int amount)
         {
             _playerScore += amount;

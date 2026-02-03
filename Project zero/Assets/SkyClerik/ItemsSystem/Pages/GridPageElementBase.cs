@@ -8,6 +8,12 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Базовый абстрактный класс для элементов UI, представляющих собой страницы с сеткой предметов.
+    /// Предоставляет общую логику для инициализации, управления визуальными элементами предметов,
+    /// обработки перетаскивания и взаимодействия с <see cref="ItemContainer"/>.
+    /// Реализует интерфейс <see cref="IDropTarget"/>.
+    /// </summary>
     [System.Serializable]
     public abstract class GridPageElementBase : IDropTarget
     {
@@ -31,13 +37,35 @@ namespace SkyClerik.Inventory
         private readonly float _gridHoverSnapToBoundaryPixels = 64f;
 
         // --- Свойства IDropTarget и прочие ---
+        /// <summary>
+        /// Возвращает UIDocument, к которому принадлежит эта страница.
+        /// </summary>
         public UIDocument GetDocument => _document;
+        /// <summary>
+        /// Возвращает связанный контейнер предметов, управляемый этой страницей.
+        /// </summary>
         public ItemContainer ItemContainer => _itemContainer;
+        /// <summary>
+        /// Возвращает размер одной ячейки сетки в пикселях.
+        /// </summary>
         public Vector2 CellSize => _itemContainer.CellSize;
+        /// <summary>
+        /// Возвращает корневой визуальный элемент этой страницы.
+        /// </summary>
         public VisualElement Root => _root;
+        /// <summary>
+        /// Возвращает "телеграф" - визуальный индикатор возможного места размещения предмета.
+        /// </summary>
         public Telegraph Telegraph => _telegraph;
 
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="GridPageElementBase"/>.
+        /// </summary>
+        /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
+        /// <param name="document">UIDocument, к которому принадлежит эта страница.</param>
+        /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей.</param>
+        /// <param name="rootID">Идентификатор корневого визуального элемента страницы в UIDocument.</param>
         protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer,
 string rootID)
         {
@@ -176,35 +204,65 @@ string rootID)
             newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
         }
 
+        /// <summary>
+        /// Добавляет визуальный элемент предмета в сетку инвентаря.
+        /// </summary>
+        /// <param name="item">Визуальный элемент, который нужно добавить.</param>
         public void AddItemToInventoryGrid(VisualElement item)
         {
             _inventoryGrid.Add(item);
         }
 
         // --- Реализация IDropTarget ---
+        /// <summary>
+        /// Пытается найти свободное место для предмета в контейнере.
+        /// </summary>
+        /// <param name="item">Предмет, для которого ищется место.</param>
+        /// <param name="suggestedGridPosition">Предложенная позиция в сетке, если место найдено.</param>
+        /// <returns>True, если свободное место найдено; иначе false.</returns>
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
             return _itemContainer.TryFindPlacement(item, out suggestedGridPosition);
         }
 
+        /// <summary>
+        /// Возвращает логические данные предмета (позиция, размер) по его визуальному представлению.
+        /// </summary>
+        /// <param name="itemVisual">Визуальный элемент предмета.</param>
+        /// <returns>Объект <see cref="ItemGridData"/> или null, если визуальный элемент не зарегистрирован.</returns>
         public ItemGridData GetItemGridData(ItemVisual itemVisual)
         {
             _visuals.TryGetValue(itemVisual, out ItemGridData gridData);
             return gridData;
         }
 
+        /// <summary>
+        /// Регистрирует визуальный элемент предмета и его логические данные.
+        /// </summary>
+        /// <param name="visual">Визуальный элемент предмета.</param>
+        /// <param name="gridData">Логические данные предмета.</param>
         public void RegisterVisual(ItemVisual visual, ItemGridData gridData)
         {
             if (!_visuals.ContainsKey(visual))
                 _visuals.Add(visual, gridData);
         }
 
+        /// <summary>
+        /// Отменяет регистрацию визуального элемента предмета.
+        /// </summary>
+        /// <param name="visual">Визуальный элемент предмета.</param>
         public void UnregisterVisual(ItemVisual visual)
         {
             if (_visuals.ContainsKey(visual))
                 _visuals.Remove(visual);
         }
 
+        /// <summary>
+        /// Показывает целевую область для размещения перетаскиваемого предмета,
+        /// а также определяет возможные конфликты размещения.
+        /// </summary>
+        /// <param name="draggedItem">Перетаскиваемый визуальный элемент предмета.</param>
+        /// <returns>Результаты размещения, включающие информацию о конфликте, предложенной позиции и пересекающемся предмете.</returns>
         public virtual PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
             //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'", _coroutineRunner);
@@ -329,6 +387,9 @@ gridData.GridSize.x, gridData.GridSize.y);
             return overlappingItems;
         }
 
+        /// <summary>
+        /// Завершает операцию перетаскивания, скрывая телеграф.
+        /// </summary>
         public virtual void FinalizeDrag() => _telegraph.Hide();
 
         //public void SetLogicalGridVisualizerActive(bool active)
@@ -339,16 +400,29 @@ gridData.GridSize.x, gridData.GridSize.y);
         //        Debug.LogWarning($"[GridPageElementBase:{_root.name}] Попытка установить состояние LogicalGridVisualizer до его инициализации.");
         //}
 
+        /// <summary>
+        /// Добавляет предмет в контейнер на указанную позицию.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета, который нужно добавить.</param>
+        /// <param name="gridPosition">Позиция в сетке для добавления.</param>
         public virtual void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {
             _itemContainer.MoveItem(storedItem.ItemDefinition, gridPosition);
         }
 
+        /// <summary>
+        /// Удаляет предмет из контейнера.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета, который нужно удалить.</param>
         public virtual void RemoveStoredItem(ItemVisual storedItem)
         {
             _itemContainer.RemoveItem(GetItemDefinition(storedItem), true);
         }
 
+        /// <summary>
+        /// Поднимает предмет из сетки, подготавливая его к перетаскиванию.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета, который нужно поднять.</param>
         public virtual void PickUp(ItemVisual storedItem)
         {
             var itemDef = GetItemDefinition(storedItem);
@@ -362,11 +436,21 @@ gridData.GridSize.x, gridData.GridSize.y);
             storedItem.SetOwnerInventory(this);
         }
 
+        /// <summary>
+        /// Помещает предмет обратно в сетку на указанную позицию.
+        /// </summary>
+        /// <param name="storedItem">Визуальный элемент предмета, который нужно поместить.</param>
+        /// <param name="gridPosition">Позиция в сетке для размещения.</param>
         public virtual void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
             _itemContainer.MoveItem(storedItem.ItemDefinition, gridPosition);
         }
 
+        /// <summary>
+        /// Возвращает определение предмета по его визуальному элементу.
+        /// </summary>
+        /// <param name="itemVisual">Визуальный элемент предмета.</param>
+        /// <returns>Определение предмета (<see cref="ItemBaseDefinition"/>) или null, если не найдено.</returns>
         public ItemBaseDefinition GetItemDefinition(ItemVisual itemVisual)
         {
             _visuals.TryGetValue(itemVisual, out ItemGridData gridData);
@@ -388,6 +472,9 @@ gridData.GridSize.x, gridData.GridSize.y);
             //Debug.Log($"[GridPageElementBase:{_root.name}] Visuals refreshed. Recreated {_visuals.Count} items.", _coroutineRunner);
         }
 
+        /// <summary>
+        /// Выполняет очистку ресурсов и отписку от событий.
+        /// </summary>
         public virtual void Dispose()
         {
             UnsubscribeFromContainerEvents();

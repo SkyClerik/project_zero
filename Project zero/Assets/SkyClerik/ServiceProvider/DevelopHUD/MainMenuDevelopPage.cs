@@ -5,6 +5,11 @@ using SkyClerik.Utils;
 
 namespace SkyClerik
 {
+    /// <summary>
+    /// Компонент, управляющий UI главной страницы меню для режима разработки.
+    /// Предоставляет кнопки для начала новой игры, загрузки и выхода,
+    /// а также инициирует цепочку выполнения действий после выбора опции.
+    /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class MainMenuDevelopPage : MonoBehaviour
     {
@@ -24,6 +29,9 @@ namespace SkyClerik
                 Debug.LogError("Первое звено цепи не назначено или не реализует IChain!", this);
         }
 
+        /// <summary>
+        /// Запускает выполнение цепочки действий, начиная с первого звена.
+        /// </summary>
         public void StartChain()
         {
             _chainHead?.ExecuteStep();

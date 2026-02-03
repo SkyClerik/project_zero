@@ -5,6 +5,10 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Представляет собой визуальный элемент для отображения всплывающей подсказки о предмете.
+    /// Содержит иконку, название, описание и цену предмета.
+    /// </summary>
     public class ItemTooltip : VisualElement
     {
         private Image _icon;
@@ -17,6 +21,10 @@ namespace SkyClerik.Inventory
         private const string _descriptionLabelName = "item-description";
         private const string _priceLabelName = "item-price";
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="ItemTooltip"/>.
+        /// Устанавливает базовые стили и создает дочерние элементы для отображения информации о предмете.
+        /// </summary>
         public ItemTooltip()
         {
             style.position = Position.Absolute;
@@ -58,6 +66,11 @@ namespace SkyClerik.Inventory
             Add(_priceLabel);
         }
 
+        /// <summary>
+        /// Отображает всплывающую подсказку с информацией о предмете.
+        /// </summary>
+        /// <param name="item">Предмет, информацию о котором нужно отобразить.</param>
+        /// <param name="mousePosition">Позиция мыши, относительно которой будет показана подсказка.</param>
         public void ShowTooltip(ItemBaseDefinition item, Vector2 mousePosition)
         {
             if (item == null)
@@ -83,6 +96,9 @@ namespace SkyClerik.Inventory
             style.display = DisplayStyle.Flex;
         }
 
+        /// <summary>
+        /// Скрывает всплывающую подсказку.
+        /// </summary>
         public void HideTooltip()
         {
             style.display = DisplayStyle.None;

@@ -8,27 +8,24 @@ namespace SkyClerik.CraftingSystem
 {
     /// <summary>
     /// Управляет рецептами и логикой крафта в игре.
-    /// Регистрирует себя как сервис 'ICraftingSystem' в ServiceProvider.
     /// </summary>
-    public class CraftingManager : MonoBehaviour, ICraftingSystem
+    public class CraftingManager : MonoBehaviour
     {
         [SerializeField]
-        private RecipeDatabase _recipeDatabase; // Наша база данных рецептов
+        private RecipeDatabase _recipeDatabase;
 
         // Словарь для молниеносного поиска рецептов по их "отпечатку".
         private readonly Dictionary<string, CraftingRecipe> _recipes = new Dictionary<string, CraftingRecipe>();
 
         private void Awake()
         {
-            // Регистрируем себя как реализацию интерфейса ICraftingSystem.
-            ServiceProvider.Register<ICraftingSystem>(this);
+            ServiceProvider.Register<CraftingManager>(this);
             Initialize();
         }
 
         private void OnDestroy()
         {
-            // Отменяем регистрацию, когда объект уничтожается.
-            ServiceProvider.Unregister<ICraftingSystem>();
+            ServiceProvider.Unregister<CraftingManager>();
         }
 
         /// <summary>

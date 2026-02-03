@@ -8,11 +8,19 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Компонент, управляющий логическим хранением предметов в сетке.
+    /// Отвечает за операции добавления, удаления, перемещения предметов,
+    /// а также за отслеживание занятости ячеек сетки.
+    /// </summary>
     public class ItemContainer : MonoBehaviour
     {
         [Header("Хранилище данных")]
         [SerializeField]
         private ItemContainerDefinition _itemDataStorageSO;
+        /// <summary>
+        /// ScriptableObject, хранящий данные о предметах в этом контейнере.
+        /// </summary>
         public ItemContainerDefinition ItemDataStorageSO => _itemDataStorageSO;
 
         [Header("Конфигурация сетки")]
@@ -20,6 +28,9 @@ namespace SkyClerik.Inventory
         [SerializeField] private UIDocument _uiDocument;
         [Tooltip("Имя корневой панели в UI документе, внутри которой находится элемент 'grid'.")]
         [SerializeField] private string _rootPanelName;
+        /// <summary>
+        /// Возвращает имя корневой панели UI, связанной с этим контейнером.
+        /// </summary>
         public string RootPanelName => _rootPanelName;
 
         [Tooltip("Рассчитанный размер сетки инвентаря (ширина, высота). Не редактировать вручную.")]
@@ -35,23 +46,52 @@ namespace SkyClerik.Inventory
         [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
         private Rect _gridWorldRect;
 
+        /// <summary>
+        /// Возвращает размеры сетки контейнера в ячейках (ширина, высота).
+        /// </summary>
         public Vector2Int GridDimensions => _gridDimensions;
+        /// <summary>
+        /// Возвращает размер одной ячейки сетки в пикселях.
+        /// </summary>
         public Vector2 CellSize => _cellSize;
+        /// <summary>
+        /// Возвращает мировые координаты и размер области сетки.
+        /// </summary>
         public Rect GridWorldRect => _gridWorldRect;
 
         // --- События для UI ---
+        /// <summary>
+        /// Событие, вызываемое при добавлении предмета в контейнер.
+        /// </summary>
         public event Action<ItemBaseDefinition> OnItemAdded;
+        /// <summary>
+        /// Событие, вызываемое при удалении предмета из контейнера.
+        /// </summary>
         public event Action<ItemBaseDefinition> OnItemRemoved;
+        /// <summary>
+        /// Событие, вызываемое при полной очистке контейнера.
+        /// </summary>
         public event Action OnCleared;
+        /// <summary>
+        /// Событие, вызываемое при изменении занятости ячеек сетки.
+        /// </summary>
         public event Action OnGridOccupancyChanged;
 
         // --- Логика сетки ---
         private bool[,] _gridOccupancy;
 
+        /// <summary>
+        /// Возвращает двухмерный массив, представляющий занятость ячеек сетки.
+        /// True означает, что ячейка занята, false - свободна.
+        /// </summary>
         public bool[,] GetGridOccupancy => _gridOccupancy;
 
 
 #if UNITY_EDITOR
+        /// <summary>
+        /// [Контекстное меню редактора] Рассчитывает размеры сетки контейнера (ширина, высота ячеек)
+        /// на основе текущего состояния UI. Должен вызываться в режиме Play Mode или при видимом UI.
+        /// </summary>
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
         public void CalculateGridDimensionsFromUI()
         {
@@ -154,7 +194,7 @@ namespace SkyClerik.Inventory
 
 
         /// <summary>
-        /// Перестраивает логическую сетку инвентаря и помечает занятые ячейки на основе загруженных предметов.
+        /// Перестраивает логическую сетку контейнера и помечает занятые ячейки на основе загруженных предметов.
         /// Вызывается после загрузки данных из сохранения.
         /// </summary>
         public void SetupLoadedItemsGrid()
@@ -178,6 +218,11 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Логическая сетка инвентаря перестроена для {ItemDataStorageSO.Items.Count} предметов.", this);
         }
 
+        /// <summary>
+        /// Добавляет клонированные предметы в контейнер. Клонирует каждый предмет из списка шаблонов.
+        /// </summary>
+        /// <param name="itemTemplates">Список шаблонов предметов для добавления.</param>
+        /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
         public List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
             if (itemTemplates == null || !itemTemplates.Any())
@@ -187,6 +232,11 @@ namespace SkyClerik.Inventory
             return AddItems(clones);
         }
 
+        /// <summary>
+        /// Добавляет список предметов в контейнер, обрабатывая их стакинг и размещение.
+        /// </summary>
+        /// <param name="itemsToAdd">Список предметов для добавления.</param>
+        /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
         public List<ItemBaseDefinition> AddItems(List<ItemBaseDefinition> itemsToAdd)
         {
             if (itemsToAdd == null) return new List<ItemBaseDefinition>();
@@ -217,6 +267,10 @@ namespace SkyClerik.Inventory
             return unplacedItems;
         }
 
+        /// <summary>
+        /// Добавляет предметы из указанного контейнера лута в текущий контейнер.
+        /// </summary>
+        /// <param name="sourceLut">Контейнер лута, из которого будут взяты предметы.</param>
         public void AddLoot(LutContainer sourceLut)
         {
             if (sourceLut == null) return;
@@ -230,6 +284,12 @@ namespace SkyClerik.Inventory
             }
         }
 
+        /// <summary>
+        /// Удаляет указанный предмет из контейнера.
+        /// </summary>
+        /// <param name="item">Предмет для удаления.</param>
+        /// <param name="destroy">Если true, объект предмета будет уничтожен после удаления.</param>
+        /// <returns>True, если предмет успешно удален; иначе false.</returns>
         public bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
         {
             if (item == null) return false;
@@ -244,6 +304,9 @@ namespace SkyClerik.Inventory
             return removed;
         }
 
+        /// <summary>
+        /// Полностью очищает контейнер от всех предметов.
+        /// </summary>
         public void Clear()
         {
             var itemsCopy = _itemDataStorageSO.Items.ToList();
@@ -256,11 +319,20 @@ namespace SkyClerik.Inventory
             foreach (var item in itemsCopy) Destroy(item);
         }
 
+        /// <summary>
+        /// Возвращает список предметов, находящихся в контейнере.
+        /// </summary>
+        /// <returns>Список предметов только для чтения.</returns>
         public IReadOnlyList<ItemBaseDefinition> GetItems()
         {
             return _itemDataStorageSO.Items.AsReadOnly();
         }
 
+        /// <summary>
+        /// Ищет предмет в контейнере по его WrapperIndex.
+        /// </summary>
+        /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
+        /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
         /// <summary>
         /// Ищет предмет в контейнере по его WrapperIndex.
         /// </summary>
@@ -285,6 +357,12 @@ namespace SkyClerik.Inventory
             return null;
         }
 
+        /// <summary>
+        /// Пытается добавить предмет в контейнер по указанной позиции в сетке.
+        /// </summary>
+        /// <param name="item">Предмет для добавления.</param>
+        /// <param name="gridPosition">Позиция в сетке, куда нужно добавить предмет.</param>
+        /// <returns>True, если предмет успешно добавлен; иначе false.</returns>
         public bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
         {
             //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.CurrentWidth}x{item.Dimensions.CurrentHeight}) на позицию {gridPosition}.", this);
@@ -309,6 +387,11 @@ namespace SkyClerik.Inventory
             return false;
         }
 
+        /// <summary>
+        /// Перемещает существующий предмет в новую позицию в сетке контейнера.
+        /// </summary>
+        /// <param name="item">Предмет для перемещения.</param>
+        /// <param name="newPosition">Новая позиция в сетке.</param>
         public void MoveItem(ItemBaseDefinition item, Vector2Int newPosition)
         {
             OccupyGridCells(item, false);
@@ -344,6 +427,11 @@ namespace SkyClerik.Inventory
             }
         }
 
+        /// <summary>
+        /// Отмечает ячейки сетки как занятые или свободные для указанного предмета.
+        /// </summary>
+        /// <param name="item">Предмет, чьи ячейки необходимо отметить.</param>
+        /// <param name="occupy">True, чтобы отметить как занятые; false, чтобы отметить как свободные.</param>
         public void OccupyGridCells(ItemBaseDefinition item, bool occupy)
         {
             if (item.GridPosition.x < 0 || item.GridPosition.y < 0) return;
@@ -379,6 +467,12 @@ namespace SkyClerik.Inventory
         //    Debug.Log("-----------------------------------------");
         //}
 
+        /// <summary>
+        /// Проверяет, свободна ли указанная область в сетке.
+        /// </summary>
+        /// <param name="start">Начальная позиция области в сетке.</param>
+        /// <param name="size">Размер области.</param>
+        /// <returns>True, если область свободна и находится в пределах сетки; иначе false.</returns>
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
         {
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
@@ -399,6 +493,12 @@ namespace SkyClerik.Inventory
             return true;
         }
 
+        /// <summary>
+        /// Ищет первое свободное место в сетке для указанного предмета.
+        /// </summary>
+        /// <param name="item">Предмет, для которого ищется место.</param>
+        /// <param name="suggestedGridPosition">Найденная свободная позиция в сетке.</param>
+        /// <returns>True, если свободное место найдено; иначе false.</returns>
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
             Vector2Int itemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);

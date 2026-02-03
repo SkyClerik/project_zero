@@ -5,6 +5,10 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Utils
 {
+    /// <summary>
+    /// Компонент, управляющий UI для режима разработки (DevelopHUD).
+    /// Предоставляет кнопки для отладки и быстрого доступа к функциям инвентаря, крафта, сохранения и выхода из игры.
+    /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class DevelopHUD : MonoBehaviour
     {

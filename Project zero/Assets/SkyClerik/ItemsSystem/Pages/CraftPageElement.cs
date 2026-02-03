@@ -8,6 +8,10 @@ using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Представляет элемент UI страницы крафта, управляющий взаимодействием с пользователем
+    /// и логикой крафта предметов. Наследует функциональность базовой страницы сетки.
+    /// </summary>
     public class CraftPageElement : GridPageElementBase
     {
         private const string _titleText = "Окно крафта предметов";
@@ -20,6 +24,12 @@ namespace SkyClerik.Inventory
         private Button _craftButton;
         private const string _craftButtonID = "b_craft";
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="CraftPageElement"/>.
+        /// </summary>
+        /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
+        /// <param name="document">UIDocument, содержащий корневой визуальный элемент.</param>
+        /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей крафта.</param>
         public CraftPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
@@ -35,7 +45,7 @@ namespace SkyClerik.Inventory
         // Специфичная логика для крафта
         private void _craftButton_clicked()
         {
-            var craftSystem = ServiceProvider.Get<ICraftingSystem>();
+            var craftSystem = ServiceProvider.Get<CraftingManager>();
             if (craftSystem == null)
             {
                 Debug.LogError("Система крафта не найдена!");

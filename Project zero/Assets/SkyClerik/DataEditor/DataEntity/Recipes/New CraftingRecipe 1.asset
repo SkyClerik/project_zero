@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: New CraftingRecipe 1
   m_EditorClassIdentifier: 
   _id: 612da0dc-d0d4-4b5d-aec3-ea961320eb4b
-  _definitionName: "\u0438\u0437 \u0434\u0432\u0443\u0445 \u0431\u043E\u043B\u044C\u0448\u043E\u0435"
+  _definitionName: "\u0440\u0435\u0446\u0435\u043F\u0442 \u0441\u0440\u0435\u0434\u043D\u0435\u0433\u043E
+    \u0437\u0435\u043B\u044C\u044F \u043F\u0440\u043E\u0432\u043E\u0440\u0441\u0442\u0432\u0430"
   _description: 
   _icon: {fileID: 0}
   _ingredients:
-  - _item: {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
+  - _item: {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
     _quantity: 3
   _result:
     _item: {fileID: 11400000, guid: f3b9ea3388f94424a97b49c14da6e2f5, type: 2}

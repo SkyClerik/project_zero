@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace SkyClerik.Inventory.Editor
 {
+    /// <summary>
+    /// Пользовательский редактор для <see cref="ItemPrefabsStorageDefinition"/>.
+    /// Добавляет кнопку в инспектор для автоматического назначения ID префабам на основе их индекса.
+    /// </summary>
     [CustomEditor(typeof(ItemPrefabsStorageDefinition))]
     public class ItemPrefabsStorageDefinitionEditor : UnityEditor.Editor
     {
@@ -16,6 +20,10 @@ namespace SkyClerik.Inventory.Editor
             _prefabMappingsProperty = serializedObject.FindProperty("_prefabMappings");
         }
 
+        /// <summary>
+        /// Переопределяет метод отрисовки инспектора для <see cref="ItemPrefabsStorageDefinition"/>.
+        /// Отображает список префабов и кнопку для обновления их ID.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             serializedObject.Update();

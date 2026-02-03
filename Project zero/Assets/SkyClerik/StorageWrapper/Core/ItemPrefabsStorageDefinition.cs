@@ -3,17 +3,26 @@ using UnityEngine;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Представляет собой связку между уникальным ID предмета и его префабом для размещения в игровом мире.
+    /// </summary>
     [System.Serializable]
     public class ItemPrefabMapping
     {
         [SerializeField]
         [Tooltip("Уникальный ID предмета (int). Будет назначен автоматически кнопкой в инспекторе.")]
         private int _itemID = -1;
+        /// <summary>
+        /// Возвращает уникальный ID предмета.
+        /// </summary>
         public int ItemID => _itemID;
 
         [SerializeField]
         [Tooltip("Префаб объекта, который будет появляться в мире.")]
         private GameObject _worldPrefab;
+        /// <summary>
+        /// Возвращает префаб GameObject, который будет появляться в мире.
+        /// </summary>
         public GameObject WorldPrefab => _worldPrefab;
 
         /// <summary>
@@ -25,6 +34,10 @@ namespace SkyClerik.Inventory
         }
     }
 
+    /// <summary>
+    /// ScriptableObject для хранения сопоставлений ID предметов с их префабами для игрового мира.
+    /// Позволяет получить префаб по ID предмета.
+    /// </summary>
     [CreateAssetMenu(fileName = "Item Prefabs Storage Definition", menuName = "SkyClerik/Inventory/Item Prefabs Storage Definition")]
     public class ItemPrefabsStorageDefinition : ScriptableObject
     {
@@ -50,7 +63,7 @@ namespace SkyClerik.Inventory
         /// Возвращает префаб для мира по его ID (int). ID должен совпадать с индексом в списке.
         /// </summary>
         /// <param name="itemID">Уникальный ID предмета (int).</param>
-        /// <returns>Префаб GameObject или null, если ID не найден или индекс вне диапазона.</param>
+        /// <returns>Префаб GameObject или null, если ID не найден или индекс вне диапазона.</returns>
         public GameObject GetPrefab(int itemID)
         {
             // Проверяем, что itemID является валидным индексом для списка.

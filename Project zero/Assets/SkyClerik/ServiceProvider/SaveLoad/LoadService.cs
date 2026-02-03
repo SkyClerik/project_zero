@@ -6,11 +6,17 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Utils
 {
+    /// <summary>
+    /// Сервис для загрузки игровых данных, таких как глобальное состояние игры и содержимое контейнеров предметов.
+    /// Использует Newtonsoft.Json для десериализации данных.
+    /// </summary>
     public class LoadService
     {
         /// <summary>
-        /// Загружает все игровые данные (состояние и инвентари) для указанного GlobalGameProperty.
+        /// Загружает все игровые данные (состояние и инвентари) для указанного <see cref="GlobalGameProperty"/>.
         /// </summary>
+        /// <param name="globalGameProperty">Глобальные свойства игры для загрузки.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения/загрузки.</param>
         public void LoadAll(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
             var itemsPage = ServiceProvider.Get<ItemsPage>();
@@ -26,8 +32,10 @@ namespace SkyClerik.Utils
         }
 
         /// <summary>
-        /// Загружает объект GlobalGameProperty из указанной папки слота.
+        /// Загружает объект <see cref="GlobalGameProperty"/> из указанной папки слота.
         /// </summary>
+        /// <param name="globalGameProperty">Объект глобальных свойств игры, в который будут загружены данные.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения/загрузки.</param>
         public void LoadGlobalState(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
             string filePath = Path.Combine(slotFolderPath, "globalGameState.json");
@@ -55,8 +63,10 @@ namespace SkyClerik.Utils
         }
 
         /// <summary>
-        /// Загружает данные в ItemContainer из JSON файла для указанного слота.
+        /// Загружает данные в <see cref="ItemContainer"/> из JSON файла для указанного слота.
         /// </summary>
+        /// <param name="targetContainer">Контейнер предметов, в который будут загружены данные.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения/загрузки.</param>
         public void LoadItemContainer(ItemContainer targetContainer, string slotFolderPath)
         {
             if (targetContainer == null)
@@ -170,6 +180,8 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Получает или создает путь к папке для указанного слота сохранения.
         /// </summary>
+        /// <param name="slotIndex">Индекс слота сохранения.</param>
+        /// <returns>Полный путь к папке слота сохранения.</returns>
         public string GetSaveSlotFolderPath(int slotIndex)
         {
             const string SaveSlotPrefix = "Slot";

@@ -26,20 +26,13 @@ namespace SkyClerik
         {
             var gameStateManager = ServiceProvider.Get<GlobalManager>();
             if (gameStateManager == null)
-            {
-                //Debug.LogError("GameStateManager не найден в ServiceProvider!", this);
                 return;
-            }
+
 
             if (gameStateManager.GlobalGameProperty.IsNewGame)
-            {
                 StartCoroutine(GiveItemsToPlayer());
-            }
             else
-            {
-                //Debug.Log("StartingPlayerItems: Пропускаем шаг, так как это не новая игра.");
                 Next();
-            }
         }
 
         private IEnumerator GiveItemsToPlayer()

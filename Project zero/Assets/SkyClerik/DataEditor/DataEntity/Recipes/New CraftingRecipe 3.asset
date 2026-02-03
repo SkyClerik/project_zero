@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948aa6a9819961b4e9c6ccba146adb7b, type: 3}
-  m_Name: New CraftingRecipe 2
+  m_Name: New CraftingRecipe 3
   m_EditorClassIdentifier: 
-  _id: 4e9a3c22-cfd1-4cec-a844-cbef285de154
+  _id: a01afe82-e4d6-4341-a613-be5afbf4786f
   _definitionName: "\u0440\u0435\u0446\u0435\u043F\u0442 \u0421\u0442\u0430\u0442\u0443\u044D\u0442\u043A\u0438
     \u0438\u0437 \u0441\u0440\u0435\u0434\u043D\u0435\u0433\u043E \u0437\u0435\u043B\u044C\u044F
-    \u043F\u0440\u043E\u0432\u043E\u0440\u0441\u0442\u0432\u0430"
+    \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F"
   _description: 
   _icon: {fileID: 0}
   _ingredients:
-  - _item: {fileID: 11400000, guid: f3b9ea3388f94424a97b49c14da6e2f5, type: 2}
+  - _item: {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
     _quantity: 2
   _result:
     _item: {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}

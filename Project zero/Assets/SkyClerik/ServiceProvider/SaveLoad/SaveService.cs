@@ -6,11 +6,17 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Utils
 {
+    /// <summary>
+    /// Сервис для сохранения игровых данных, таких как глобальное состояние игры и содержимое контейнеров предметов.
+    /// Использует Newtonsoft.Json для сериализации данных.
+    /// </summary>
     public class SaveService
     {
         /// <summary>
         /// Сохраняет все игровые данные (состояние и инвентари) для указанного слота.
         /// </summary>
+        /// <param name="globalGameProperty">Глобальные свойства игры для сохранения.</param>
+        /// <param name="slotIndex">Индекс слота сохранения.</param>
         public void SaveAll(GlobalGameProperty globalGameProperty, int slotIndex)
         {
             var itemsPage = ServiceProvider.Get<ItemsPage>();
@@ -30,8 +36,10 @@ namespace SkyClerik.Utils
         }
 
         /// <summary>
-        /// Сохраняет объект GlobalGameState в указанную папку слота.
+        /// Сохраняет объект <see cref="GlobalGameProperty"/> в указанную папку слота.
         /// </summary>
+        /// <param name="globalProperty">Объект глобальных свойств игры для сохранения.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения.</param>
         public void SaveGlobalState(GlobalGameProperty globalProperty, string slotFolderPath)
         {
             string filePath = Path.Combine(slotFolderPath, "globalGameState.json");
@@ -46,8 +54,10 @@ namespace SkyClerik.Utils
         }
 
         /// <summary>
-        /// Сохраняет один ItemContainer в указанную папку слота.
+        /// Сохраняет один <see cref="ItemContainer"/> в указанную папку слота.
         /// </summary>
+        /// <param name="itemContainer">Контейнер предметов для сохранения.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения.</param>
         public void SaveItemContainer(ItemContainer itemContainer, string slotFolderPath)
         {
             if (itemContainer == null)
