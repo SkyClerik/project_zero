@@ -31,7 +31,7 @@ namespace SkyClerik
                 return;
             }
 
-            if (gameStateManager.GlobalGameState.IsNewGame)
+            if (gameStateManager.GlobalGameProperty.IsNewGame)
             {
                 StartCoroutine(GiveItemsToPlayer());
             }

@@ -29,6 +29,7 @@ namespace SkyClerik.Utils
         private Button _bExitGame;
         private const string _bExitGameID = "b_exit_game";
         private ItemsPage _itemsPage;
+        private GlobalGameProperty _globalGameProperty;
 
         [SerializeField]
         private LutContainer _developLut;
@@ -41,6 +42,7 @@ namespace SkyClerik.Utils
         void Start()
         {
             _itemsPage = ServiceProvider.Get<ItemsPage>();
+            _globalGameProperty = ServiceProvider.Get<GlobalManager>()?.GlobalGameProperty;
 
             _developHudUiDocument.enabled = true;
             var root = _developHudUiDocument.rootVisualElement;
@@ -64,8 +66,6 @@ namespace SkyClerik.Utils
 
             _bExitGame.clicked += _bExitGame_clicked;
         }
-
-
 
         private void OnDestroy()
         {
@@ -97,18 +97,20 @@ namespace SkyClerik.Utils
             if (_itemsPage.IsInventoryVisible)
                 _itemsPage.CloseAll();
             else
-                _itemsPage.OpenInventoryGiveItem(wrapperIndex: 0);
+                _itemsPage.OpenInventoryFromGiveItem(wrapperIndex: 0);
         }
 
         private void _bTrueCraft_clicked()
         {
-            _itemsPage.MakeCraftAccessible = !_itemsPage.MakeCraftAccessible;
+            _globalGameProperty.MakeCraftAccessible = !_globalGameProperty.MakeCraftAccessible;
         }
 
         private void _bAddItem_clicked()
         {
-            if (_itemsPage?.InventoryPage != null && _developLut != null)
-                _itemsPage.InventoryPage.AddLoot(_developLut);
+            var pic = ServiceProvider.Get<PlayerItemContainer>();
+
+            if (pic != null && _developLut != null)
+                pic.AddLoot(_developLut);
             else
                 Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
         }
@@ -120,7 +122,7 @@ namespace SkyClerik.Utils
                 return;
 
             var saveService = gameStateManager.SaveService;
-            var globalState = gameStateManager.GlobalGameState;
+            var globalState = gameStateManager.GlobalGameProperty;
 
             // slotIndex будет 0 всегда так как мы не планируем слоты сохранения            
             saveService.SaveAll(globalState, 0);

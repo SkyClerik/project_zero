@@ -6,9 +6,9 @@ namespace SkyClerik.Utils
     public class GlobalManager : MonoBehaviour
     {
         [SerializeField]
-        private GlobalGameProperty _globalGameState = new GlobalGameProperty();
+        private GlobalGameProperty _globalGameProperty = new GlobalGameProperty();
 
-        public GlobalGameProperty GlobalGameState => _globalGameState;
+        public GlobalGameProperty GlobalGameProperty => _globalGameProperty;
         public SaveService SaveService { get; } = new SaveService();
         public LoadService LoadService { get; } = new LoadService();
 

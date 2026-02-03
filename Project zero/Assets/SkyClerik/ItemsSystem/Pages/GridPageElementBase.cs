@@ -181,19 +181,6 @@ string rootID)
             _inventoryGrid.Add(item);
         }
 
-        public void AddLoot(LutContainer sourceLut)
-        {
-            if (sourceLut == null) return;
-            var unplacedClones = _itemContainer.AddClonedItems(sourceLut.Items);
-
-            if (unplacedClones.Any())
-            {
-                //Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
-                sourceLut.Items.Clear();
-                sourceLut.Items.AddRange(unplacedClones);
-            }
-        }
-
         // --- Реализация IDropTarget ---
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {

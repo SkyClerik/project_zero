@@ -796,6 +796,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1923614411}
     m_Modifications:
+    - target: {fileID: 807833916544114362, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3012271787897610413, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 963194227}
+    - target: {fileID: 3012271787897610413, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6452682332439669834, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: m_Name
       value: Inventory
@@ -839,6 +851,10 @@ PrefabInstance:
     - target: {fileID: 7381920286519882158, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422042304283840621, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _gridDimensions.x
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

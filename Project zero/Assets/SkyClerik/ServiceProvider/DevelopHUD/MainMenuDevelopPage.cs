@@ -73,7 +73,7 @@ namespace SkyClerik
             if (gameStateManager != null)
             {
                 Hide();
-                gameStateManager.GlobalGameState.SetNewGame();
+                gameStateManager.GlobalGameProperty.SetNewGame();
                 StartChain();
             }
             else
@@ -88,7 +88,7 @@ namespace SkyClerik
             if (gameStateManager != null)
             {
                 Hide();
-                gameStateManager.GlobalGameState.SetLoadGame();
+                gameStateManager.GlobalGameProperty.SetLoadGame();
                 StartChain();
             }
             else

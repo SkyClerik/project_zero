@@ -33,6 +33,12 @@ namespace SkyClerik.Utils
         public int PlayerScore => _playerScore;
 
         [Header("Сохранение")]
+        [Tooltip("Установлено в 'true', если игроку разрешено открыть окно крафта")]
+        [SerializeField]
+        private bool _craftAccessible = false;
+        public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
+
+        [Header("Сохранение")]
         [Tooltip("Индекс текущего слота сохранения (например, 0, 1, 2).")]
         [SerializeField]
         private int _currentSaveSlotIndex = 0;

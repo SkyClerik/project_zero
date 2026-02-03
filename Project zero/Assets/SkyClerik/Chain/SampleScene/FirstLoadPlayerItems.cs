@@ -19,32 +19,6 @@ namespace SkyClerik
 
         public void ExecuteStep()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalManager>();
-            if (gameStateManager == null)
-            {
-                Next();
-                return;
-            }
-
-            if (gameStateManager.GlobalGameState.IsNewGame)
-            {
-                Next();
-                return;
-            }
-
-            var itemsPage = ServiceProvider.Get<ItemsPage>();
-            if (itemsPage == null)
-            {
-                Next();
-                return;
-            }
-
-            var containersToLoad = new ItemContainer[]
-            {
-                   itemsPage.InventoryItemContainer,
-                   itemsPage.CraftItemContainer
-            };
-
             LoadItems();
             Next();
         }
@@ -62,12 +36,15 @@ namespace SkyClerik
                 return;
 
             var loadService = gameStateManager.LoadService;
-            var globalState = gameStateManager.GlobalGameState;
+            var globalProperty = gameStateManager.GlobalGameProperty;
+
+            if (globalProperty.IsNewGame)
+                return;
 
             // slotIndex будет 0 всегда так как мы не планируем слоты сохранения
             var slotFolderPath = loadService.GetSaveSlotFolderPath(slotIndex: 0);
-            loadService.LoadGlobalState(globalState, slotFolderPath);
-            loadService.LoadAll(globalState, slotFolderPath);
+            loadService.LoadGlobalState(globalProperty, slotFolderPath);
+            loadService.LoadAll(globalProperty, slotFolderPath);
         }
     }
 }

@@ -19,10 +19,12 @@ namespace SkyClerik.Utils
 
             var slotFolderPath = GetSaveSlotFolderPath(slotIndex);
 
-            foreach (var container in itemsPage.GetItemContainers)
+            foreach (var containerAndPage in itemsPage.ContainersAndPages)
             {
-                SaveItemContainer(container, slotFolderPath);
+                SaveItemContainer(containerAndPage.Container, slotFolderPath);
             }
+
+            SaveGlobalState(globalGameProperty, slotFolderPath);
 
             Debug.Log($"Полное сохранение для слота {globalGameProperty.CurrentSaveSlotIndex} завершено.");
         }
@@ -30,10 +32,10 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Сохраняет объект GlobalGameState в указанную папку слота.
         /// </summary>
-        public void SaveGlobalState(GlobalGameProperty globalState, string slotFolderPath)
+        public void SaveGlobalState(GlobalGameProperty globalProperty, string slotFolderPath)
         {
             string filePath = Path.Combine(slotFolderPath, "globalGameState.json");
-            string json = JsonConvert.SerializeObject(globalState, Formatting.Indented, new JsonSerializerSettings
+            string json = JsonConvert.SerializeObject(globalProperty, Formatting.Indented, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto

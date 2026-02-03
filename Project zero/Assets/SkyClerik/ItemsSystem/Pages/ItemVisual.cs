@@ -243,7 +243,23 @@ namespace SkyClerik.Inventory
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.None:
-                        Placement(_placementResults.SuggestedGridPosition);
+
+                        // Если перемещение происходит внутри того же инвентаря                                                                        
+                        if (_placementResults.TargetInventory == _ownerInventory)
+                        {
+                            // Просто перемещаем логически и визуально, без пересоздания                                                                    
+                            _ownerInventory.AddItemToInventoryGrid(this); // Возвращаем в сетку                                                              
+                            _ownerInventory.Drop(this, _placementResults.SuggestedGridPosition);
+                            SetPosition(_placementResults.Position);
+                        }
+                        else
+                        {
+                            // Если перемещение в другой инвентарь, используем старую логику трансфера                                              
+                            Placement(_placementResults.SuggestedGridPosition);
+                        }
+
+                        // Старый вариант
+                        //Placement(_placementResults.SuggestedGridPosition);
                         break;
                     default:
                         TryDropBack();

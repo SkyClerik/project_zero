@@ -217,6 +217,19 @@ namespace SkyClerik.Inventory
             return unplacedItems;
         }
 
+        public void AddLoot(LutContainer sourceLut)
+        {
+            if (sourceLut == null) return;
+            var unplacedClones = AddClonedItems(sourceLut.Items);
+
+            if (unplacedClones.Any())
+            {
+                //Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
+                sourceLut.Items.Clear();
+                sourceLut.Items.AddRange(unplacedClones);
+            }
+        }
+
         public bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
         {
             if (item == null) return false;

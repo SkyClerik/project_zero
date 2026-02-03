@@ -1,3 +1,4 @@
+using SkyClerik.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,13 +8,30 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
+    public class ContainerAndPage
+    {
+        [SerializeField]
+        private ItemContainer _container;
+        [SerializeField]
+        private GridPageElementBase _page;
+
+        public ItemContainer Container => _container;
+        public GridPageElementBase Page => _page;
+
+        public ContainerAndPage(ItemContainer itemContainer, GridPageElementBase gridPageElementBase)
+        {
+            _container = itemContainer;
+            _page = gridPageElementBase;
+        }
+    }
+
     public class ItemsPage : MonoBehaviour
     {
         private UIDocument _document;
+        private Vector2 _mousePositionOffset;
 
         private Vector2 _mouseUILocalPosition;
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
-        private Vector2 _mousePositionOffset;
 
         private static ItemVisual _currentDraggedItem = null;
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
@@ -26,19 +44,13 @@ namespace SkyClerik.Inventory
         private ItemContainer _inventoryItemContainer;
         private InventoryPageElement _inventoryPage;
         private ItemBaseDefinition _givenItem = null;
-        public ItemContainer InventoryItemContainer => _inventoryItemContainer;
-        public InventoryPageElement InventoryPage => _inventoryPage;
         public ItemBaseDefinition GiveItem => _givenItem;
         public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _craftItemContainer;
         private CraftPageElement _craftPage;
-        private bool _craftAccessible = false;
-        public ItemContainer CraftItemContainer => _craftItemContainer;
-        public CraftPageElement CraftPage => _craftPage;
         public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
-        public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
 
         [SerializeField]
         private ItemContainer _cheastItemContainer;
@@ -50,9 +62,10 @@ namespace SkyClerik.Inventory
         private LutPageElement _lutPage;
         public bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
 
-        private List<ItemContainer> _itemContainers = new List<ItemContainer>();
-        public List<ItemContainer> GetItemContainers => _itemContainers;
+        private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
+        public List<ContainerAndPage> ContainersAndPages => _containersAndPages;
 
+        private GlobalGameProperty _globalGameProperty;
 
         public delegate void OnItemGivenDelegate(ItemBaseDefinition item);
         public event OnItemGivenDelegate OnItemGiven;
@@ -81,37 +94,28 @@ namespace SkyClerik.Inventory
             _document = GetComponentInChildren<UIDocument>(includeInactive: false);
             _document.enabled = true;
 
-            _inventoryPage = new InventoryPageElement(
-                itemsPage: this,
-                document: _document,
-                itemContainer: _inventoryItemContainer);
-            _itemContainers.Add(_inventoryItemContainer);
+            _inventoryPage = new InventoryPageElement(itemsPage: this, document: _document, itemContainer: _inventoryItemContainer);
+            var inventoryCA = new ContainerAndPage(_inventoryItemContainer, _inventoryPage);
+            _containersAndPages.Add(inventoryCA);
 
-            _craftPage = new CraftPageElement(
-                itemsPage: this,
-                document: _document,
-                itemContainer: _craftItemContainer);
-            _itemContainers.Add(_craftItemContainer);
+            _craftPage = new CraftPageElement(itemsPage: this, document: _document, itemContainer: _craftItemContainer);
+            var craftCA = new ContainerAndPage(_craftItemContainer, _craftPage);
+            _containersAndPages.Add(craftCA);
 
-            _cheastPage = new CheastPageElement(
-                itemsPage: this,
-                document: _document,
-                itemContainer: _cheastItemContainer);
-            _itemContainers.Add(_cheastItemContainer);
+            _cheastPage = new CheastPageElement(itemsPage: this, document: _document, itemContainer: _cheastItemContainer);
+            var cheastCA = new ContainerAndPage(_cheastItemContainer, _cheastPage);
+            _containersAndPages.Add(cheastCA);
 
-            _lutPage = new LutPageElement(
-                itemsPage: this,
-                document: _document,
-                itemContainer: _lutItemContainer);
-            _itemContainers.Add(_lutItemContainer);
+            _lutPage = new LutPageElement(itemsPage: this, document: _document, itemContainer: _lutItemContainer);
+            var lutCA = new ContainerAndPage(_lutItemContainer, _lutPage);
+            _containersAndPages.Add(lutCA);
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
 
-            CloseInventory();
-            CloseCraft();
-            CloseCheast();
-            CloseLut();
+            _globalGameProperty = ServiceProvider.Get<GlobalManager>()?.GlobalGameProperty;
+
+            CloseAll();
         }
 
         private void OnRootMouseMove(MouseMoveEvent evt)
@@ -132,15 +136,6 @@ namespace SkyClerik.Inventory
 
             SetDraggedItemPosition();
         }
-        //[SerializeField]
-        //private Camera _camera;
-        //public void SetDraggedItemPosition()
-        //{
-        //    var mp = _camera.ScreenToViewportPoint(Input.mousePosition);
-        //    _mousePositionOffset.x = mp.x - (_currentDraggedItem.resolvedStyle.width / 2);
-        //    _mousePositionOffset.y = (Screen.height - mp.y) - (_currentDraggedItem.resolvedStyle.height / 2);
-        //    _currentDraggedItem.SetPosition(_mousePositionOffset);
-        //}
 
         public void SetDraggedItemPosition()
         {
@@ -153,7 +148,6 @@ namespace SkyClerik.Inventory
         {
             //Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
-
             if (resultsPage.Conflict == ReasonConflict.None || resultsPage.Conflict == ReasonConflict.StackAvailable || resultsPage.Conflict == ReasonConflict.SwapAvailable)
             {
                 //Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
@@ -161,27 +155,53 @@ namespace SkyClerik.Inventory
                 return resultsPage.Init(resultsPage.Conflict, resultsPage.Position, resultsPage.SuggestedGridPosition, resultsPage.OverlapItem, _inventoryPage);
             }
 
-            if (!_craftAccessible)
+            // -----
+            if (_cheastPage.Root.enabledSelf)
             {
-                //Debug.Log($"[ЛОГ] Крафт не видимый и мы пропускаем размещение в него");
-                _inventoryPage.Telegraph.Hide();
-                _craftPage.Telegraph.Hide();
-                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
-            }
-            else
-            {
-                PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
-                if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
+                //Debug.Log($"[ЛОG] Проверяю страницу сундука ({_cheastPage.Root.name}).");
+                PlacementResults resultsCheast = _cheastPage.ShowPlacementTarget(draggedItem);
+                if (resultsCheast.Conflict != ReasonConflict.beyondTheGridBoundary)
                 {
-                    //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
+                    //Debug.Log($"[ЛОГ] Страница сундука активна. Конфликт: {resultsCheast.Conflict}. Скрываю телеграф инвентаря.");
                     _inventoryPage.Telegraph.Hide();
-                    return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
+                    return resultsCheast.Init(resultsCheast.Conflict, resultsCheast.Position, resultsCheast.SuggestedGridPosition, resultsCheast.OverlapItem, _cheastPage);
                 }
             }
+            // -----
+            if (_lutPage.Root.enabledSelf)
+            {
+                //Debug.Log($"[ЛОG] Проверяю страницу лута ({_lutPage.Root.name}).");
+                PlacementResults lutCheast = _lutPage.ShowPlacementTarget(draggedItem);
+                if (lutCheast.Conflict != ReasonConflict.beyondTheGridBoundary)
+                {
+                    //Debug.Log($"[ЛОГ] Страница лута активна. Конфликт: {lutCheast.Conflict}. Скрываю телеграф инвентаря.");
+                    _inventoryPage.Telegraph.Hide();
+                    return lutCheast.Init(lutCheast.Conflict, lutCheast.Position, lutCheast.SuggestedGridPosition, lutCheast.OverlapItem, _lutPage);
+                }
+            }
+
+            // -----
+            if (_craftPage.Root.enabledSelf)
+            {
+                if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
+                {
+                    PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
+                    if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
+                    {
+                        //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
+                        _inventoryPage.Telegraph.Hide();
+                        return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
+                    }
+                }
+            }
+
+            // -----
 
             //Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
             _inventoryPage.Telegraph.Hide();
             _craftPage.Telegraph.Hide();
+            _cheastPage.Telegraph.Hide();
+            _lutPage.Telegraph.Hide();
             return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
 
@@ -189,6 +209,8 @@ namespace SkyClerik.Inventory
         {
             _inventoryPage.FinalizeDrag();
             _craftPage.FinalizeDrag();
+            _cheastPage.FinalizeDrag();
+            _lutPage.FinalizeDrag();
         }
 
         public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2Int gridPosition)
@@ -247,23 +269,29 @@ namespace SkyClerik.Inventory
         /// Откроет инвентарь для выбора предмета который найдет по индексу, если не найдет то и не откроет инвентарь
         /// </summary>
         /// <param name="wrapperIndex"></param>
-        public void OpenInventoryGiveItem(int wrapperIndex)
+        public void OpenInventoryFromGiveItem(int wrapperIndex)
         {
             _givenItem = _inventoryItemContainer.GetItemByWrapperIndex(wrapperIndex);
             if (_givenItem != null)
                 OpenInventoryNormal();
         }
 
+        /// <summary>
+        /// Откроет инвентарь для выбора указанного предмета. Не откроет если ссылка null
+        /// </summary>
+        /// <param name="wrapperIndex"></param>
         public void OpenInventoryGiveItem(ItemBaseDefinition item)
         {
             _givenItem = item;
-            OpenInventoryNormal();
+            if (_givenItem != null)
+                OpenInventoryNormal();
         }
 
         public void OpenInventoryNormal()
         {
-            _inventoryPage.Root.SetEnabled(true);
             _document.rootVisualElement.SetVisibility(true);
+            _inventoryPage.Root.SetEnabled(true);
+
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
             //_inventoryPage.SetLogicalGridVisualizerActive(false);
         }
@@ -271,8 +299,9 @@ namespace SkyClerik.Inventory
         public void CloseInventory()
         {
             _givenItem = null;
-            _inventoryPage.Root.SetEnabled(false);
             _document.rootVisualElement.SetVisibility(false);
+            _inventoryPage.Root.SetEnabled(false);
+
             _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
 
@@ -280,7 +309,7 @@ namespace SkyClerik.Inventory
         {
             _craftPage.Root.SetDisplay(true);
             _craftPage.Root.SetVisibility(false);
-            if (_craftAccessible)
+            if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
                 SetDisplaySelfPage(_craftPage);
         }
 
@@ -320,15 +349,15 @@ namespace SkyClerik.Inventory
             CloseLut();
         }
 
-        private void SetDisplaySelfPage(GridPageElementBase gridPageElementBase)
+        private void SetDisplaySelfPage(GridPageElementBase page)
         {
             _craftPage.Root.SetDisplay(false);
             _cheastPage.Root.SetDisplay(false);
             _lutPage.Root.SetDisplay(false);
 
-            gridPageElementBase.Root.SetVisibility(true);
-            gridPageElementBase.Root.SetDisplay(true);
-            gridPageElementBase.Root.SetEnabled(true);
+            page.Root.SetVisibility(true);
+            page.Root.SetDisplay(true);
+            page.Root.SetEnabled(true);
         }
     }
 }

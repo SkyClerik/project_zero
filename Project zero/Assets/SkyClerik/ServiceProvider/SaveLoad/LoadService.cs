@@ -17,9 +17,9 @@ namespace SkyClerik.Utils
             if (itemsPage == null)
                 return;
 
-            foreach (var container in itemsPage.GetItemContainers)
+            foreach (var containerAndPage in itemsPage.ContainersAndPages)
             {
-                LoadItemContainer(container, slotFolderPath);
+                LoadItemContainer(containerAndPage.Container, slotFolderPath);
             }
 
             Debug.Log($"Полная загрузка для слота {globalGameProperty.CurrentSaveSlotIndex} завершена.");
@@ -111,23 +111,45 @@ namespace SkyClerik.Utils
                     if (itemsPage != null)
                     {
                         GridPageElementBase targetGridPage = null;
-                        if (targetContainer == itemsPage.InventoryItemContainer)
+                        foreach (var containerAndPage in itemsPage.ContainersAndPages)
                         {
-                            targetGridPage = itemsPage.InventoryPage;
+                            if (targetContainer == containerAndPage.Container)
+                            {
+                                targetGridPage = containerAndPage.Page;
+                                break;
+                            }
                         }
-                        else if (targetContainer == itemsPage.CraftItemContainer)
-                        {
-                            targetGridPage = itemsPage.CraftPage;
-                        }
-
                         if (targetGridPage != null)
-                        {
                             targetGridPage.RefreshVisuals();
-                        }
                         else
-                        {
                             Debug.LogWarning($"[LoadService] Не удалось найти соответствующий GridPageElementBase для контейнера '{targetContainer.name}'. Визуальные элементы не будут обновлены.");
-                        }
+
+
+                        //if (targetContainer == itemsPage.InventoryItemContainer)
+                        //{
+                        //    targetGridPage = itemsPage.InventoryPage;
+                        //}
+                        //else if (targetContainer == itemsPage.CraftItemContainer)
+                        //{
+                        //    targetGridPage = itemsPage.CraftPage;
+                        //}
+                        //else if (targetContainer == itemsPage.CheastItemContainer)
+                        //{
+                        //    targetGridPage = itemsPage.CheastPage;
+                        //}
+                        //else if (targetContainer == itemsPage.LutItemContainer)
+                        //{
+                        //    targetGridPage = itemsPage.LutPage;
+                        //}
+
+                        //if (targetGridPage != null)
+                        //{
+                        //    targetGridPage.RefreshVisuals();
+                        //}
+                        //else
+                        //{
+                        //    Debug.LogWarning($"[LoadService] Не удалось найти соответствующий GridPageElementBase для контейнера '{targetContainer.name}'. Визуальные элементы не будут обновлены.");
+                        //}
                     }
                     else
                     {
