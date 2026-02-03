@@ -47,17 +47,9 @@ namespace SkyClerik.Inventory
         private Rect _gridWorldRect;
 
         /// <summary>
-        /// Возвращает размеры сетки контейнера в ячейках (ширина, высота).
-        /// </summary>
-        public Vector2Int GridDimensions => _gridDimensions;
-        /// <summary>
         /// Возвращает размер одной ячейки сетки в пикселях.
         /// </summary>
         public Vector2 CellSize => _cellSize;
-        /// <summary>
-        /// Возвращает мировые координаты и размер области сетки.
-        /// </summary>
-        public Rect GridWorldRect => _gridWorldRect;
 
         // --- События для UI ---
         /// <summary>
@@ -79,12 +71,6 @@ namespace SkyClerik.Inventory
 
         // --- Логика сетки ---
         private bool[,] _gridOccupancy;
-
-        /// <summary>
-        /// Возвращает двухмерный массив, представляющий занятость ячеек сетки.
-        /// True означает, что ячейка занята, false - свободна.
-        /// </summary>
-        public bool[,] GetGridOccupancy => _gridOccupancy;
 
 
 #if UNITY_EDITOR
@@ -239,11 +225,14 @@ namespace SkyClerik.Inventory
         /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
         public List<ItemBaseDefinition> AddItems(List<ItemBaseDefinition> itemsToAdd)
         {
-            if (itemsToAdd == null) return new List<ItemBaseDefinition>();
+            if (itemsToAdd == null)
+                return new List<ItemBaseDefinition>();
+
             HandleStacking(itemsToAdd);
 
             var remainingItems = itemsToAdd.Where(i => i != null && i.Stack > 0).ToList();
-            if (!remainingItems.Any()) return new List<ItemBaseDefinition>();
+            if (!remainingItems.Any())
+                return new List<ItemBaseDefinition>();
 
             var sortedItems = remainingItems.OrderByDescending(item =>
                 item.Dimensions.Width * item.Dimensions.Height).ToList();
@@ -254,6 +243,7 @@ namespace SkyClerik.Inventory
             {
                 if (TryFindPlacement(item, out var foundPosition))
                 {
+                    Debug.Log($"В контейнер добавится : {item}");
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
                     _itemDataStorageSO.Items.Add(item);
@@ -265,23 +255,6 @@ namespace SkyClerik.Inventory
                 }
             }
             return unplacedItems;
-        }
-
-        /// <summary>
-        /// Добавляет предметы из указанного контейнера лута в текущий контейнер.
-        /// </summary>
-        /// <param name="sourceLut">Контейнер лута, из которого будут взяты предметы.</param>
-        public void AddLoot(LutContainer sourceLut)
-        {
-            if (sourceLut == null) return;
-            var unplacedClones = AddClonedItems(sourceLut.Items);
-
-            if (unplacedClones.Any())
-            {
-                //Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
-                sourceLut.Items.Clear();
-                sourceLut.Items.AddRange(unplacedClones);
-            }
         }
 
         /// <summary>
@@ -325,6 +298,7 @@ namespace SkyClerik.Inventory
         /// <returns>Список предметов только для чтения.</returns>
         public IReadOnlyList<ItemBaseDefinition> GetItems()
         {
+            //TODO переделать выдачу листа предметов
             return _itemDataStorageSO.Items.AsReadOnly();
         }
 

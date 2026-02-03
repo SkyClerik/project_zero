@@ -161,7 +161,7 @@ namespace SkyClerik.Inventory
             var cheastCA = new ContainerAndPage(_cheastItemContainer, _cheastPage);
             _containersAndPages.Add(cheastCA);
 
-            _lutPage = new LutPageElement(itemsPage: this, document: _document, itemContainer: _lutItemContainer);
+            _lutPage = new LutPageElement(itemsPage: this, document: _document, itemContainer: _lutItemContainer, _inventoryPage);
             var lutCA = new ContainerAndPage(_lutItemContainer, _lutPage);
             _containersAndPages.Add(lutCA);
 

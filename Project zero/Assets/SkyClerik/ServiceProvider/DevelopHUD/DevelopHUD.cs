@@ -111,12 +111,7 @@ namespace SkyClerik.Utils
 
         private void _bAddItem_clicked()
         {
-            var pic = ServiceProvider.Get<PlayerItemContainer>();
-
-            if (pic != null && _developLut != null)
-                pic.AddLoot(_developLut);
-            else
-                Debug.LogError("Не удалось получить доступ к инвентарю или лут-контейнеру!");
+            _developLut.TransferItemsToPlayerInventoryContainer();
         }
 
         private void _bSave_clicked()
@@ -147,15 +142,17 @@ namespace SkyClerik.Utils
 
         private void _bLut_clicked()
         {
-            if (_itemsPage.IsLutVisible)
-            {
-                _itemsPage.CloseAll();
-            }
-            else
-            {
-                _itemsPage.OpenInventoryNormal();
-                _itemsPage.OpenLut();
-            }
+            //if (_itemsPage.IsLutVisible)
+            //{
+            //    _itemsPage.CloseAll();
+            //}
+            //else
+            //{
+            //    _itemsPage.OpenInventoryNormal();
+            //    _itemsPage.OpenLut();
+            //}
+
+            _developLut.OpenLutPage();
         }
 
 
