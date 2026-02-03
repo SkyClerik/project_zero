@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
@@ -12,7 +10,7 @@ namespace SkyClerik.Inventory
     public class LutContainer : MonoBehaviour
     {
         [SerializeField]
-        private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
+        private ItemsList _itemsList;
 
         // -- Через вызов окна для игрока
 
@@ -22,11 +20,11 @@ namespace SkyClerik.Inventory
         private void TransferItemsToPlayerLutContainer()
         {
             var playerLutContainer = ServiceProvider.Get<PlayerLutContainer>();
-            playerLutContainer.AddItems(ref _items, container: this);
+            playerLutContainer.AddItems(_itemsList);
         }
 
         /// <summary>
-        /// Попытаться передать указанные предметы в лут игрока.
+        /// Открыть окно с лутом для предоставления игроку выбора
         /// </summary>
         public void OpenLutPage()
         {
@@ -40,12 +38,12 @@ namespace SkyClerik.Inventory
         // -- Передача всего возможного лута в инвентарь игрока
 
         /// <summary>
-        /// Попытаться передать указанные предметы в лут игрока.
+        /// Попытаться передать указанные предметы в инвентарь игрока.
         /// </summary>
         public void TransferItemsToPlayerInventoryContainer()
         {
             var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
-            playerItemContainer.AddItems(ref _items);
+            playerItemContainer.AddItems(_itemsList);
         }
     }
 }

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
@@ -26,19 +24,19 @@ namespace SkyClerik.Inventory
         /// Добавляет предметы из указанного контейнера лута в текущий контейнер.
         /// </summary>
         /// <param name="sourceLut">Контейнер лута, из которого будут взяты предметы.</param>
-        public void AddItems(ref List<ItemBaseDefinition> items)
+        public void AddItems(ItemsList itemsList)
         {
-            if (items.Count <= 0)
+            if (itemsList.Items.Count <= 0)
                 return;
 
-            var unplacedClones = AddClonedItems(items);
+            var unplacedClones = AddClonedItems(itemsList.Items);
 
-            items.Clear();
+            itemsList.Items.Clear();
 
             if (unplacedClones.Any())
             {
                 //Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
-                items.AddRange(unplacedClones);
+                itemsList.Items.AddRange(unplacedClones);
             }
         }
     }

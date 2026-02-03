@@ -440,8 +440,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eefaf293c04a6e744834a57f56951e74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _items:
-  - {fileID: 11400000, guid: 372b6fc30df60de45833ec7853249742, type: 2}
+  _itemsList:
+    _items: []
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,12 +609,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb9b2ab4777d2247953aa428d5e00f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globalGameState:
+  _globalGameProperty:
     _currentGameState: 0
     _isNewGame: 1
     _hasSeenIntro: 0
     _hasInfomatron: 0
     _playerScore: 0
+    _craftAccessible: 0
     _currentSaveSlotIndex: 0
 --- !u!1 &1689564143
 GameObject:
