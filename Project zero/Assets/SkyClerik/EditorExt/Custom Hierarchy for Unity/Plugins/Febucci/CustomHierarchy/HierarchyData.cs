@@ -9,6 +9,8 @@ namespace Febucci.HierarchyData
     {
         public bool enabled = true;
 
+        public string User = "Default";
+
         #region Icons Data
 
         [System.Serializable]
