@@ -98,7 +98,10 @@ namespace UnityEngine.Toolbox
 
             if (keysToRemove.Count == 0)
             {
-                Debug.LogWarning($"[ServiceProvider] Экземпляр сервиса '{serviceInstance.GetType().Name}' не был найден ни под одним зарегистрированным типом.");
+                if (_services.Count > 0)
+                {
+                    Debug.LogWarning($"[ServiceProvider] Экземпляр сервиса '{serviceInstance.GetType().Name}' не был найден ни под одним зарегистрированным типом.");
+                }
             }
         }
 

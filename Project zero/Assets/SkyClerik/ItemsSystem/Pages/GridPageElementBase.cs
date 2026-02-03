@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,14 +98,14 @@ string rootID)
             var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
             if (existingVisual != null)
             {
-                Debug.Log($"[GridPageElementBase] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
+                //Debug.Log($"[GridPageElementBase] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
                 existingVisual.UpdatePcs();
                 existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
                 _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
             }
             else
             {
-                Debug.Log($"[GridPageElementBase] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
+                //Debug.Log($"[GridPageElementBase] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
                 CreateVisualForItem(item);
             }
         }
@@ -116,7 +115,7 @@ string rootID)
             var visualToRemove = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
             if (visualToRemove != null)
             {
-                Debug.Log($"[GridPageElementBase] HandleItemRemoved: Найден и удаляется visual для '{item.name}'. HashCode: {visualToRemove.GetHashCode()}");
+                //Debug.Log($"[GridPageElementBase] HandleItemRemoved: Найден и удаляется visual для '{item.name}'. HashCode: {visualToRemove.GetHashCode()}");
                 UnregisterVisual(visualToRemove);
                 visualToRemove.RemoveFromHierarchy();
             }
@@ -163,7 +162,7 @@ string rootID)
         }
         private void CreateVisualForItem(ItemBaseDefinition item)
         {
-            Debug.Log($"[GridPageElementBase] CreateVisualForItem: Создание нового ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
+            //Debug.Log($"[GridPageElementBase] CreateVisualForItem: Создание нового ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
             var newGridData = new ItemGridData(item, item.GridPosition);
             var newItemVisual = new ItemVisual(
                 itemsPage: _itemsPage,
@@ -172,7 +171,7 @@ string rootID)
                 gridPosition: item.GridPosition,
                 gridSize: new Vector2Int(item.Dimensions.Width, item.Dimensions.Height));
 
-            Debug.Log($"[GridPageElementBase] CreateVisualForItem: Новый ItemVisual создан. HashCode: {newItemVisual.GetHashCode()}");
+            //Debug.Log($"[GridPageElementBase] CreateVisualForItem: Новый ItemVisual создан. HashCode: {newItemVisual.GetHashCode()}");
             RegisterVisual(newItemVisual, newGridData);
             AddItemToInventoryGrid(newItemVisual);
             newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
@@ -190,7 +189,7 @@ string rootID)
 
             if (unplacedClones.Any())
             {
-                Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
+                //Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
                 sourceLut.Items.Clear();
                 sourceLut.Items.AddRange(unplacedClones);
             }
@@ -369,7 +368,7 @@ gridData.GridSize.x, gridData.GridSize.y);
             var itemDef = GetItemDefinition(storedItem);
             if (itemDef != null)
             {
-                Debug.Log($"[GridPageElementBase] PickUp: Вызов OccupyGridCells(false) для '{itemDef.name}' на позиции {itemDef.GridPosition}");
+                //Debug.Log($"[GridPageElementBase] PickUp: Вызов OccupyGridCells(false) для '{itemDef.name}' на позиции {itemDef.GridPosition}");
                 _itemContainer.OccupyGridCells(itemDef, false);
                 itemDef.GridPosition = new Vector2Int(-1, -1);
             }
@@ -393,16 +392,14 @@ gridData.GridSize.x, gridData.GridSize.y);
         /// </summary>
         public void RefreshVisuals()
         {
-            // Удаляем все существующие визуальные элементы из UI
             foreach (var visual in _visuals.Keys.ToList())
             {
                 visual.RemoveFromHierarchy();
             }
-            _visuals.Clear(); // Очищаем словарь связей
+            _visuals.Clear();
 
-            // Пересоздаем визуальные элементы на основе текущих данных в контейнере
             LoadInitialVisuals();
-            Debug.Log($"[GridPageElementBase:{_root.name}] Visuals refreshed. Recreated {_visuals.Count} items.", _coroutineRunner);
+            //Debug.Log($"[GridPageElementBase:{_root.name}] Visuals refreshed. Recreated {_visuals.Count} items.", _coroutineRunner);
         }
 
         public virtual void Dispose()

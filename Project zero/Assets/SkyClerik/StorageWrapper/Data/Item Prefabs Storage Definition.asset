@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fab4e36dd7300b4baabdb7fd5943b5c, type: 3}
   m_Name: Item Prefabs Storage Definition
   m_EditorClassIdentifier: 
-  _prefabMappings: []
+  _prefabMappings:
+  - _itemID: 0
+    _worldPrefab: {fileID: 7274654834732417453, guid: fd212ee46506f984fbb33a14c51eb717, type: 3}

@@ -155,7 +155,7 @@ namespace SkyClerik.Inventory
             }
 
             // 1. Удаляем предмет из исходного контейнера (это вызовет OnItemRemoved в UI)
-            sourceContainer.RemoveItem(itemToMove, destroy: false); 
+            sourceContainer.RemoveItem(itemToMove, destroy: false);
 
             // 2. Пытаемся добавить предмет в целевой контейнер на указанную позицию Это вызовет OnItemAdded в UI, если успешно
             bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, gridPosition);
@@ -165,7 +165,7 @@ namespace SkyClerik.Inventory
                 //Debug.LogWarning($"Не удалось переместить предмет '{itemToMove.name}' в целевой контейнер на позицию {gridPosition}. Возвращаем в исходный контейнер.");
                 // Если не удалось добавить в целевой, возвращаем предмет в исходный контейнер
                 // Это может вызвать OnItemAdded в UI исходного контейнера, ItemContainer сам найдет место
-                sourceContainer.AddItems(new List<ItemBaseDefinition>{ itemToMove }); 
+                sourceContainer.AddItems(new List<ItemBaseDefinition> { itemToMove });
             }
         }
 
@@ -194,12 +194,15 @@ namespace SkyClerik.Inventory
             _itemTooltip.ShowTooltip(itemVisual.ItemDefinition, itemVisual.worldBound.center);
         }
 
-        public void OpenInventoryGiveItem(int itemId)
+        /// <summary>
+        /// Откроет инвентарь для выбора предмета который найдет по индексу, если не найдет то и не откроет инвентарь
+        /// </summary>
+        /// <param name="wrapperIndex"></param>
+        public void OpenInventoryGiveItem(int wrapperIndex)
         {
-            //TODO стоит заглушка, нужно написать скрипт поиска предмета по ID
-            //_giveItem = itemId;
-            _givenItem = null;
-            OpenInventoryNormal();
+            _givenItem = _inventoryItemContainer.GetItemByWrapperIndex(wrapperIndex);
+            if (_givenItem != null)
+                OpenInventoryNormal();
         }
 
         public void OpenInventoryGiveItem(ItemBaseDefinition item)

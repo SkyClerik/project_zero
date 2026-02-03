@@ -246,6 +246,30 @@ namespace SkyClerik.Inventory
             return _itemDataStorageSO.Items.AsReadOnly();
         }
 
+        /// <summary>
+        /// Ищет предмет в контейнере по его WrapperIndex.
+        /// </summary>
+        /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
+        /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
+        public ItemBaseDefinition GetItemByWrapperIndex(int wrapperIndex)
+        {
+            if (_itemDataStorageSO == null || _itemDataStorageSO.Items == null)
+            {
+                Debug.LogWarning("[ItemContainer] Попытка получить предмет по ID из неинициализированного хранилища.");
+                return null;
+            }
+
+            foreach (var item in _itemDataStorageSO.Items)
+            {
+                if (item != null && item.WrapperIndex == wrapperIndex)
+                {
+                    return item;
+                }
+            }
+            Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{wrapperIndex}' не найден в контейнере '{name}'.");
+            return null;
+        }
+
         public bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
         {
             //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.CurrentWidth}x{item.Dimensions.CurrentHeight}) на позицию {gridPosition}.", this);
@@ -310,7 +334,7 @@ namespace SkyClerik.Inventory
             if (item.GridPosition.x < 0 || item.GridPosition.y < 0) return;
 
             var size = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
-            Debug.Log($"[ItemContainer] OccupyGridCells вызван для '{item.DefinitionName}'. Действие: {(occupy ? "ЗАНЯТЬ" : "ОСВОБОДИТЬ")}. Позиция: {item.GridPosition}, Размер: {size}");
+            //Debug.Log($"[ItemContainer] OccupyGridCells вызван для '{item.DefinitionName}'. Действие: {(occupy ? "ЗАНЯТЬ" : "ОСВОБОДИТЬ")}. Позиция: {item.GridPosition}, Размер: {size}");
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
