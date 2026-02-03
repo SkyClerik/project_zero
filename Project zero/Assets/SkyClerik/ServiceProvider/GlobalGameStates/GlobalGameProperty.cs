@@ -3,7 +3,7 @@ using UnityEngine;
 namespace SkyClerik.Utils
 {
     [System.Serializable]
-    public class GlobalGameState
+    public class GlobalGameProperty
     {
         [Header("Состояние игры")]
         [Tooltip("Текущее состояние игры (например, в главном меню, в игре, на паузе).")]
@@ -21,6 +21,11 @@ namespace SkyClerik.Utils
         [SerializeField]
         private bool _hasSeenIntro = false;
         public bool HasSeenIntro => _hasSeenIntro;
+
+        [Tooltip("Установлено в 'true', если игрок не хочет видеть автоматические подсказки.")]
+        [SerializeField]
+        private bool _hasInfomatron = false;
+        public bool HasInfomatron => _hasInfomatron;
 
         [Tooltip("Текущий счет или очки игрока.")]
         [SerializeField]
@@ -63,7 +68,7 @@ namespace SkyClerik.Utils
             _currentGameState = GameState.InGame;
             Debug.Log("Глобальное состояние игры установлено: В Игре.");
         }
-        
+
         /// <summary>
         /// Устанавливает игровое состояние на "Пауза".
         /// </summary>

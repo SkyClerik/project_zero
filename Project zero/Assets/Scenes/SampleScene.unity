@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 138080786}
   - component: {fileID: 138080785}
   m_Layer: 0
-  m_Name: StartingPlayerItems
+  m_Name: 00_StartingPlayerItems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -302,6 +302,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7381920286519882158, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
   m_PrefabInstance: {fileID: 343507649103086034}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &627866744 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8422042304283840621, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+  m_PrefabInstance: {fileID: 343507649103086034}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b47efc9b9b3ac47bb66ad82e9d690c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &627866745 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8572603436829135497, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+  m_PrefabInstance: {fileID: 343507649103086034}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 751ba84b193bfc247b75f4f3bc0aed7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -574,7 +596,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1276237421}
-  - component: {fileID: 1276237420}
+  - component: {fileID: 1276237422}
   m_Layer: 0
   m_Name: GameStateManager
   m_TagString: Untagged
@@ -582,24 +604,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1276237420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1276237419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0574297f77780b049aaf301d67c2ced1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _globalGameState:
-    _currentGameState: 0
-    _isNewGame: 1
-    _hasSeenIntro: 0
-    _playerScore: 0
-    _currentSaveSlotIndex: 0
 --- !u!4 &1276237421
 Transform:
   m_ObjectHideFlags: 0
@@ -615,6 +619,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1923614411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1276237422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276237419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb9b2ab4777d2247953aa428d5e00f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _globalGameState:
+    _currentGameState: 0
+    _isNewGame: 1
+    _hasSeenIntro: 0
+    _hasInfomatron: 0
+    _playerScore: 0
+    _currentSaveSlotIndex: 0
 --- !u!1 &1689564143
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,7 +649,7 @@ GameObject:
   - component: {fileID: 1689564144}
   - component: {fileID: 1689564146}
   m_Layer: 0
-  m_Name: FirstLoadPlayerItems
+  m_Name: 01_FirstLoadPlayerItems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -705,7 +728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   globalItemsStorageDefinition: {fileID: 11400000, guid: fd107c64735c5774f9a4c7e8e2f6b796, type: 2}
-  itemPrefabsStorageDefinition: {fileID: 11400000, guid: d3cec41f0a5a4b34bacff5ee2f2a44ca, type: 2}
+  itemPrefabsStorageDefinition: {fileID: 11400000, guid: 9219a07650ae8b242aab8afaf68bb7c4, type: 2}
 --- !u!1 &1923614410
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,6 +818,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1923614411}
     m_Modifications:
+    - target: {fileID: 807833916544114362, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3012271787897610413, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _lutItemContainer
+      value: 
+      objectReference: {fileID: 627866745}
+    - target: {fileID: 3012271787897610413, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _cheastItemContainer
+      value: 
+      objectReference: {fileID: 627866744}
     - target: {fileID: 6452682332439669834, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: m_Name
       value: Inventory

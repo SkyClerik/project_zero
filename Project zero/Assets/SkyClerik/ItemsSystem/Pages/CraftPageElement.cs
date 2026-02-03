@@ -10,8 +10,7 @@ namespace SkyClerik.Inventory
 {
     public class CraftPageElement : GridPageElementBase
     {
-        private const string _craftPageTitleText = "Окно крафта предметов";
-        private const string _craftRootID = "craft_root";
+        private const string _titleText = "Окно крафта предметов";
         private VisualElement _header;
         private const string _headerID = "header";
         private Label _title;
@@ -22,14 +21,14 @@ namespace SkyClerik.Inventory
         private const string _craftButtonID = "b_craft";
 
         public CraftPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
-            : base(itemsPage, document, itemContainer, _craftRootID)
+            : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
             _header = _root.Q(_headerID);
             _title = _header.Q<Label>(_titleID);
             _body = _root.Q(_bodyID);
             _craftButton = _body.Q<Button>(_craftButtonID);
 
-            _title.text = _craftPageTitleText;
+            _title.text = _titleText;
             _craftButton.clicked += _craftButton_clicked;
         }
 

@@ -2,9 +2,9 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
-    public class InventoryPageElement : GridPageElementBase
+    public class CheastPageElement : GridPageElementBase
     {
-        private const string _titleText = "Инвентарь";
+        private const string _titleText = "Хранилище предметов";
         private VisualElement _header;
         private const string _headerID = "header";
         private Label _title;
@@ -12,8 +12,8 @@ namespace SkyClerik.Inventory
         private VisualElement _body;
         private const string _bodyID = "body";
 
-        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
-            : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
+        public CheastPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
+    : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
             _header = _root.Q(_headerID);
             _title = _header.Q<Label>(_titleID);

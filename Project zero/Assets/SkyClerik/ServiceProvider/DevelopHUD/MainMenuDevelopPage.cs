@@ -69,7 +69,7 @@ namespace SkyClerik
 
         private void OnNewGameClick()
         {
-            var gameStateManager = ServiceProvider.Get<GameStateManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalManager>();
             if (gameStateManager != null)
             {
                 Hide();
@@ -84,7 +84,7 @@ namespace SkyClerik
 
         private void OnLoadGameClick()
         {
-            var gameStateManager = ServiceProvider.Get<GameStateManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalManager>();
             if (gameStateManager != null)
             {
                 Hide();

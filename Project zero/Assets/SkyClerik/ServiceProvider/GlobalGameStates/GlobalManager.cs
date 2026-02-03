@@ -3,12 +3,12 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Utils
 {
-    public class GameStateManager : MonoBehaviour
+    public class GlobalManager : MonoBehaviour
     {
         [SerializeField]
-        private GlobalGameState _globalGameState = new GlobalGameState();
+        private GlobalGameProperty _globalGameState = new GlobalGameProperty();
 
-        public GlobalGameState GlobalGameState => _globalGameState;
+        public GlobalGameProperty GlobalGameState => _globalGameState;
         public SaveService SaveService { get; } = new SaveService();
         public LoadService LoadService { get; } = new LoadService();
 

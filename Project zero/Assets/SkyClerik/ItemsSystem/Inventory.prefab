@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 511445279938769042}
   - component: {fileID: 8947709996843349493}
   - component: {fileID: 324047505839359744}
+  - component: {fileID: 8422042304283840621}
+  - component: {fileID: 8572603436829135497}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -29,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6452682332439669834}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -43,7 +45,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6452682332439669834}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
@@ -112,4 +114,38 @@ MonoBehaviour:
   _uiDocument: {fileID: 807833916544114362}
   _rootPanelName: craft_root
   _gridDimensions: {x: 3, y: 4}
+  _cellSize: {x: 128, y: 128}
+--- !u!114 &8422042304283840621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6452682332439669834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b47efc9b9b3ac47bb66ad82e9d690c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemDataStorageSO: {fileID: 11400000, guid: c2c261aa040c3514e9351b17bbb6bbc6, type: 2}
+  _uiDocument: {fileID: 807833916544114362}
+  _rootPanelName: cheast_root
+  _gridDimensions: {x: 4, y: 5}
+  _cellSize: {x: 128, y: 128}
+--- !u!114 &8572603436829135497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6452682332439669834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 751ba84b193bfc247b75f4f3bc0aed7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemDataStorageSO: {fileID: 11400000, guid: 41a3e04031bd0da4d9526500ae81686b, type: 2}
+  _uiDocument: {fileID: 807833916544114362}
+  _rootPanelName: lut_root
+  _gridDimensions: {x: 4, y: 5}
   _cellSize: {x: 128, y: 128}

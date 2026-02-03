@@ -24,7 +24,7 @@ namespace SkyClerik
 
         public void ExecuteStep()
         {
-            var gameStateManager = ServiceProvider.Get<GameStateManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalManager>();
             if (gameStateManager == null)
             {
                 //Debug.LogError("GameStateManager не найден в ServiceProvider!", this);

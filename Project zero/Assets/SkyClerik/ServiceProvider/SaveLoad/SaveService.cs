@@ -1,7 +1,8 @@
-using UnityEngine;
+using Newtonsoft.Json;
 using SkyClerik.Inventory;
 using System.IO;
-using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.Toolbox;
 
 namespace SkyClerik.Utils
 {
@@ -10,27 +11,26 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Сохраняет все игровые данные (состояние и инвентари) для указанного слота.
         /// </summary>
-        public void SaveAll(GlobalGameState globalState, ItemContainer[] containersToSave)
+        public void SaveAll(GlobalGameProperty globalGameProperty, int slotIndex)
         {
-            int slotIndex = globalState.CurrentSaveSlotIndex;
-            string slotFolderPath = GetSaveSlotFolderPath(slotIndex);
+            var itemsPage = ServiceProvider.Get<ItemsPage>();
+            if (itemsPage == null)
+                return;
 
-            // Сохраняем глобальное состояние
-            SaveGlobalState(globalState, slotFolderPath);
+            var slotFolderPath = GetSaveSlotFolderPath(slotIndex);
 
-            // Сохраняем все переданные контейнеры
-            foreach (var container in containersToSave)
+            foreach (var container in itemsPage.GetItemContainers)
             {
                 SaveItemContainer(container, slotFolderPath);
             }
 
-            Debug.Log($"Полное сохранение для слота {slotIndex} завершено.");
+            Debug.Log($"Полное сохранение для слота {globalGameProperty.CurrentSaveSlotIndex} завершено.");
         }
 
         /// <summary>
         /// Сохраняет объект GlobalGameState в указанную папку слота.
         /// </summary>
-        public void SaveGlobalState(GlobalGameState globalState, string slotFolderPath)
+        public void SaveGlobalState(GlobalGameProperty globalState, string slotFolderPath)
         {
             string filePath = Path.Combine(slotFolderPath, "globalGameState.json");
             string json = JsonConvert.SerializeObject(globalState, Formatting.Indented, new JsonSerializerSettings
@@ -86,7 +86,7 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Получает или создает путь к папке для указанного слота сохранения.
         /// </summary>
-        public string GetSaveSlotFolderPath(int slotIndex)
+        private string GetSaveSlotFolderPath(int slotIndex)
         {
             const string SaveSlotPrefix = "Slot";
             string baseSavePath = Path.Combine(Application.persistentDataPath, "Saves");

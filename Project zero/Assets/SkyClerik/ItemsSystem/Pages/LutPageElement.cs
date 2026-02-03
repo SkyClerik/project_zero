@@ -2,9 +2,9 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
-    public class InventoryPageElement : GridPageElementBase
+    public class LutPageElement : GridPageElementBase
     {
-        private const string _titleText = "Инвентарь";
+        private const string _craftPageTitleText = "Трофейня";
         private VisualElement _header;
         private const string _headerID = "header";
         private Label _title;
@@ -12,14 +12,14 @@ namespace SkyClerik.Inventory
         private VisualElement _body;
         private const string _bodyID = "body";
 
-        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
-            : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
+        public LutPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
+    : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
             _header = _root.Q(_headerID);
             _title = _header.Q<Label>(_titleID);
             _body = _root.Q(_bodyID);
 
-            _title.text = _titleText;
+            _title.text = _craftPageTitleText;
         }
     }
 }

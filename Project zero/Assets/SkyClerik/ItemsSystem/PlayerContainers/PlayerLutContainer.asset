@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fb0a68e101715d4f9bb1203d7d51430, type: 3}
-  m_Name: CraftContainerEmpty
+  m_Name: PlayerLutContainer
   m_EditorClassIdentifier: 
-  _containerGuid: ce197b02-ebd4-4559-82fb-3aa15b984ed5
+  _containerGuid: 935e1dbf-5eec-4570-9253-6a0cd01cae8e
   _items: []

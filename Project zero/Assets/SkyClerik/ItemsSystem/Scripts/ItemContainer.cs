@@ -20,6 +20,7 @@ namespace SkyClerik.Inventory
         [SerializeField] private UIDocument _uiDocument;
         [Tooltip("Имя корневой панели в UI документе, внутри которой находится элемент 'grid'.")]
         [SerializeField] private string _rootPanelName;
+        public string RootPanelName => _rootPanelName;
 
         [Tooltip("Рассчитанный размер сетки инвентаря (ширина, высота). Не редактировать вручную.")]
         [SerializeField]
@@ -48,6 +49,7 @@ namespace SkyClerik.Inventory
         private bool[,] _gridOccupancy;
 
         public bool[,] GetGridOccupancy => _gridOccupancy;
+
 
 #if UNITY_EDITOR
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]

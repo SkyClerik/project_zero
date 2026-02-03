@@ -73,19 +73,13 @@ namespace SkyClerik.Inventory
 
         /// <summary>
         /// Проверяет и генерирует GUID для контейнера, если он отсутствует.
-        /// Может быть вызван вручную через контекстное меню.
         /// </summary>
-        [ContextMenu("Validate GUID")]
         public void ValidateGuid()
         {
             if (string.IsNullOrEmpty(_containerGuid))
             {
                 _containerGuid = Guid.NewGuid().ToString();
                 Debug.Log($"Сгенерирован новый GUID для контейнера: {_containerGuid} (из ValidateGuid)");
-            }
-            else
-            {
-                Debug.Log($"GUID контейнера уже существует: {_containerGuid}");
             }
         }
     }

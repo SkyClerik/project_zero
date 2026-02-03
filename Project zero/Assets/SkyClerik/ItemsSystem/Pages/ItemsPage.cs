@@ -10,36 +10,57 @@ namespace SkyClerik.Inventory
     public class ItemsPage : MonoBehaviour
     {
         private UIDocument _document;
-        private InventoryPageElement _inventoryPage;
-        private CraftPageElement _craftPage;
-        private bool _craftAccessible = false;
+
         private Vector2 _mouseUILocalPosition;
+        public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
         private Vector2 _mousePositionOffset;
+
         private static ItemVisual _currentDraggedItem = null;
+        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
-        private ItemBaseDefinition _givenItem = null;
 
         [SerializeField]
         private ItemContainer _inventoryItemContainer;
+        private InventoryPageElement _inventoryPage;
+        private ItemBaseDefinition _givenItem = null;
+        public ItemContainer InventoryItemContainer => _inventoryItemContainer;
+        public InventoryPageElement InventoryPage => _inventoryPage;
+        public ItemBaseDefinition GiveItem => _givenItem;
+        public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
+
         [SerializeField]
         private ItemContainer _craftItemContainer;
+        private CraftPageElement _craftPage;
+        private bool _craftAccessible = false;
+        public ItemContainer CraftItemContainer => _craftItemContainer;
+        public CraftPageElement CraftPage => _craftPage;
+        public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
+        public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
+
+        [SerializeField]
+        private ItemContainer _cheastItemContainer;
+        private CheastPageElement _cheastPage;
+        public bool IsCheastVisible { get => _cheastPage.Root.enabledSelf; set => _cheastPage.Root.SetEnabled(value); }
+
+        [SerializeField]
+        private ItemContainer _lutItemContainer;
+        private LutPageElement _lutPage;
+        public bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
+
+        private List<ItemContainer> _itemContainers = new List<ItemContainer>();
+        public List<ItemContainer> GetItemContainers => _itemContainers;
+
 
         public delegate void OnItemGivenDelegate(ItemBaseDefinition item);
         public event OnItemGivenDelegate OnItemGiven;
-
-        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
-        public InventoryPageElement InventoryPage => _inventoryPage;
-        public CraftPageElement CraftPage => _craftPage;
-        public ItemBaseDefinition GiveItem => _givenItem;
-        public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
-        public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
-        public bool MakeCraftAccessible { get => _craftAccessible; set => _craftAccessible = value; }
-        public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
-        public ItemContainer InventoryItemContainer => _inventoryItemContainer;
-        public ItemContainer CraftItemContainer => _craftItemContainer;
+        public void RiseItemGiveEvent(ItemBaseDefinition item)
+        {
+            Debug.Log($"TriggerItemGiveEvent: {item}");
+            OnItemGiven?.Invoke(item);
+        }
 
         private void Awake()
         {
@@ -51,6 +72,8 @@ namespace SkyClerik.Inventory
             ServiceProvider.Unregister(this);
             _inventoryPage?.Dispose();
             _craftPage?.Dispose();
+            _cheastPage?.Dispose();
+            _lutPage?.Dispose();
         }
 
         protected void Start()
@@ -62,16 +85,33 @@ namespace SkyClerik.Inventory
                 itemsPage: this,
                 document: _document,
                 itemContainer: _inventoryItemContainer);
+            _itemContainers.Add(_inventoryItemContainer);
 
             _craftPage = new CraftPageElement(
                 itemsPage: this,
                 document: _document,
                 itemContainer: _craftItemContainer);
+            _itemContainers.Add(_craftItemContainer);
+
+            _cheastPage = new CheastPageElement(
+                itemsPage: this,
+                document: _document,
+                itemContainer: _cheastItemContainer);
+            _itemContainers.Add(_cheastItemContainer);
+
+            _lutPage = new LutPageElement(
+                itemsPage: this,
+                document: _document,
+                itemContainer: _lutItemContainer);
+            _itemContainers.Add(_lutItemContainer);
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
+
             CloseInventory();
             CloseCraft();
+            CloseCheast();
+            CloseLut();
         }
 
         private void OnRootMouseMove(MouseMoveEvent evt)
@@ -216,7 +256,7 @@ namespace SkyClerik.Inventory
             _inventoryPage.Root.SetEnabled(true);
             _document.rootVisualElement.SetVisibility(true);
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
-            _inventoryPage.SetLogicalGridVisualizerActive(false);
+            //_inventoryPage.SetLogicalGridVisualizerActive(false);
         }
 
         public void CloseInventory()
@@ -225,31 +265,61 @@ namespace SkyClerik.Inventory
             _inventoryPage.Root.SetEnabled(false);
             _document.rootVisualElement.SetVisibility(false);
             _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
-            _inventoryPage.SetLogicalGridVisualizerActive(false);
         }
 
         public void OpenCraft()
         {
+            _craftPage.Root.SetDisplay(true);
             _craftPage.Root.SetVisibility(false);
             if (_craftAccessible)
-            {
-                _craftPage.Root.SetVisibility(true);
-                _craftPage.Root.SetEnabled(true);
-                _craftPage.SetLogicalGridVisualizerActive(false);
-            }
+                SetDisplaySelfPage(_craftPage);
         }
 
         public void CloseCraft()
         {
             _craftPage.Root.SetVisibility(false);
             _craftPage.Root.SetEnabled(false);
-            _craftPage.SetLogicalGridVisualizerActive(false);
         }
 
-        public void TriggerItemGiveEvent(ItemBaseDefinition item)
+        public void OpenCheast()
         {
-            Debug.Log($"TriggerItemGiveEvent: {item}");
-            OnItemGiven?.Invoke(item);
+            SetDisplaySelfPage(_cheastPage);
+        }
+
+        public void CloseCheast()
+        {
+            _cheastPage.Root.SetVisibility(false);
+            _cheastPage.Root.SetEnabled(false);
+        }
+
+        public void OpenLut()
+        {
+            SetDisplaySelfPage(_lutPage);
+        }
+
+        public void CloseLut()
+        {
+            _lutPage.Root.SetVisibility(false);
+            _lutPage.Root.SetEnabled(false);
+        }
+
+        public void CloseAll()
+        {
+            CloseInventory();
+            CloseCraft();
+            CloseCheast();
+            CloseLut();
+        }
+
+        private void SetDisplaySelfPage(GridPageElementBase gridPageElementBase)
+        {
+            _craftPage.Root.SetDisplay(false);
+            _cheastPage.Root.SetDisplay(false);
+            _lutPage.Root.SetDisplay(false);
+
+            gridPageElementBase.Root.SetVisibility(true);
+            gridPageElementBase.Root.SetDisplay(true);
+            gridPageElementBase.Root.SetEnabled(true);
         }
     }
 }

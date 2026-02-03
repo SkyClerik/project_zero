@@ -260,7 +260,7 @@ namespace SkyClerik.Inventory
             {
                 if (_itemsPage.GiveItem != null)
                 {
-                    _itemsPage.TriggerItemGiveEvent(_itemDefinition);
+                    _itemsPage.RiseItemGiveEvent(_itemDefinition);
                 }
                 else
                 {

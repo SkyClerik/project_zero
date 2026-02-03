@@ -19,11 +19,12 @@ namespace SkyClerik.Utils
         private const string _bTrueCraftID = "b_true_craft";
         private Button _bAddItem;
         private const string _bAddItemID = "b_add_item";
-
         private Button _bSave;
         private const string _bSaveID = "b_save";
-        private Button _bLoad;
-        private const string _bLoadID = "b_load";
+        private Button _bCheast;
+        private const string _bCheastID = "b_cheast";
+        private Button _bLut;
+        private const string _bLutID = "b_lut";
 
         private Button _bExitGame;
         private const string _bExitGameID = "b_exit_game";
@@ -48,7 +49,8 @@ namespace SkyClerik.Utils
             _bTrueCraft = root.Q<Button>(_bTrueCraftID);
             _bAddItem = root.Q<Button>(_bAddItemID);
             _bSave = root.Q<Button>(_bSaveID);
-            _bLoad = root.Q<Button>(_bLoadID);
+            _bCheast = root.Q<Button>(_bCheastID);
+            _bLut = root.Q<Button>(_bLutID);
 
             _bExitGame = root.Q<Button>(_bExitGameID);
 
@@ -57,10 +59,13 @@ namespace SkyClerik.Utils
             _bTrueCraft.clicked += _bTrueCraft_clicked;
             _bAddItem.clicked += _bAddItem_clicked;
             _bSave.clicked += _bSave_clicked;
-            _bLoad.clicked += _bLoad_clicked;
+            _bCheast.clicked += _bCheast_clicked;
+            _bLut.clicked += _bLut_clicked;
 
             _bExitGame.clicked += _bExitGame_clicked;
         }
+
+
 
         private void OnDestroy()
         {
@@ -70,15 +75,15 @@ namespace SkyClerik.Utils
             _bAddItem.clicked -= _bAddItem_clicked;
             _bExitGame.clicked -= _bExitGame_clicked;
             _bSave.clicked -= _bSave_clicked;
-            _bLoad.clicked -= _bLoad_clicked;
+            _bCheast.clicked -= _bCheast_clicked;
+            _bLut.clicked -= _bLut_clicked;
         }
 
         private void _bInventory_clicked()
         {
             if (_itemsPage.IsInventoryVisible)
             {
-                _itemsPage.CloseInventory();
-                _itemsPage.CloseCraft();
+                _itemsPage.CloseAll();
             }
             else
             {
@@ -90,7 +95,7 @@ namespace SkyClerik.Utils
         private void _bInventoryGive_clicked()
         {
             if (_itemsPage.IsInventoryVisible)
-                _itemsPage.CloseInventory();
+                _itemsPage.CloseAll();
             else
                 _itemsPage.OpenInventoryGiveItem(wrapperIndex: 0);
         }
@@ -110,56 +115,43 @@ namespace SkyClerik.Utils
 
         private void _bSave_clicked()
         {
-            var gameStateManager = ServiceProvider.Get<GameStateManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalManager>();
             if (gameStateManager == null)
-            {
-                //Debug.LogError("GameStateManager не найден в ServiceProvider!");
                 return;
-            }
-
-            var itemsPage = ServiceProvider.Get<ItemsPage>();
-            if (itemsPage == null)
-            {
-                //Debug.LogError("ItemsPage не найден в ServiceProvider!");
-                return;
-            }
 
             var saveService = gameStateManager.SaveService;
             var globalState = gameStateManager.GlobalGameState;
-            string slotFolderPath = saveService.GetSaveSlotFolderPath(globalState.CurrentSaveSlotIndex);
 
-            saveService.SaveItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
-            saveService.SaveItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
-
-            //Debug.Log($"[DevelopHUD] Сохранение контейнеров в слот {globalState.CurrentSaveSlotIndex} завершено.");
+            // slotIndex будет 0 всегда так как мы не планируем слоты сохранения            
+            saveService.SaveAll(globalState, 0);
         }
 
-        private void _bLoad_clicked()
+        private void _bCheast_clicked()
         {
-            var gameStateManager = ServiceProvider.Get<GameStateManager>();
-            if (gameStateManager == null)
+            if (_itemsPage.IsCheastVisible)
             {
-                //Debug.LogError("GameStateManager не найден в ServiceProvider!");
-                return;
+                _itemsPage.CloseAll();
             }
-
-            var itemsPage = ServiceProvider.Get<ItemsPage>();
-            if (itemsPage == null)
+            else
             {
-                //Debug.LogError("ItemsPage не найден в ServiceProvider!");
-                return;
+                _itemsPage.OpenInventoryNormal();
+                _itemsPage.OpenCheast();
             }
-
-            var loadService = gameStateManager.LoadService;
-            var globalState = gameStateManager.GlobalGameState;
-            string slotFolderPath = loadService.GetSaveSlotFolderPath(globalState.CurrentSaveSlotIndex);
-
-            loadService.LoadItemContainer(itemsPage.InventoryItemContainer, slotFolderPath);
-            loadService.LoadItemContainer(itemsPage.CraftItemContainer, slotFolderPath);
-
-            //Debug.Log($"[DevelopHUD] Загрузка контейнеров из слота {globalState.CurrentSaveSlotIndex} завершена.");
-
         }
+
+        private void _bLut_clicked()
+        {
+            if (_itemsPage.IsLutVisible)
+            {
+                _itemsPage.CloseAll();
+            }
+            else
+            {
+                _itemsPage.OpenInventoryNormal();
+                _itemsPage.OpenLut();
+            }
+        }
+
 
         private void _bExitGame_clicked()
         {

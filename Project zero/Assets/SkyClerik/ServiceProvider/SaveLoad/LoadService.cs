@@ -9,29 +9,26 @@ namespace SkyClerik.Utils
     public class LoadService
     {
         /// <summary>
-        /// Загружает все игровые данные (состояние и инвентари) для указанного слота.
+        /// Загружает все игровые данные (состояние и инвентари) для указанного GlobalGameProperty.
         /// </summary>
-        public void LoadAll(GlobalGameState globalState, ItemContainer[] containersToLoad)
+        public void LoadAll(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
-            int slotIndex = globalState.CurrentSaveSlotIndex;
-            string slotFolderPath = GetSaveSlotFolderPath(slotIndex);
+            var itemsPage = ServiceProvider.Get<ItemsPage>();
+            if (itemsPage == null)
+                return;
 
-            // Загружаем глобальное состояние
-            LoadGlobalState(globalState, slotFolderPath);
-
-            // Загружаем все переданные контейнеры
-            foreach (var container in containersToLoad)
+            foreach (var container in itemsPage.GetItemContainers)
             {
                 LoadItemContainer(container, slotFolderPath);
             }
-            
-            Debug.Log($"Полная загрузка для слота {slotIndex} завершена.");
+
+            Debug.Log($"Полная загрузка для слота {globalGameProperty.CurrentSaveSlotIndex} завершена.");
         }
 
         /// <summary>
-        /// Загружает объект GlobalGameState из указанной папки слота.
+        /// Загружает объект GlobalGameProperty из указанной папки слота.
         /// </summary>
-        public void LoadGlobalState(GlobalGameState globalState, string slotFolderPath)
+        public void LoadGlobalState(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
             string filePath = Path.Combine(slotFolderPath, "globalGameState.json");
 
@@ -40,7 +37,7 @@ namespace SkyClerik.Utils
                 string json = File.ReadAllText(filePath);
                 try
                 {
-                    JsonConvert.PopulateObject(json, globalState, new JsonSerializerSettings
+                    JsonConvert.PopulateObject(json, globalGameProperty, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     });
@@ -105,7 +102,7 @@ namespace SkyClerik.Utils
                     // Копируем данные из загруженного определения в существующее
                     // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
                     targetContainer.ItemDataStorageSO.SetDataFromOtherContainer(loadedContainerDefinition);
-                    
+
                     // После загрузки данных в ItemDataStorageSO, настраиваем логическую сетку контейнера
                     targetContainer.SetupLoadedItemsGrid();
 
