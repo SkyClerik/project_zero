@@ -243,7 +243,7 @@ namespace SkyClerik.Inventory
             {
                 if (TryFindPlacement(item, out var foundPosition))
                 {
-                    Debug.Log($"В контейнер добавится : {item}");
+                    //Debug.Log($"В контейнер добавится : {item}");
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
                     _itemDataStorageSO.Items.Add(item);

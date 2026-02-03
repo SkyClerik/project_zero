@@ -157,9 +157,14 @@ namespace Febucci.HierarchyData
         private static bool initialized = false;
         private static HierarchyData data;
         private static int firstInstanceID = 0;
-        private static List<int> iconsPositions = new List<int>();
-        private static Dictionary<int, InstanceInfo> sceneGameObjects = new Dictionary<int, InstanceInfo>();
-        private static Dictionary<int, Color> prefabColors = new Dictionary<int, Color>();
+        private static List<int> iconsPositions = new List<int>(); // Восстановлено
+        private static Dictionary<int, InstanceInfo> sceneGameObjects = new Dictionary<int, InstanceInfo>(); // Восстановлено
+        private static Dictionary<int, Color> prefabColors = new Dictionary<int, Color>(); // Восстановлено
+
+        // Поля для реализации задержки
+        private static float _initializationStartTime;
+        private static bool _isInitializationPending;
+        private const float DelayDuration = 5f; // Задержка в секундах
 
         #region Menu Items
 
@@ -333,6 +338,28 @@ namespace Febucci.HierarchyData
         /// Initializes the script at the beginning. 
         /// </summary>
         public static void Initialize()
+        {
+            if (_isInitializationPending) return; // Инициализация уже запланирована
+
+            _initializationStartTime = (float)EditorApplication.timeSinceStartup;
+            _isInitializationPending = true;
+            EditorApplication.update += DelayedInitializeUpdate;
+        }
+
+        private static void DelayedInitializeUpdate()
+        {
+            if (EditorApplication.timeSinceStartup - _initializationStartTime < DelayDuration)
+            {
+                return; // Ждем, пока не пройдет нужное время
+            }
+
+            EditorApplication.update -= DelayedInitializeUpdate; // Отписываемся от события
+            _isInitializationPending = false; // Сбрасываем флаг
+
+            ExecuteInitialization(); // Выполняем фактическую инициализацию
+        }
+
+        private static void ExecuteInitialization()
         {
             #region Unregisters previous events
 
