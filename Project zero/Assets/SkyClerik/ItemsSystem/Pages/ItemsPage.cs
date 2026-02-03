@@ -132,6 +132,15 @@ namespace SkyClerik.Inventory
 
             SetDraggedItemPosition();
         }
+        //[SerializeField]
+        //private Camera _camera;
+        //public void SetDraggedItemPosition()
+        //{
+        //    var mp = _camera.ScreenToViewportPoint(Input.mousePosition);
+        //    _mousePositionOffset.x = mp.x - (_currentDraggedItem.resolvedStyle.width / 2);
+        //    _mousePositionOffset.y = (Screen.height - mp.y) - (_currentDraggedItem.resolvedStyle.height / 2);
+        //    _currentDraggedItem.SetPosition(_mousePositionOffset);
+        //}
 
         public void SetDraggedItemPosition()
         {

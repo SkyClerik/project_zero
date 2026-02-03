@@ -27,7 +27,7 @@ namespace SkyClerik.Inventory
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
-        public LogicalGridVisualizer LogicalGridVisualizer;
+        //public LogicalGridVisualizer LogicalGridVisualizer;
         private readonly float _gridHoverSnapToBoundaryPixels = 64f;
 
         // --- Свойства IDropTarget и прочие ---
@@ -57,12 +57,11 @@ string rootID)
         {
             Configure();
             yield return new WaitForEndOfFrame();
-            CreateGridBoundaryVisualizer();
+            //CreateGridBoundaryVisualizer();
 
-            LogicalGridVisualizer = new LogicalGridVisualizer();
-            LogicalGridVisualizer.Init(_itemContainer);
-            _document.rootVisualElement.Add(LogicalGridVisualizer);
-
+            //LogicalGridVisualizer = new LogicalGridVisualizer();
+            //LogicalGridVisualizer.Init(_itemContainer);
+            //_document.rootVisualElement.Add(LogicalGridVisualizer);
 
             SubscribeToContainerEvents();
 
@@ -130,26 +129,26 @@ string rootID)
             _visuals.Clear();
         }
 
-        private void CreateGridBoundaryVisualizer()
-        {
-            if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
+        //private void CreateGridBoundaryVisualizer()
+        //{
+            //if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
 
-            var _gridRect = _itemContainer.GridWorldRect;
+            //var _gridRect = _itemContainer.GridWorldRect;
 
             //Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
 
-            var test1 = new VisualElement();
-            test1.name = "test1";
-            test1.style.width = _gridRect.width;
-            test1.style.height = _gridRect.height;
-            test1.style.left = _gridRect.x;
-            test1.style.top = _gridRect.y;
-            test1.SetBorderColor(Color.blue);
-            test1.SetBorderWidth(5);
-            test1.style.position = Position.Absolute;
-            test1.pickingMode = PickingMode.Ignore;
-            _document.rootVisualElement.Add(test1);
-        }
+            //var test1 = new VisualElement();
+            //test1.name = "test1";
+            //test1.style.width = _gridRect.width;
+            //test1.style.height = _gridRect.height;
+            //test1.style.left = _gridRect.x;
+            //test1.style.top = _gridRect.y;
+            //test1.SetBorderColor(Color.blue);
+            //test1.SetBorderWidth(5);
+            //test1.style.position = Position.Absolute;
+            //test1.pickingMode = PickingMode.Ignore;
+            //_document.rootVisualElement.Add(test1);
+        //}
 
         // --- Логика UI ---
 
@@ -345,13 +344,13 @@ gridData.GridSize.x, gridData.GridSize.y);
 
         public virtual void FinalizeDrag() => _telegraph.Hide();
 
-        public void SetLogicalGridVisualizerActive(bool active)
-        {
-            if (LogicalGridVisualizer != null)
-                LogicalGridVisualizer.IsEnabled = active;
-            else
-                Debug.LogWarning($"[GridPageElementBase:{_root.name}] Попытка установить состояние LogicalGridVisualizer до его инициализации.");
-        }
+        //public void SetLogicalGridVisualizerActive(bool active)
+        //{
+        //    if (LogicalGridVisualizer != null)
+        //        LogicalGridVisualizer.IsEnabled = active;
+        //    else
+        //        Debug.LogWarning($"[GridPageElementBase:{_root.name}] Попытка установить состояние LogicalGridVisualizer до его инициализации.");
+        //}
 
         public virtual void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {

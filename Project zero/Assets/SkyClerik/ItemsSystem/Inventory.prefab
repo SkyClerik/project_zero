@@ -45,7 +45,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6452682332439669834}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
@@ -68,6 +68,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inventoryItemContainer: {fileID: 8947709996843349493}
   _craftItemContainer: {fileID: 324047505839359744}
+  _cheastItemContainer: {fileID: 8422042304283840621}
+  _lutItemContainer: {fileID: 8572603436829135497}
 --- !u!114 &511445279938769042
 MonoBehaviour:
   m_ObjectHideFlags: 0
