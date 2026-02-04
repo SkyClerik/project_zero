@@ -45,7 +45,6 @@ namespace SkyClerik.Inventory
         private Vector2 _cellSize;
         [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
         private Rect _gridWorldRect;
-
         /// <summary>
         /// Возвращает размер одной ячейки сетки в пикселях.
         /// </summary>

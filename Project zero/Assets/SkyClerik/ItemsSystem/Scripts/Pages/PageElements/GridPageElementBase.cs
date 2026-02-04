@@ -1,9 +1,9 @@
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
-using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
@@ -15,7 +15,7 @@ namespace SkyClerik.Inventory
     /// Реализует интерфейс <see cref="IDropTarget"/>.
     /// </summary>
     [System.Serializable]
-    public abstract class GridPageElementBase : IDropTarget
+    public abstract class GridPageElementBase : IDropTarget, IDisposable
     {
         // Словарь для хранения связей между визуальными элементами и их логическими данными
         protected Dictionary<ItemVisual, ItemGridData> _visuals = new Dictionary<ItemVisual, ItemGridData>();

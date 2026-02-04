@@ -1,3 +1,4 @@
+﻿using SkyClerik.EquipmentSystem;
 using SkyClerik.Inventory;
 using UnityEngine;
 using UnityEngine.Toolbox;

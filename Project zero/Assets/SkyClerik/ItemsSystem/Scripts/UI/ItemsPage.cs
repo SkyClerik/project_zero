@@ -1,3 +1,4 @@
+﻿using SkyClerik.EquipmentSystem;
 using SkyClerik.Utils;
 using System.Collections;
 using System.Collections.Generic;
@@ -104,6 +105,11 @@ namespace SkyClerik.Inventory
         public bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
 
         private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
+
+        [SerializeField]
+        private EquipmentContainer _quipmentContainer;
+        private EquipmentPageElement _equipPage;
+
         /// <summary>
         /// Список всех зарегистрированных связок контейнеров и их UI-страниц.
         /// </summary>
@@ -142,6 +148,7 @@ namespace SkyClerik.Inventory
             _craftPage?.Dispose();
             _cheastPage?.Dispose();
             _lutPage?.Dispose();
+            _equipPage?.Dispose();
         }
 
         protected void Start()
@@ -164,6 +171,9 @@ namespace SkyClerik.Inventory
             _lutPage = new LutPageElement(itemsPage: this, document: _document, itemContainer: _lutItemContainer, _inventoryPage);
             var lutCA = new ContainerAndPage(_lutItemContainer, _lutPage);
             _containersAndPages.Add(lutCA);
+
+            _equipPage = new EquipmentPageElement(itemsPage: this, document: _document, equipmentContainer: _quipmentContainer);
+
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
@@ -279,6 +289,7 @@ namespace SkyClerik.Inventory
             _craftPage.FinalizeDrag();
             _cheastPage.FinalizeDrag();
             _lutPage.FinalizeDrag();
+            _equipPage.FinalizeDrag();
         }
 
         /// <summary>
@@ -403,7 +414,7 @@ namespace SkyClerik.Inventory
         {
             _craftPage.Root.SetDisplay(true);
             if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
-                SetDisplaySelfPage(_craftPage);
+                SetDisplaySelfPage(_craftPage.Root);
         }
 
         /// <summary>
@@ -420,7 +431,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void OpenCheast()
         {
-            SetDisplaySelfPage(_cheastPage);
+            SetDisplaySelfPage(_cheastPage.Root);
         }
 
         /// <summary>
@@ -437,7 +448,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void OpenLut()
         {
-            SetDisplaySelfPage(_lutPage);
+            SetDisplaySelfPage(_lutPage.Root);
         }
 
         /// <summary>
@@ -450,6 +461,23 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
+        /// Открывает страницу экипировки.
+        /// </summary>
+        public void OpenEquip()
+        {
+            SetDisplaySelfPage(_equipPage.Root);
+        }
+
+        /// <summary>
+        /// Закрывает страницу экипировки.
+        /// </summary>
+        public void CloseEquip()
+        {
+            _equipPage.Root.SetVisibility(false);
+            _equipPage.Root.SetEnabled(false);
+        }
+
+        /// <summary>
         /// Закрывает все страницы инвентаря.
         /// </summary>
         public void CloseAll()
@@ -458,21 +486,23 @@ namespace SkyClerik.Inventory
             CloseCraft();
             CloseCheast();
             CloseLut();
+            CloseEquip();
         }
 
         /// <summary>
         /// Устанавливает видимость и активность для указанной страницы, скрывая остальные страницы (крафт, сундук, лут).
         /// </summary>
         /// <param name="page">Страница, которую необходимо сделать активной.</param>
-        private void SetDisplaySelfPage(GridPageElementBase page)
+        private void SetDisplaySelfPage(VisualElement pageRoot)
         {
             _craftPage.Root.SetDisplay(false);
             _cheastPage.Root.SetDisplay(false);
             _lutPage.Root.SetDisplay(false);
+            _equipPage.Root.SetDisplay(false);
 
-            page.Root.SetVisibility(true);
-            page.Root.SetDisplay(true);
-            page.Root.SetEnabled(true);
+            pageRoot.SetVisibility(true);
+            pageRoot.SetDisplay(true);
+            pageRoot.SetEnabled(true);
         }
     }
 }

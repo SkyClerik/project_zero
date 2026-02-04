@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.DataEditor; // Для ItemBaseDefinition
 
