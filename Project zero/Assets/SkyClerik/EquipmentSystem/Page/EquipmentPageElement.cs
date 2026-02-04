@@ -66,7 +66,7 @@ namespace SkyClerik.EquipmentSystem
             _cellSize = _playerItemContainer.CellSize;
 
             _header = _root.Q(_headerID);
-            _title = _root.Q<Label>(_titleID);
+            _title = _header.Q<Label>(_titleID);
 
             _title.text = _titleText;
 
@@ -88,43 +88,40 @@ namespace SkyClerik.EquipmentSystem
             _equipmentContainer.PlayerEquipmentContainerDefinition.OnItemUnequipped -= HandleItemUnequipped;
         }
 
-        // --- Инициализация и подписка на события ---
         protected IEnumerator Initialize()
         {
-            _telegraph = new Telegraph();
-            AddItemToInventoryGrid(_telegraph);
+            // Добавляем цикл ожидания, пока _inventoryGrid не получит реальные размеры
+            // и пока в нем не появятся дочерние элементы
+            while (_inventoryGrid == null || _inventoryGrid.resolvedStyle.width == 0 || _inventoryGrid.childCount == 0)
+            {
+                yield return null; // Ждем следующий кадр
+            }
 
-            yield return new WaitForEndOfFrame();
-            ;
-            while (_inventoryGrid.resolvedStyle.width == 0)
-                yield return null;
+            _cells = _inventoryGrid.Children().ToList(); // Инициализация _cells теперь здесь, после ожидания, и из _inventoryGrid
 
-            _cells = _inventoryGrid.Children().ToList();
+            // Заполняем CallPlace для каждого EquipmentSlot
             for (int i = 0; i < _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.Count; i++)
             {
-                _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots[i].CallPlace = _cells[i];
-            }
-
-            foreach (var slot in _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots)
-            {
-                if (slot.EquippedItem != null)
+                if (i < _cells.Count) // Проверяем границы, чтобы не было ArgumentOutOfRangeException
                 {
-                    Debug.Log($"slot item : {slot.EquippedItem.DefinitionName}");
-                    CreateItemVisualInSlot(slot, slot.EquippedItem);
+                    _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots[i].CallPlace = _cells[i];
                 }
             }
+            
+            _telegraph = new Telegraph();
+            AddItemToInventoryGrid(_telegraph);
+            LoadInitialVisuals();
         }
 
-        private void CreateItemVisualInSlot(EquipmentSlot slot, ItemBaseDefinition equippedItem)
+        protected void LoadInitialVisuals()
         {
-            ItemVisual newItemVisual = new ItemVisual(
-                itemsPage: _itemsPage,
-                ownerInventory: this,
-                itemDefinition: equippedItem,
-                gridPosition: Vector2Int.zero,
-                gridSize: new Vector2Int(equippedItem.Dimensions.Width * 128, equippedItem.Dimensions.Height * 128));
-
-            slot.CallPlace.Add(newItemVisual);
+            foreach (EquipmentSlot slot in _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots)
+            {
+                if (slot.ItemVisual != null)
+                {
+                    slot.CallPlace.Add(slot.ItemVisual);
+                }
+            }
         }
 
         /// <summary>
@@ -132,8 +129,7 @@ namespace SkyClerik.EquipmentSystem
         /// </summary>
         private void HandleItemEquipped(EquipmentSlot slot, ItemVisual item)
         {
-            // Ну тут не создание должно быть то, это присваение ячейке уже имеющегося itemVisual
-            //CreateItemVisualInSlot(slot, item);
+            slot.CallPlace.Add(item);
         }
 
         /// <summary>
@@ -141,34 +137,7 @@ namespace SkyClerik.EquipmentSystem
         /// </summary>
         private void HandleItemUnequipped(EquipmentSlot slot, ItemVisual item)
         {
-            //int index = _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.IndexOf(slot);
-            //if (index != -1 && index < _cells.Count)
-            //{
-            //    VisualElement slotVisualElement = _cells[index];
-            //    ItemVisual itemVisualToRemove = _itemVisuals.FirstOrDefault(iv => iv.ItemDefinition == item && iv.parent == slotVisualElement);
-            //    if (itemVisualToRemove != null)
-            //    {
-            //        itemVisualToRemove.RemoveFromHierarchy();
-            //        _itemVisuals.Remove(itemVisualToRemove);
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// Возвращает ItemVisual для экипированного предмета, если он существует в UI слотах.
-        /// </summary>
-        /// <param name="itemDef">Определение предмета, для которого ищется ItemVisual.</param>
-        /// <returns>Найденный ItemVisual или null.</returns>
-        private ItemVisual GetItemVisualForEquippedItem(ItemVisual itemDef)
-        {
-            //foreach (ItemVisual slotVisual in _itemVisuals)
-            //{
-            //    if (slotVisual != null && slotVisual.ItemDefinition == itemDef)
-            //    {
-            //        return slotVisual;
-            //    }
-            //}
-            return null;
+            item.RemoveFromHierarchy();
         }
 
         public void PickUp(ItemVisual storedItem)
@@ -181,7 +150,6 @@ namespace SkyClerik.EquipmentSystem
             // Здесь логика Drop будет обрабатываться в ItemsPage
         }
 
-
         /// <summary>
         /// Показывает целевую область для размещения перетаскиваемого предмета,
         /// а также определяет возможные конфликты размещения.
@@ -193,41 +161,65 @@ namespace SkyClerik.EquipmentSystem
             _placementResults = new PlacementResults();
             _placementResults.OverlapItem = null;
 
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - Начало. draggedItem: {draggedItem?.ItemDefinition?.name}");
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root: {_root?.name}, enabledSelf: {_root?.enabledSelf}, display: {_root?.resolvedStyle.display}, visibility: {_root?.resolvedStyle.visibility}");
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root.worldBound: {_root.worldBound}");
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root.localBound: {_root.localBound}");
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _inventoryGrid.layout: {_inventoryGrid.layout}");
+
             if (_root == null || !_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
                 _telegraph.Hide();
+                Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root не активен/виден. Скрываю телеграф. Conflict: ReasonConflict.beyondTheGridBoundary");
                 return _placementResults.Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
 
-            Vector2 mouseLocalPositionInRoot = _root.WorldToLocal(_itemsPage.MouseUILocalPosition);
-            EquipmentSlot targetSlot = _equipmentContainer.PlayerEquipmentContainerDefinition.GetSlot(mouseLocalPositionInRoot);
+            Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
+            Debug.Log($"mouseLocalPosition: {mouseLocalPosition}");
+            EquipmentSlot targetSlot = _equipmentContainer.PlayerEquipmentContainerDefinition.GetSlot(mouseLocalPosition);
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - targetSlot: {(targetSlot != null ? "Найден" : "NULL")}");
 
             if (targetSlot == null)
             {
                 _telegraph.Hide();
+                Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - targetSlot == null. Скрываю телеграф. Conflict: ReasonConflict.beyondTheGridBoundary");
                 return _placementResults.Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
 
             // Курсор находится над слотом
-            if (targetSlot.CanEquip(draggedItem.ItemDefinition))
+            bool canEquip = targetSlot.CanEquip(draggedItem.ItemDefinition);
+            bool isEmpty = targetSlot.IsEmpty;
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - targetSlot.CanEquip({draggedItem.ItemDefinition.name}): {canEquip}. targetSlot.IsEmpty: {isEmpty}");
+
+            if (canEquip)
             {
-                if (targetSlot.IsEmpty)
+                if (isEmpty)
                 {
-                    _placementResults.Conflict = ReasonConflict.None; // Слот подходит и пуст
+                    _placementResults.Conflict = ReasonConflict.None;
+                    Debug.Log($"Слот подходит и пуст");
                 }
                 else
                 {
-                    _placementResults.Conflict = ReasonConflict.SwapAvailable; // Слот подходит, но занят (возможен свап)
+                    _placementResults.Conflict = ReasonConflict.SwapAvailable;
+                    Debug.Log($" Слот подходит, но занят (возможен свап)");
                 }
             }
             else
             {
-                _placementResults.Conflict = ReasonConflict.invalidSlotType; // Предмет не подходит по типу
+                _placementResults.Conflict = ReasonConflict.invalidSlotType;
+                Debug.Log($"Предмет не подходит по типу");
             }
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - Определенный Conflict: {_placementResults.Conflict}");
+
 
             // Отображаем телеграф на позиции и размере слота
-            _telegraph.SetPosition(targetSlot.Rect.position);
-            _telegraph.SetPlacement(_placementResults.Conflict, targetSlot.Rect.x, targetSlot.Rect.y);
+            // Преобразуем локальную позицию слота (относительно _inventoryGrid)
+            // в локальную позицию относительно _root (equipment_root)
+            Vector2 telegraphLocalPositionInRoot = _inventoryGrid.ChangeCoordinatesTo(_root, targetSlot.Rect.position);
+            _telegraph.SetPosition(telegraphLocalPositionInRoot);
+            _telegraph.SetPlacement(_placementResults.Conflict, telegraphLocalPositionInRoot.x, telegraphLocalPositionInRoot.y);
+            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - Telegraph set to position: {telegraphLocalPositionInRoot}, size: {targetSlot.Rect.size}, conflict: {_placementResults.Conflict}");
+
 
             // Инициализируем PlacementResults с данными слота
             return _placementResults.Init(conflict: _placementResults.Conflict,
@@ -242,7 +234,7 @@ namespace SkyClerik.EquipmentSystem
         {
             // ItemsPage уже определил, что предмет можно экипировать в этот контейнер (EquipmentPageElement)
             // Теперь нужно найти, в какой именно слот
-            Vector2 mouseLocalPositionInRoot = _root.WorldToLocal(_itemsPage.MouseUILocalPosition);
+            Vector2 mouseLocalPositionInRoot = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
             EquipmentSlot targetSlot = _equipmentContainer.PlayerEquipmentContainerDefinition.GetSlot(mouseLocalPositionInRoot);
 
             if (targetSlot != null)
@@ -257,7 +249,7 @@ namespace SkyClerik.EquipmentSystem
         {
             // ItemsPage хочет удалить этот предмет из экипировки
             // Нужно найти слот, в котором находится этот предмет, и снять его.
-            EquipmentSlot slotToRemoveFrom = _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.FirstOrDefault(s => s.ItemVisual.ItemDefinition == storedItem.ItemDefinition);
+            EquipmentSlot slotToRemoveFrom = _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.FirstOrDefault(s => s.ItemVisual == storedItem);
 
             if (slotToRemoveFrom != null)
             {
@@ -278,12 +270,14 @@ namespace SkyClerik.EquipmentSystem
 
         public void RegisterVisual(ItemVisual visual, ItemGridData gridData)
         {
-            throw new NotImplementedException();
+            // EquipmentPageElement не использует регистрацию визуальных элементов, так как ItemVisual
+            // напрямую добавляется в EquipmentSlot.CallPlace при экипировке.
         }
 
         public void UnregisterVisual(ItemVisual visual)
         {
-            throw new NotImplementedException();
+            // EquipmentPageElement не использует выгрузку визуальных элементов, так как ItemVisual
+            // удаляется из иерархии при снятии экипировки.
         }
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)

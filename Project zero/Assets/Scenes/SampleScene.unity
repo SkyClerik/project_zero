@@ -802,6 +802,12 @@ MonoBehaviour:
   _rootPanelName: craft_root
   _gridDimensions: {x: 3, y: 4}
   _cellSize: {x: 128, y: 128}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!114 &278491618114777408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -831,6 +837,12 @@ MonoBehaviour:
   _uiDocument: {fileID: 1149089473774264168}
   _rootPanelName: equipment_root
   _gridDimensions: {x: 896, y: 1024}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 1387
+    y: 226
+    width: 896
+    height: 1024
 --- !u!114 &1149089473774264168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -920,6 +932,12 @@ MonoBehaviour:
   _rootPanelName: cheast_root
   _gridDimensions: {x: 7, y: 5}
   _cellSize: {x: 128, y: 128}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!114 &8231563091886019419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -937,6 +955,12 @@ MonoBehaviour:
   _rootPanelName: lut_root
   _gridDimensions: {x: 4, y: 5}
   _cellSize: {x: 128, y: 128}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!114 &8712429768355902503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -954,6 +978,12 @@ MonoBehaviour:
   _rootPanelName: inventory_root
   _gridDimensions: {x: 7, y: 8}
   _cellSize: {x: 128, y: 127.999985}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

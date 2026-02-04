@@ -273,6 +273,18 @@ namespace SkyClerik.Inventory
             }
 
             // -----
+            if (_equipPage != null && _equipPage.Root.enabledSelf)
+            {
+                PlacementResults resultsEquip = _equipPage.ShowPlacementTarget(draggedItem);
+                if (resultsEquip.Conflict != ReasonConflict.beyondTheGridBoundary)
+                {
+                    _inventoryPage.Telegraph.Hide();
+                    _craftPage.Telegraph.Hide();
+                    _cheastPage.Telegraph.Hide();
+                    _lutPage.Telegraph.Hide();
+                    return resultsEquip.Init(resultsEquip.Conflict, resultsEquip.Position, resultsEquip.SuggestedGridPosition, resultsEquip.OverlapItem, _equipPage);
+                }
+            }
 
             //Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
             _inventoryPage.Telegraph.Hide();
@@ -390,12 +402,15 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void OpenInventoryNormal()
         {
+            OpenOnlyInventoryNormal();
+            OpenCraft();
+        }
+
+        public void OpenOnlyInventoryNormal()
+        {
             _document.rootVisualElement.SetVisibility(true);
             _inventoryPage.Root.SetEnabled(true);
-
             _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
-
-            OpenCraft();
         }
 
         /// <summary>
@@ -468,6 +483,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void OpenEquip()
         {
+            OpenOnlyInventoryNormal();
             SetDisplaySelfPage(_equipPage.Root);
         }
 

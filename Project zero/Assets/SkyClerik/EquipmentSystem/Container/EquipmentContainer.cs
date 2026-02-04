@@ -20,14 +20,10 @@ namespace SkyClerik
         [SerializeField] private string _rootPanelName;
         public string RootPanelName => _rootPanelName;
 
-        [Tooltip("Рассчитанный размер сетки инвентаря (ширина, высота). Не редактировать вручную.")]
+        [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
         [SerializeField]
         [ReadOnly]
-        [Space]
-        private Vector2 _gridDimensions;
-        [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
-        private Rect _gridWorldRect;
-
+        private Rect _gridWorldRect; // (1387,226,896,1024)
 
 #if UNITY_EDITOR
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
@@ -62,13 +58,16 @@ namespace SkyClerik
                     return;
                 }
 
+                if (_gridWorldRect != inventoryGrid.worldBound)
+                {
+                    _gridWorldRect = inventoryGrid.worldBound;
+                }
+
                 if (inventoryGrid.childCount == 0)
                 {
                     Debug.LogWarning($"Сетка '{inventoryGrid.name}' не содержит дочерних элементов (ячеек). Невозможно определить размер ячейки.", this);
                     return;
                 }
-
-                _gridDimensions = new Vector2(inventoryGrid.resolvedStyle.width, inventoryGrid.resolvedStyle.height);
 
                 var allCell = inventoryGrid.Children().ToList();
 

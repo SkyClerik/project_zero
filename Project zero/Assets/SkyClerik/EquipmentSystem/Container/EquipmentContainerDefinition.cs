@@ -3,7 +3,6 @@ using SkyClerik.Inventory;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.EquipmentSystem
@@ -27,6 +26,10 @@ namespace SkyClerik.EquipmentSystem
 
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
         [SerializeField]
+        //_equipmentSlots(0).rect =  (71,38,256,384) позиция локальная для объекта grid
+        //_equipmentSlots(0).rect =  (519,44,256,256) позиция локальная для объекта grid
+        //_equipmentSlots(0).rect =  (835,47,128,128) позиция локальная для объекта grid
+        //_equipmentSlots(0).rect =  (839,198,128,128) позиция локальная для объекта grid
         private List<EquipmentSlot> _equipmentSlots = new List<EquipmentSlot>();
         /// <summary>
         /// Список всех слотов экипировки.
@@ -67,11 +70,17 @@ namespace SkyClerik.EquipmentSystem
         /// <returns>Найденный EquipmentSlot или null, если позиция не попадает ни в один слот.</returns>
         public EquipmentSlot GetSlot(Vector2 mousePosition)
         {
+            Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Входная mousePosition: {mousePosition}");
             foreach (var slot in _equipmentSlots)
             {
+                Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Проверяем слот: Rect: {slot.Rect}. Содержит mousePosition: {slot.Rect.Contains(mousePosition)}");
                 if (slot.Rect.Contains(mousePosition))
+                {
+                    Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Найден слот.");
                     return slot;
+                }
             }
+            Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Слот не найден для mousePosition: {mousePosition}");
             return null;
         }
 
