@@ -3,6 +3,7 @@
         <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 10%; align-items: center; justify-content: space-between; flex-direction: row;">
             <ui:VisualElement name="button_group" picking-mode="Ignore" style="flex-grow: 0; flex-direction: column; height: 100%;">
                 <ui:Button text="Стандартное окно инвентаря" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory_normal" />
+                <ui:Button text="Окно экипировки" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_equip" />
                 <ui:Button text="Инвентарь для выдачи" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory_give" />
                 <ui:Button text="Разрешить крафт" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_true_craft" />
                 <ui:Button text="Добавить лут" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_add_item" />

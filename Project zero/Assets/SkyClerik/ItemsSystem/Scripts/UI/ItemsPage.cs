@@ -110,6 +110,8 @@ namespace SkyClerik.Inventory
         private EquipmentContainer _quipmentContainer;
         private EquipmentPageElement _equipPage;
 
+        public bool IsEquipVisible { get => _equipPage.Root.enabledSelf; set => _equipPage.Root.SetEnabled(value); }
+
         /// <summary>
         /// Список всех зарегистрированных связок контейнеров и их UI-страниц.
         /// </summary>
@@ -172,7 +174,8 @@ namespace SkyClerik.Inventory
             var lutCA = new ContainerAndPage(_lutItemContainer, _lutPage);
             _containersAndPages.Add(lutCA);
 
-            _equipPage = new EquipmentPageElement(itemsPage: this, document: _document, equipmentContainer: _quipmentContainer);
+            if (_quipmentContainer != null)
+                _equipPage = new EquipmentPageElement(itemsPage: this, document: _document, equipmentContainer: _quipmentContainer);
 
 
             _itemTooltip = new ItemTooltip();

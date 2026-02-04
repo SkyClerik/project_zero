@@ -12,15 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d301352169022814a9954e2802b513be, type: 3}
   m_Name: EquipmentContainerDefinition
   m_EditorClassIdentifier: 
-  _containerGuid: 
+  _containerGuid: 1e8cf7f2-b3f3-4c0f-9faa-9208321f8e87
   _equipmentSlots:
-  - _allowedType:
-      _assemblyQualifiedName: 
-    _equippedItem: {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
-    _uiPosition: {x: 0, y: 0}
-    _uiSize: {x: 0, y: 0}
-  - _allowedType:
-      _assemblyQualifiedName: 
-    _equippedItem: {fileID: 11400000, guid: d3c3a996b92430746b9f611dd248c633, type: 2}
-    _uiPosition: {x: 0, y: 0}
-    _uiSize: {x: 0, y: 0}
+  - _equippedItem: {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
+    _rect:
+      serializedVersion: 2
+      x: 71
+      y: 38
+      width: 256
+      height: 384
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 519
+      y: 44
+      width: 256
+      height: 256
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 835
+      y: 47
+      width: 128
+      height: 128
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 839
+      y: 198
+      width: 128
+      height: 128

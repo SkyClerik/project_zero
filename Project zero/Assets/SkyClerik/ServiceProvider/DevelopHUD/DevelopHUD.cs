@@ -18,6 +18,8 @@ namespace SkyClerik.Utils
         private UIDocument _developHudUiDocument;
         private Button _bInventoryNormal;
         private const string _bInventoryNormalID = "b_inventory_normal";
+        private Button _bEquip;
+        private const string _bEquipID = "b_equip";
         private Button _bInventoryGive;
         private const string _bInventoryGiveID = "b_inventory_give";
         private Button _bTrueCraft;
@@ -52,6 +54,7 @@ namespace SkyClerik.Utils
             _developHudUiDocument.enabled = true;
             var root = _developHudUiDocument.rootVisualElement;
             _bInventoryNormal = root.Q<Button>(_bInventoryNormalID);
+            _bEquip = root.Q<Button>(_bEquipID);
             _bInventoryGive = root.Q<Button>(_bInventoryGiveID);
             _bTrueCraft = root.Q<Button>(_bTrueCraftID);
             _bAddItem = root.Q<Button>(_bAddItemID);
@@ -62,6 +65,7 @@ namespace SkyClerik.Utils
             _bExitGame = root.Q<Button>(_bExitGameID);
 
             _bInventoryNormal.clicked += _bInventory_clicked;
+            _bEquip.clicked += _bEquip_clicked;
             _bInventoryGive.clicked += _bInventoryGive_clicked;
             _bTrueCraft.clicked += _bTrueCraft_clicked;
             _bAddItem.clicked += _bAddItem_clicked;
@@ -72,9 +76,11 @@ namespace SkyClerik.Utils
             _bExitGame.clicked += _bExitGame_clicked;
         }
 
+
         private void OnDestroy()
         {
             _bInventoryNormal.clicked -= _bInventory_clicked;
+            _bEquip.clicked -= _bEquip_clicked;
             _bInventoryGive.clicked -= _bInventoryGive_clicked;
             _bTrueCraft.clicked -= _bTrueCraft_clicked;
             _bAddItem.clicked -= _bAddItem_clicked;
@@ -93,6 +99,19 @@ namespace SkyClerik.Utils
             else
             {
                 _itemsPage.OpenInventoryNormal();
+                //_itemsPage.OpenCraft();
+            }
+        }
+
+        private void _bEquip_clicked()
+        {
+            if (_itemsPage.IsEquipVisible)
+            {
+                _itemsPage.CloseAll();
+            }
+            else
+            {
+                _itemsPage.OpenEquip();
                 //_itemsPage.OpenCraft();
             }
         }

@@ -2,8 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.DataEditor;
+using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
 namespace SkyClerik.EquipmentSystem
@@ -19,7 +22,8 @@ namespace SkyClerik.EquipmentSystem
         private Label _title;
         private const string _titleID = "l_title";
 
-        private List<ItemVisual> _itemVisuals = new List<ItemVisual>();
+        protected VisualElement _inventoryGrid;
+        private const string _inventoryGridID = "grid";
 
         // Зависимости
         protected ItemsPage _itemsPage;
@@ -31,12 +35,16 @@ namespace SkyClerik.EquipmentSystem
         protected VisualElement _root;
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
+        protected List<VisualElement> _cells; // Только объявление, инициализация в конструкторе
 
         public UIDocument GetDocument => _document;
         public VisualElement Root => _root;
         public Telegraph Telegraph => _telegraph;
+        private Vector2 _cellSize;
 
-        public Vector2 CellSize => throw new NotImplementedException();
+        public Vector2 CellSize => _cellSize;
+
+        private PlayerItemContainer _playerItemContainer;
 
         /// <summary>
         /// Конструктор для страницы экипировки.
@@ -52,12 +60,15 @@ namespace SkyClerik.EquipmentSystem
             _equipmentContainer = equipmentContainer;
 
             _root = _document.rootVisualElement.Q<VisualElement>(equipmentContainer.RootPanelName);
+            _inventoryGrid = _root.Q<VisualElement>(_inventoryGridID);
+
+            _playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
+            _cellSize = _playerItemContainer.CellSize;
+
             _header = _root.Q(_headerID);
             _title = _root.Q<Label>(_titleID);
 
             _title.text = _titleText;
-
-
 
             SubscribeToContainerEvents();
 
@@ -65,121 +76,98 @@ namespace SkyClerik.EquipmentSystem
             _coroutineRunner.StartCoroutine(Initialize());
         }
 
-        // --- Инициализация и подписка на события ---
-        protected IEnumerator Initialize()
-        {
-            Configure();
-            yield return new WaitForEndOfFrame();
-            LoadInitialVisuals();
-        }
-
         protected void SubscribeToContainerEvents()
         {
-            //if (_itemContainer == null) return;
-            //_itemContainer.OnItemAdded += HandleItemAdded;
-            //_itemContainer.OnItemRemoved += HandleItemRemoved;
-            //_itemContainer.OnCleared += HandleContainerCleared;
-
-            //_equipmentContainerDefinition.OnItemEquipped += HandleItemEquipped;
-            //_equipmentContainerDefinition.OnItemUnequipped += HandleItemUnequipped;
+            _equipmentContainer.PlayerEquipmentContainerDefinition.OnItemEquipped += HandleItemEquipped;
+            _equipmentContainer.PlayerEquipmentContainerDefinition.OnItemUnequipped += HandleItemUnequipped;
         }
 
         protected void UnsubscribeFromContainerEvents()
         {
-            //if (_itemContainer == null) return;
-            //_itemContainer.OnItemAdded -= HandleItemAdded;
-            //_itemContainer.OnItemRemoved -= HandleItemRemoved;
-            //_itemContainer.OnCleared -= HandleContainerCleared;
-
-            //_equipmentContainerDefinition.OnItemEquipped -= HandleItemEquipped;
-            //_equipmentContainerDefinition.OnItemUnequipped -= HandleItemUnequipped;
+            _equipmentContainer.PlayerEquipmentContainerDefinition.OnItemEquipped -= HandleItemEquipped;
+            _equipmentContainer.PlayerEquipmentContainerDefinition.OnItemUnequipped -= HandleItemUnequipped;
         }
 
-        protected void Configure()
+        // --- Инициализация и подписка на события ---
+        protected IEnumerator Initialize()
         {
             _telegraph = new Telegraph();
             AddItemToInventoryGrid(_telegraph);
-        }
 
-        private void LoadInitialVisuals()
-        {
-            foreach (var item in _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots)
+            yield return new WaitForEndOfFrame();
+            ;
+            while (_inventoryGrid.resolvedStyle.width == 0)
+                yield return null;
+
+            _cells = _inventoryGrid.Children().ToList();
+            for (int i = 0; i < _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.Count; i++)
             {
-                CreateVisualForItem(item.EquippedItem);
+                _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots[i].CallPlace = _cells[i];
+            }
+
+            foreach (var slot in _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots)
+            {
+                if (slot.EquippedItem != null)
+                {
+                    Debug.Log($"slot item : {slot.EquippedItem.DefinitionName}");
+                    CreateItemVisualInSlot(slot, slot.EquippedItem);
+                }
             }
         }
-        private void CreateVisualForItem(ItemBaseDefinition item)
+
+        private void CreateItemVisualInSlot(EquipmentSlot slot, ItemBaseDefinition equippedItem)
         {
-            //Debug.Log($"[GridPageElementBase] CreateVisualForItem: Создание нового ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
-            var newGridData = new ItemGridData(item, item.GridPosition);
-            var newItemVisual = new ItemVisual(
+            ItemVisual newItemVisual = new ItemVisual(
                 itemsPage: _itemsPage,
                 ownerInventory: this,
-                itemDefinition: item,
-                gridPosition: item.GridPosition,
-                gridSize: new Vector2Int(item.Dimensions.Width, item.Dimensions.Height));
+                itemDefinition: equippedItem,
+                gridPosition: Vector2Int.zero,
+                gridSize: new Vector2Int(equippedItem.Dimensions.Width * 128, equippedItem.Dimensions.Height * 128));
 
-            //Debug.Log($"[GridPageElementBase] CreateVisualForItem: Новый ItemVisual создан. HashCode: {newItemVisual.GetHashCode()}");
-            RegisterVisual(newItemVisual, newGridData);
-            AddItemToInventoryGrid(newItemVisual);
-            newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
+            slot.CallPlace.Add(newItemVisual);
         }
 
         /// <summary>
         /// Обрабатывает событие экипировки предмета.
         /// </summary>
-        private void HandleItemEquipped(EquipmentSlot slot, ItemBaseDefinition item)
+        private void HandleItemEquipped(EquipmentSlot slot, ItemVisual item)
         {
-            //if (_slotVisuals.TryGetValue(slot, out EquipmentSlotVisual slotVisual))
-            //{
-            //    slotVisual.SetItem(item);
-            //}
+            // Ну тут не создание должно быть то, это присваение ячейке уже имеющегося itemVisual
+            //CreateItemVisualInSlot(slot, item);
         }
 
         /// <summary>
         /// Обрабатывает событие снятия предмета.
         /// </summary>
-        private void HandleItemUnequipped(EquipmentSlot slot, ItemBaseDefinition item)
+        private void HandleItemUnequipped(EquipmentSlot slot, ItemVisual item)
         {
-            //if (_slotVisuals.TryGetValue(slot, out EquipmentSlotVisual slotVisual))
+            //int index = _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.IndexOf(slot);
+            //if (index != -1 && index < _cells.Count)
             //{
-            //    slotVisual.SetItem(null); // Убираем визуальное представление предмета
+            //    VisualElement slotVisualElement = _cells[index];
+            //    ItemVisual itemVisualToRemove = _itemVisuals.FirstOrDefault(iv => iv.ItemDefinition == item && iv.parent == slotVisualElement);
+            //    if (itemVisualToRemove != null)
+            //    {
+            //        itemVisualToRemove.RemoveFromHierarchy();
+            //        _itemVisuals.Remove(itemVisualToRemove);
+            //    }
             //}
         }
-
-        /// <summary>
-        /// Возвращает EquipmentSlotVisual по логическому EquipmentSlot.
-        /// </summary>
-        //public EquipmentSlotVisual GetSlotVisual(EquipmentSlot slot)
-        //{
-        //    //_slotVisuals.TryGetValue(slot, out EquipmentSlotVisual slotVisual);
-        //    //return slotVisual;
-        //}
-
-        /// <summary>
-        /// Возвращает логический EquipmentSlot по ItemVisual.
-        /// </summary>
-        //public EquipmentSlot GetSlotByItemVisual(ItemVisual itemVisual)
-        //{
-        //    return _itemVisuals.FirstOrDefault(s => s.EquippedItem == itemVisual.ItemDefinition);
-
-        //    return null;
-        //}
 
         /// <summary>
         /// Возвращает ItemVisual для экипированного предмета, если он существует в UI слотах.
         /// </summary>
         /// <param name="itemDef">Определение предмета, для которого ищется ItemVisual.</param>
         /// <returns>Найденный ItemVisual или null.</returns>
-        public ItemVisual GetItemVisualForEquippedItem(ItemBaseDefinition itemDef)
+        private ItemVisual GetItemVisualForEquippedItem(ItemVisual itemDef)
         {
-            foreach (ItemVisual slotVisual in _itemVisuals)
-            {
-                if (slotVisual != null && slotVisual.ItemDefinition == itemDef)
-                {
-                    return slotVisual;
-                }
-            }
+            //foreach (ItemVisual slotVisual in _itemVisuals)
+            //{
+            //    if (slotVisual != null && slotVisual.ItemDefinition == itemDef)
+            //    {
+            //        return slotVisual;
+            //    }
+            //}
             return null;
         }
 
@@ -230,8 +218,6 @@ namespace SkyClerik.EquipmentSystem
                 else
                 {
                     _placementResults.Conflict = ReasonConflict.SwapAvailable; // Слот подходит, но занят (возможен свап)
-                    // Получаем ItemVisual для экипированного предмета через EquipmentPageElement
-                    //_placementResults.OverlapItem = (_itemsPage.GetEquipmentPageElement() as EquipmentPageElement)?.GetItemVisualForEquippedItem(targetSlot.EquippedItem);
                 }
             }
             else
@@ -254,22 +240,40 @@ namespace SkyClerik.EquipmentSystem
 
         public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            throw new NotImplementedException();
+            // ItemsPage уже определил, что предмет можно экипировать в этот контейнер (EquipmentPageElement)
+            // Теперь нужно найти, в какой именно слот
+            Vector2 mouseLocalPositionInRoot = _root.WorldToLocal(_itemsPage.MouseUILocalPosition);
+            EquipmentSlot targetSlot = _equipmentContainer.PlayerEquipmentContainerDefinition.GetSlot(mouseLocalPositionInRoot);
+
+            if (targetSlot != null)
+            {
+                ItemVisual unequippedItem;
+                _equipmentContainer.PlayerEquipmentContainerDefinition.TryEquipItem(storedItem, targetSlot, out unequippedItem);
+                // Если был unequippedItem, он будет обработан через OnItemUnequipped -> HandleItemUnequipped
+            }
         }
 
         public void RemoveStoredItem(ItemVisual storedItem)
         {
-            throw new NotImplementedException();
+            // ItemsPage хочет удалить этот предмет из экипировки
+            // Нужно найти слот, в котором находится этот предмет, и снять его.
+            EquipmentSlot slotToRemoveFrom = _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.FirstOrDefault(s => s.ItemVisual.ItemDefinition == storedItem.ItemDefinition);
+
+            if (slotToRemoveFrom != null)
+            {
+                _equipmentContainer.PlayerEquipmentContainerDefinition.UnequipItem(slotToRemoveFrom);
+                // OnItemUnequipped -> HandleItemUnequipped будет вызван
+            }
         }
 
         public void AddItemToInventoryGrid(VisualElement item)
         {
-            throw new NotImplementedException();
+            _root.Add(item);
         }
 
         public ItemGridData GetItemGridData(ItemVisual itemVisual)
         {
-            throw new NotImplementedException();
+            return null; // Для экипировки предметы не располагаются в сетке.
         }
 
         public void RegisterVisual(ItemVisual visual, ItemGridData gridData)
@@ -285,7 +289,7 @@ namespace SkyClerik.EquipmentSystem
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
             suggestedGridPosition = Vector2Int.zero;
-            return false;
+            return false; // Для экипировки у нас фиксированные слоты, а не динамический поиск места.
         }
 
         public void FinalizeDrag() => _telegraph.Hide();

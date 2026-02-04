@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SkyClerik.Inventory;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,8 +34,8 @@ namespace SkyClerik.EquipmentSystem
         public List<EquipmentSlot> EquipmentSlots => _equipmentSlots;
 
         // События для уведомления об изменении состояния экипировки
-        public event Action<EquipmentSlot, ItemBaseDefinition> OnItemEquipped;
-        public event Action<EquipmentSlot, ItemBaseDefinition> OnItemUnequipped;
+        public event Action<EquipmentSlot, ItemVisual> OnItemEquipped;
+        public event Action<EquipmentSlot, ItemVisual> OnItemUnequipped;
 
         /// <summary>
         /// Проверяет и генерирует GUID для контейнера, если он отсутствует.
@@ -81,11 +82,11 @@ namespace SkyClerik.EquipmentSystem
         /// <param name="targetSlot">Целевой слот экипировки.</param>
         /// <param name="unequippedItem">Предмет, который был снят из слота (если слот был занят).</param>
         /// <returns>True, если предмет успешно экипирован (или произошел свап); иначе false.</returns>
-        public bool TryEquipItem(ItemBaseDefinition item, EquipmentSlot targetSlot, out ItemBaseDefinition unequippedItem)
+        public bool TryEquipItem(ItemVisual item, EquipmentSlot targetSlot, out ItemVisual unequippedItem)
         {
             unequippedItem = null;
 
-            if (targetSlot == null || !targetSlot.CanEquip(item))
+            if (targetSlot == null || !targetSlot.IsEmpty)
             {
                 Debug.LogWarning($"[EquipmentContainerDefinition] Предмет '{item?.name}' не может быть экипирован в слот.");
                 return false;
@@ -118,7 +119,7 @@ namespace SkyClerik.EquipmentSystem
         /// </summary>
         /// <param name="slot">Слот, из которого нужно снять предмет.</param>
         /// <returns>Снятый предмет, или null, если слот был пуст.</returns>
-        public ItemBaseDefinition UnequipItem(EquipmentSlot slot)
+        public ItemVisual UnequipItem(EquipmentSlot slot)
         {
             if (slot == null || slot.IsEmpty)
             {
@@ -126,7 +127,7 @@ namespace SkyClerik.EquipmentSystem
                 return null;
             }
 
-            ItemBaseDefinition unequipped = slot.Unequip();
+            ItemVisual unequipped = slot.Unequip();
             Debug.Log($"[EquipmentContainerDefinition] Предмет '{unequipped.name}' снят из слота.");
 
             // Вызываем внешнее событие контейнера
@@ -136,12 +137,12 @@ namespace SkyClerik.EquipmentSystem
         }
 
         // Обработчики внутренних событий слотов для проброса во внешние события контейнера
-        private void HandleSlotItemEquipped(EquipmentSlot slot, ItemBaseDefinition item)
+        private void HandleSlotItemEquipped(EquipmentSlot slot, ItemVisual item)
         {
             OnItemEquipped?.Invoke(slot, item);
         }
 
-        private void HandleSlotItemUnequipped(EquipmentSlot slot, ItemBaseDefinition item)
+        private void HandleSlotItemUnequipped(EquipmentSlot slot, ItemVisual item)
         {
             OnItemUnequipped?.Invoke(slot, item);
         }
