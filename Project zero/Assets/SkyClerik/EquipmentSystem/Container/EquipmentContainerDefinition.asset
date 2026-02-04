@@ -21,7 +21,7 @@ MonoBehaviour:
       y: 38
       width: 256
       height: 384
-  - _equippedItem: {fileID: 0}
+  - _equippedItem: {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
     _rect:
       serializedVersion: 2
       x: 519

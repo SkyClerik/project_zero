@@ -158,68 +158,47 @@ namespace SkyClerik.EquipmentSystem
         /// <returns>Результаты размещения, включающие информацию о конфликте, предложенной позиции и пересекающемся предмете.</returns>
         public PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
-            _placementResults = new PlacementResults();
-            _placementResults.OverlapItem = null;
-
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - Начало. draggedItem: {draggedItem?.ItemDefinition?.name}");
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root: {_root?.name}, enabledSelf: {_root?.enabledSelf}, display: {_root?.resolvedStyle.display}, visibility: {_root?.resolvedStyle.visibility}");
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root.worldBound: {_root.worldBound}");
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root.localBound: {_root.localBound}");
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _inventoryGrid.layout: {_inventoryGrid.layout}");
-
             if (_root == null || !_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
                 _telegraph.Hide();
-                Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - _root не активен/виден. Скрываю телеграф. Conflict: ReasonConflict.beyondTheGridBoundary");
                 return _placementResults.Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
 
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
-            Debug.Log($"mouseLocalPosition: {mouseLocalPosition}");
             EquipmentSlot targetSlot = _equipmentContainer.PlayerEquipmentContainerDefinition.GetSlot(mouseLocalPosition);
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - targetSlot: {(targetSlot != null ? "Найден" : "NULL")}");
 
             if (targetSlot == null)
             {
                 _telegraph.Hide();
-                Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - targetSlot == null. Скрываю телеграф. Conflict: ReasonConflict.beyondTheGridBoundary");
                 return _placementResults.Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
 
             // Курсор находится над слотом
             bool canEquip = targetSlot.CanEquip(draggedItem.ItemDefinition);
             bool isEmpty = targetSlot.IsEmpty;
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - targetSlot.CanEquip({draggedItem.ItemDefinition.name}): {canEquip}. targetSlot.IsEmpty: {isEmpty}");
 
             if (canEquip)
             {
                 if (isEmpty)
                 {
                     _placementResults.Conflict = ReasonConflict.None;
-                    Debug.Log($"Слот подходит и пуст");
                 }
                 else
                 {
                     _placementResults.Conflict = ReasonConflict.SwapAvailable;
-                    Debug.Log($" Слот подходит, но занят (возможен свап)");
                 }
             }
             else
             {
                 _placementResults.Conflict = ReasonConflict.invalidSlotType;
-                Debug.Log($"Предмет не подходит по типу");
             }
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - Определенный Conflict: {_placementResults.Conflict}");
-
 
             // Отображаем телеграф на позиции и размере слота
             // Преобразуем локальную позицию слота (относительно _inventoryGrid)
             // в локальную позицию относительно _root (equipment_root)
             Vector2 telegraphLocalPositionInRoot = _inventoryGrid.ChangeCoordinatesTo(_root, targetSlot.Rect.position);
             _telegraph.SetPosition(telegraphLocalPositionInRoot);
-            _telegraph.SetPlacement(_placementResults.Conflict, telegraphLocalPositionInRoot.x, telegraphLocalPositionInRoot.y);
-            Debug.Log($"[EquipmentPageElement.ShowPlacementTarget] - Telegraph set to position: {telegraphLocalPositionInRoot}, size: {targetSlot.Rect.size}, conflict: {_placementResults.Conflict}");
-
+            _telegraph.SetPlacement(_placementResults.Conflict, targetSlot.Rect.size.x, targetSlot.Rect.size.y);
 
             // Инициализируем PlacementResults с данными слота
             return _placementResults.Init(conflict: _placementResults.Conflict,

@@ -836,7 +836,6 @@ MonoBehaviour:
   _playerEquipmentContainerDefinition: {fileID: 11400000, guid: dbc2e8528335c404c8113dcb2c04624f, type: 2}
   _uiDocument: {fileID: 1149089473774264168}
   _rootPanelName: equipment_root
-  _gridDimensions: {x: 896, y: 1024}
   _gridWorldRect:
     serializedVersion: 2
     x: 1387

@@ -78,7 +78,7 @@ namespace SkyClerik
 
                     if (calculatedCellSize.x > 0 && calculatedCellSize.y > 0)
                     {
-                        var rect = new Rect(visualElement.resolvedStyle.top, visualElement.resolvedStyle.left, visualElement.resolvedStyle.width, visualElement.resolvedStyle.height);
+                        var rect = new Rect(visualElement.resolvedStyle.left, visualElement.resolvedStyle.top, visualElement.resolvedStyle.width, visualElement.resolvedStyle.height);
                         _playerEquipmentContainerDefinition.EquipmentSlots.Add(new EquipmentSlot(rect: rect));
                     }
                 }

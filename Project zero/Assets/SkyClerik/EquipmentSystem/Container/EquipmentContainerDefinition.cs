@@ -70,17 +70,13 @@ namespace SkyClerik.EquipmentSystem
         /// <returns>Найденный EquipmentSlot или null, если позиция не попадает ни в один слот.</returns>
         public EquipmentSlot GetSlot(Vector2 mousePosition)
         {
-            Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Входная mousePosition: {mousePosition}");
             foreach (var slot in _equipmentSlots)
             {
-                Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Проверяем слот: Rect: {slot.Rect}. Содержит mousePosition: {slot.Rect.Contains(mousePosition)}");
                 if (slot.Rect.Contains(mousePosition))
                 {
-                    Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Найден слот.");
                     return slot;
                 }
             }
-            Debug.Log($"[EquipmentContainerDefinition.GetSlot] - Слот не найден для mousePosition: {mousePosition}");
             return null;
         }
 
