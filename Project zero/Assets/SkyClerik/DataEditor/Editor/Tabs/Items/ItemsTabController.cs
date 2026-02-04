@@ -21,9 +21,9 @@ namespace UnityEditor.DataEditor
         private Type _activeItemType;
         private readonly Dictionary<Type, VisualElement> _tabContents = new Dictionary<Type, VisualElement>();
         private VisualElement _currentActiveTabContent;
-        private TabButtonGroup _innerTabButtonGroup; // Added for internal tabs
+        private TabButtonGroup _innerTabButtonGroup; // Добавлено для внутренних вкладок
 
-        // Specific Item Databases and their SerializedObject counterparts
+        // Конкретные базы данных предметов и их аналоги SerializedObject
         private ConsumableItemDatabase _consumableItemDatabase;
         private SerializedObject _serializedConsumableItemDatabase;
         private KeyItemDatabase _keyItemDatabase;
@@ -63,7 +63,7 @@ namespace UnityEditor.DataEditor
             var listContainer = new VisualElement { name = "item-lists-container", style = { flexGrow = 1 } };
             leftPanel.Add(listContainer);
 
-            // Load all specific item databases
+            // Загрузка всех конкретных баз данных предметов
             _consumableItemDatabase = DataEditorWindow.LoadOrCreateDatabase<ConsumableItemDatabase>();
             _serializedConsumableItemDatabase = new SerializedObject(_consumableItemDatabase);
 
@@ -79,7 +79,7 @@ namespace UnityEditor.DataEditor
             _accessoryDatabase = DataEditorWindow.LoadOrCreateDatabase<AccessoryDatabase>();
             _serializedAccessoryDatabase = new SerializedObject(_accessoryDatabase);
 
-            // Map item types to their serialized databases
+            // Сопоставление типов предметов с их сериализованными базами данных
             _itemTypeToSerializedDatabase = new Dictionary<Type, SerializedObject>
             {
                 { typeof(ConsumableItemDefinition), _serializedConsumableItemDatabase },
@@ -109,7 +109,7 @@ namespace UnityEditor.DataEditor
                 var propertyName = GetPropertyNameForType(itemType);
                 if (string.IsNullOrEmpty(propertyName)) continue;
 
-                // Get the correct serialized database based on itemType
+                // Получаем правильную сериализованную базу данных на основе itemType
                 if (!_itemTypeToSerializedDatabase.TryGetValue(itemType, out SerializedObject currentSerializedDatabase))
                 {
                     Debug.LogError($"No serialized database found for item type: {itemType.Name}");
@@ -382,8 +382,8 @@ namespace UnityEditor.DataEditor
 
         private string GetPropertyNameForType(Type itemType)
         {
-            // All DefinitionDatabase<T> instances store their items in a private field named "_items".
-            // We need to return this name to correctly find the SerializedProperty.
+            // Все экземпляры DefinitionDatabase<T> хранят свои элементы в приватном поле с именем "_items".
+            // Нам нужно вернуть это имя, чтобы корректно найти SerializedProperty.
             return "_items";
         }
 

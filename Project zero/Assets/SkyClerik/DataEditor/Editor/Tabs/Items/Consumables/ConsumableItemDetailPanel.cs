@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,12 +22,11 @@ namespace UnityEditor.DataEditor
             style.paddingLeft = 5;
         }
 
-        public void DisplayDetails(BaseDefinition selected) // Accepts BaseDefinition for generic ListViewPanel
+        public void DisplayDetails(BaseDefinition selected)
         {
             Clear();
-            _currentDefinition = selected as ConsumableItemDefinition; // Cast to specific type
+            _currentDefinition = selected as ConsumableItemDefinition;
 
-            // Unregister previous handler if any
             if (_definitionNameChangeHandler != null && _currentSerializedObject != null)
             {
                 this.UnregisterCallback<SerializedPropertyChangeEvent>(_definitionNameChangeHandler);
@@ -45,7 +44,6 @@ namespace UnityEditor.DataEditor
 
             _currentSerializedObject = new SerializedObject(_currentDefinition);
 
-            // Create a container for properties and bind it
             var propertiesContainer = new VisualElement();
             propertiesContainer.Bind(_currentSerializedObject);
 
@@ -79,7 +77,6 @@ namespace UnityEditor.DataEditor
                     }
                     else if (selectorAttribute != null && !propertyIterator.isArray)
                     {
-                        // Check if the fieldType is a BaseDefinition or derived from it
                         if (fieldType != null && typeof(BaseDefinition).IsAssignableFrom(fieldType))
                         {
                             var selector = new DefinitionSelectorField(propertyIterator.displayName, fieldType, 32);
@@ -88,7 +85,6 @@ namespace UnityEditor.DataEditor
                         }
                         else
                         {
-                            // Fallback to default PropertyField if type is not a BaseDefinition
                             currentFieldElement = new PropertyField(propertyIterator.Copy());
                         }
                     }
@@ -127,7 +123,7 @@ namespace UnityEditor.DataEditor
                     else if (propertyIterator.isArray && fieldType != null && fieldType.IsGenericType && typeof(BaseDefinition).IsAssignableFrom(fieldType.GetGenericArguments()[0]))
                     {
                         var listLabel = new Label(propertyIterator.displayName) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
-                        propertiesContainer.Add(listLabel); // Add header directly to propertiesContainer
+                        propertiesContainer.Add(listLabel);
 
                         SerializedProperty arrayProperty = propertyIterator.Copy();
                         Type elementType = fieldType.GetGenericArguments()[0];
@@ -138,8 +134,8 @@ namespace UnityEditor.DataEditor
                             (e as DefinitionSelectorField).BindProperty(arrayProperty.GetArrayElementAtIndex(i));
                         };
 
-                        currentFieldElement = UnityEditor.Toolbox.ToolkitExt.CreateCustomListView(arrayProperty, null, null, true, makeItem, bindItem, 96f); // Pass fixedItemHeight to ListView
-                        currentFieldElement.Q<ListView>()?.RefreshItems(); // Added to force refresh
+                        currentFieldElement = UnityEditor.Toolbox.ToolkitExt.CreateCustomListView(arrayProperty, null, null, true, makeItem, bindItem, 96f);
+                        currentFieldElement.Q<ListView>()?.RefreshItems();
                     }
                     else if (propertyIterator.propertyType == SerializedPropertyType.ObjectReference && fieldType != null && typeof(BaseDefinition).IsAssignableFrom(fieldType))
                     {
@@ -173,7 +169,7 @@ namespace UnityEditor.DataEditor
                 if (evt.changedProperty.name == "_definitionName")
                 {
                     _currentSerializedObject.ApplyModifiedProperties();
-                    _onDefinitionNameChangedCallback?.Invoke(); // Notify parent about name change
+                    _onDefinitionNameChangedCallback?.Invoke();
                 }
             };
             this.RegisterCallback<SerializedPropertyChangeEvent>(_definitionNameChangeHandler);
