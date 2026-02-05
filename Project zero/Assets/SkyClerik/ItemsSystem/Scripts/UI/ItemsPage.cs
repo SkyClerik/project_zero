@@ -1,6 +1,4 @@
-﻿using SkyClerik.EquipmentSystem;
-using SkyClerik.Utils;
-using System;
+﻿using SkyClerik.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,8 +61,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal Vector2 MouseUILocalPosition => _mouseUILocalPosition;
 
-        private static ItemVisual _currentDraggedItem = null;
-        internal static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
+        private static ItemVisual _currentDraggedItem;
+        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
         private ItemBaseDefinition _givenItem = null;
         /// <summary>
@@ -104,12 +102,6 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
 
-
-        [SerializeField]
-        private EquipmentContainer _quipmentContainer;
-        private EquipmentPageElement _equipPage;
-        internal bool IsEquipVisible { get => _equipPage.Root.enabledSelf; set => _equipPage.Root.SetEnabled(value); }
-
         private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
         /// <summary>
         /// Список всех зарегистрированных связок контейнеров и их UI-страниц.
@@ -134,7 +126,6 @@ namespace SkyClerik.Inventory
             _craftPage?.Dispose();
             _cheastPage?.Dispose();
             _lutPage?.Dispose();
-            _equipPage?.Dispose();
         }
 
         protected void Start()
@@ -154,9 +145,6 @@ namespace SkyClerik.Inventory
             _lutPage = new LutPageElement(itemsPage: this, document: _uiDocument, itemContainer: _lutItemContainer, _inventoryPage);
             var lutCA = new ContainerAndPage(_lutItemContainer, _lutPage);
             _containersAndPages.Add(lutCA);
-
-            if (_quipmentContainer != null)
-                _equipPage = new EquipmentPageElement(itemsPage: this, document: _uiDocument, equipmentContainer: _quipmentContainer);
 
             _itemTooltip = new ItemTooltip();
             _uiDocument.rootVisualElement.Add(_itemTooltip);
@@ -252,20 +240,6 @@ namespace SkyClerik.Inventory
                 }
             }
 
-            // -----
-            if (_equipPage != null && _equipPage.Root.enabledSelf)
-            {
-                PlacementResults resultsEquip = _equipPage.ShowPlacementTarget(draggedItem);
-                if (resultsEquip.Conflict != ReasonConflict.beyondTheGridBoundary)
-                {
-                    _inventoryPage.Telegraph.Hide();
-                    _craftPage.Telegraph.Hide();
-                    _cheastPage.Telegraph.Hide();
-                    _lutPage.Telegraph.Hide();
-                    return resultsEquip.Init(resultsEquip.Conflict, resultsEquip.Position, resultsEquip.SuggestedGridPosition, resultsEquip.OverlapItem, _equipPage);
-                }
-            }
-
             //Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
             _inventoryPage.Telegraph.Hide();
             _craftPage.Telegraph.Hide();
@@ -284,7 +258,6 @@ namespace SkyClerik.Inventory
             _craftPage.FinalizeDrag();
             _cheastPage.FinalizeDrag();
             _lutPage.FinalizeDrag();
-            _equipPage.FinalizeDrag();
         }
 
         /// <summary>
@@ -396,7 +369,7 @@ namespace SkyClerik.Inventory
             OpenCraft();
         }
 
-        internal void OpenInventoryNormal()
+        public void OpenInventoryNormal()
         {
             _givenItem = null;
             SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
@@ -416,24 +389,21 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal void OpenCheast()
         {
+            SetPage(_craftPage.Root, display: false, visible: true, enabled: false);
             OpenInventoryNormal();
             SetPage(_cheastPage.Root, display: true, visible: true, enabled: true);
         }
+
+
+
         /// <summary>
         /// Открывает страницу лута.
         /// </summary>
         internal void OpenLut()
         {
+            SetPage(_craftPage.Root, display: false, visible: true, enabled: false);
             OpenInventoryNormal();
             SetPage(_lutPage.Root, display: true, visible: true, enabled: true);
-        }
-        /// <summary>
-        /// Открывает страницу экипировки.
-        /// </summary>
-        internal void OpenEquip()
-        {
-            OpenInventoryNormal();
-            SetPage(_equipPage.Root, display: true, visible: true, enabled: true);
         }
         /// <summary>
         /// Закрывает все страницы.
@@ -465,10 +435,6 @@ namespace SkyClerik.Inventory
             _lutPage.Root.SetDisplay(display);
             _lutPage.Root.SetVisibility(visible);
             _lutPage.Root.SetEnabled(enabled);
-
-            _equipPage.Root.SetDisplay(display);
-            _equipPage.Root.SetVisibility(visible);
-            _equipPage.Root.SetEnabled(enabled);
         }
 
         /// <summary>
@@ -503,15 +469,6 @@ namespace SkyClerik.Inventory
         /// Закрывает страницу лута.
         /// </summary>
         //public void CloseLut()
-        //{
-        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
-        //    SetAllSelfPage(display: false, visible: false, enabled: false);
-        //}
-
-        /// <summary>
-        /// Закрывает страницу экипировки.
-        /// </summary>
-        //public void CloseEquip()
         //{
         //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
         //    SetAllSelfPage(display: false, visible: false, enabled: false);

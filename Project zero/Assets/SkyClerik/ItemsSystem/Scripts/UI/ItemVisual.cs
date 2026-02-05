@@ -357,14 +357,10 @@ namespace SkyClerik.Inventory
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.Width, _itemDefinition.Dimensions.Height);
 
             _itemsPage.StopTooltipDelayAndHideTooltip();
-
-            ItemsPage.CurrentDraggedItem = this;
-
+            //ItemsPage.CurrentDraggedItem = this;
+            //_ownerInventory.GetDocument.rootVisualElement.Add(this);
             this.style.position = Position.Absolute;
-            _ownerInventory.GetDocument.rootVisualElement.Add(this);
-
             _ownerInventory.PickUp(this);
-
             _placementResults = _itemsPage.HandleItemPlacement(this);
         }
 

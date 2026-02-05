@@ -1,4 +1,5 @@
-﻿using SkyClerik.Inventory;
+﻿using SkyClerik.EquipmentSystem;
+using SkyClerik.Inventory;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
@@ -113,15 +114,10 @@ namespace SkyClerik.Utils
 
         private void _bEquip_clicked()
         {
-            if (_inventoryAPI.IsEquipVisible)
-            {
-                _inventoryAPI.CloseAll();
-            }
-            else
-            {
-                // Открыть окно экипировки (еще в разработке)
-                _inventoryAPI.OpenEquip();
-            }
+            ItemsPage itemsPage = ServiceProvider.Get<ItemsPage>();
+            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+            itemsPage.OpenInventoryNormal();
+            equipPage.OpenEquip();
         }
 
         private void _bInventoryGive_clicked()

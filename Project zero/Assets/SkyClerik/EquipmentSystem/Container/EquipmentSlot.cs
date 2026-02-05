@@ -1,19 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 using SkyClerik.Inventory;
+using System;
 
 namespace SkyClerik.EquipmentSystem
 {
-    /// <summary>
-    /// Представляет единичную ячейку экипировки.
-    /// Определяет тип предметов, которые могут быть экипированы в этот слот,
-    /// и хранит ссылку на экипированный предмет.
-    /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class EquipmentSlot
     {
         [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
@@ -21,34 +16,51 @@ namespace SkyClerik.EquipmentSystem
         [SerializeReference]
         private ItemBaseDefinition _equippedItem;
 
-        [SerializeField]
-        [ReadOnly]
-        private VisualElement _cellPlace;
-
         [JsonProperty]
         [SerializeField]
-        [ReadOnly]
+        [ReadOnly] // Заполняется методом CalculateGridDimensionsFromUI
         private Rect _rect;
 
         [SerializeField]
         [ReadOnly]
         private ItemVisual _itemVisual;
+        [SerializeField]
+        [ReadOnly]
+        private string _cellNameDebug;
+        private VisualElement _cell;
 
-        // События для уведомления об изменении состояния слота
-        public event Action<EquipmentSlot, ItemVisual> OnItemEquipped;
-        public event Action<EquipmentSlot, ItemVisual> OnItemUnequipped;
-
-        public VisualElement CallPlace { get => _cellPlace; set => _cellPlace = value; }
         public Rect Rect => _rect;
-        public ItemVisual ItemVisual { get => _itemVisual; set => _itemVisual = value; }
-
         public bool IsEmpty => _itemVisual == null;
+        public ItemBaseDefinition EquippedItem => _equippedItem;
 
-        public ItemBaseDefinition EquippedItem { get => _equippedItem; set => _equippedItem = value; }
+        public VisualElement Cell
+        {
+            get => _cell;
+            set
+            {
+                _cell = value;
+                _cellNameDebug = _cell.name;
+            }
+        }
 
         public EquipmentSlot(Rect rect)
         {
             _rect = rect;
+        }
+
+        public void CreateItemVisualAndEquip(ItemsPage itemsPage, ItemBaseDefinition itemBaseDefinition)
+        {
+            if (_equippedItem != null)
+            {
+                var itemVisual = new ItemVisual(
+                           itemsPage: itemsPage,
+                           ownerInventory: itemsPage.ContainersAndPages[0].Page,
+                           itemDefinition: itemBaseDefinition,
+                           gridPosition: Vector2Int.zero,
+                           gridSize: Vector2Int.zero
+                           );
+                Equip(itemVisual);
+            }
         }
 
         /// <summary>
@@ -58,7 +70,7 @@ namespace SkyClerik.EquipmentSystem
         /// <returns>True, если предмет подходит; иначе false.</returns>
         public bool CanEquip(ItemBaseDefinition item)
         {
-            if (item == null) 
+            if (item == null)
                 return false;
             // TODO заглушка на проверке экипируемого предмета, надо решить на что проверять
             return true;
@@ -70,28 +82,28 @@ namespace SkyClerik.EquipmentSystem
         /// <param name="item">Предмет для экипировки.</param>
         public void Equip(ItemVisual itemVisual)
         {
-            if (itemVisual == null) 
+            if (itemVisual == null)
                 return;
 
+            _equippedItem = itemVisual.ItemDefinition;
             _itemVisual = itemVisual;
-            OnItemEquipped?.Invoke(this, itemVisual);
+            ItemsPage.CurrentDraggedItem = null;
+
+            _cell.Add(itemVisual);
         }
 
         /// <summary>
         /// Снимает предмет из этого слота.
         /// </summary>
         /// <returns>Снятый предмет, или null, если слот был пуст.</returns>
-        public ItemVisual Unequip()
+        public void Unequip(UIDocument document)
         {
-            ItemVisual itemVisual = _itemVisual;
+            ItemsPage.CurrentDraggedItem = _itemVisual;
+            document.rootVisualElement.Add(ItemsPage.CurrentDraggedItem);
             _itemVisual = null;
-            if (itemVisual != null)
-            {
-                OnItemUnequipped?.Invoke(this, itemVisual);
-            }
-            return itemVisual;
+
+            ItemBaseDefinition itemBaseDefinition = _equippedItem;
+            _equippedItem = null;
         }
-
-
     }
 }

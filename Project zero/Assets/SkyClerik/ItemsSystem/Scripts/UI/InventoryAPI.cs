@@ -54,11 +54,6 @@ namespace SkyClerik.Inventory
         public bool IsLutVisible { get => _itemsPage.IsLutVisible; set => _itemsPage.IsLutVisible = value; }
 
         /// <summary>
-        /// Указывает, видна ли страница экипировки.
-        /// </summary>
-        public bool IsEquipVisible { get => _itemsPage.IsEquipVisible; set => _itemsPage.IsEquipVisible = value; }
-
-        /// <summary>
         /// Откроет инвентарь, чтобы выбрать предмет по его ID. Если предмета нет, инвентарь не откроется.
         /// </summary>
         /// <param name="itemID">Индекс искомого предмета.</param>
@@ -89,11 +84,6 @@ namespace SkyClerik.Inventory
         /// Открывает страничку лута.
         /// </summary>
         public void OpenLut() => _itemsPage.OpenLut();
-
-        /// <summary>
-        /// Открывает страничку экипировки.
-        /// </summary>
-        public void OpenEquip() => _itemsPage.OpenEquip();
 
         /// <summary>
         /// Закрывает вообще все странички UI инвентаря.

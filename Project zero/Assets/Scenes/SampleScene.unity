@@ -852,6 +852,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6943209157565411911, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       insertIndex: 3
       addedObject: {fileID: 8712429768355902505}
+    - targetCorrespondingSourceObject: {fileID: 6943209157565411911, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8712429768355902514}
   m_SourcePrefab: {fileID: 100100000, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
 --- !u!1 &6721879763057257880 stripped
 GameObject:
@@ -887,6 +890,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbb6a4e65d47030419884c1e5ef91090, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8712429768355902513 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1217899791473864697, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+  m_PrefabInstance: {fileID: 4426855488001158020}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6721879763057257880}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8712429768355902514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6721879763057257880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef063a784b9383f4ca29657d4af42f4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _equipSlots:
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 1425.3334
+      y: 297.33334
+      width: 256
+      height: 383.99997
+    _cellNameDebug: 
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 1430.6666
+      y: 745.3333
+      width: 256
+      height: 256
+    _cellNameDebug: 
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 1433.3334
+      y: 1061.3334
+      width: 128
+      height: 128
+    _cellNameDebug: 
+  - _equippedItem: {fileID: 0}
+    _rect:
+      serializedVersion: 2
+      x: 1585.3334
+      y: 1065.3334
+      width: 128
+      height: 128
+    _cellNameDebug: 
+  _uiDocument: {fileID: 8712429768355902513}
+  _rootPanelName: equipment_root
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

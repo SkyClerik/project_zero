@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 3082931858055872412}
   - component: {fileID: 9080966158530640378}
   - component: {fileID: 6636705637116334045}
-  - component: {fileID: 8501266575850338180}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -67,11 +66,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d6775aeab62d5b44b51b7c6c0563280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _uiDocument: {fileID: 1217899791473864697}
   _inventoryItemContainer: {fileID: 5845306660861489922}
   _craftItemContainer: {fileID: 3082931858055872412}
   _cheastItemContainer: {fileID: 9080966158530640378}
   _lutItemContainer: {fileID: 6636705637116334045}
-  _quipmentContainer: {fileID: 8501266575850338180}
 --- !u!114 &2875510106509005718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,24 +176,3 @@ MonoBehaviour:
     y: 352
     width: 512.0001
     height: 640
---- !u!114 &8501266575850338180
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6943209157565411911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 670d15a3a0df7de4a9c21cdfd8af4537, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerEquipmentContainerDefinition: {fileID: 11400000, guid: dbc2e8528335c404c8113dcb2c04624f, type: 2}
-  _uiDocument: {fileID: 1217899791473864697}
-  _rootPanelName: equipment_root
-  _gridWorldRect:
-    serializedVersion: 2
-    x: 1386.6666
-    y: 226.66667
-    width: 896.0001
-    height: 1023.99994

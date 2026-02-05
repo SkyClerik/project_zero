@@ -433,6 +433,7 @@ gridData.GridSize.x, gridData.GridSize.y);
                 itemDef.GridPosition = new Vector2Int(-1, -1);
             }
             ItemsPage.CurrentDraggedItem = storedItem;
+            _document.rootVisualElement.Add(storedItem);
             storedItem.SetOwnerInventory(this);
         }
 
