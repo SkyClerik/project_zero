@@ -19,10 +19,10 @@ namespace SkyClerik.EquipmentSystem
         [SerializeField] private string _rootPanelName;
         public string RootPanelName => _rootPanelName;
 
-        [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
-        [SerializeField]
-        [ReadOnly]
-        private Rect _gridWorldRect; // (1387,226,896,1024)
+        //[Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
+        //[SerializeField]
+        //[ReadOnly]
+        //private Rect _gridWorldRect; // (1387,226,896,1024)
 
 #if UNITY_EDITOR
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
@@ -57,10 +57,10 @@ namespace SkyClerik.EquipmentSystem
                     return;
                 }
 
-                if (_gridWorldRect != inventoryGrid.worldBound)
-                {
-                    _gridWorldRect = inventoryGrid.worldBound;
-                }
+                //if (_gridWorldRect != inventoryGrid.worldBound)
+                //{
+                //    _gridWorldRect = inventoryGrid.worldBound;
+                //}
 
                 if (inventoryGrid.childCount == 0)
                 {
@@ -81,14 +81,14 @@ namespace SkyClerik.EquipmentSystem
                         _playerEquipmentContainerDefinition.EquipmentSlots.Add(new EquipmentSlot(rect: rect));
                     }
                 }
-
+                UnityEditor.EditorUtility.SetDirty(_playerEquipmentContainerDefinition); // Mark ScriptableObject as dirty for persistence
             }).ExecuteLater(1);
         }
 #endif
 
         private void Awake()
         {
-            _playerEquipmentContainerDefinition.ValidateGuid();
+                _playerEquipmentContainerDefinition.ValidateGuid();
         }
     }
 }

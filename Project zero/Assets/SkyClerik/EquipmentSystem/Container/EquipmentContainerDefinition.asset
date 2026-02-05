@@ -14,31 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _containerGuid: 1e8cf7f2-b3f3-4c0f-9faa-9208321f8e87
   _equipmentSlots:
-  - _equippedItem: {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
+  - _equippedItem: {fileID: 0}
     _rect:
       serializedVersion: 2
-      x: 71
-      y: 38
+      x: 38.666748
+      y: 70.66667
       width: 256
-      height: 384
-  - _equippedItem: {fileID: 11400000, guid: a36a70068d190e7428a5bb867885b319, type: 2}
+      height: 383.99997
+  - _equippedItem: {fileID: 0}
     _rect:
       serializedVersion: 2
-      x: 519
-      y: 44
+      x: 44
+      y: 518.6666
       width: 256
       height: 256
   - _equippedItem: {fileID: 0}
     _rect:
       serializedVersion: 2
-      x: 835
-      y: 47
+      x: 46.666748
+      y: 834.6667
       width: 128
       height: 128
   - _equippedItem: {fileID: 0}
     _rect:
       serializedVersion: 2
-      x: 839
-      y: 198
+      x: 198.66675
+      y: 838.6667
       width: 128
       height: 128
