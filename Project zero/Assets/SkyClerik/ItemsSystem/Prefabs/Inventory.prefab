@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6452682332439669834
+--- !u!1 &6943209157565411911
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,14 +8,15 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7381920286519882158}
-  - component: {fileID: 807833916544114362}
-  - component: {fileID: 3012271787897610413}
-  - component: {fileID: 511445279938769042}
-  - component: {fileID: 8947709996843349493}
-  - component: {fileID: 324047505839359744}
-  - component: {fileID: 8422042304283840621}
-  - component: {fileID: 8572603436829135497}
+  - component: {fileID: 7640618312717302545}
+  - component: {fileID: 1217899791473864697}
+  - component: {fileID: 8617945101721430520}
+  - component: {fileID: 2875510106509005718}
+  - component: {fileID: 5845306660861489922}
+  - component: {fileID: 3082931858055872412}
+  - component: {fileID: 9080966158530640378}
+  - component: {fileID: 6636705637116334045}
+  - component: {fileID: 8501266575850338180}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -23,28 +24,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7381920286519882158
+--- !u!4 &7640618312717302545
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &807833916544114362
+--- !u!114 &1217899791473864697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -54,100 +55,146 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 9fe69c9212cdcc1498ee1d5d577021c7, type: 3}
   m_SortingOrder: 0
---- !u!114 &3012271787897610413
+--- !u!114 &8617945101721430520
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0fa887a3b208444c88f74eb7d7400e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d6775aeab62d5b44b51b7c6c0563280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inventoryItemContainer: {fileID: 8947709996843349493}
-  _craftItemContainer: {fileID: 324047505839359744}
-  _cheastItemContainer: {fileID: 8422042304283840621}
-  _lutItemContainer: {fileID: 8572603436829135497}
---- !u!114 &511445279938769042
+  _inventoryItemContainer: {fileID: 5845306660861489922}
+  _craftItemContainer: {fileID: 3082931858055872412}
+  _cheastItemContainer: {fileID: 9080966158530640378}
+  _lutItemContainer: {fileID: 6636705637116334045}
+  _quipmentContainer: {fileID: 8501266575850338180}
+--- !u!114 &2875510106509005718
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 759c6ab6f9835684398bb66de2722c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _recipeDatabase: {fileID: 11400000, guid: cdaf9ece590758e42936394cc83d83e6, type: 2}
---- !u!114 &8947709996843349493
+--- !u!114 &5845306660861489922
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 246f182f6f292544e8a06f982e48eade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemDataStorageSO: {fileID: 11400000, guid: 597b1778d5825124dad19d8e6353cf28, type: 2}
-  _uiDocument: {fileID: 807833916544114362}
+  _containerDefinition: {fileID: 11400000, guid: 597b1778d5825124dad19d8e6353cf28, type: 2}
+  _uiDocument: {fileID: 1217899791473864697}
   _rootPanelName: inventory_root
   _gridDimensions: {x: 7, y: 8}
   _cellSize: {x: 128, y: 127.999985}
---- !u!114 &324047505839359744
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+--- !u!114 &3082931858055872412
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2971fa98ec98b8d4288a1d717a6961c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemDataStorageSO: {fileID: 11400000, guid: 2827add769d20904eadf88f6dbe78bcd, type: 2}
-  _uiDocument: {fileID: 807833916544114362}
+  _containerDefinition: {fileID: 11400000, guid: 2827add769d20904eadf88f6dbe78bcd, type: 2}
+  _uiDocument: {fileID: 1217899791473864697}
   _rootPanelName: craft_root
   _gridDimensions: {x: 3, y: 4}
   _cellSize: {x: 128, y: 128}
---- !u!114 &8422042304283840621
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 1642.6666
+    y: 416
+    width: 384
+    height: 512
+--- !u!114 &9080966158530640378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57b47efc9b9b3ac47bb66ad82e9d690c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemDataStorageSO: {fileID: 11400000, guid: c2c261aa040c3514e9351b17bbb6bbc6, type: 2}
-  _uiDocument: {fileID: 807833916544114362}
+  _containerDefinition: {fileID: 11400000, guid: c2c261aa040c3514e9351b17bbb6bbc6, type: 2}
+  _uiDocument: {fileID: 1217899791473864697}
   _rootPanelName: cheast_root
   _gridDimensions: {x: 7, y: 5}
   _cellSize: {x: 128, y: 128}
---- !u!114 &8572603436829135497
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 1386.6666
+    y: 352
+    width: 896.0001
+    height: 640
+--- !u!114 &6636705637116334045
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6452682332439669834}
+  m_GameObject: {fileID: 6943209157565411911}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 751ba84b193bfc247b75f4f3bc0aed7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemDataStorageSO: {fileID: 11400000, guid: 41a3e04031bd0da4d9526500ae81686b, type: 2}
-  _uiDocument: {fileID: 807833916544114362}
+  _containerDefinition: {fileID: 11400000, guid: 41a3e04031bd0da4d9526500ae81686b, type: 2}
+  _uiDocument: {fileID: 1217899791473864697}
   _rootPanelName: lut_root
   _gridDimensions: {x: 4, y: 5}
   _cellSize: {x: 128, y: 128}
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 1578.6666
+    y: 352
+    width: 512.0001
+    height: 640
+--- !u!114 &8501266575850338180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6943209157565411911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 670d15a3a0df7de4a9c21cdfd8af4537, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerEquipmentContainerDefinition: {fileID: 11400000, guid: dbc2e8528335c404c8113dcb2c04624f, type: 2}
+  _uiDocument: {fileID: 1217899791473864697}
+  _rootPanelName: equipment_root
+  _gridWorldRect:
+    serializedVersion: 2
+    x: 1386.6666
+    y: 226.66667
+    width: 896.0001
+    height: 1023.99994

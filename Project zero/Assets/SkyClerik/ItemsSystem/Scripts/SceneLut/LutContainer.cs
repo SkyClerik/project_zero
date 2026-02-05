@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
@@ -31,7 +31,6 @@ namespace SkyClerik.Inventory
             TransferItemsToPlayerLutContainer();
 
             var itemsPage = ServiceProvider.Get<ItemsPage>();
-            itemsPage.OpenInventoryNormal();
             itemsPage.OpenLut();
         }
 

@@ -58,12 +58,9 @@ namespace SkyClerik.EquipmentSystem
         /// <returns>True, если предмет подходит; иначе false.</returns>
         public bool CanEquip(ItemBaseDefinition item)
         {
-            if (item == null) return false;
-            // Проверяем, является ли тип предмета совместимым с разрешенным типом слота.
-            // AllowedType.IsAssignableFrom(item.GetType()) проверяет, можно ли назначить
-            // экземпляр item.GetType() переменной типа AllowedType.
-            // Это позволяет использовать наследование, например, в слот "Weapon"
-            // можно будет поместить "Sword" или "Axe".
+            if (item == null) 
+                return false;
+            // TODO заглушка на проверке экипируемого предмета, надо решить на что проверять
             return true;
         }
 

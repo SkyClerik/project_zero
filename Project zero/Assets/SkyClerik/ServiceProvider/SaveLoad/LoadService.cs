@@ -75,13 +75,13 @@ namespace SkyClerik.Utils
                 return;
             }
 
-            if (targetContainer.ItemDataStorageSO == null || string.IsNullOrEmpty(targetContainer.ItemDataStorageSO.ContainerGuid))
+            if (targetContainer.ContainerDefinition == null || string.IsNullOrEmpty(targetContainer.ContainerDefinition.ContainerGuid))
             {
                 Debug.LogError($"GUID целевого контейнера '{targetContainer.name}' не может быть пустым для загрузки!");
                 return;
             }
 
-            string containerGuid = targetContainer.ItemDataStorageSO.ContainerGuid;
+            string containerGuid = targetContainer.ContainerDefinition.ContainerGuid;
             string fileName = $"{containerGuid}.json";
             string filePath = Path.Combine(slotFolderPath, fileName);
 
@@ -111,7 +111,7 @@ namespace SkyClerik.Utils
 
                     // Копируем данные из загруженного определения в существующее
                     // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
-                    targetContainer.ItemDataStorageSO.SetDataFromOtherContainer(loadedContainerDefinition);
+                    targetContainer.ContainerDefinition.SetDataFromOtherContainer(loadedContainerDefinition);
 
                     // После загрузки данных в ItemDataStorageSO, настраиваем логическую сетку контейнера
                     targetContainer.SetupLoadedItemsGrid();

@@ -93,27 +93,17 @@ namespace SkyClerik.Utils
         private void _bInventory_clicked()
         {
             if (_itemsPage.IsInventoryVisible)
-            {
                 _itemsPage.CloseAll();
-            }
             else
-            {
-                _itemsPage.OpenInventoryNormal();
-                //_itemsPage.OpenCraft();
-            }
+                _itemsPage.OpenInventoryAndCraft();
         }
 
         private void _bEquip_clicked()
         {
             if (_itemsPage.IsEquipVisible)
-            {
                 _itemsPage.CloseAll();
-            }
             else
-            {
                 _itemsPage.OpenEquip();
-                //_itemsPage.OpenCraft();
-            }
         }
 
         private void _bInventoryGive_clicked()
@@ -121,7 +111,7 @@ namespace SkyClerik.Utils
             if (_itemsPage.IsInventoryVisible)
                 _itemsPage.CloseAll();
             else
-                _itemsPage.OpenInventoryFromGiveItem(wrapperIndex: 0);
+                _itemsPage.OpenInventoryFromGiveItem(itemID: 0);
         }
 
         private void _bTrueCraft_clicked()
@@ -150,29 +140,22 @@ namespace SkyClerik.Utils
         private void _bCheast_clicked()
         {
             if (_itemsPage.IsCheastVisible)
-            {
                 _itemsPage.CloseAll();
-            }
             else
-            {
-                _itemsPage.OpenInventoryNormal();
                 _itemsPage.OpenCheast();
-            }
         }
 
         private void _bLut_clicked()
         {
             //if (_itemsPage.IsLutVisible)
-            //{
             //    _itemsPage.CloseAll();
-            //}
             //else
-            //{
-            //    _itemsPage.OpenInventoryNormal();
             //    _itemsPage.OpenLut();
-            //}
 
-            _developLut.OpenLutPage();
+            if (_itemsPage.IsLutVisible)
+                _itemsPage.CloseAll();
+            else
+                _developLut.OpenLutPage();
         }
 
 

@@ -22,6 +22,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9219a07650ae8b242aab8afaf68bb7c4
+    m_Address: Assets/SkyClerik/StorageWrapper/Data/Item Prefabs Storage Definition.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ca525d827c9bb7c46863445068867b30
     m_Address: Assets/SkyClerik/Images/Items/Potions/9.png
     m_ReadOnly: 0
@@ -39,6 +44,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f946925a07946fa40a425f1b0198ff5a
     m_Address: Assets/SkyClerik/Images/Develop/Statue of the goddess of testers.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd107c64735c5774f9a4c7e8e2f6b796
+    m_Address: Assets/SkyClerik/StorageWrapper/Data/ItemsDataStorageDefinition.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

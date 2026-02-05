@@ -66,22 +66,22 @@ namespace SkyClerik.Utils
                 return;
             }
 
-            if (itemContainer.ItemDataStorageSO == null || string.IsNullOrEmpty(itemContainer.ItemDataStorageSO.ContainerGuid))
+            if (itemContainer.ContainerDefinition == null || string.IsNullOrEmpty(itemContainer.ContainerDefinition.ContainerGuid))
             {
                 Debug.LogError($"GUID контейнера '{itemContainer.name}' не может быть пустым для сохранения!");
                 return;
             }
 
-            string fileName = $"{itemContainer.ItemDataStorageSO.ContainerGuid}.json";
+            string fileName = $"{itemContainer.ContainerDefinition.ContainerGuid}.json";
             string filePath = Path.Combine(slotFolderPath, fileName);
 
-            string json = Inventory.JsonScriptableObjectSerializer.SerializeScriptableObject(itemContainer.ItemDataStorageSO);
+            string json = Inventory.JsonScriptableObjectSerializer.SerializeScriptableObject(itemContainer.ContainerDefinition);
             File.WriteAllText(filePath, json);
-            Debug.Log($"Контейнер '{itemContainer.ItemDataStorageSO.ContainerGuid}' сохранен в: {filePath}");
-            Debug.Log($"[SaveService] Сериализован контейнер '{itemContainer.ItemDataStorageSO.name}' с {itemContainer.ItemDataStorageSO.Items.Count} предметами.");
+            Debug.Log($"Контейнер '{itemContainer.ContainerDefinition.ContainerGuid}' сохранен в: {filePath}");
+            Debug.Log($"[SaveService] Сериализован контейнер '{itemContainer.ContainerDefinition.name}' с {itemContainer.ContainerDefinition.Items.Count} предметами.");
 
             int itemIndex = 0;
-            foreach (var item in itemContainer.ItemDataStorageSO.Items)
+            foreach (var item in itemContainer.ContainerDefinition.Items)
             {
                 if (item != null)
                 {

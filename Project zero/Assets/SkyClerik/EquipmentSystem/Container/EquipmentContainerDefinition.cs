@@ -24,12 +24,12 @@ namespace SkyClerik.EquipmentSystem
         /// </summary>
         public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
 
-        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
-        [SerializeField]
         //_equipmentSlots(0).rect =  (71,38,256,384) позиция локальная для объекта grid
         //_equipmentSlots(0).rect =  (519,44,256,256) позиция локальная для объекта grid
         //_equipmentSlots(0).rect =  (835,47,128,128) позиция локальная для объекта grid
         //_equipmentSlots(0).rect =  (839,198,128,128) позиция локальная для объекта grid
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
+        [SerializeField]
         private List<EquipmentSlot> _equipmentSlots = new List<EquipmentSlot>();
         /// <summary>
         /// Список всех слотов экипировки.

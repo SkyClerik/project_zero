@@ -49,6 +49,10 @@ namespace SkyClerik.Inventory
     {
         private UIDocument _document;
         private Vector2 _mousePositionOffset;
+        private GlobalGameProperty _globalGameProperty;
+        private ItemTooltip _itemTooltip;
+        private Coroutine _tooltipShowCoroutine;
+        private const float _tooltipDelay = 0.5f;
 
         private Vector2 _mouseUILocalPosition;
         /// <summary>
@@ -57,24 +61,17 @@ namespace SkyClerik.Inventory
         public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
 
         private static ItemVisual _currentDraggedItem = null;
-        /// <summary>
-        /// Статический экземпляр текущего перетаскиваемого визуального предмета.
-        /// </summary>
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
-        private ItemTooltip _itemTooltip;
-        private Coroutine _tooltipShowCoroutine;
-        private const float _tooltipDelay = 0.5f;
-
-        [SerializeField]
-        private ItemContainer _inventoryItemContainer;
-        private InventoryPageElement _inventoryPage;
         private ItemBaseDefinition _givenItem = null;
         /// <summary>
         /// Предмет, который был выбран для отдачи (например, при передаче NPC).
         /// </summary>
         public ItemBaseDefinition GiveItem => _givenItem;
-        //TODO удалить GiveItem передать его в ItemPage например
+
+        [SerializeField]
+        private ItemContainer _inventoryItemContainer;
+        private InventoryPageElement _inventoryPage;
         /// <summary>
         /// Определяет, виден ли UI инвентаря.
         /// </summary>
@@ -104,20 +101,17 @@ namespace SkyClerik.Inventory
         /// </summary>
         public bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
 
-        private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
 
         [SerializeField]
         private EquipmentContainer _quipmentContainer;
         private EquipmentPageElement _equipPage;
-
         public bool IsEquipVisible { get => _equipPage.Root.enabledSelf; set => _equipPage.Root.SetEnabled(value); }
 
+        private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
         /// <summary>
         /// Список всех зарегистрированных связок контейнеров и их UI-страниц.
         /// </summary>
         public List<ContainerAndPage> ContainersAndPages => _containersAndPages;
-
-        private GlobalGameProperty _globalGameProperty;
 
         /// <summary>
         /// Делегат для события "предмет отдан".
@@ -176,7 +170,6 @@ namespace SkyClerik.Inventory
 
             if (_quipmentContainer != null)
                 _equipPage = new EquipmentPageElement(itemsPage: this, document: _document, equipmentContainer: _quipmentContainer);
-
 
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
@@ -326,10 +319,10 @@ namespace SkyClerik.Inventory
                 return;
             }
 
-            // 1. Удаляем предмет из исходного контейнера (это вызовет OnItemRemoved в UI)
+            // Удаляем предмет из исходного контейнера (это вызовет OnItemRemoved в UI)
             sourceContainer.RemoveItem(itemToMove, destroy: false);
 
-            // 2. Пытаемся добавить предмет в целевой контейнер на указанную позицию Это вызовет OnItemAdded в UI, если успешно
+            // Пытаемся добавить предмет в целевой контейнер на указанную позицию Это вызовет OnItemAdded в UI, если успешно
             bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, gridPosition);
 
             if (!addedToTarget)
@@ -377,12 +370,15 @@ namespace SkyClerik.Inventory
         /// Откроет инвентарь для выбора предмета, который найдет по индексу.
         /// Если предмет не будет найден, инвентарь не откроется.
         /// </summary>
-        /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
-        public void OpenInventoryFromGiveItem(int wrapperIndex)
+        /// <param name="itemID">WrapperIndex искомого предмета.</param>
+        public void OpenInventoryFromGiveItem(int itemID)
         {
-            _givenItem = _inventoryItemContainer.GetItemByWrapperIndex(wrapperIndex);
+            _givenItem = _inventoryItemContainer.GetItemByItemID(itemID);
             if (_givenItem != null)
+            {
+                SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
                 OpenInventoryNormal();
+            }
         }
 
         /// <summary>
@@ -394,134 +390,140 @@ namespace SkyClerik.Inventory
         {
             _givenItem = item;
             if (_givenItem != null)
+            {
+                SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
                 OpenInventoryNormal();
+            }
         }
 
         /// <summary>
         /// Открывает обычный режим отображения инвентаря.
         /// </summary>
-        public void OpenInventoryNormal()
+        public void OpenInventoryAndCraft()
         {
-            OpenOnlyInventoryNormal();
+            OpenInventoryNormal();
             OpenCraft();
         }
 
-        public void OpenOnlyInventoryNormal()
-        {
-            _document.rootVisualElement.SetVisibility(true);
-            _inventoryPage.Root.SetEnabled(true);
-            _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
-        }
-
-        /// <summary>
-        /// Закрывает инвентарь.
-        /// </summary>
-        public void CloseInventory()
+        public void OpenInventoryNormal()
         {
             _givenItem = null;
-            _document.rootVisualElement.SetVisibility(false);
-            _inventoryPage.Root.SetEnabled(false);
-
-            _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
+            SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
+            _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
-
         /// <summary>
         /// Открывает страницу крафта. Доступность зависит от глобального свойства <see cref="GlobalGameProperty.MakeCraftAccessible"/>.
         /// </summary>
-        public void OpenCraft()
+        private void OpenCraft()
         {
-            _craftPage.Root.SetDisplay(true);
+            SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
             if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
-                SetDisplaySelfPage(_craftPage.Root);
+                SetPage(_craftPage.Root, display: true, visible: true, enabled: true);
         }
-
-        /// <summary>
-        /// Закрывает страницу крафта.
-        /// </summary>
-        public void CloseCraft()
-        {
-            _craftPage.Root.SetVisibility(false);
-            _craftPage.Root.SetEnabled(false);
-        }
-
         /// <summary>
         /// Открывает страницу сундука.
         /// </summary>
         public void OpenCheast()
         {
-            SetDisplaySelfPage(_cheastPage.Root);
+            OpenInventoryNormal();
+            SetPage(_cheastPage.Root, display: true, visible: true, enabled: true);
         }
-
-        /// <summary>
-        /// Закрывает страницу сундука.
-        /// </summary>
-        public void CloseCheast()
-        {
-            _cheastPage.Root.SetVisibility(false);
-            _cheastPage.Root.SetEnabled(false);
-        }
-
         /// <summary>
         /// Открывает страницу лута.
         /// </summary>
         public void OpenLut()
         {
-            SetDisplaySelfPage(_lutPage.Root);
+            OpenInventoryNormal();
+            SetPage(_lutPage.Root, display: true, visible: true, enabled: true);
         }
-
-        /// <summary>
-        /// Закрывает страницу лута.
-        /// </summary>
-        public void CloseLut()
-        {
-            _lutPage.Root.SetVisibility(false);
-            _lutPage.Root.SetEnabled(false);
-        }
-
         /// <summary>
         /// Открывает страницу экипировки.
         /// </summary>
         public void OpenEquip()
         {
-            OpenOnlyInventoryNormal();
-            SetDisplaySelfPage(_equipPage.Root);
+            OpenInventoryNormal();
+            SetPage(_equipPage.Root, display: true, visible: true, enabled: true);
         }
+        /// <summary>
+        /// Закрывает все страницы.
+        /// </summary>
+        public void CloseAll()
+        {
+            SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
+            SetAllSelfPage(display: false, visible: false, enabled: false);
+            _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
+        }
+
+        private void SetPage(VisualElement pageRoot, bool display, bool visible, bool enabled)
+        {
+            pageRoot.SetVisibility(visible);
+            pageRoot.SetDisplay(display);
+            pageRoot.SetEnabled(enabled);
+        }
+
+        private void SetAllSelfPage(bool display, bool visible, bool enabled)
+        {
+            _craftPage.Root.SetDisplay(display);
+            _craftPage.Root.SetVisibility(visible);
+            _craftPage.Root.SetEnabled(enabled);
+
+            _cheastPage.Root.SetDisplay(display);
+            _cheastPage.Root.SetVisibility(visible);
+            _cheastPage.Root.SetEnabled(enabled);
+
+            _lutPage.Root.SetDisplay(display);
+            _lutPage.Root.SetVisibility(visible);
+            _lutPage.Root.SetEnabled(enabled);
+
+            _equipPage.Root.SetDisplay(display);
+            _equipPage.Root.SetVisibility(visible);
+            _equipPage.Root.SetEnabled(enabled);
+        }
+
+        /// <summary>
+        /// Закрывает инвентарь.
+        /// </summary>
+        //public void CloseInventory()
+        //{
+        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
+        //    SetAllSelfPage(display: false, visible: false, enabled: false);
+        //    _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
+        //}
+
+        /// <summary>
+        /// Закрывает страницу крафта.
+        /// </summary>
+        //public void CloseCraft()
+        //{
+        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
+        //    SetAllSelfPage(display: false, visible: false, enabled: false);
+        //}
+
+        /// <summary>
+        /// Закрывает страницу сундука.
+        /// </summary>
+        //public void CloseCheast()
+        //{
+        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
+        //    SetAllSelfPage(display: false, visible: false, enabled: false);
+        //}
+
+        /// <summary>
+        /// Закрывает страницу лута.
+        /// </summary>
+        //public void CloseLut()
+        //{
+        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
+        //    SetAllSelfPage(display: false, visible: false, enabled: false);
+        //}
 
         /// <summary>
         /// Закрывает страницу экипировки.
         /// </summary>
-        public void CloseEquip()
-        {
-            _equipPage.Root.SetVisibility(false);
-            _equipPage.Root.SetEnabled(false);
-        }
-
-        /// <summary>
-        /// Закрывает все страницы инвентаря.
-        /// </summary>
-        public void CloseAll()
-        {
-            CloseInventory();
-            CloseCraft();
-            CloseCheast();
-            CloseLut();
-            CloseEquip();
-        }
-
-        /// <summary>
-        /// Устанавливает видимость и активность для указанной страницы, скрывая остальные страницы (крафт, сундук, лут).
-        /// </summary>
-        /// <param name="page">Страница, которую необходимо сделать активной.</param>
-        private void SetDisplaySelfPage(VisualElement pageRoot)
-        {
-            _craftPage.Root.SetDisplay(false);
-            _cheastPage.Root.SetDisplay(false);
-            _lutPage.Root.SetDisplay(false);
-            _equipPage.Root.SetDisplay(false);
-
-            pageRoot.SetVisibility(true);
-            pageRoot.SetDisplay(true);
-            pageRoot.SetEnabled(true);
-        }
+        //public void CloseEquip()
+        //{
+        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
+        //    SetAllSelfPage(display: false, visible: false, enabled: false);
+        //}
     }
 }

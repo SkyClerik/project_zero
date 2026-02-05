@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Toolbox;
 
@@ -7,25 +7,25 @@ namespace SkyClerik.Inventory
     public class LutContainerWrapper
     {
         private ItemsList _itemsList;
-        //TODO ПРОВЕРИТЬ РАБОТУ, я его вообще не проверял
+        //TODO РџР РћР’Р•Р РРўР¬ Р РђР‘РћРўРЈ, СЏ РµРіРѕ РІРѕРѕР±С‰Рµ РЅРµ РїСЂРѕРІРµСЂСЏР»
         public LutContainerWrapper(List<int> wrapperItemIndexes)
         {
             var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
 
             foreach (var wrapperIndex in wrapperItemIndexes)
             {
-                var result = playerItemContainer.GetItemByWrapperIndex(wrapperIndex);
+                var result = playerItemContainer.GetItemByItemID(wrapperIndex);
                 if (result != null)
                     _itemsList.Items.Add(result);
                 else
-                    Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperIndex} в свой локальный контейнер лута");
+                    Debug.Log($"LutContainerWrapper РЅРµ СЃРјРѕРі РЅР°Р№С‚Рё Рё РґРѕР±Р°РІРёС‚СЊ РїСЂРµРґРјРµС‚ РїРѕРґ РёРЅРґРµРєСЃРѕРј {wrapperIndex} РІ СЃРІРѕР№ Р»РѕРєР°Р»СЊРЅС‹Р№ РєРѕРЅС‚РµР№РЅРµСЂ Р»СѓС‚Р°");
             }
         }
 
-        // -- Через вызов окна для игрока
+        // -- Р§РµСЂРµР· РІС‹Р·РѕРІ РѕРєРЅР° РґР»СЏ РёРіСЂРѕРєР°
 
         /// <summary>
-        /// Попытаться передать указанные предметы в лут игрока.
+        /// РџРѕРїС‹С‚Р°С‚СЊСЃСЏ РїРµСЂРµРґР°С‚СЊ СѓРєР°Р·Р°РЅРЅС‹Рµ РїСЂРµРґРјРµС‚С‹ РІ Р»СѓС‚ РёРіСЂРѕРєР°.
         /// </summary>
         private void TransferItemsToPlayerLutContainer()
         {
@@ -34,21 +34,21 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Открыть окно с лутом для предоставления игроку выбора
+        /// РћС‚РєСЂС‹С‚СЊ РѕРєРЅРѕ СЃ Р»СѓС‚РѕРј РґР»СЏ РїСЂРµРґРѕСЃС‚Р°РІР»РµРЅРёСЏ РёРіСЂРѕРєСѓ РІС‹Р±РѕСЂР°
         /// </summary>
         public void OpenLutPage()
         {
             TransferItemsToPlayerLutContainer();
 
             var itemsPage = ServiceProvider.Get<ItemsPage>();
-            itemsPage.OpenInventoryNormal();
+            itemsPage.OpenInventoryAndCraft();
             itemsPage.OpenLut();
         }
 
-        // -- Передача всего возможного лута в инвентарь игрока
+        // -- РџРµСЂРµРґР°С‡Р° РІСЃРµРіРѕ РІРѕР·РјРѕР¶РЅРѕРіРѕ Р»СѓС‚Р° РІ РёРЅРІРµРЅС‚Р°СЂСЊ РёРіСЂРѕРєР°
 
         /// <summary>
-        /// Попытаться передать указанные предметы в инвентарь игрока.
+        /// РџРѕРїС‹С‚Р°С‚СЊСЃСЏ РїРµСЂРµРґР°С‚СЊ СѓРєР°Р·Р°РЅРЅС‹Рµ РїСЂРµРґРјРµС‚С‹ РІ РёРЅРІРµРЅС‚Р°СЂСЊ РёРіСЂРѕРєР°.
         /// </summary>
         public void TransferItemsToPlayerInventoryContainer()
         {

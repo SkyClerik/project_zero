@@ -17,11 +17,11 @@ namespace SkyClerik.Inventory
     {
         [Header("Хранилище данных")]
         [SerializeField]
-        private ItemContainerDefinition _itemDataStorageSO;
+        private ItemContainerDefinition _containerDefinition;
         /// <summary>
         /// ScriptableObject, хранящий данные о предметах в этом контейнере.
         /// </summary>
-        public ItemContainerDefinition ItemDataStorageSO => _itemDataStorageSO;
+        public ItemContainerDefinition ContainerDefinition => _containerDefinition;
 
         [Header("Конфигурация сетки")]
         [Tooltip("Ссылка на UI Document, в котором находится сетка для этого контейнера.")]
@@ -167,13 +167,13 @@ namespace SkyClerik.Inventory
 
         protected virtual void Awake()
         {
-            if (_itemDataStorageSO == null)
+            if (_containerDefinition == null)
             {
                 //Debug.LogWarning("ItemDataStorageSO не назначен в ItemContainer. Создаем новый пустой ItemDataStorageSO.", this);
-                _itemDataStorageSO = ScriptableObject.CreateInstance<ItemContainerDefinition>();
+                _containerDefinition = ScriptableObject.CreateInstance<ItemContainerDefinition>();
             }
-            _itemDataStorageSO = ScriptableObject.Instantiate(_itemDataStorageSO);
-            _itemDataStorageSO.ValidateGuid();
+            _containerDefinition = ScriptableObject.Instantiate(_containerDefinition);
+            _containerDefinition.ValidateGuid();
 
             _gridOccupancy = new bool[_gridDimensions.x, _gridDimensions.y];
             //Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
@@ -193,7 +193,7 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Очищена логическая сетка. Размеры: {_gridDimensions.x}x{_gridDimensions.y}.", this);
 
             // Проходим по всем предметам и помечаем занятые ячейки
-            foreach (var item in _itemDataStorageSO.Items)
+            foreach (var item in _containerDefinition.Items)
             {
                 if (item != null)
                 {
@@ -247,7 +247,7 @@ namespace SkyClerik.Inventory
                     //Debug.Log($"В контейнер добавится : {item}");
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
-                    _itemDataStorageSO.Items.Add(item);
+                    _containerDefinition.Items.Add(item);
                     OnItemAdded?.Invoke(item);
                 }
                 else
@@ -268,7 +268,7 @@ namespace SkyClerik.Inventory
         {
             if (item == null) return false;
 
-            bool removed = _itemDataStorageSO.Items.Remove(item);
+            bool removed = _containerDefinition.Items.Remove(item);
             if (removed)
             {
                 OccupyGridCells(item, false);
@@ -283,8 +283,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void Clear()
         {
-            var itemsCopy = _itemDataStorageSO.Items.ToList();
-            _itemDataStorageSO.Items.Clear();
+            var itemsCopy = _containerDefinition.Items.ToList();
+            _containerDefinition.Items.Clear();
             if (_gridOccupancy != null)
                 Array.Clear(_gridOccupancy, 0, _gridOccupancy.Length);
 
@@ -300,7 +300,7 @@ namespace SkyClerik.Inventory
         public IReadOnlyList<ItemBaseDefinition> GetItems()
         {
             //TODO переделать выдачу листа предметов
-            return _itemDataStorageSO.Items.AsReadOnly();
+            return _containerDefinition.Items.AsReadOnly();
         }
 
         /// <summary>
@@ -313,15 +313,15 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
         /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
-        public ItemBaseDefinition GetItemByWrapperIndex(int wrapperIndex)
+        public ItemBaseDefinition GetItemByItemID(int wrapperIndex)
         {
-            if (_itemDataStorageSO == null || _itemDataStorageSO.Items == null)
+            if (_containerDefinition == null || _containerDefinition.Items == null)
             {
                 Debug.LogWarning("[ItemContainer] Попытка получить предмет по ID из неинициализированного хранилища.");
                 return null;
             }
 
-            foreach (var item in _itemDataStorageSO.Items)
+            foreach (var item in _containerDefinition.Items)
             {
                 if (item != null && item.ID == wrapperIndex)
                 {
@@ -354,7 +354,7 @@ namespace SkyClerik.Inventory
                 //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
                 item.GridPosition = gridPosition;
                 OccupyGridCells(item, true);
-                _itemDataStorageSO.Items.Add(item);
+                _containerDefinition.Items.Add(item);
                 OnItemAdded?.Invoke(item);
                 return true;
             }
@@ -384,7 +384,7 @@ namespace SkyClerik.Inventory
             foreach (var item in itemsToAdd)
             {
                 if (item == null || !item.Stackable || item.Stack <= 0) continue;
-                foreach (var existingItem in _itemDataStorageSO.Items)
+                foreach (var existingItem in _containerDefinition.Items)
                 {
                     if (item.Stack <= 0) break;
                     if (existingItem.DefinitionName == item.DefinitionName && existingItem.Stack < existingItem.MaxStack)
@@ -423,24 +423,25 @@ namespace SkyClerik.Inventory
                         _gridOccupancy[gridX, gridY] = occupy;
                 }
             }
+
             //LogGridState();
+            //void LogGridState()
+            //{
+            //    Debug.Log($"--- Состояние логической сетки ({name}) {_gridDimensions.x}x{_gridDimensions.y} ---");
+            //    for (int y = _gridDimensions.y - 1; y >= 0; y--)
+            //    {
+            //        string row = "";
+            //        for (int x = 0; x < _gridDimensions.x; x++)
+            //        {
+            //            row += _gridOccupancy[x, y] ? "1 " : "0 ";
+            //        }
+            //        Debug.Log(row);
+            //    }
+            //    Debug.Log("-----------------------------------------");
+            //}
+
             OnGridOccupancyChanged?.Invoke();
         }
-
-        //private void LogGridState()
-        //{
-        //    Debug.Log($"--- Состояние логической сетки ({name}) {_gridDimensions.x}x{_gridDimensions.y} ---");
-        //    for (int y = _gridDimensions.y - 1; y >= 0; y--)
-        //    {
-        //        string row = "";
-        //        for (int x = 0; x < _gridDimensions.x; x++)
-        //        {
-        //            row += _gridOccupancy[x, y] ? "1 " : "0 ";
-        //        }
-        //        Debug.Log(row);
-        //    }
-        //    Debug.Log("-----------------------------------------");
-        //}
 
         /// <summary>
         /// Проверяет, свободна ли указанная область в сетке.

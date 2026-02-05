@@ -19,19 +19,12 @@ namespace SkyClerik.Inventory
         [SerializeField]
         [ReadOnly]
         private string _containerGuid;
-        /// <summary>
-        /// Уникальный идентификатор контейнера.
-        /// </summary>
         public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
 
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
         [SerializeField]
         [SerializeReference]
         private List<ItemBaseDefinition> _items = new List<ItemBaseDefinition>();
-
-        /// <summary>
-        /// Список предметов, хранящихся в данном контейнере.
-        /// </summary>
         public List<ItemBaseDefinition> Items => _items;
 
         /// <summary>

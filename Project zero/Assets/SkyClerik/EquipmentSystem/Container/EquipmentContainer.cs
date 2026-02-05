@@ -1,10 +1,9 @@
-﻿using SkyClerik.EquipmentSystem;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
-namespace SkyClerik
+namespace SkyClerik.EquipmentSystem
 {
     public class EquipmentContainer : MonoBehaviour
     {
