@@ -30,12 +30,12 @@ namespace SkyClerik
 
         private void LoadItems()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalServices>();
-            if (gameStateManager == null)
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox == null)
                 return;
 
-            var loadService = gameStateManager.LoadService;
-            var globalProperty = gameStateManager.GlobalGameProperty;
+            var loadService = globalBox.LoadService;
+            var globalProperty = globalBox.GlobalGameProperty;
 
             if (globalProperty.IsNewGame)
                 return;

@@ -1,5 +1,6 @@
 ﻿using SkyClerik.EquipmentSystem;
 using SkyClerik.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,16 +59,16 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Текущая локальная позиция мыши в пространстве UI.
         /// </summary>
-        public Vector2 MouseUILocalPosition => _mouseUILocalPosition;
+        internal Vector2 MouseUILocalPosition => _mouseUILocalPosition;
 
         private static ItemVisual _currentDraggedItem = null;
-        public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
+        internal static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
 
         private ItemBaseDefinition _givenItem = null;
         /// <summary>
         /// Предмет, который был выбран для отдачи (например, при передаче NPC).
         /// </summary>
-        public ItemBaseDefinition GiveItem => _givenItem;
+        internal ItemBaseDefinition GiveItem => _givenItem;
 
         [SerializeField]
         private ItemContainer _inventoryItemContainer;
@@ -75,7 +76,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Определяет, виден ли UI инвентаря.
         /// </summary>
-        public bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
+        internal bool IsInventoryVisible { get => _inventoryPage.Root.enabledSelf; set => _inventoryPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _craftItemContainer;
@@ -83,7 +84,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Определяет, виден ли UI страницы крафта.
         /// </summary>
-        public bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
+        internal bool IsCraftVisible { get => _craftPage.Root.enabledSelf; set => _craftPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _cheastItemContainer;
@@ -91,7 +92,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Определяет, виден ли UI страницы сундука.
         /// </summary>
-        public bool IsCheastVisible { get => _cheastPage.Root.enabledSelf; set => _cheastPage.Root.SetEnabled(value); }
+        internal bool IsCheastVisible { get => _cheastPage.Root.enabledSelf; set => _cheastPage.Root.SetEnabled(value); }
 
         [SerializeField]
         private ItemContainer _lutItemContainer;
@@ -99,38 +100,19 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Определяет, виден ли UI страницы лута.
         /// </summary>
-        public bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
+        internal bool IsLutVisible { get => _lutPage.Root.enabledSelf; set => _lutPage.Root.SetEnabled(value); }
 
 
         [SerializeField]
         private EquipmentContainer _quipmentContainer;
         private EquipmentPageElement _equipPage;
-        public bool IsEquipVisible { get => _equipPage.Root.enabledSelf; set => _equipPage.Root.SetEnabled(value); }
+        internal bool IsEquipVisible { get => _equipPage.Root.enabledSelf; set => _equipPage.Root.SetEnabled(value); }
 
         private List<ContainerAndPage> _containersAndPages = new List<ContainerAndPage>();
         /// <summary>
         /// Список всех зарегистрированных связок контейнеров и их UI-страниц.
         /// </summary>
-        public List<ContainerAndPage> ContainersAndPages => _containersAndPages;
-
-        /// <summary>
-        /// Делегат для события "предмет отдан".
-        /// </summary>
-        /// <param name="item">Предмет, который был отдан.</param>
-        public delegate void OnItemGivenDelegate(ItemBaseDefinition item);
-        /// <summary>
-        /// Событие, вызываемое при отдаче предмета (например, при взаимодействии с NPC).
-        /// </summary>
-        public event OnItemGivenDelegate OnItemGiven;
-        /// <summary>
-        /// Вызывает событие <see cref="OnItemGiven"/>.
-        /// </summary>
-        /// <param name="item">Предмет, который был отдан.</param>
-        public void RiseItemGiveEvent(ItemBaseDefinition item)
-        {
-            Debug.Log($"TriggerItemGiveEvent: {item}");
-            OnItemGiven?.Invoke(item);
-        }
+        internal List<ContainerAndPage> ContainersAndPages => _containersAndPages;
 
         private void Awake()
         {
@@ -174,7 +156,7 @@ namespace SkyClerik.Inventory
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
 
-            _globalGameProperty = ServiceProvider.Get<GlobalServices>()?.GlobalGameProperty;
+            _globalGameProperty = ServiceProvider.Get<GlobalBox>()?.GlobalGameProperty;
 
             CloseAll();
         }
@@ -371,13 +353,15 @@ namespace SkyClerik.Inventory
         /// Если предмет не будет найден, инвентарь не откроется.
         /// </summary>
         /// <param name="itemID">WrapperIndex искомого предмета.</param>
-        public void OpenInventoryFromGiveItem(int itemID)
+        internal void OpenInventoryFromGiveItem(int itemID)
         {
             _givenItem = _inventoryItemContainer.GetItemByItemID(itemID);
             if (_givenItem != null)
             {
+                Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
-                OpenInventoryNormal();
+                SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
+                _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
             }
         }
 
@@ -386,26 +370,28 @@ namespace SkyClerik.Inventory
         /// Если ссылка на предмет null, инвентарь не откроется.
         /// </summary>
         /// <param name="item">Предмет, который нужно выбрать.</param>
-        public void OpenInventoryGiveItem(ItemBaseDefinition item)
+        internal void OpenInventoryGiveItem(ItemBaseDefinition item)
         {
             _givenItem = item;
             if (_givenItem != null)
             {
+                Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
-                OpenInventoryNormal();
+                SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
+                _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
             }
         }
 
         /// <summary>
         /// Открывает обычный режим отображения инвентаря.
         /// </summary>
-        public void OpenInventoryAndCraft()
+        internal void OpenInventoryAndCraft()
         {
             OpenInventoryNormal();
             OpenCraft();
         }
 
-        public void OpenInventoryNormal()
+        internal void OpenInventoryNormal()
         {
             _givenItem = null;
             SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
@@ -423,7 +409,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Открывает страницу сундука.
         /// </summary>
-        public void OpenCheast()
+        internal void OpenCheast()
         {
             OpenInventoryNormal();
             SetPage(_cheastPage.Root, display: true, visible: true, enabled: true);
@@ -431,7 +417,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Открывает страницу лута.
         /// </summary>
-        public void OpenLut()
+        internal void OpenLut()
         {
             OpenInventoryNormal();
             SetPage(_lutPage.Root, display: true, visible: true, enabled: true);
@@ -439,7 +425,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Открывает страницу экипировки.
         /// </summary>
-        public void OpenEquip()
+        internal void OpenEquip()
         {
             OpenInventoryNormal();
             SetPage(_equipPage.Root, display: true, visible: true, enabled: true);
@@ -447,7 +433,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Закрывает все страницы.
         /// </summary>
-        public void CloseAll()
+        internal void CloseAll()
         {
             SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
             SetAllSelfPage(display: false, visible: false, enabled: false);

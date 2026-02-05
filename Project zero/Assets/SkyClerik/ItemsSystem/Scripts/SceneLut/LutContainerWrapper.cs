@@ -4,6 +4,10 @@ using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Объект, представляющий собой контейнер для лута.
+    /// Хранит список предметов, которые могут быть переданы в другой контейнер.
+    /// </summary>
     public class LutContainerWrapper
     {
         private ItemsList _itemsList;
@@ -20,6 +24,7 @@ namespace SkyClerik.Inventory
                 else
                     Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperIndex} в свой локальный контейнер лута");
             }
+
         }
 
         // -- Через вызов окна для игрока
@@ -29,8 +34,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         private void TransferItemsToPlayerLutContainer()
         {
-            var playerLutContainer = ServiceProvider.Get<PlayerLutContainer>();
-            playerLutContainer.AddItems(_itemsList);
+            var inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
+            inventoryContainersAPI.AddItemsToLutContainer(_itemsList);
         }
 
         /// <summary>
@@ -39,10 +44,8 @@ namespace SkyClerik.Inventory
         public void OpenLutPage()
         {
             TransferItemsToPlayerLutContainer();
-
-            var itemsPage = ServiceProvider.Get<ItemsPage>();
-            itemsPage.OpenInventoryAndCraft();
-            itemsPage.OpenLut();
+            var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            inventoryAPI.OpenLut();
         }
 
         // -- Передача всего возможного лута в инвентарь игрока
@@ -52,8 +55,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void TransferItemsToPlayerInventoryContainer()
         {
-            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
-            playerItemContainer.AddItems(_itemsList);
+            var inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
+            inventoryContainersAPI.AddItemsToPlayerInventory(_itemsList);
         }
     }
 }

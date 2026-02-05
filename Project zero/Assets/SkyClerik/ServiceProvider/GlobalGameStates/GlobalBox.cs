@@ -7,7 +7,7 @@ namespace SkyClerik.Utils
     /// Глобальный менеджер, отвечающий за управление состоянием игры,
     /// сервисами сохранения и загрузки. Регистрируется в <see cref="ServiceProvider"/>.
     /// </summary>
-    public class GlobalServices : MonoBehaviour
+    public class GlobalBox : MonoBehaviour
     {
         [SerializeField]
         private GlobalGameProperty _globalGameProperty = new GlobalGameProperty();
@@ -17,11 +17,11 @@ namespace SkyClerik.Utils
         /// </summary>
         public GlobalGameProperty GlobalGameProperty => _globalGameProperty;
         /// <summary>
-        /// Возвращает экземпляр сервиса сохранения игры.
+        /// Возвращает экземпляр сервиса сохранения данных.
         /// </summary>
         public SaveService SaveService { get; } = new SaveService();
         /// <summary>
-        /// Возвращает экземпляр сервиса загрузки игры.
+        /// Возвращает экземпляр сервиса загрузки данных.
         /// </summary>
         public LoadService LoadService { get; } = new LoadService();
 

@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
@@ -24,7 +24,7 @@ namespace SkyClerik.Inventory
         /// Добавляет предметы из указанного контейнера лута в текущий контейнер.
         /// </summary>
         /// <param name="sourceLut">Контейнер лута, из которого будут взяты предметы.</param>
-        public void AddItems(ItemsList itemsList)
+        internal void AddItems(ItemsList itemsList)
         {
             if (itemsList.Items.Count <= 0)
                 return;

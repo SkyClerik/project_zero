@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 
@@ -66,10 +66,10 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Возвращает префаб для мира по его ID (int). ID должен совпадать с индексом в списке.
+        /// Возвращает префаб для мира по его itemID (int). itemID должен совпадать с индексом в списке.
         /// </summary>
-        /// <param name="itemID">Уникальный ID предмета (int).</param>
-        /// <returns>Префаб GameObject или null, если ID не найден или индекс вне диапазона.</returns>
+        /// <param name="itemID">Уникальный itemID предмета (int).</param>
+        /// <returns>Префаб GameObject или null, если itemID не найден или индекс вне диапазона.</returns>
         public GameObject GetPrefab(int itemID)
         {
             // Проверяем, что itemID является валидным индексом для списка.

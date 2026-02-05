@@ -19,8 +19,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         private void TransferItemsToPlayerLutContainer()
         {
-            var playerLutContainer = ServiceProvider.Get<PlayerLutContainer>();
-            playerLutContainer.AddItems(_itemsList);
+            var inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
+            inventoryContainersAPI.AddItemsToLutContainer(_itemsList);
         }
 
         /// <summary>
@@ -28,10 +28,10 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void OpenLutPage()
         {
+            //TODO Обязательно не забыть что лут нужно возвращать при закрытии окна
             TransferItemsToPlayerLutContainer();
-
-            var itemsPage = ServiceProvider.Get<ItemsPage>();
-            itemsPage.OpenLut();
+            var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            inventoryAPI.OpenLut();
         }
 
         // -- Передача всего возможного лута в инвентарь игрока
@@ -41,8 +41,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void TransferItemsToPlayerInventoryContainer()
         {
-            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
-            playerItemContainer.AddItems(_itemsList);
+            var inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
+            inventoryContainersAPI.AddItemsToPlayerInventory(_itemsList);
         }
     }
 }

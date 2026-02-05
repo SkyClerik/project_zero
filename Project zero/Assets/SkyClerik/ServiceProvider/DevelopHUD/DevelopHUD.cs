@@ -1,6 +1,6 @@
-﻿using SkyClerik.EquipmentSystem;
-using SkyClerik.Inventory;
+﻿using SkyClerik.Inventory;
 using UnityEngine;
+using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
@@ -35,8 +35,9 @@ namespace SkyClerik.Utils
 
         private Button _bExitGame;
         private const string _bExitGameID = "b_exit_game";
-        private ItemsPage _itemsPage;
         private GlobalGameProperty _globalGameProperty;
+        private InventoryAPI _inventoryAPI;
+        private InventoryContainersAPI _inventoryContainersAPI;
 
         [SerializeField]
         private LutContainer _developLut;
@@ -48,8 +49,10 @@ namespace SkyClerik.Utils
 
         void Start()
         {
-            _itemsPage = ServiceProvider.Get<ItemsPage>();
-            _globalGameProperty = ServiceProvider.Get<GlobalServices>()?.GlobalGameProperty;
+            //_itemsPage = ServiceProvider.Get<ItemsPage>();
+            _globalGameProperty = ServiceProvider.Get<GlobalBox>()?.GlobalGameProperty;
+            _inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            _inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
 
             _developHudUiDocument.enabled = true;
             var root = _developHudUiDocument.rootVisualElement;
@@ -92,70 +95,109 @@ namespace SkyClerik.Utils
 
         private void _bInventory_clicked()
         {
-            if (_itemsPage.IsInventoryVisible)
-                _itemsPage.CloseAll();
+            if (_inventoryAPI.IsInventoryVisible)
+            {
+                _inventoryAPI.CloseAll();
+            }
             else
-                _itemsPage.OpenInventoryAndCraft();
+            {
+                // Открыть окно инвентаря (и попробовать открыть крафт потому что его доступность решается глобальным логическим свойством)
+                _inventoryAPI.OpenInventoryAndCraft();
+            }
         }
 
         private void _bEquip_clicked()
         {
-            if (_itemsPage.IsEquipVisible)
-                _itemsPage.CloseAll();
+            if (_inventoryAPI.IsEquipVisible)
+            {
+                _inventoryAPI.CloseAll();
+            }
             else
-                _itemsPage.OpenEquip();
+            {
+                // Открыть окно экипировки (еще в разработке)
+                _inventoryAPI.OpenEquip();
+            }
         }
 
         private void _bInventoryGive_clicked()
         {
-            if (_itemsPage.IsInventoryVisible)
-                _itemsPage.CloseAll();
+            if (_inventoryAPI.IsInventoryVisible)
+            {
+                _inventoryAPI.OnItemGiven -= OnItemGivenCallback;
+                _inventoryAPI.CloseAll();
+            }
             else
-                _itemsPage.OpenInventoryFromGiveItem(itemID: 0);
+            {
+                // открыть инвентарь для выбора предмета (отписки обязательные)
+                _inventoryAPI.OnItemGiven += OnItemGivenCallback;
+                _inventoryAPI.OpenInventoryFromGiveItem(itemID: 0);
+            }
+        }
+
+        private void OnItemGivenCallback(ItemBaseDefinition itemBaseDefinition)
+        {
+            if (itemBaseDefinition.ID == 0)
+            {
+                _inventoryAPI.OnItemGiven -= OnItemGivenCallback;
+                Debug.Log($"выбран нужный предмет : {itemBaseDefinition.ID} - {itemBaseDefinition}");
+                _inventoryAPI.CloseAll();
+            }
+            else
+            {
+                Debug.Log($"выбран не нужный предмет : {itemBaseDefinition.ID} - {itemBaseDefinition}");
+            }
         }
 
         private void _bTrueCraft_clicked()
         {
+            // Изменить доступность крафта для игрока
             _globalGameProperty.MakeCraftAccessible = !_globalGameProperty.MakeCraftAccessible;
         }
 
         private void _bAddItem_clicked()
         {
+            // Отправить из контейнера в инвентарь игрока
             _developLut.TransferItemsToPlayerInventoryContainer();
         }
 
         private void _bSave_clicked()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalServices>();
-            if (gameStateManager == null)
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox == null)
                 return;
 
-            var saveService = gameStateManager.SaveService;
-            var globalState = gameStateManager.GlobalGameProperty;
+            var saveService = globalBox.SaveService;
+            var globalState = globalBox.GlobalGameProperty;
 
+            // Сохраняем и глобальные настройки и инвентарь
             // slotIndex будет 0 всегда так как мы не планируем слоты сохранения            
             saveService.SaveAll(globalState, 0);
         }
 
         private void _bCheast_clicked()
         {
-            if (_itemsPage.IsCheastVisible)
-                _itemsPage.CloseAll();
+            if (_inventoryAPI.IsCheastVisible)
+            {
+                _inventoryAPI.CloseAll();
+            }
             else
-                _itemsPage.OpenCheast();
+            {
+                // Открыть сундук игрока
+                _inventoryAPI.OpenCheast();
+            }
         }
 
         private void _bLut_clicked()
         {
-            //if (_itemsPage.IsLutVisible)
-            //    _itemsPage.CloseAll();
-            //else
-            //    _itemsPage.OpenLut();
-
-            if (_itemsPage.IsLutVisible)
-                _itemsPage.CloseAll();
+            if (_inventoryAPI.IsLutVisible)
+            {
+                _inventoryAPI.CloseAll();
+            }
             else
+            {
+                // Открыть окно с лутом (имеются баги)
                 _developLut.OpenLutPage();
+            }
         }
 
 

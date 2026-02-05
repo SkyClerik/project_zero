@@ -164,7 +164,6 @@ namespace SkyClerik.Inventory
             }).ExecuteLater(1);
         }
 #endif
-
         protected virtual void Awake()
         {
             if (_containerDefinition == null)
@@ -210,7 +209,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="itemTemplates">Список шаблонов предметов для добавления.</param>
         /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
-        public List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
+        internal List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
             if (itemTemplates == null || !itemTemplates.Any())
                 return new List<ItemBaseDefinition>();
@@ -224,7 +223,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="itemsToAdd">Список предметов для добавления.</param>
         /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
-        public List<ItemBaseDefinition> AddItems(List<ItemBaseDefinition> itemsToAdd)
+        internal List<ItemBaseDefinition> AddItems(List<ItemBaseDefinition> itemsToAdd)
         {
             if (itemsToAdd == null)
                 return new List<ItemBaseDefinition>();
@@ -264,7 +263,7 @@ namespace SkyClerik.Inventory
         /// <param name="item">Предмет для удаления.</param>
         /// <param name="destroy">Если true, объект предмета будет уничтожен после удаления.</param>
         /// <returns>True, если предмет успешно удален; иначе false.</returns>
-        public bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
+        internal bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
         {
             if (item == null) return false;
 
@@ -281,7 +280,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Полностью очищает контейнер от всех предметов.
         /// </summary>
-        public void Clear()
+        internal void Clear()
         {
             var itemsCopy = _containerDefinition.Items.ToList();
             _containerDefinition.Items.Clear();
@@ -297,7 +296,7 @@ namespace SkyClerik.Inventory
         /// Возвращает список предметов, находящихся в контейнере.
         /// </summary>
         /// <returns>Список предметов только для чтения.</returns>
-        public IReadOnlyList<ItemBaseDefinition> GetItems()
+        internal IReadOnlyList<ItemBaseDefinition> GetItems()
         {
             //TODO переделать выдачу листа предметов
             return _containerDefinition.Items.AsReadOnly();
@@ -306,14 +305,14 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Ищет предмет в контейнере по его WrapperIndex.
         /// </summary>
-        /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
+        /// <param name="itemID">WrapperIndex искомого предмета.</param>
         /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
         /// <summary>
         /// Ищет предмет в контейнере по его WrapperIndex.
         /// </summary>
-        /// <param name="wrapperIndex">WrapperIndex искомого предмета.</param>
+        /// <param name="itemID">WrapperIndex искомого предмета.</param>
         /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
-        public ItemBaseDefinition GetItemByItemID(int wrapperIndex)
+        internal ItemBaseDefinition GetItemByItemID(int itemID)
         {
             if (_containerDefinition == null || _containerDefinition.Items == null)
             {
@@ -323,12 +322,12 @@ namespace SkyClerik.Inventory
 
             foreach (var item in _containerDefinition.Items)
             {
-                if (item != null && item.ID == wrapperIndex)
+                if (item != null && item.ID == itemID)
                 {
                     return item;
                 }
             }
-            Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{wrapperIndex}' не найден в контейнере '{name}'.");
+            Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{itemID}' не найден в контейнере '{name}'.");
             return null;
         }
 
@@ -338,7 +337,7 @@ namespace SkyClerik.Inventory
         /// <param name="item">Предмет для добавления.</param>
         /// <param name="gridPosition">Позиция в сетке, куда нужно добавить предмет.</param>
         /// <returns>True, если предмет успешно добавлен; иначе false.</returns>
-        public bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
+        internal bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
         {
             //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.CurrentWidth}x{item.Dimensions.CurrentHeight}) на позицию {gridPosition}.", this);
             if (item == null)
@@ -367,7 +366,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="item">Предмет для перемещения.</param>
         /// <param name="newPosition">Новая позиция в сетке.</param>
-        public void MoveItem(ItemBaseDefinition item, Vector2Int newPosition)
+        internal void MoveItem(ItemBaseDefinition item, Vector2Int newPosition)
         {
             OccupyGridCells(item, false);
             item.GridPosition = newPosition;

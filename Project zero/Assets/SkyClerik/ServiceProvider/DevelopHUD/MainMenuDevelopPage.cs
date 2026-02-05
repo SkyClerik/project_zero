@@ -77,11 +77,11 @@ namespace SkyClerik
 
         private void OnNewGameClick()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalServices>();
-            if (gameStateManager != null)
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox != null)
             {
                 Hide();
-                gameStateManager.GlobalGameProperty.SetNewGame();
+                globalBox.GlobalGameProperty.SetNewGame();
                 StartChain();
             }
             else
@@ -92,11 +92,11 @@ namespace SkyClerik
 
         private void OnLoadGameClick()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalServices>();
-            if (gameStateManager != null)
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox != null)
             {
                 Hide();
-                gameStateManager.GlobalGameProperty.SetLoadGame();
+                globalBox.GlobalGameProperty.SetLoadGame();
                 StartChain();
             }
             else

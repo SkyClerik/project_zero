@@ -1,4 +1,4 @@
-using UnityEngine.Toolbox;
+﻿using UnityEngine.Toolbox;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.DataEditor;
@@ -303,7 +303,7 @@ namespace SkyClerik.Inventory
             {
                 if (_itemsPage.GiveItem != null)
                 {
-                    _itemsPage.RiseItemGiveEvent(_itemDefinition);
+                    ServiceProvider.Get<InventoryAPI>().RiseItemGiveEvent(_itemDefinition);
                 }
                 else
                 {

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
@@ -11,18 +11,18 @@ namespace SkyClerik.Inventory
     public class GlobalItemStorage : MonoBehaviour
     {
         [SerializeField]
-        private ItemsDataStorageDefinition globalItemsStorageDefinition;
+        private ItemsDataStorageDefinition _globalItemsStorageDefinition;
         [SerializeField]
-        private ItemPrefabsStorageDefinition itemPrefabsStorageDefinition;
+        private ItemPrefabsStorageDefinition _itemPrefabsStorageDefinition;
 
         /// <summary>
         /// Возвращает определение глобального хранилища данных предметов.
         /// </summary>
-        public ItemsDataStorageDefinition GlobalItemsStorageDefinition => globalItemsStorageDefinition;
+        public ItemsDataStorageDefinition GlobalItemsStorageDefinition => _globalItemsStorageDefinition;
         /// <summary>
         /// Возвращает определение хранилища префабов предметов.
         /// </summary>
-        public ItemPrefabsStorageDefinition ItemPrefabsStorageDefinition => itemPrefabsStorageDefinition;
+        public ItemPrefabsStorageDefinition ItemPrefabsStorageDefinition => _itemPrefabsStorageDefinition;
 
         private void Awake()
         {

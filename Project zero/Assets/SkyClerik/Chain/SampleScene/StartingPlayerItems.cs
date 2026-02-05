@@ -24,12 +24,12 @@ namespace SkyClerik
 
         public void ExecuteStep()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalServices>();
-            if (gameStateManager == null)
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox == null)
                 return;
 
 
-            if (gameStateManager.GlobalGameProperty.IsNewGame)
+            if (globalBox.GlobalGameProperty.IsNewGame)
                 StartCoroutine(GiveItemsToPlayer());
             else
                 Next();
