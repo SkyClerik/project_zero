@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Toolbox;
 using System.Collections;
 using SkyClerik.Inventory;
@@ -24,7 +24,7 @@ namespace SkyClerik
 
         public void ExecuteStep()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalServices>();
             if (gameStateManager == null)
                 return;
 

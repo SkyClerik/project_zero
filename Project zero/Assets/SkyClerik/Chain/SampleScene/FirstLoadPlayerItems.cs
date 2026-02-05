@@ -1,4 +1,4 @@
-using SkyClerik.Utils;
+п»їusing SkyClerik.Utils;
 using UnityEngine;
 using UnityEngine.Toolbox;
 
@@ -30,7 +30,7 @@ namespace SkyClerik
 
         private void LoadItems()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalServices>();
             if (gameStateManager == null)
                 return;
 
@@ -40,7 +40,7 @@ namespace SkyClerik
             if (globalProperty.IsNewGame)
                 return;
 
-            // slotIndex будет 0 всегда так как мы не планируем слоты сохранения
+            // slotIndex Р±СѓРґРµС‚ 0 РІСЃРµРіРґР° С‚Р°Рє РєР°Рє РјС‹ РЅРµ РїР»Р°РЅРёСЂСѓРµРј СЃР»РѕС‚С‹ СЃРѕС…СЂР°РЅРµРЅРёСЏ
             var slotFolderPath = loadService.GetSaveSlotFolderPath(slotIndex: 0);
             loadService.LoadGlobalState(globalProperty, slotFolderPath);
             loadService.LoadAll(globalProperty, slotFolderPath);

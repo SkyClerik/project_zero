@@ -174,7 +174,7 @@ namespace SkyClerik.Inventory
             _itemTooltip = new ItemTooltip();
             _document.rootVisualElement.Add(_itemTooltip);
 
-            _globalGameProperty = ServiceProvider.Get<GlobalManager>()?.GlobalGameProperty;
+            _globalGameProperty = ServiceProvider.Get<GlobalServices>()?.GlobalGameProperty;
 
             CloseAll();
         }

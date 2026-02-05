@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.Toolbox;
 using SkyClerik.Utils;
@@ -77,7 +77,7 @@ namespace SkyClerik
 
         private void OnNewGameClick()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalServices>();
             if (gameStateManager != null)
             {
                 Hide();
@@ -92,7 +92,7 @@ namespace SkyClerik
 
         private void OnLoadGameClick()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalServices>();
             if (gameStateManager != null)
             {
                 Hide();

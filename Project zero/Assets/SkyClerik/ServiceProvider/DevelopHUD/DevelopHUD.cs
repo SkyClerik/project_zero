@@ -49,7 +49,7 @@ namespace SkyClerik.Utils
         void Start()
         {
             _itemsPage = ServiceProvider.Get<ItemsPage>();
-            _globalGameProperty = ServiceProvider.Get<GlobalManager>()?.GlobalGameProperty;
+            _globalGameProperty = ServiceProvider.Get<GlobalServices>()?.GlobalGameProperty;
 
             _developHudUiDocument.enabled = true;
             var root = _developHudUiDocument.rootVisualElement;
@@ -126,7 +126,7 @@ namespace SkyClerik.Utils
 
         private void _bSave_clicked()
         {
-            var gameStateManager = ServiceProvider.Get<GlobalManager>();
+            var gameStateManager = ServiceProvider.Get<GlobalServices>();
             if (gameStateManager == null)
                 return;
 

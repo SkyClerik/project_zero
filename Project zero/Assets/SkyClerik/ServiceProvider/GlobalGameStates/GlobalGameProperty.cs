@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SkyClerik.Utils
 {
@@ -51,7 +51,6 @@ namespace SkyClerik.Utils
         /// </summary>
         public int PlayerScore => _playerScore;
 
-        [Header("Сохранение")]
         [Tooltip("Установлено в 'true', если игроку разрешено открыть окно крафта")]
         [SerializeField]
         private bool _craftAccessible = false;

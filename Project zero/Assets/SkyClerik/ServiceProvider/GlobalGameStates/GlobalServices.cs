@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Utils
@@ -7,7 +7,7 @@ namespace SkyClerik.Utils
     /// Глобальный менеджер, отвечающий за управление состоянием игры,
     /// сервисами сохранения и загрузки. Регистрируется в <see cref="ServiceProvider"/>.
     /// </summary>
-    public class GlobalManager : MonoBehaviour
+    public class GlobalServices : MonoBehaviour
     {
         [SerializeField]
         private GlobalGameProperty _globalGameProperty = new GlobalGameProperty();

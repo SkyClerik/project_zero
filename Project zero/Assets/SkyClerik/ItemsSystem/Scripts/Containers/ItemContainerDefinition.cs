@@ -60,8 +60,8 @@ namespace SkyClerik.Inventory
                     continue;
                 }
 
-                // Используем WrapperIndex для получения клона оригинального предмета из GlobalItemStorage
-                ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItemByIndex(deserializedItem.ID);
+                // Используем itemID для получения клона оригинального предмета из GlobalItemStorage
+                ItemBaseDefinition originalClone = globalItemStorage.GlobalItemsStorageDefinition.GetClonedItem(deserializedItem.ID);
 
                 if (originalClone != null)
                 {
