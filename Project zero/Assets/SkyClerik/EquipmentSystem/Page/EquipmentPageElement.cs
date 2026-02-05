@@ -98,6 +98,7 @@ namespace SkyClerik.EquipmentSystem
 
             _cells = _inventoryGrid.Children().ToList(); // Инициализация _cells теперь здесь, после ожидания, и из _inventoryGrid
 
+            // Это в отдельный метод стоит вынести потому что при переносе с инвентаря нужно будет обновление
             // Заполняем CallPlace для каждого EquipmentSlot
             for (int i = 0; i < _equipmentContainer.PlayerEquipmentContainerDefinition.EquipmentSlots.Count; i++)
             {
