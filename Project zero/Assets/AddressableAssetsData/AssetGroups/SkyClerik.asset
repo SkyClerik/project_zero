@@ -22,8 +22,58 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2827add769d20904eadf88f6dbe78bcd
+    m_Address: Assets/SkyClerik/ItemsSystem/PlayerContainers/PlayerCraftContainer.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3cd4664d8afb0734a9fa1bf570965410
+    m_Address: Assets/SkyClerik/DataEditor/Databases/StateDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41a3e04031bd0da4d9526500ae81686b
+    m_Address: Assets/SkyClerik/ItemsSystem/PlayerContainers/PlayerLutContainer.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 597b1778d5825124dad19d8e6353cf28
+    m_Address: Assets/SkyClerik/ItemsSystem/PlayerContainers/PlayerInventoryContainer.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90d0f01eb359f97418df4d2c8203210e
+    m_Address: Assets/SkyClerik/DataEditor/Databases/ArmorDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9219a07650ae8b242aab8afaf68bb7c4
     m_Address: Assets/SkyClerik/StorageWrapper/Data/Item Prefabs Storage Definition.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99106de3cb9c48544ba2158b7a83187d
+    m_Address: Assets/SkyClerik/DataEditor/Databases/UnitDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a05b48aaa05a68847adc5dbc86084e8c
+    m_Address: Assets/SkyClerik/DataEditor/Databases/KeyItemDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2c261aa040c3514e9351b17bbb6bbc6
+    m_Address: Assets/SkyClerik/ItemsSystem/PlayerContainers/PlayerCheastContainer.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4602bf18b03cbf498071858a0028bcb
+    m_Address: Assets/SkyClerik/DataEditor/Databases/WeaponDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c46238c55c1d0a8438113c80c8f1821c
+    m_Address: Assets/SkyClerik/DataEditor/Databases/AccessoryDatabase.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -32,8 +82,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cdaf9ece590758e42936394cc83d83e6
+    m_Address: Assets/SkyClerik/DataEditor/Databases/RecipeDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d97ccd6843cc0ba46a5ff5054d62fad2
     m_Address: Assets/SkyClerik/Images/Items/Potions/8.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc8fe8a8e625b724f8ae2d1b71585cc9
+    m_Address: Assets/SkyClerik/DataEditor/Databases/TypeDatabase.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -42,8 +102,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f78deb616c2eb0844b90d36704c0c2a4
+    m_Address: Assets/SkyClerik/DataEditor/Databases/ClassDatabase.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f946925a07946fa40a425f1b0198ff5a
     m_Address: Assets/SkyClerik/Images/Develop/Statue of the goddess of testers.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fab1c7daa38c4b74487542e7b7b17f42
+    m_Address: Assets/SkyClerik/DataEditor/Databases/ConsumableItemDatabase.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

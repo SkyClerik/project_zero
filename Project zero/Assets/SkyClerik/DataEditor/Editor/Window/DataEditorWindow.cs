@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System;
@@ -17,7 +17,7 @@ namespace UnityEngine.DataEditor
         private readonly Dictionary<string, Func<ITabController>> _tabControllerFactories = new Dictionary<string, Func<ITabController>>();
         private readonly Dictionary<Type, string> _definitionTypeToTabName = new Dictionary<Type, string>();
 
-        [MenuItem("Tools/Data Editor")]
+        [MenuItem("SkyClerik/Tools/Data Editor")]
         public static void ShowWindow()
         {
             GetWindow<DataEditorWindow>("Data Editor");

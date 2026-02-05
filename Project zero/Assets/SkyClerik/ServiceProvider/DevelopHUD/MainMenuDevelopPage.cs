@@ -17,11 +17,20 @@ namespace SkyClerik
         [Tooltip("Сюда перетаскиваем первое звено которое начнет цепочку")]
         private MonoBehaviour _firstStep;
         private IChain _chainHead;
+
+        [SerializeField]
+        [ReadOnly]
         private UIDocument _uiDocument;
+
+        private void OnValidate()
+        {
+            _uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
+        }
 
         private void Awake()
         {
-            _uiDocument = GetComponent<UIDocument>();
+            _uiDocument.enabled = true;
+            //_uiDocument.rootVisualElement.SetDisplay(false);
 
             if (_firstStep != null && _firstStep is IChain)
                 _chainHead = _firstStep as IChain;

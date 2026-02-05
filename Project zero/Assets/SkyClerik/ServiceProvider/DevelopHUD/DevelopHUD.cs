@@ -15,7 +15,7 @@ namespace SkyClerik.Utils
     {
         [SerializeField]
         [ReadOnly]
-        private UIDocument _developHudUiDocument;
+        private UIDocument _uiDocument;
         private Button _bInventoryNormal;
         private const string _bInventoryNormalID = "b_inventory_normal";
         private Button _bEquip;
@@ -44,9 +44,14 @@ namespace SkyClerik.Utils
 
         private void OnValidate()
         {
-            _developHudUiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
+            _uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
         }
 
+        private void Awake()
+        {
+            _uiDocument.enabled = true;
+            //_uiDocument.rootVisualElement.SetDisplay(false);
+        }
         void Start()
         {
             //_itemsPage = ServiceProvider.Get<ItemsPage>();
@@ -54,8 +59,8 @@ namespace SkyClerik.Utils
             _inventoryAPI = ServiceProvider.Get<InventoryAPI>();
             _inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
 
-            _developHudUiDocument.enabled = true;
-            var root = _developHudUiDocument.rootVisualElement;
+            _uiDocument.enabled = true;
+            var root = _uiDocument.rootVisualElement;
             _bInventoryNormal = root.Q<Button>(_bInventoryNormalID);
             _bEquip = root.Q<Button>(_bEquipID);
             _bInventoryGive = root.Q<Button>(_bInventoryGiveID);

@@ -1,48 +1,49 @@
+﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
-class FindMissingComponents
+namespace SkyClerik.Editor
 {
-
-    static Transform[] transforms;
-    static List<UnityEngine.Object> offenders = new List<UnityEngine.Object>();
-    // Add menu item to the menu.
-    [MenuItem("GameObject/Find Missing Components")]
-    static void FindMissingComponentsFunction()
+    class FindMissingComponents
     {
-        transforms = GameObject.FindObjectsOfType <Transform>();
-        offenders.Clear();
-        foreach (var item in transforms)
-        {
-            Debug.Log("checking: " + item.name);
-            checkObject(item.gameObject);
-        }
-        Selection.objects = offenders.ToArray();
-        Debug.Log("Found " + offenders.Count.ToString() + " objects with missing components");
-    }
+        static List<GameObject> offenders = new List<GameObject>();
 
-    static void checkObject(GameObject go)
-    {
-        Component[] comps = go.GetComponents<Component>();
-        foreach (var item in comps)
+        [MenuItem("SkyClerik/GameObject/Find & Select Missing Components")]
+        static void FindAndSelectMissingComponents()
         {
-            if (item == null)
+            offenders.Clear();
+            Transform[] allTransformsInScene = GameObject.FindObjectsOfType<Transform>(true);
+
+            foreach (var item in allTransformsInScene)
             {
-                offenders.Add(go as UnityEngine.Object);
-                break;
+                checkObject(item.gameObject);
+            }
+
+            if (offenders.Count > 0)
+            {
+                Selection.objects = offenders.Distinct().ToArray();
+                Debug.Log($"Found {offenders.Count} objects with missing components: {string.Join(", ", offenders.Select(go => go.name))}");
+            }
+            else
+            {
+                Debug.Log("No objects with missing components found in the current scene. You're doing great! ✨");
+            }
+        }
+
+        static void checkObject(GameObject go)
+        {
+            Component[] comps = go.GetComponents<Component>();
+            foreach (var item in comps)
+            {
+                if (item == null)
+                {
+                    offenders.Add(go);
+                    break;
+                }
             }
         }
     }
-	
-    // Validate the menu item.
-    // The item will be disabled if this function returns false.
-    [MenuItem("GameObject/Select Missing Components", true)]
-    static bool ValidateFindMissingComponents()
-    {
-        return true;
-    }
-		
 }
+#endif

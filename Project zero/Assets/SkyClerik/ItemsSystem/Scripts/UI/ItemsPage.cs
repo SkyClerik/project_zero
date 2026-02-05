@@ -48,7 +48,9 @@ namespace SkyClerik.Inventory
     /// </summary>
     public class ItemsPage : MonoBehaviour
     {
-        private UIDocument _document;
+        [SerializeField]
+        [ReadOnly]
+        private UIDocument _uiDocument;
         private Vector2 _mousePositionOffset;
         private GlobalGameProperty _globalGameProperty;
         private ItemTooltip _itemTooltip;
@@ -114,9 +116,15 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal List<ContainerAndPage> ContainersAndPages => _containersAndPages;
 
+        private void OnValidate()
+        {
+            _uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
+        }
+
         private void Awake()
         {
             ServiceProvider.Register(this);
+            _uiDocument.enabled = true;
         }
 
         private void OnDestroy()
@@ -131,30 +139,27 @@ namespace SkyClerik.Inventory
 
         protected void Start()
         {
-            _document = GetComponentInChildren<UIDocument>(includeInactive: false);
-            _document.enabled = true;
-
-            _inventoryPage = new InventoryPageElement(itemsPage: this, document: _document, itemContainer: _inventoryItemContainer);
+            _inventoryPage = new InventoryPageElement(itemsPage: this, document: _uiDocument, itemContainer: _inventoryItemContainer);
             var inventoryCA = new ContainerAndPage(_inventoryItemContainer, _inventoryPage);
             _containersAndPages.Add(inventoryCA);
 
-            _craftPage = new CraftPageElement(itemsPage: this, document: _document, itemContainer: _craftItemContainer);
+            _craftPage = new CraftPageElement(itemsPage: this, document: _uiDocument, itemContainer: _craftItemContainer);
             var craftCA = new ContainerAndPage(_craftItemContainer, _craftPage);
             _containersAndPages.Add(craftCA);
 
-            _cheastPage = new CheastPageElement(itemsPage: this, document: _document, itemContainer: _cheastItemContainer);
+            _cheastPage = new CheastPageElement(itemsPage: this, document: _uiDocument, itemContainer: _cheastItemContainer);
             var cheastCA = new ContainerAndPage(_cheastItemContainer, _cheastPage);
             _containersAndPages.Add(cheastCA);
 
-            _lutPage = new LutPageElement(itemsPage: this, document: _document, itemContainer: _lutItemContainer, _inventoryPage);
+            _lutPage = new LutPageElement(itemsPage: this, document: _uiDocument, itemContainer: _lutItemContainer, _inventoryPage);
             var lutCA = new ContainerAndPage(_lutItemContainer, _lutPage);
             _containersAndPages.Add(lutCA);
 
             if (_quipmentContainer != null)
-                _equipPage = new EquipmentPageElement(itemsPage: this, document: _document, equipmentContainer: _quipmentContainer);
+                _equipPage = new EquipmentPageElement(itemsPage: this, document: _uiDocument, equipmentContainer: _quipmentContainer);
 
             _itemTooltip = new ItemTooltip();
-            _document.rootVisualElement.Add(_itemTooltip);
+            _uiDocument.rootVisualElement.Add(_itemTooltip);
 
             _globalGameProperty = ServiceProvider.Get<GlobalBox>()?.GlobalGameProperty;
 
@@ -168,7 +173,7 @@ namespace SkyClerik.Inventory
 
         private void Update()
         {
-            if (!_document.isActiveAndEnabled)
+            if (!_uiDocument.isActiveAndEnabled)
                 return;
 
             if (_currentDraggedItem == null)
@@ -361,7 +366,7 @@ namespace SkyClerik.Inventory
                 Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
                 SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
-                _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+                _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
             }
         }
 
@@ -378,7 +383,7 @@ namespace SkyClerik.Inventory
                 Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
                 SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
-                _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+                _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
             }
         }
 
@@ -395,7 +400,7 @@ namespace SkyClerik.Inventory
         {
             _givenItem = null;
             SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
-            _document.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+            _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
         /// <summary>
         /// Открывает страницу крафта. Доступность зависит от глобального свойства <see cref="GlobalGameProperty.MakeCraftAccessible"/>.
@@ -437,7 +442,7 @@ namespace SkyClerik.Inventory
         {
             SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
             SetAllSelfPage(display: false, visible: false, enabled: false);
-            _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
+            _uiDocument.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
 
         private void SetPage(VisualElement pageRoot, bool display, bool visible, bool enabled)
