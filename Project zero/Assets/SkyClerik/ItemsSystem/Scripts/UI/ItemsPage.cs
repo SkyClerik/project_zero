@@ -306,6 +306,17 @@ namespace SkyClerik.Inventory
                     equipSlot.FinalizeDrag();
                 }
             }
+
+            // --- NEW LOGIC TO HANDLE THE DRAGGED ITEM VISUAL ---
+            if (CurrentDraggedItem != null)
+            {
+                // Check if the dragged item is still attached to the root (which it should be if it was dragged)
+                if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
+                {
+                    CurrentDraggedItem.RemoveFromHierarchy();
+                }
+                CurrentDraggedItem = null; // Clear the static reference
+            }
         }
 
 
