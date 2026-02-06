@@ -9,7 +9,7 @@ using System;
 namespace SkyClerik.EquipmentSystem
 {
     [Serializable]
-    public class EquipmentSlot
+    public class EquipmentSlot : IDropTarget
     {
         [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
         [SerializeField]
@@ -28,7 +28,11 @@ namespace SkyClerik.EquipmentSystem
         [ReadOnly]
         private string _cellNameDebug;
         private VisualElement _cell;
+        private Telegraph _telegraph;
+        private UIDocument _document;
 
+        public UIDocument GetDocument => _document;
+        public Vector2 CellSize => _rect.size;
         public Rect Rect => _rect;
         public bool IsEmpty => _itemVisual == null;
         public ItemBaseDefinition EquippedItem => _equippedItem;
@@ -43,24 +47,16 @@ namespace SkyClerik.EquipmentSystem
             }
         }
 
-        public EquipmentSlot(Rect rect)
+        public EquipmentSlot(Rect rect, UIDocument document)
         {
             _rect = rect;
+            _document = document;
         }
 
-        public void CreateItemVisualAndEquip(ItemsPage itemsPage, ItemBaseDefinition itemBaseDefinition)
+        public void InitializeTelegraph(UIDocument document)
         {
-            if (_equippedItem != null)
-            {
-                var itemVisual = new ItemVisual(
-                           itemsPage: itemsPage,
-                           ownerInventory: itemsPage.ContainersAndPages[0].Page,
-                           itemDefinition: itemBaseDefinition,
-                           gridPosition: Vector2Int.zero,
-                           gridSize: Vector2Int.zero
-                           );
-                Equip(itemVisual);
-            }
+            _telegraph = new Telegraph();
+            document.rootVisualElement.Add(_telegraph);
         }
 
         /// <summary>
@@ -96,14 +92,99 @@ namespace SkyClerik.EquipmentSystem
         /// Снимает предмет из этого слота.
         /// </summary>
         /// <returns>Снятый предмет, или null, если слот был пуст.</returns>
-        public void Unequip(UIDocument document)
+        public void Unequip() // Изменяем сигнатуру: UIDocument больше не нужен, используем GetDocument
         {
             ItemsPage.CurrentDraggedItem = _itemVisual;
-            document.rootVisualElement.Add(ItemsPage.CurrentDraggedItem);
+            _document.rootVisualElement.Add(ItemsPage.CurrentDraggedItem); // Используем GetDocument
             _itemVisual = null;
 
             ItemBaseDefinition itemBaseDefinition = _equippedItem;
             _equippedItem = null;
         }
+
+        // --- IDropTarget реализация ---
+
+        public PlacementResults ShowPlacementTarget(ItemVisual itemVisual)
+        {
+            // Здесь мы должны проверить, может ли itemVisual быть экипирован в этот слот.
+            // Используем существующий метод CanEquip.
+            bool canEquip = CanEquip(itemVisual.ItemDefinition);
+            ReasonConflict conflict = ReasonConflict.invalidSlotType;
+
+            if (canEquip)
+            {
+                if (IsEmpty)
+                {
+                    conflict = ReasonConflict.None;
+                }
+                else
+                {
+                    conflict = ReasonConflict.SwapAvailable;
+                }
+            }
+
+            // Отображаем телеграф на позиции и размере слота
+            // _rect.position уже содержит корректную позицию Rect слота в мировых координатах.
+            // Телеграф является дочерним элементом rootVisualElement, поэтому его позиция style.left/top
+            // должна быть равна _rect.position, чтобы он появился над слотом.
+            _telegraph.SetPosition(_rect.position); // Устанавливаем позицию телеграфа напрямую в мировые координаты
+            _telegraph.SetPlacement(conflict, _rect.size.x, _rect.size.y);
+
+            // Инициализируем PlacementResults с данными слота
+            return new PlacementResults().Init(
+                conflict: conflict,
+                position: _rect.position, // Позиция Rect слота
+                suggestedGridPosition: Vector2Int.zero, // Не используется для экипировки
+                overlapItem: IsEmpty ? null : _itemVisual, // Возвращаем ItemVisual, если слот занят
+                targetInventory: this // Сам EquipmentSlot является целью перетаскивания
+            );
+        }
+
+        public void FinalizeDrag()
+        {
+            _telegraph.Hide();
+        }
+
+        public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
+        {
+            Equip(storedItem); // Просто вызываем Equip
+        }
+
+        public void RemoveStoredItem(ItemVisual storedItem)
+        {
+            Unequip(); // Просто вызываем Unequip
+        }
+
+        public void PickUp(ItemVisual storedItem)
+        {
+            RemoveStoredItem(storedItem); // Удаляем из слота
+        }
+
+        public void Drop(ItemVisual storedItem, Vector2Int gridPosition)
+        {
+            AddStoredItem(storedItem, gridPosition); // Добавляем в слот
+        }
+
+        public void AddItemToInventoryGrid(VisualElement item)
+        {
+            // ItemVisual уже добавляется к _cell в методе Equip
+            // Этот метод может быть пустым
+        }
+
+        public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
+        {
+            suggestedGridPosition = Vector2Int.zero; // Не используется для слотов экипировки
+
+            return IsEmpty && CanEquip(item);
+        }
+
+        public ItemGridData GetItemGridData(ItemVisual itemVisual)
+        {
+            // EquipSlot не работает с ItemGridData, возвращаем null
+            return null;
+        }
+
+        public void RegisterVisual(ItemVisual visual, ItemGridData gridData) { }
+        public void UnregisterVisual(ItemVisual visual) { }
     }
 }

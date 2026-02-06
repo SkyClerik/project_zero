@@ -914,40 +914,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _equipSlots:
-  - _equippedItem: {fileID: 0}
-    _rect:
-      serializedVersion: 2
-      x: 1425.3334
-      y: 297.33334
-      width: 256
-      height: 383.99997
-    _cellNameDebug: 
-  - _equippedItem: {fileID: 0}
-    _rect:
-      serializedVersion: 2
-      x: 1430.6666
-      y: 745.3333
-      width: 256
-      height: 256
-    _cellNameDebug: 
-  - _equippedItem: {fileID: 0}
-    _rect:
-      serializedVersion: 2
-      x: 1433.3334
-      y: 1061.3334
-      width: 128
-      height: 128
-    _cellNameDebug: 
-  - _equippedItem: {fileID: 0}
-    _rect:
-      serializedVersion: 2
-      x: 1585.3334
-      y: 1065.3334
-      width: 128
-      height: 128
-    _cellNameDebug: 
+  - rid: 2157767516646801408
+  - rid: 2157767516646801409
+  - rid: 2157767516646801410
+  - rid: 2157767516646801411
   _uiDocument: {fileID: 8712429768355902513}
   _rootPanelName: equipment_root
+  references:
+    version: 2
+    RefIds:
+    - rid: 2157767516646801408
+      type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
+      data:
+        _equippedItem: {fileID: 0}
+        _rect:
+          serializedVersion: 2
+          x: 1425
+          y: 297
+          width: 256
+          height: 384
+        _cellNameDebug: 
+    - rid: 2157767516646801409
+      type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
+      data:
+        _equippedItem: {fileID: 0}
+        _rect:
+          serializedVersion: 2
+          x: 1431
+          y: 745
+          width: 256
+          height: 256
+        _cellNameDebug: 
+    - rid: 2157767516646801410
+      type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
+      data:
+        _equippedItem: {fileID: 0}
+        _rect:
+          serializedVersion: 2
+          x: 1434
+          y: 1061
+          width: 128
+          height: 128
+        _cellNameDebug: 
+    - rid: 2157767516646801411
+      type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
+      data:
+        _equippedItem: {fileID: 0}
+        _rect:
+          serializedVersion: 2
+          x: 1585
+          y: 1065
+          width: 128
+          height: 128
+        _cellNameDebug: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

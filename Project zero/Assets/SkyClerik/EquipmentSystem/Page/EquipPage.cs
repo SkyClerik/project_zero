@@ -19,12 +19,14 @@ namespace SkyClerik.EquipmentSystem
         private Label _title;
         private const string _titleID = "l_title";
 
-        private VisualElement _inventoryGrid;
+        internal VisualElement _inventoryGrid;
         private const string _inventoryGridID = "grid";
 
         [Header("Хранилище данных")]
         [SerializeField]
+        [SerializeReference]
         private List<EquipmentSlot> _equipSlots = new List<EquipmentSlot>();
+        public List<EquipmentSlot> EquipmentSlots => _equipSlots;
 
         [Header("Конфигурация")]
 
@@ -40,8 +42,7 @@ namespace SkyClerik.EquipmentSystem
         private ItemsPage _itemsPage;
 
         // UI-элементы
-        private VisualElement _root;
-        private Telegraph _telegraph;
+        internal VisualElement _root;
         private PlacementResults _placementResults;
         private List<VisualElement> _visualSlots;
 
@@ -78,10 +79,7 @@ namespace SkyClerik.EquipmentSystem
                 yield return null;
 
             _visualSlots = _inventoryGrid.Children().ToList();
-            _telegraph = new Telegraph();
             FirstLoadInitialVisuals();
-
-
         }
 
         protected void FirstLoadInitialVisuals()
@@ -107,6 +105,8 @@ namespace SkyClerik.EquipmentSystem
                             continue;
                         }
                         equipSlot.Cell = cell;
+                        //equipSlot.GetDocument = _uiDocument; // Устанавливаем UIDocument в существующий слот
+                        equipSlot.InitializeTelegraph(_uiDocument); // Инициализируем телеграф для этого слота
                     }
                 }
             }
@@ -143,7 +143,7 @@ namespace SkyClerik.EquipmentSystem
         public void RemoveStoredItem(EquipmentSlot equipmentSlot)
         {
             if (equipmentSlot != null)
-                equipmentSlot.Unequip(_uiDocument);
+                equipmentSlot.Unequip(); // Изменено с equipmentSlot.Unequip(_uiDocument);
         }
 
         public void OpenEquip()
@@ -156,7 +156,6 @@ namespace SkyClerik.EquipmentSystem
         {
             if (_root == null || !_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
-                _telegraph.Hide();
                 return _placementResults.Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
             }
 
@@ -164,40 +163,10 @@ namespace SkyClerik.EquipmentSystem
             if (TryGetTargetSlot(mouseLocalPosition, out EquipmentSlot targetSlot))
             {
                 // Курсор находится над слотом
-                bool canEquip = targetSlot.CanEquip(draggedItem.ItemDefinition);
-                bool isEmpty = targetSlot.IsEmpty;
-
-                if (canEquip)
-                {
-                    if (isEmpty)
-                    {
-                        _placementResults.Conflict = ReasonConflict.None;
-                    }
-                    else
-                    {
-                        _placementResults.Conflict = ReasonConflict.SwapAvailable;
-                    }
-                }
-                else
-                {
-                    _placementResults.Conflict = ReasonConflict.invalidSlotType;
-                }
-
-                // Отображаем телеграф на позиции и размере слота
-                // Преобразуем локальную позицию слота (относительно _inventoryGrid)
-                // в локальную позицию относительно _root (equipment_root)
-                Vector2 telegraphLocalPositionInRoot = _inventoryGrid.ChangeCoordinatesTo(_root, targetSlot.Rect.position);
-                _telegraph.SetPosition(telegraphLocalPositionInRoot);
-                _telegraph.SetPlacement(_placementResults.Conflict, targetSlot.Rect.size.x, targetSlot.Rect.size.y);
-
-                // Инициализируем PlacementResults с данными слота
-                return _placementResults.Init(conflict: _placementResults.Conflict,
-                                              position: targetSlot.Rect.position,
-                                              suggestedGridPosition: Vector2Int.zero, // Не используется для экипировки
-                                              overlapItem: _placementResults.OverlapItem,
-                                              targetInventory: null);
+                // Вместо того, чтобы самому EquipPage обрабатывать логику размещения,
+                // мы делегируем это найденному EquipmentSlot, который теперь является IDropTarget.
+                return targetSlot.ShowPlacementTarget(draggedItem);
             }
-            _telegraph.Hide();
             return _placementResults.Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
 
@@ -234,6 +203,17 @@ namespace SkyClerik.EquipmentSystem
                     return;
                 }
 
+                // Добавляем проверку, что _inventoryGrid имеет размеры
+                if (inventoryGrid.resolvedStyle.width == 0 || inventoryGrid.resolvedStyle.height == 0)
+                {
+                    Debug.LogWarning("UI-элементы еще не отрисованы, откладываем расчет...", this);
+                    // Если размеры еще не получены, откладываем выполнение еще раз.
+                    // Можно сделать это более надежно, используя корутину, но для ContextMenu
+                    // откладывание - это простой способ.
+                    root.schedule.Execute(() => CalculateGridDimensionsFromUI()).ExecuteLater(1); // Рекурсивный вызов
+                    return;
+                }
+
                 if (inventoryGrid.childCount == 0)
                 {
                     Debug.LogWarning($"Сетка '{inventoryGrid.name}' не содержит дочерних элементов (ячеек). Невозможно определить размер ячейки.", this);
@@ -250,7 +230,7 @@ namespace SkyClerik.EquipmentSystem
                     if (calculatedCellSize.x > 0 && calculatedCellSize.y > 0)
                     {
                         var rect = new Rect(visualElement.worldBound.x, visualElement.worldBound.y, visualElement.resolvedStyle.width, visualElement.resolvedStyle.height);
-                        var slotData = new EquipmentSlot(rect: rect);
+                        var slotData = new EquipmentSlot(rect: rect, document: _uiDocument); // Передаем _uiDocument
                         _equipSlots.Add(slotData);
                     }
                 }

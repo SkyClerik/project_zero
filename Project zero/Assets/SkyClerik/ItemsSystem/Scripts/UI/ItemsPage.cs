@@ -1,4 +1,5 @@
-﻿using SkyClerik.Utils;
+﻿using SkyClerik.EquipmentSystem;
+using SkyClerik.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -236,6 +237,35 @@ namespace SkyClerik.Inventory
                         //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
                         _inventoryPage.Telegraph.Hide();
                         return resultsTwo.Init(resultsTwo.Conflict, resultsTwo.Position, resultsTwo.SuggestedGridPosition, resultsTwo.OverlapItem, _craftPage);
+                    }
+                }
+            }
+
+            // -----
+            // Добавляем проверку для EquipPage (который теперь содержит IDropTarget слоты)
+            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+            if (equipPage != null && equipPage.isActiveAndEnabled && equipPage._root.resolvedStyle.display != DisplayStyle.None)
+            {
+                // Для каждого EquipmentSlot в EquipPage
+                foreach (var equipSlot in equipPage.EquipmentSlots)
+                {
+                    // Проверяем, находится ли мышка над текущим EquipmentSlot
+                    if (equipSlot.Rect.Contains(MouseUILocalPosition))
+                    {
+                        Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}"); // Новый Debug.Log
+
+                        // Если мышка над слотом, то делегируем проверку этому EquipmentSlot
+                        PlacementResults equipResults = equipSlot.ShowPlacementTarget(draggedItem);
+                        if (equipResults.Conflict != ReasonConflict.beyondTheGridBoundary)
+                        {
+                            Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
+                            // Скрываем все другие телеграфы
+                            _inventoryPage.Telegraph.Hide();
+                            _craftPage.Telegraph.Hide();
+                            _cheastPage.Telegraph.Hide();
+                            _lutPage.Telegraph.Hide();
+                            return equipResults;
+                        }
                     }
                 }
             }
