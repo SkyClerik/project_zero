@@ -294,6 +294,16 @@ namespace SkyClerik.Inventory
             _craftPage.FinalizeDrag();
             _cheastPage.FinalizeDrag();
             _lutPage.FinalizeDrag();
+
+            // Добавляем вызов FinalizeDrag для всех слотов EquipPage
+            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+            if (equipPage != null)
+            {
+                foreach (var equipSlot in equipPage.EquipmentSlots)
+                {
+                    equipSlot.FinalizeDrag();
+                }
+            }
         }
 
         /// <summary>

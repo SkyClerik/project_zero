@@ -86,6 +86,10 @@ namespace SkyClerik.EquipmentSystem
             ItemsPage.CurrentDraggedItem = null;
 
             _cell.Add(itemVisual);
+            // Сбрасываем позицию ItemVisual относительно нового родителя
+            itemVisual.style.left = 0;
+            itemVisual.style.top = 0;
+            itemVisual.style.position = Position.Absolute; // Убеждаемся, что позиционирование абсолютное
         }
 
         /// <summary>
