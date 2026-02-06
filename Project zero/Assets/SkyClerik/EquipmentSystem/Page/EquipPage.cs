@@ -116,7 +116,10 @@ namespace SkyClerik.EquipmentSystem
             {
                 if (slot.EquippedItem != null)
                 {
-                    slot.CreateItemVisualAndEquip(_itemsPage, slot.EquippedItem);
+                    // Просим ItemsPage создать ItemVisual для экипированного предмета
+                    var newItemVisual = _itemsPage.CreateItemVisualForEquipPage(slot.EquippedItem);
+                    // Экипируем полученный ItemVisual
+                    slot.Equip(newItemVisual);
                 }
             }
         }

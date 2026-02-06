@@ -473,5 +473,27 @@ namespace SkyClerik.Inventory
         //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
         //    SetAllSelfPage(display: false, visible: false, enabled: false);
         //}
+
+        /// <summary>
+        /// Создает новый ItemVisual для отображения в слоте экипировки.
+        /// </summary>
+        /// <param name="itemDefinition">Определение предмета.</param>
+        /// <returns>Созданный ItemVisual.</returns>
+        public ItemVisual CreateItemVisualForEquipPage(ItemBaseDefinition itemDefinition)
+        {
+            // Здесь мы используем существующий конструктор ItemVisual.
+            // Параметры ownerInventory, gridPosition и gridSize - это заглушки,
+            // так как ItemVisual для слотов экипировки не управляется напрямую сеткой инвентаря.
+            // ItemsPage.ContainersAndPages[0].Page используется как пример IDropTarget для ownerInventory.
+            // В идеале, EquipPage должен будет передавать свой собственный CellSize и UIDocument,
+            // но так как ItemVisual менять нельзя, мы используем то, что доступно.
+            return new ItemVisual(
+                itemsPage: this,
+                ownerInventory: ContainersAndPages[0].Page, // Предполагаем, что первый Page в ContainersAndPages существует и является IDropTarget
+                itemDefinition: itemDefinition,
+                gridPosition: Vector2Int.zero, // Заглушка
+                gridSize: Vector2Int.zero // Заглушка
+            );
+        }
     }
 }
