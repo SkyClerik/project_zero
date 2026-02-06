@@ -30,7 +30,11 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Возвращает определение предмета (<see cref="ItemBaseDefinition"/>), связанное с этим визуальным элементом.
         /// </summary>
-        public ItemBaseDefinition ItemDefinition => _itemDefinition;
+        public ItemBaseDefinition ItemDefinition
+        {
+            get => _itemDefinition;
+            set => _itemDefinition = value; // Добавляем сеттер
+        }
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="ItemVisual"/>.

@@ -192,8 +192,10 @@ namespace SkyClerik.Inventory
         /// <returns>Результаты размещения, включающие информацию о конфликте и предложенной позиции.</returns>
         public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
         {
+            Debug.Log($"[ItemsPage][Placement] Начало HandleItemPlacement для {draggedItem.ItemDefinition.name}");
             //Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
+            Debug.Log($"[ItemsPage][Placement] Результат для инвентаря: {resultsPage.Conflict}");
             if (resultsPage.Conflict == ReasonConflict.None || resultsPage.Conflict == ReasonConflict.StackAvailable || resultsPage.Conflict == ReasonConflict.SwapAvailable)
             {
                 //Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
@@ -206,6 +208,7 @@ namespace SkyClerik.Inventory
             {
                 //Debug.Log($"[ЛОG] Проверяю страницу сундука ({_cheastPage.Root.name}).");
                 PlacementResults resultsCheast = _cheastPage.ShowPlacementTarget(draggedItem);
+                Debug.Log($"[ItemsPage][Placement] Результат для сундука: {resultsCheast.Conflict}");
                 if (resultsCheast.Conflict != ReasonConflict.beyondTheGridBoundary)
                 {
                     //Debug.Log($"[ЛОГ] Страница сундука активна. Конфликт: {resultsCheast.Conflict}. Скрываю телеграф инвентаря.");
@@ -218,6 +221,7 @@ namespace SkyClerik.Inventory
             {
                 //Debug.Log($"[ЛОG] Проверяю страницу лута ({_lutPage.Root.name}).");
                 PlacementResults lutCheast = _lutPage.ShowPlacementTarget(draggedItem);
+                Debug.Log($"[ItemsPage][Placement] Результат для лута: {lutCheast.Conflict}");
                 if (lutCheast.Conflict != ReasonConflict.beyondTheGridBoundary)
                 {
                     //Debug.Log($"[ЛОГ] Страница лута активна. Конфликт: {lutCheast.Conflict}. Скрываю телеграф инвентаря.");
@@ -232,6 +236,7 @@ namespace SkyClerik.Inventory
                 if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
                 {
                     PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
+                    Debug.Log($"[ItemsPage][Placement] Результат для крафта: {resultsTwo.Conflict}");
                     if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
                     {
                         //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
@@ -258,13 +263,14 @@ namespace SkyClerik.Inventory
                     // Проверяем, находится ли мышка над текущим EquipmentSlot
                     if (equipSlot.Rect.Contains(MouseUILocalPosition))
                     {
-                        Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}"); // Новый Debug.Log
+                        //Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}"); // Новый Debug.Log
 
                         // Если мышка над слотом, то делегируем проверку этому EquipmentSlot
                         PlacementResults equipResults = equipSlot.ShowPlacementTarget(draggedItem);
+                        Debug.Log($"[ItemsPage][Placement] Результат для слота экипировки '{equipSlot.Cell.name}': {equipResults.Conflict}");
                         if (equipResults.Conflict != ReasonConflict.beyondTheGridBoundary)
                         {
-                            Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
+                            //Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
                             // Скрываем все другие телеграфы
                             _inventoryPage.Telegraph.Hide();
                             _craftPage.Telegraph.Hide();
@@ -276,7 +282,7 @@ namespace SkyClerik.Inventory
                 }
             }
 
-            //Debug.Log("[ЛОГ] Ни одна страница не подходит. Скрываю оба телеграфа.");
+            Debug.Log($"[ItemsPage][Placement] Возвращаем beyondTheGridBoundary для {draggedItem.ItemDefinition.name}");
             _inventoryPage.Telegraph.Hide();
             _craftPage.Telegraph.Hide();
             _cheastPage.Telegraph.Hide();
@@ -306,6 +312,7 @@ namespace SkyClerik.Inventory
             }
         }
 
+
         /// <summary>
         /// Перемещает предмет между контейнерами.
         /// </summary>
@@ -315,6 +322,10 @@ namespace SkyClerik.Inventory
         /// <param name="gridPosition">Позиция в сетке целевого контейнера.</param>
         public void TransferItemBetweenContainers(ItemVisual draggedItem, IDropTarget sourceInventory, IDropTarget targetInventory, Vector2Int gridPosition)
         {
+            Debug.Log($"[ItemsPage][Transfer] Dragged: {draggedItem.ItemDefinition.name}");
+            Debug.Log($"[ItemsPage][Transfer] Source Inventory Type: {sourceInventory?.GetType().Name}");
+            Debug.Log($"[ItemsPage][Transfer] Target Inventory Type: {targetInventory?.GetType().Name}");
+
             var itemToMove = draggedItem.ItemDefinition;
 
             GridPageElementBase sourceGridPage = sourceInventory as GridPageElementBase;
@@ -322,9 +333,13 @@ namespace SkyClerik.Inventory
             EquipmentSlot sourceEquipSlot = sourceInventory as EquipmentSlot;
             EquipmentSlot targetEquipSlot = targetInventory as EquipmentSlot;
 
+            Debug.Log($"[ItemsPage][Transfer] SourceGridPage: {sourceGridPage != null}, TargetGridPage: {targetGridPage != null}, SourceEquipSlot: {sourceEquipSlot != null}, TargetEquipSlot: {targetEquipSlot != null}");
+
             // Случай 1: Из инвентаря в инвентарь
             if (sourceGridPage != null && targetGridPage != null)
             {
+                Debug.Log($"Случай 1: Из инвентаря в инвентарь");
+
                 var sourceContainer = sourceGridPage.ItemContainer;
                 var targetContainer = targetGridPage.ItemContainer;
 
@@ -352,63 +367,71 @@ namespace SkyClerik.Inventory
             // Случай 2: Из инвентаря в слот экипировки
             else if (sourceGridPage != null && targetEquipSlot != null)
             {
-                var sourceContainer = sourceGridPage.ItemContainer;
-                TransferItemToEquipSlot(draggedItem, sourceContainer, targetEquipSlot);
+                Debug.Log($"Cлучай 2: Из инвентаря в слот экипировки");
+
+               var sourceContainer = sourceGridPage.ItemContainer;
+                EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+                if (equipPage != null)
+                {
+                    equipPage.HandleItemTransfer(draggedItem, sourceContainer, targetEquipSlot);
+                }
             }
             // Случай 3: Из слота экипировки в инвентарь
             else if (sourceEquipSlot != null && targetGridPage != null)
             {
+                Debug.Log($"Случай 3: Из слота экипировки в инвентарь");
+
                 var targetContainer = targetGridPage.ItemContainer;
-                TransferItemFromEquipSlot(draggedItem, sourceEquipSlot, targetContainer, gridPosition);
+                EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+                if (equipPage != null)
+                {
+                    equipPage.HandleItemTransferFromEquip(draggedItem, sourceEquipSlot, targetContainer, gridPosition);
+                }
             }
             // Случай 4: Из слота экипировки в слот экипировки
             else if (sourceEquipSlot != null && targetEquipSlot != null)
             {
-                // Если оба - слоты экипировки, это может быть попытка свапа между слотами экипировки
-                // или попытка экипировать тот же предмет обратно в другой слот экипировки.
-                // В данном случае, так как предмет уже "поднят", мы просто пытаемся его экипировать в целевой слот.
-                // Если целевой слот занят, он обработает свап сам (в TransferItemToEquipSlot)
-                // Для этого нужно сначала "снять" его с текущего слота (sourceEquipSlot) и затем "надеть" на целевой (targetEquipSlot)
-                // НО! Логика TransferItemToEquipSlot уже учитывает свап.
-                // Поэтому, мы можем просто снять предмет с sourceEquipSlot и затем передать его в TransferItemToEquipSlot,
-                // предполагая, что поднятый предмет - это ItemVisual.CurrentDraggedItem, а он уже имеет ItemDefinition.
-                
-                // Сначала снимаем предмет с текущего слота (sourceEquipSlot)
-                sourceEquipSlot.Unequip();
-                Debug.Log($"[ЭКИПИРОВКА] Предмет '{itemToMove.name}' был снят из исходного слота экипировки '{sourceEquipSlot.Cell.name}' для переброски в другой слот экипировки.");
-                
-                // Теперь пытаемся экипировать его в целевой слот.
-                // Важно: draggedItem здесь - это предмет, который был изначально поднят,
-                // и он остается ItemsPage.CurrentDraggedItem.
-                // Мы передаем его как будто он из "инвентаря" (но без реального контейнера источника)
-                // Нужно адаптировать TransferItemToEquipSlot или создать новый метод.
-                // В текущей логике, TransferItemToEquipSlot предполагает sourceContainer.
-                // Упрощенное решение: если это перетаскивание между двумя EquipmentSlot, то:
-                // 1. Снять draggedItem с sourceEquipSlot.
-                // 2. Если targetEquipSlot занят, то предмет из targetEquipSlot переносится в sourceEquipSlot.
-                // 3. draggedItem экипируется в targetEquipSlot.
+                Debug.Log($"Случай 4: Из слота экипировки в слот экипировки");
 
-                // Временно просто выведем лог, чтобы не сломать текущий функционал, пока не продумаем свап между EquipSlots.
-                Debug.LogWarning($"[ЭКИПИРОВКА] Перемещение между слотами экипировки ('{sourceEquipSlot.Cell.name}' -> '{targetEquipSlot.Cell.name}') пока не имеет полной логики свапа. Реализуйте этот сценарий.");
+                // draggedItem - это предмет, который был "поднят" из sourceEquipSlot.
+                // sourceEquipSlot уже пуст после Unequip, вызванного при поднятии предмета.
 
-                // Здесь нужно более сложная логика, которая учитывает, что sourceContainer здесь отсутствует.
-                // Пока оставим без изменений логики, чтобы не вводить баги.
-                // Временное решение - просто вернуть предмет обратно, если он не может быть помещен в целевой слот.
-                if (targetEquipSlot.IsEmpty)
+                var itemToSwapFromTarget = targetEquipSlot.EquippedItem; // Предмет, который находится в целевом слоте (может быть null, если слот пуст)
+                ItemVisual itemToSwapFromTargetVisual = targetEquipSlot.IsEmpty ? null : targetEquipSlot.ItemVisual; // Визуальный элемент предмета в целевом слоте
+
+                // 1. Проверяем, может ли draggedItem быть экипирован в targetEquipSlot
+                bool canDraggedItemEquipTarget = targetEquipSlot.CanEquip(draggedItem.ItemDefinition);
+
+                // 2. Если targetEquipSlot пуст И draggedItem подходит для него
+                if (targetEquipSlot.IsEmpty && canDraggedItemEquipTarget)
                 {
                     targetEquipSlot.Equip(draggedItem);
-                    Debug.Log($"[ЭКИПИРОВКА] Предмет '{itemToMove.name}' успешно перемещен из '{sourceEquipSlot.Cell.name}' в пустой слот '{targetEquipSlot.Cell.name}'.");
+                    Debug.Log($"[ЭКИПИРОВКА] Предмет '{draggedItem.ItemDefinition.name}' успешно перемещен из исходного слота в пустой целевой слот '{targetEquipSlot.Cell.name}'.");
                 }
+                // 3. Если targetEquipSlot занят И draggedItem подходит для него И itemToSwapFromTarget подходит для sourceEquipSlot
+                else if (!targetEquipSlot.IsEmpty && canDraggedItemEquipTarget && sourceEquipSlot.CanEquip(itemToSwapFromTarget))
+                {
+                    // Выполняем свап
+                    Debug.Log($"[ЭКИПИРОВКА] Выполняем свап между '{draggedItem.ItemDefinition.name}' ({sourceEquipSlot.Cell.name}) и '{itemToSwapFromTarget.name}' ({targetEquipSlot.Cell.name}).");
+
+                    // Экипируем draggedItem в целевой слот
+                    // Equip в EquipmentSlot уже позаботится об Unequip'е старого предмета из целевого слота
+                    // и ItemsPage.CurrentDraggedItem будет ItemVisual от itemToSwapFromTarget
+                    targetEquipSlot.Equip(draggedItem);
+
+                    // Теперь ItemsPage.CurrentDraggedItem - это ItemVisual, который был в targetEquipSlot
+                    // Экипируем его в исходный слот
+                    sourceEquipSlot.Equip(ItemsPage.CurrentDraggedItem);
+
+                    Debug.Log($"[ЭКИПИРОВКА] Свап завершен. '{draggedItem.ItemDefinition.name}' теперь в '{targetEquipSlot.Cell.name}', а '{itemToSwapFromTarget.name}' в '{sourceEquipSlot.Cell.name}'.");
+                }
+                // 4. Если свап невозможен, или draggedItem не подходит для targetEquipSlot
                 else
                 {
-                    // Если целевой слот занят, и это между EquipSlots, то нужно подумать,
-                    // как выполнить свап без участия ItemContainer.
-                    // Например, обменяться ItemVisual'ами и обновить ItemBaseDefinition.
-                    // Для простоты, пока просто вернемDraggedItem обратно, если свап не реализован.
-                    sourceEquipSlot.Equip(draggedItem); // Возвращаем обратно в исходный слот
-                    Debug.LogWarning($"[ЭКИПИРОВКА] Не удалось переместить '{itemToMove.name}' из '{sourceEquipSlot.Cell.name}' в '{targetEquipSlot.Cell.name}'. Целевой слот занят, и свап между слотами экипировки не реализован.");
+                    // Возвращаем draggedItem обратно в sourceEquipSlot
+                    sourceEquipSlot.Equip(draggedItem);
+                    Debug.LogWarning($"[ЭКИПИРОВКА] Перемещение '{draggedItem.ItemDefinition.name}' из '{sourceEquipSlot.Cell.name}' в '{targetEquipSlot.Cell.name}' невозможно. Предмет возвращен в исходный слот.");
                 }
-
             }
             else
             {
@@ -595,92 +618,5 @@ namespace SkyClerik.Inventory
         //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
         //    SetAllSelfPage(display: false, visible: false, enabled: false);
         //}
-
-        /// <summary>
-        /// Перемещает предмет из инвентаря в слот экипировки.
-        /// </summary>
-        internal void TransferItemToEquipSlot(ItemVisual draggedItem, ItemContainer sourceContainer, EquipmentSlot targetEquipSlot)
-        {
-            var itemToEquip = draggedItem.ItemDefinition;
-
-            Debug.Log($"[ЭКИПИРОВКА] Попытка экипировать предмет '{itemToEquip.name}' из '{sourceContainer.name}' в слот экипировки.");
-
-            // Если слот экипировки занят, сначала "забираем" оттуда текущий предмет
-            if (!targetEquipSlot.IsEmpty)
-            {
-                ItemBaseDefinition currentlyEquippedItem = targetEquipSlot.EquippedItem;
-                Debug.Log($"[ЭКИПИРОВКА] Слот экипировки занят предметом '{currentlyEquippedItem.name}'. Производим обмен.");
-
-                // Убираем текущий предмет из слота экипировки (он становится перетаскиваемым)
-                targetEquipSlot.Unequip();
-                // Возвращаем снятый предмет обратно в исходный инвентарь (если получится)
-                if (sourceContainer.TryAddItemAtPosition(currentlyEquippedItem, currentlyEquippedItem.GridPosition)) // Пытаемся вернуть на старую позицию
-                {
-                    Debug.Log($"[ЭКИПИРОВКА] Предмет '{currentlyEquippedItem.name}' возвращен в контейнер '{sourceContainer.name}'.");
-                }
-                else // Если не получилось, просто добавляем куда-нибудь
-                {
-                    sourceContainer.AddItems(new List<ItemBaseDefinition> { currentlyEquippedItem });
-                    Debug.Log($"[ЭКИПИРОВКА] Предмет '{currentlyEquippedItem.name}' возвращен в контейнер '{sourceContainer.name}' (на любое свободное место).");
-                }
-            }
-
-            // Удаляем предмет из исходного контейнера (инвентаря)
-            sourceContainer.RemoveItem(itemToEquip, destroy: false);
-            Debug.Log($"[ИНВЕНТАРЬ] Предмет '{itemToEquip.name}' был забран из контейнера '{sourceContainer.name}'.");
-
-            // Экипируем новый предмет в слот
-            targetEquipSlot.Equip(draggedItem);
-            Debug.Log($"[ЭКИПИРОВКА] Предмет '{itemToEquip.name}' успешно экипирован в слот '{targetEquipSlot.Cell.name}'.");
-        }
-
-        /// <summary>
-        /// Перемещает предмет из слота экипировки в инвентарь.
-        /// </summary>
-        internal void TransferItemFromEquipSlot(ItemVisual draggedItem, EquipmentSlot sourceEquipSlot, ItemContainer targetContainer, Vector2Int gridPosition)
-        {
-            var itemToUnequip = draggedItem.ItemDefinition;
-
-            Debug.Log($"[ЭКИПИРОВКА] Попытка снять предмет '{itemToUnequip.name}' из слота '{sourceEquipSlot.Cell.name}' и поместить в '{targetContainer.name}'.");
-
-            // Снимаем предмет из слота экипировки
-            sourceEquipSlot.Unequip();
-            Debug.Log($"[ЭКИПИРОВКА] Предмет '{itemToUnequip.name}' был снят из слота '{sourceEquipSlot.Cell.name}'.");
-
-            // Пытаемся добавить предмет в целевой контейнер (инвентарь)
-            bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToUnequip, gridPosition);
-
-            if (addedToTarget)
-            {
-                Debug.Log($"[ИНВЕНТАРЬ] Предмет '{itemToUnequip.name}' был положен в контейнер '{targetContainer.name}' в позицию: {gridPosition}.");
-            }
-            else
-            {
-                // Если не удалось добавить в инвентарь, возвращаем его обратно в слот экипировки (хотя такого быть не должно при корректной проверке)
-                sourceEquipSlot.Equip(draggedItem);
-                Debug.LogWarning($"[ЭКИПИРОВКА] Не удалось поместить предмет '{itemToUnequip.name}' в инвентарь '{targetContainer.name}'. Возвращен в слот экипировки.");
-            }
-        }
-        /// <summary>
-        /// Создает новый ItemVisual для отображения в слоте экипировки.
-        /// </summary>
-        /// <param name="itemDefinition">Определение предмета.</param>
-        /// <returns>Созданный ItemVisual.</returns>
-        public ItemVisual CreateItemVisualForEquipPage(ItemBaseDefinition itemDefinition)
-        {
-            // Здесь мы используем существующий конструктор ItemVisual.
-            // Параметры ownerInventory, gridPosition и gridSize - это заглушки,
-            // так как ItemVisual для слотов экипировки не управляется напрямую сеткой инвентаря.
-            // ItemsPage.ContainersAndPages[0].Page используется как пример IDropTarget для ownerInventory.
-            // В идеале, EquipPage должен будет передавать свой собственный CellSize и UIDocument,
-            // но так как ItemVisual менять нельзя, мы используем то, что доступно.
-            return new ItemVisual(
-                itemsPage: this,
-                ownerInventory: ContainersAndPages[0].Page, // Предполагаем, что первый Page в ContainersAndPages существует и является IDropTarget
-                itemDefinition: itemDefinition,
-                gridPosition: Vector2Int.zero, // Заглушка
-                gridSize: Vector2Int.zero // Заглушка
-            );
-        }
     }
 }

@@ -937,7 +937,7 @@ MonoBehaviour:
     - rid: 2157767516646801409
       type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
       data:
-        _equippedItem: {fileID: 0}
+        _equippedItem: {fileID: 11400000, guid: ad48f5bac1c190a468b08b4e79102b01, type: 2}
         _rect:
           serializedVersion: 2
           x: 1431

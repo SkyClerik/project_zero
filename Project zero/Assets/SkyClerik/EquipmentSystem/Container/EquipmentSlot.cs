@@ -24,6 +24,7 @@ namespace SkyClerik.EquipmentSystem
         [SerializeField]
         [ReadOnly]
         private ItemVisual _itemVisual;
+        public ItemVisual ItemVisual => _itemVisual; // Добавляем публичное свойство для доступа
         [SerializeField]
         [ReadOnly]
         private string _cellNameDebug;
@@ -93,17 +94,46 @@ namespace SkyClerik.EquipmentSystem
         }
 
         /// <summary>
+        /// Создает и экипирует ItemVisual для данного слота.
+        /// </summary>
+        /// <param name="itemDefinition">Определение предмета.</param>
+        /// <param name="itemsPage">Ссылка на ItemsPage.</param>
+        /// <returns>Созданный ItemVisual.</returns>
+        public ItemVisual CreateItemVisualForSlot(ItemBaseDefinition itemDefinition, ItemsPage itemsPage)
+        {
+            // Здесь мы используем существующий конструктор ItemVisual.
+            // Параметры ownerInventory, gridPosition и gridSize - это заглушки,
+            // так как ItemVisual для слотов экипировки не управляется напрямую сеткой инвентаря.
+            return new ItemVisual(
+                itemsPage: itemsPage,
+                ownerInventory: this, // САМ СЛОТ ЭКИПИРОВКИ является ownerInventory
+                itemDefinition: itemDefinition,
+                gridPosition: Vector2Int.zero, // Заглушка
+                gridSize: Vector2Int.zero // Заглушка
+            );
+        }
+
+        /// <summary>
         /// Снимает предмет из этого слота.
         /// </summary>
-        /// <returns>Снятый предмет, или null, если слот был пуст.</returns>
-        public void Unequip() // Изменяем сигнатуру: UIDocument больше не нужен, используем GetDocument
+        /// <returns>Снятый ItemBaseDefinition, или null, если слот был пуст.</returns>
+        public ItemBaseDefinition Unequip()
         {
-            ItemsPage.CurrentDraggedItem = _itemVisual;
-            _document.rootVisualElement.Add(ItemsPage.CurrentDraggedItem); // Используем GetDocument
-            _itemVisual = null;
+            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] Unequip вызывается для слота: {_cellNameDebug}. Текущий _equippedItem: {_equippedItem?.name}");
+            ItemBaseDefinition unequippedItem = _equippedItem; 
+            
+            if (_itemVisual != null)
+            {
+                // Если ItemVisual существует, убираем его из слота визуально
+                _itemVisual.RemoveFromHierarchy(); 
+                _itemVisual = null; // Обнуляем ссылку на ItemVisual в слоте
+                Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] _itemVisual обнулен для слота: {_cellNameDebug}.");
+            }
+            
+            _equippedItem = null; // Обнуляем ссылку на ItemBaseDefinition в слоте
+            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] _equippedItem обнулен для слота: {_cellNameDebug}. Возвращаем: {unequippedItem?.name}");
 
-            ItemBaseDefinition itemBaseDefinition = _equippedItem;
-            _equippedItem = null;
+            return unequippedItem; // Возвращаем снятый ItemBaseDefinition
         }
 
         // --- IDropTarget реализация ---
