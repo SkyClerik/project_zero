@@ -344,6 +344,9 @@ namespace SkyClerik.Inventory
         /// <param name="isSwap">Указывает, является ли подъем частью операции обмена.</param>
         public void PickUp(bool isSwap = false)
         {
+            Debug.Log($"[ItemVisual][PickUp] PickUp вызывается для {ItemDefinition.name}. isSwap: {isSwap}");
+            Debug.Log($"[ItemVisual][PickUp] ownerInventory Type: {_ownerInventory?.GetType().Name}");
+
             _isDragging = true;
             _hasNoHome = isSwap;
             style.opacity = 0.7f;

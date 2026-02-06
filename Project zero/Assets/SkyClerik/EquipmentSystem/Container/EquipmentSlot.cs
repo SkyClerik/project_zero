@@ -22,12 +22,13 @@ namespace SkyClerik.EquipmentSystem
         private Rect _rect;
 
         [SerializeField]
-        [ReadOnly]
         private ItemVisual _itemVisual;
-        public ItemVisual ItemVisual => _itemVisual; // Добавляем публичное свойство для доступа
+
         [SerializeField]
         [ReadOnly]
         private string _cellNameDebug;
+
+
         private VisualElement _cell;
         private Telegraph _telegraph;
         private UIDocument _document;
@@ -35,8 +36,9 @@ namespace SkyClerik.EquipmentSystem
         public UIDocument GetDocument => _document;
         public Vector2 CellSize => _rect.size;
         public Rect Rect => _rect;
-        public bool IsEmpty => _itemVisual == null;
+        public bool IsEmpty => _equippedItem == null;
         public ItemBaseDefinition EquippedItem => _equippedItem;
+        public ItemVisual ItemVisual => _itemVisual; 
 
         public VisualElement Cell
         {
@@ -54,8 +56,9 @@ namespace SkyClerik.EquipmentSystem
             _document = document;
         }
 
-        public void InitializeTelegraph(UIDocument document)
+        public void InitializeDocumentAndTelegraph(UIDocument document)
         {
+            _document = document;
             _telegraph = new Telegraph();
             document.rootVisualElement.Add(_telegraph);
         }
@@ -84,6 +87,7 @@ namespace SkyClerik.EquipmentSystem
 
             _equippedItem = itemVisual.ItemDefinition;
             _itemVisual = itemVisual;
+            _itemVisual.SetOwnerInventory(this);
             ItemsPage.CurrentDraggedItem = null;
 
             _cell.Add(itemVisual);
@@ -119,21 +123,16 @@ namespace SkyClerik.EquipmentSystem
         /// <returns>Снятый ItemBaseDefinition, или null, если слот был пуст.</returns>
         public ItemBaseDefinition Unequip()
         {
-            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] Unequip вызывается для слота: {_cellNameDebug}. Текущий _equippedItem: {_equippedItem?.name}");
-            ItemBaseDefinition unequippedItem = _equippedItem; 
-            
             if (_itemVisual != null)
             {
-                // Если ItemVisual существует, убираем его из слота визуально
-                _itemVisual.RemoveFromHierarchy(); 
-                _itemVisual = null; // Обнуляем ссылку на ItemVisual в слоте
-                Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] _itemVisual обнулен для слота: {_cellNameDebug}.");
+                _itemVisual.RemoveFromHierarchy();
+                _itemVisual = null;
             }
-            
-            _equippedItem = null; // Обнуляем ссылку на ItemBaseDefinition в слоте
-            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] _equippedItem обнулен для слота: {_cellNameDebug}. Возвращаем: {unequippedItem?.name}");
 
-            return unequippedItem; // Возвращаем снятый ItemBaseDefinition
+            _equippedItem = null;
+            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] _equippedItem обнулен для слота: {_cellNameDebug}.");
+
+            return null;
         }
 
         // --- IDropTarget реализация ---
@@ -147,12 +146,13 @@ namespace SkyClerik.EquipmentSystem
 
             if (canEquip)
             {
-                if (IsEmpty)
+                if (_itemVisual == null)
                 {
                     conflict = ReasonConflict.None;
                 }
                 else
                 {
+                    Debug.Log($"[ShowPlacementTarget] _itemVisual.ItemDefinition.name: {_itemVisual.ItemDefinition.name}.");
                     conflict = ReasonConflict.SwapAvailable;
                 }
             }
@@ -169,7 +169,7 @@ namespace SkyClerik.EquipmentSystem
                 conflict: conflict,
                 position: _rect.position, // Позиция Rect слота
                 suggestedGridPosition: Vector2Int.zero, // Не используется для экипировки
-                overlapItem: IsEmpty ? null : _itemVisual, // Возвращаем ItemVisual, если слот занят
+                overlapItem: _itemVisual == null ? null : _itemVisual, // Возвращаем ItemVisual, если слот занят
                 targetInventory: this // Сам EquipmentSlot является целью перетаскивания
             );
         }
@@ -191,7 +191,11 @@ namespace SkyClerik.EquipmentSystem
 
         public void PickUp(ItemVisual storedItem)
         {
-            RemoveStoredItem(storedItem); // Удаляем из слота
+            Debug.Log($"[ItemVisual][PickUp] storedItem: {storedItem.ItemDefinition.name}");
+            Unequip();
+            ItemsPage.CurrentDraggedItem = storedItem;
+            _document.rootVisualElement.Add(storedItem);
+            ItemsPage.CurrentDraggedItem.SetOwnerInventory(this);
         }
 
         public void Drop(ItemVisual storedItem, Vector2Int gridPosition)
@@ -209,7 +213,7 @@ namespace SkyClerik.EquipmentSystem
         {
             suggestedGridPosition = Vector2Int.zero; // Не используется для слотов экипировки
 
-            return IsEmpty && CanEquip(item);
+            return _itemVisual == null && CanEquip(item);
         }
 
         public ItemGridData GetItemGridData(ItemVisual itemVisual)

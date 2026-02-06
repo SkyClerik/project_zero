@@ -107,7 +107,7 @@ namespace SkyClerik.EquipmentSystem
                         }
                         equipSlot.Cell = cell;
                         //equipSlot.GetDocument = _uiDocument; // Устанавливаем UIDocument в существующий слот
-                        equipSlot.InitializeTelegraph(_uiDocument); // Инициализируем телеграф для этого слота
+                        equipSlot.InitializeDocumentAndTelegraph(_uiDocument); // Инициализируем телеграф для этого слота
                     }
                 }
             }
@@ -172,7 +172,7 @@ namespace SkyClerik.EquipmentSystem
 
             // Сохраняем ItemVisual, который находится в целевом слоте, во временное хранилище
             ItemVisual itemInTargetSlotVisual = targetEquipSlot.ItemVisual;
-            ItemBaseDefinition itemDefinitionFromTargetSlot = null; // Для хранения снятого ItemBaseDefinition
+            //ItemBaseDefinition itemDefinitionFromTargetSlot = null; // Для хранения снятого ItemBaseDefinition
 
             // Удаляем предмет из исходного контейнера (инвентаря)
             sourceContainer.RemoveItem(itemToEquip, destroy: false);
@@ -182,7 +182,8 @@ namespace SkyClerik.EquipmentSystem
             if (itemInTargetSlotVisual != null)
             {
                 Debug.Log($"[ЭКИПИРОВКА][EquipPage] Слот экипировки '{targetEquipSlot.Cell.name}' занят предметом '{itemInTargetSlotVisual.ItemDefinition.name}'. Поднимаем его.");
-                itemDefinitionFromTargetSlot = targetEquipSlot.Unequip(); // Сохраняем снятый ItemBaseDefinition
+                //itemDefinitionFromTargetSlot = targetEquipSlot.Unequip(); // Сохраняем снятый ItemBaseDefinition
+                targetEquipSlot.Unequip();
             }
 
             // Экипируем новый предмет в слот
@@ -211,6 +212,7 @@ namespace SkyClerik.EquipmentSystem
             if (addedToTarget)
             {
                 Debug.Log($"[ИНВЕНТАРЬ][EquipPage] Предмет '{itemToUnequip.name}' был положен в контейнер '{targetContainer.name}' в позицию: {gridPosition}.");
+                draggedItem.SetOwnerInventory(targetContainer as IDropTarget);
             }
             else
             {
@@ -346,7 +348,7 @@ namespace SkyClerik.EquipmentSystem
                     if (calculatedCellSize.x > 0 && calculatedCellSize.y > 0)
                     {
                         var rect = new Rect(visualElement.worldBound.x, visualElement.worldBound.y, visualElement.resolvedStyle.width, visualElement.resolvedStyle.height);
-                        var slotData = new EquipmentSlot(rect: rect, document: _uiDocument); // Передаем _uiDocument
+                        var slotData = new EquipmentSlot(rect: rect, document: _uiDocument);
                         _equipSlots.Add(slotData);
                     }
                 }

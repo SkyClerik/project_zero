@@ -192,10 +192,10 @@ namespace SkyClerik.Inventory
         /// <returns>Результаты размещения, включающие информацию о конфликте и предложенной позиции.</returns>
         public PlacementResults HandleItemPlacement(ItemVisual draggedItem)
         {
-            Debug.Log($"[ItemsPage][Placement] Начало HandleItemPlacement для {draggedItem.ItemDefinition.name}");
+            //Debug.Log($"[ItemsPage][Placement] Начало HandleItemPlacement для {draggedItem.ItemDefinition.name}");
             //Debug.Log($"[ЛОG] Проверяю страницу инвентаря ({_inventoryPage.Root.name}).");
             PlacementResults resultsPage = _inventoryPage.ShowPlacementTarget(draggedItem);
-            Debug.Log($"[ItemsPage][Placement] Результат для инвентаря: {resultsPage.Conflict}");
+            //Debug.Log($"[ItemsPage][Placement] Результат для инвентаря: {resultsPage.Conflict}");
             if (resultsPage.Conflict == ReasonConflict.None || resultsPage.Conflict == ReasonConflict.StackAvailable || resultsPage.Conflict == ReasonConflict.SwapAvailable)
             {
                 //Debug.Log($"[ЛОГ] Страница инвентаря активна. Конфликт: {resultsPage.Conflict}. Скрываю телеграф крафта.");
@@ -208,7 +208,7 @@ namespace SkyClerik.Inventory
             {
                 //Debug.Log($"[ЛОG] Проверяю страницу сундука ({_cheastPage.Root.name}).");
                 PlacementResults resultsCheast = _cheastPage.ShowPlacementTarget(draggedItem);
-                Debug.Log($"[ItemsPage][Placement] Результат для сундука: {resultsCheast.Conflict}");
+                //Debug.Log($"[ItemsPage][Placement] Результат для сундука: {resultsCheast.Conflict}");
                 if (resultsCheast.Conflict != ReasonConflict.beyondTheGridBoundary)
                 {
                     //Debug.Log($"[ЛОГ] Страница сундука активна. Конфликт: {resultsCheast.Conflict}. Скрываю телеграф инвентаря.");
@@ -221,7 +221,7 @@ namespace SkyClerik.Inventory
             {
                 //Debug.Log($"[ЛОG] Проверяю страницу лута ({_lutPage.Root.name}).");
                 PlacementResults lutCheast = _lutPage.ShowPlacementTarget(draggedItem);
-                Debug.Log($"[ItemsPage][Placement] Результат для лута: {lutCheast.Conflict}");
+                //Debug.Log($"[ItemsPage][Placement] Результат для лута: {lutCheast.Conflict}");
                 if (lutCheast.Conflict != ReasonConflict.beyondTheGridBoundary)
                 {
                     //Debug.Log($"[ЛОГ] Страница лута активна. Конфликт: {lutCheast.Conflict}. Скрываю телеграф инвентаря.");
@@ -236,7 +236,7 @@ namespace SkyClerik.Inventory
                 if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
                 {
                     PlacementResults resultsTwo = _craftPage.ShowPlacementTarget(draggedItem);
-                    Debug.Log($"[ItemsPage][Placement] Результат для крафта: {resultsTwo.Conflict}");
+                    //Debug.Log($"[ItemsPage][Placement] Результат для крафта: {resultsTwo.Conflict}");
                     if (resultsTwo.Conflict != ReasonConflict.beyondTheGridBoundary)
                     {
                         //Debug.Log($"[ЛОГ] Страница крафта активна. Конфликт: {resultsTwo.Conflict}. Скрываю телеграф инвентаря.");
@@ -245,6 +245,12 @@ namespace SkyClerik.Inventory
                     }
                 }
             }
+
+            //Debug.Log($"[ItemsPage][Placement] Возвращаем beyondTheGridBoundary для {draggedItem.ItemDefinition.name}");
+            _inventoryPage.Telegraph.Hide();
+            _craftPage.Telegraph.Hide();
+            _cheastPage.Telegraph.Hide();
+            _lutPage.Telegraph.Hide();
 
             // -----
             // Добавляем проверку для EquipPage (который теперь содержит IDropTarget слоты)
@@ -263,30 +269,20 @@ namespace SkyClerik.Inventory
                     // Проверяем, находится ли мышка над текущим EquipmentSlot
                     if (equipSlot.Rect.Contains(MouseUILocalPosition))
                     {
-                        //Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}"); // Новый Debug.Log
+                        Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}");
 
                         // Если мышка над слотом, то делегируем проверку этому EquipmentSlot
                         PlacementResults equipResults = equipSlot.ShowPlacementTarget(draggedItem);
                         Debug.Log($"[ItemsPage][Placement] Результат для слота экипировки '{equipSlot.Cell.name}': {equipResults.Conflict}");
                         if (equipResults.Conflict != ReasonConflict.beyondTheGridBoundary)
                         {
-                            //Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
-                            // Скрываем все другие телеграфы
-                            _inventoryPage.Telegraph.Hide();
-                            _craftPage.Telegraph.Hide();
-                            _cheastPage.Telegraph.Hide();
-                            _lutPage.Telegraph.Hide();
+                            Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
                             return equipResults;
                         }
                     }
                 }
             }
 
-            Debug.Log($"[ItemsPage][Placement] Возвращаем beyondTheGridBoundary для {draggedItem.ItemDefinition.name}");
-            _inventoryPage.Telegraph.Hide();
-            _craftPage.Telegraph.Hide();
-            _cheastPage.Telegraph.Hide();
-            _lutPage.Telegraph.Hide();
             return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
 
