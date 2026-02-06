@@ -246,6 +246,12 @@ namespace SkyClerik.Inventory
             EquipPage equipPage = ServiceProvider.Get<EquipPage>();
             if (equipPage != null && equipPage.isActiveAndEnabled && equipPage._root.resolvedStyle.display != DisplayStyle.None)
             {
+                // Сначала скрываем телеграфы всех слотов экипировки, чтобы они не оставались висящими
+                foreach (var equipSlot in equipPage.EquipmentSlots)
+                {
+                    equipSlot.FinalizeDrag();
+                }
+
                 // Для каждого EquipmentSlot в EquipPage
                 foreach (var equipSlot in equipPage.EquipmentSlots)
                 {
@@ -310,10 +316,16 @@ namespace SkyClerik.Inventory
             }
 
             // Удаляем предмет из исходного контейнера (это вызовет OnItemRemoved в UI)
+            Debug.Log($"[ИНВЕНТАРЬ] Предмет '{itemToMove.name}' был забран из контейнера '{sourceContainer.name}'.");
             sourceContainer.RemoveItem(itemToMove, destroy: false);
 
             // Пытаемся добавить предмет в целевой контейнер на указанную позицию Это вызовет OnItemAdded в UI, если успешно
             bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, gridPosition);
+
+            if (addedToTarget)
+            {
+                Debug.Log($"[ИНВЕНТАРЬ] Предмет '{itemToMove.name}' был положен в контейнер '{targetContainer.name}' в позицию: {gridPosition}.");
+            }
 
             if (!addedToTarget)
             {
