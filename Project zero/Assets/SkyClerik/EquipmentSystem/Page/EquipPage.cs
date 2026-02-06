@@ -203,7 +203,7 @@ namespace SkyClerik.EquipmentSystem
             Debug.Log($"[ЭКИПИРОВКА][EquipPage] Попытка снять предмет '{itemToUnequip.name}' из слота '{sourceEquipSlot.Cell.name}' и поместить в '{targetContainer.name}'.");
 
             // Снимаем предмет из слота экипировки
-            sourceEquipSlot.Unequip();
+            //sourceEquipSlot.Unequip();
             Debug.Log($"[ЭКИПИРОВКА][EquipPage] Предмет '{itemToUnequip.name}' был снят из слота '{sourceEquipSlot.Cell.name}'.");
 
             // Пытаемся добавить предмет в целевой контейнер (инвентарь)

@@ -125,14 +125,14 @@ string rootID)
             var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
             if (existingVisual != null)
             {
-                //Debug.Log($"[GridPageElementBase] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
+                Debug.Log($"[GridPageElementBase] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
                 existingVisual.UpdatePcs();
                 existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
                 _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
             }
             else
             {
-                //Debug.Log($"[GridPageElementBase] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
+                Debug.Log($"[GridPageElementBase] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
                 CreateVisualForItem(item);
             }
         }

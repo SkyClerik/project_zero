@@ -116,8 +116,16 @@ namespace SkyClerik.Utils
         {
             ItemsPage itemsPage = ServiceProvider.Get<ItemsPage>();
             EquipPage equipPage = ServiceProvider.Get<EquipPage>();
-            itemsPage.OpenInventoryNormal();
-            equipPage.OpenEquip();
+
+            if (equipPage.enabled)
+            {
+                itemsPage.OpenInventoryNormal();
+                equipPage.OpenEquip();
+            }
+            else
+            {
+                Debug.Log($"Это заклинание еще не готово!");
+            }
         }
 
         private void _bInventoryGive_clicked()

@@ -269,7 +269,7 @@ namespace SkyClerik.Inventory
 
                 _isDragging = false;
                 style.opacity = 1f;
-                ItemsPage.CurrentDraggedItem = null;
+                // ItemsPage.CurrentDraggedItem = null; // Moved to FinalizeDragOfItem
 
                 switch (_placementResults.Conflict)
                 {
