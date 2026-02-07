@@ -85,16 +85,28 @@ namespace SkyClerik.EquipmentSystem
             if (itemVisual == null)
                 return;
 
+            IDropTarget sourceOwner = itemVisual.OwnerInventory;
+            if (sourceOwner is GridPageElementBase sourceGridPage)
+            {
+                ItemContainer sourceContainer = sourceGridPage.ItemContainer;
+                if (sourceContainer != null)
+                {
+                    Debug.Log($"[EquipmentSlot][Equip] Удаляю '{itemVisual.ItemDefinition.name}' из исходного инвентаря '{sourceContainer.name}'.");
+                    sourceContainer.RemoveItem(itemVisual.ItemDefinition, destroy: false);
+                }
+            }
+
             _equippedItem = itemVisual.ItemDefinition;
             _itemVisual = itemVisual;
-            _itemVisual.SetOwnerInventory(this);
-            // ItemsPage.CurrentDraggedItem = null; // <-- Удалено! Это обнуляет CurrentDraggedItem слишком рано.
 
             _cell.Add(itemVisual);
-            // Сбрасываем позицию ItemVisual относительно нового родителя
+            _telegraph.Hide();
+            
             itemVisual.style.left = 0;
             itemVisual.style.top = 0;
-            itemVisual.style.position = Position.Absolute; // Убеждаемся, что позиционирование абсолютное
+            itemVisual.style.position = Position.Absolute;
+
+            ItemsPage.CurrentDraggedItem = null;
         }
 
         /// <summary>
@@ -181,7 +193,7 @@ namespace SkyClerik.EquipmentSystem
 
         public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            Equip(storedItem); // Просто вызываем Equip
+            //Equip(storedItem); // Просто вызываем Equip
         }
 
         public void RemoveStoredItem(ItemVisual storedItem)
@@ -201,7 +213,7 @@ namespace SkyClerik.EquipmentSystem
 
         public void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            AddStoredItem(storedItem, gridPosition); // Добавляем в слот
+            Equip(storedItem); // Просто вызываем Equip
         }
 
         public void AddItemToInventoryGrid(VisualElement item)

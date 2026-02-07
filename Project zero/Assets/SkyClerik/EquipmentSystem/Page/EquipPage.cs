@@ -183,7 +183,7 @@ namespace SkyClerik.EquipmentSystem
                     // Просим EquipmentSlot создать ItemVisual для экипированного предмета
                     var newItemVisual = slot.CreateItemVisualForSlot(slot.EquippedItem, _itemsPage);
                     // Экипируем созданный ItemVisual
-                    slot.Equip(newItemVisual);
+                    slot.Drop(newItemVisual, Vector2Int.zero);
                 }
             }
         }

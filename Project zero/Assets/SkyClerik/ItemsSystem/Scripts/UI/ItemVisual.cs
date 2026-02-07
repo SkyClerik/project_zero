@@ -28,6 +28,8 @@ namespace SkyClerik.Inventory
         private const string _iconName = "Icon";
         private const int IconPadding = 5;
 
+        public IDropTarget OwnerInventory => _ownerInventory;
+
         /// <summary>
         /// Возвращает определение предмета (<see cref="ItemBaseDefinition"/>), связанное с этим визуальным элементом.
         /// </summary>
@@ -246,13 +248,14 @@ namespace SkyClerik.Inventory
 
         private bool FromEquip()
         {
-            _placementResults = _itemsPage.HandleItemPlacement(this);
+            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+            _placementResults = equipPage.ProcessDragFeedback(this, _itemsPage.MouseUILocalPosition);
 
             if (_placementResults.TargetInventory is EquipmentSlot targetEquipmentSlot)
             {
                 return HandleEquipmentDrop(targetEquipmentSlot);
             }
-            else // Если цель - не EquipmentSlot
+            else // Если цель - не EquipmentSlot (например, beyondTheGridBoundary)
             {
                 return HandleEquipmentToInventoryOrDropBack(_placementResults.TargetInventory, _placementResults.SuggestedGridPosition);
             }
@@ -282,11 +285,11 @@ namespace SkyClerik.Inventory
             // 1. Поднимаем предмет из слота экипировки
             // Это установит ItemsPage.CurrentDraggedItem в itemToSwap
             // И уберет itemToSwap из EquipmentSlot.
-            targetSlot.PickUp(itemToSwap); 
+            targetSlot.PickUp(itemToSwap);
 
             // 2. Экипируем текущий перетаскиваемый предмет (this) в целевой слот
             targetSlot.Drop(this, Vector2Int.zero); // Vector2Int.zero - заглушка, так как для слотов экипировки не используется
-            
+
             // 3. Теперь ItemsPage.CurrentDraggedItem содержит itemToSwap (который мы подняли из слота)
             // И текущий предмет (this) успешно помещен в слот экипировки.
 
