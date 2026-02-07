@@ -252,36 +252,36 @@ namespace SkyClerik.Inventory
             _cheastPage.Telegraph.Hide();
             _lutPage.Telegraph.Hide();
 
-            // -----
-            // Добавляем проверку для EquipPage (который теперь содержит IDropTarget слоты)
-            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
-            if (equipPage != null && equipPage.isActiveAndEnabled && equipPage._root.resolvedStyle.display != DisplayStyle.None)
-            {
-                // Сначала скрываем телеграфы всех слотов экипировки, чтобы они не оставались висящими
-                foreach (var equipSlot in equipPage.EquipmentSlots)
-                {
-                    equipSlot.FinalizeDrag();
-                }
+            //// -----
+            //// Добавляем проверку для EquipPage (который теперь содержит IDropTarget слоты)
+            //EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+            //if (equipPage != null && equipPage.isActiveAndEnabled && equipPage._root.resolvedStyle.display != DisplayStyle.None)
+            //{
+            //    // Сначала скрываем телеграфы всех слотов экипировки, чтобы они не оставались висящими
+            //    foreach (var equipSlot in equipPage.EquipmentSlots)
+            //    {
+            //        equipSlot.FinalizeDrag();
+            //    }
 
-                // Для каждого EquipmentSlot в EquipPage
-                foreach (var equipSlot in equipPage.EquipmentSlots)
-                {
-                    // Проверяем, находится ли мышка над текущим EquipmentSlot
-                    if (equipSlot.Rect.Contains(MouseUILocalPosition))
-                    {
-                        Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}");
+            //    // Для каждого EquipmentSlot в EquipPage
+            //    foreach (var equipSlot in equipPage.EquipmentSlots)
+            //    {
+            //        // Проверяем, находится ли мышка над текущим EquipmentSlot
+            //        if (equipSlot.Rect.Contains(MouseUILocalPosition))
+            //        {
+            //            Debug.Log($"Проверка слота: {equipSlot.Cell.name}, Rect: {equipSlot.Rect}, Mouse Local in EquipGrid: {MouseUILocalPosition}");
 
-                        // Если мышка над слотом, то делегируем проверку этому EquipmentSlot
-                        PlacementResults equipResults = equipSlot.ShowPlacementTarget(draggedItem);
-                        Debug.Log($"[ItemsPage][Placement] Результат для слота экипировки '{equipSlot.Cell.name}': {equipResults.Conflict}");
-                        if (equipResults.Conflict != ReasonConflict.beyondTheGridBoundary)
-                        {
-                            Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
-                            return equipResults;
-                        }
-                    }
-                }
-            }
+            //            // Если мышка над слотом, то делегируем проверку этому EquipmentSlot
+            //            PlacementResults equipResults = equipSlot.ShowPlacementTarget(draggedItem);
+            //            Debug.Log($"[ItemsPage][Placement] Результат для слота экипировки '{equipSlot.Cell.name}': {equipResults.Conflict}");
+            //            if (equipResults.Conflict != ReasonConflict.beyondTheGridBoundary)
+            //            {
+            //                Debug.Log($"Мышка над слотом: {equipSlot.Cell.name}"); // Новый Debug.Log
+            //                return equipResults;
+            //            }
+            //        }
+            //    }
+            //}
 
             return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
         }
@@ -297,38 +297,38 @@ namespace SkyClerik.Inventory
             _cheastPage.FinalizeDrag();
             _lutPage.FinalizeDrag();
 
-            // Добавляем вызов FinalizeDrag для всех слотов EquipPage
-            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
-            if (equipPage != null)
-            {
-                foreach (var equipSlot in equipPage.EquipmentSlots)
-                {
-                    equipSlot.FinalizeDrag();
-                }
-            }
+            //// Добавляем вызов FinalizeDrag для всех слотов EquipPage
+            //EquipPage equipPage = ServiceProvider.Get<EquipPage>();
+            //if (equipPage != null)
+            //{
+            //    foreach (var equipSlot in equipPage.EquipmentSlots)
+            //    {
+            //        equipSlot.FinalizeDrag();
+            //    }
+            //}
 
-            // --- NEW LOGIC TO HANDLE THE DRAGGED ITEM VISUAL ---
-            if (CurrentDraggedItem != null)
-            {
-                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem не равен null. ItemDefinition: {(CurrentDraggedItem.ItemDefinition != null ? CurrentDraggedItem.ItemDefinition.name : "NULL")}, HashCode: {CurrentDraggedItem.GetHashCode()}");
-                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem.parent: {CurrentDraggedItem.parent?.name ?? "NULL"}, _uiDocument.rootVisualElement: {_uiDocument.rootVisualElement.name}");
+            //// --- NEW LOGIC TO HANDLE THE DRAGGED ITEM VISUAL ---
+            //if (CurrentDraggedItem != null)
+            //{
+            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem не равен null. ItemDefinition: {(CurrentDraggedItem.ItemDefinition != null ? CurrentDraggedItem.ItemDefinition.name : "NULL")}, HashCode: {CurrentDraggedItem.GetHashCode()}");
+            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem.parent: {CurrentDraggedItem.parent?.name ?? "NULL"}, _uiDocument.rootVisualElement: {_uiDocument.rootVisualElement.name}");
 
-                if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
-                {
-                    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem.parent ЯВЛЯЕТСЯ rootVisualElement. Удаляем из иерархии.");
-                    CurrentDraggedItem.RemoveFromHierarchy();
-                }
-                else
-                {
-                    Debug.LogWarning($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem НЕ является дочерним элементом rootVisualElement. Родитель: {CurrentDraggedItem.parent?.name ?? "NULL"}. Не удаляем из корня.");
-                }
-                CurrentDraggedItem = null; // Clear the static reference
-                Debug.Log($"[ItemsPage][FinalizeDragOfItem] Ссылка CurrentDraggedItem установлена в NULL.");
-            }
-            else
-            {
-                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem уже NULL. Нет визуального элемента для очистки из корня.");
-            }
+            //    if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
+            //    {
+            //        Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem.parent ЯВЛЯЕТСЯ rootVisualElement. Удаляем из иерархии.");
+            //        CurrentDraggedItem.RemoveFromHierarchy();
+            //    }
+            //    else
+            //    {
+            //        Debug.LogWarning($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem НЕ является дочерним элементом rootVisualElement. Родитель: {CurrentDraggedItem.parent?.name ?? "NULL"}. Не удаляем из корня.");
+            //    }
+            //    CurrentDraggedItem = null; // Clear the static reference
+            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] Ссылка CurrentDraggedItem установлена в NULL.");
+            //}
+            //else
+            //{
+            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem уже NULL. Нет визуального элемента для очистки из корня.");
+            //}
         }
 
 
@@ -388,11 +388,46 @@ namespace SkyClerik.Inventory
             {
                 Debug.Log($"Cлучай 2: Из инвентаря в слот экипировки");
 
-               var sourceContainer = sourceGridPage.ItemContainer;
+                var sourceContainer = sourceGridPage.ItemContainer;
                 EquipPage equipPage = ServiceProvider.Get<EquipPage>();
                 if (equipPage != null)
                 {
-                    equipPage.HandleItemTransfer(draggedItem, sourceContainer, targetEquipSlot);
+                    var itemToEquip = draggedItem.ItemDefinition;
+
+                    Debug.Log($"[ЭКИПИРОВКА][HandleItemTransfer] Начало. Перетаскиваемый предмет: '{itemToEquip.name}' из '{sourceContainer.name}'. Целевой слот: '{targetEquipSlot.Cell.name}'.");
+
+                    // Проверяем, может ли draggedItem быть помещен в целевой слот
+                    if (!targetEquipSlot.CanEquip(itemToEquip))
+                    {
+                        Debug.LogWarning($"[ЭКИПИРОВКА][HandleItemTransfer] Предмет '{itemToEquip.name}' не может быть экипирован в слот '{targetEquipSlot.Cell.name}'. Операция отменена.");
+                        // draggedItem все еще "в руке", и система ItemsPage должна вернуть его обратно в исходный инвентарь.
+                        return;
+                    }
+
+                    // Сохраняем ItemVisual, который находится в целевом слоте, во временное хранилище
+                    ItemVisual itemInTargetSlotVisual = targetEquipSlot.ItemVisual;
+                    //ItemBaseDefinition itemDefinitionFromTargetSlot = null; // Для хранения снятого ItemBaseDefinition
+
+                    // Удаляем предмет из исходного контейнера (инвентаря)
+                    sourceContainer.RemoveItem(itemToEquip, destroy: false);
+                    // Debug.Log($"[ИНВЕНТАРЬ][EquipPage] Предмет '{itemToEquip.name}' был забран из контейнера '{sourceContainer.name}'."); // Закомментировано
+
+                    // Если слот экипировки занят, "поднимаем" оттуда текущий предмет
+                    if (itemInTargetSlotVisual != null)
+                    {
+                        Debug.Log($"[ЭКИПИРОВКА][HandleItemTransfer] В целевом слоте '{targetEquipSlot.Cell.name}' был предмет '{itemInTargetSlotVisual.ItemDefinition.name}'. Снимаем его.");
+                        //itemDefinitionFromTargetSlot = targetEquipSlot.Unequip(); // Сохраняем снятый ItemBaseDefinition
+                        targetEquipSlot.Unequip();
+                    }
+                    else
+                    {
+                        Debug.Log($"[ЭКИПИРОВКА][HandleItemTransfer] Целевой слот '{targetEquipSlot.Cell.name}' пуст.");
+                    }
+
+                    // Экипируем новый предмет в слот
+                    targetEquipSlot.Equip(draggedItem);
+                    Debug.Log($"[ЭКИПИРОВКА][HandleItemTransfer] Предмет '{itemToEquip.name}' успешно экипирован в слот '{targetEquipSlot.Cell.name}'.");
+
                 }
             }
             // Случай 3: Из слота экипировки в инвентарь
@@ -404,7 +439,23 @@ namespace SkyClerik.Inventory
                 EquipPage equipPage = ServiceProvider.Get<EquipPage>();
                 if (equipPage != null)
                 {
-                    equipPage.HandleItemTransferFromEquip(draggedItem, sourceEquipSlot, targetContainer, gridPosition);
+                    ItemBaseDefinition itemToUnequip = draggedItem.ItemDefinition;
+                    sourceEquipSlot.Unequip();
+                    Debug.Log($"[ЭКИПИРОВКА][HandleItemTransferFromEquip] Предмет '{itemToUnequip.name}' снят из слота '{sourceEquipSlot.Cell.name}'. Попытка добавить в инвентарь.");
+
+                    // Пытаемся добавить предмет в целевой контейнер (инвентарь)
+                    bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToUnequip, gridPosition);
+                    if (addedToTarget)
+                    {
+                        Debug.Log($"[ЭКИПИРОВКА][HandleItemTransferFromEquip] Предмет '{itemToUnequip.name}' успешно помещен в контейнер '{targetContainer.name}' в позицию: {gridPosition}.");
+                        draggedItem.SetOwnerInventory(targetGridPage);
+                    }
+                    else
+                    {
+                        // Если не удалось добавить в инвентарь, возвращаем его обратно в слот экипировки
+                        sourceEquipSlot.Equip(draggedItem);
+                        Debug.LogWarning($"[ЭКИПИРОВКА][HandleItemTransferFromEquip] Не удалось поместить предмет '{itemToUnequip.name}' в инвентарь '{targetContainer.name}'. Возвращен в слот экипировки '{sourceEquipSlot.Cell.name}'.");
+                    }
                 }
             }
             // Случай 4: Из слота экипировки в слот экипировки

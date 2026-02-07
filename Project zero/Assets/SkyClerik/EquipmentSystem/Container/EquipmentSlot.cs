@@ -88,7 +88,7 @@ namespace SkyClerik.EquipmentSystem
             _equippedItem = itemVisual.ItemDefinition;
             _itemVisual = itemVisual;
             _itemVisual.SetOwnerInventory(this);
-            ItemsPage.CurrentDraggedItem = null;
+            // ItemsPage.CurrentDraggedItem = null; // <-- Удалено! Это обнуляет CurrentDraggedItem слишком рано.
 
             _cell.Add(itemVisual);
             // Сбрасываем позицию ItemVisual относительно нового родителя
@@ -196,6 +196,7 @@ namespace SkyClerik.EquipmentSystem
             ItemsPage.CurrentDraggedItem = storedItem;
             _document.rootVisualElement.Add(storedItem);
             ItemsPage.CurrentDraggedItem.SetOwnerInventory(this);
+            Debug.Log($"[EquipmentSlot][PickUp] Установлен ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.ItemDefinition.name}.");
         }
 
         public void Drop(ItemVisual storedItem, Vector2Int gridPosition)

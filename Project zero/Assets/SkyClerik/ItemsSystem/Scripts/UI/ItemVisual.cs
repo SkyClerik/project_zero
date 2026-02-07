@@ -288,9 +288,6 @@ namespace SkyClerik.Inventory
                             // Если перемещение в другой инвентарь, используем старую логику трансфера                                              
                             Placement(_placementResults.SuggestedGridPosition);
                         }
-
-                        // Старый вариант
-                        //Placement(_placementResults.SuggestedGridPosition);
                         break;
                     default:
                         TryDropBack();
@@ -364,8 +361,6 @@ namespace SkyClerik.Inventory
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.Width, _itemDefinition.Dimensions.Height);
 
             _itemsPage.StopTooltipDelayAndHideTooltip();
-            //ItemsPage.CurrentDraggedItem = this;
-            //_ownerInventory.GetDocument.rootVisualElement.Add(this);
             this.style.position = Position.Absolute;
             _ownerInventory.PickUp(this);
             _placementResults = _itemsPage.HandleItemPlacement(this);
@@ -377,11 +372,18 @@ namespace SkyClerik.Inventory
         /// <param name="dropTarget">Новый инвентарь-владелец.</param>
         public void SetOwnerInventory(IDropTarget dropTarget)
         {
+            Debug.Log($"[ItemVisual][SetOwnerInventory] Предмет '{this.name}'. Изменение владельца. Старый: {_ownerInventory?.GetType().Name ?? "NULL"}. Новый: {dropTarget?.GetType().Name ?? "NULL"}.");
             _ownerInventory = dropTarget;
+            if (ItemsPage.CurrentDraggedItem != null)
+            {
+                // Используем _ownerInventory (приватное поле), так как публичного свойства OwnerInventory нет.
+                Debug.Log($"[ItemVisual][SetOwnerInventory] ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.name}. Его владелец: {ItemsPage.CurrentDraggedItem._ownerInventory?.GetType().Name ?? "NULL"}");
+            }
         }
 
         private void Placement(Vector2Int gridPosition)
         {
+            Debug.Log($"[ItemVisual][Placement] Вызов TransferItemBetweenContainers. DraggedItem: {this.name}. Его ownerInventory: {this._ownerInventory?.GetType().Name ?? "NULL"}. TargetInventory: {_placementResults.TargetInventory?.GetType().Name ?? "NULL"}.");
             _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
         }
 
