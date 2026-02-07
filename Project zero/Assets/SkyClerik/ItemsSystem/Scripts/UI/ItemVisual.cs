@@ -228,6 +228,7 @@ namespace SkyClerik.Inventory
 
                 if (EquipPage.IsShow)
                 {
+                    Debug.Log($"[ItemVisual][HandleEquipmentPlacementToInventory] После SetOwnerInventory, _ownerInventory: {_ownerInventory?.GetType().Name ?? "NULL"}");
                     bool flowControl = FromEquip();
                     if (!flowControl)
                     {
@@ -236,16 +237,16 @@ namespace SkyClerik.Inventory
                 }
                 else
                 {
-
+                    Debug.Log($"[ItemVisual][HandleEquipmentPlacementToInventory] После SetOwnerInventory, _ownerInventory: {_ownerInventory?.GetType().Name ?? "NULL"}");
                     bool flowControl = FromContainers();
                     if (!flowControl)
                     {
                         return;
                     }
                 }
+                _isDragging = false;
             }
         }
-
         private bool FromEquip()
         {
             EquipPage equipPage = ServiceProvider.Get<EquipPage>();
@@ -296,8 +297,10 @@ namespace SkyClerik.Inventory
         private void HandleEquipmentPlacementToInventory(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
         {
             EquipmentSlot sourceEquipSlot = _ownerInventory as EquipmentSlot;
+            GridPageElementBase sourceGridPage = _ownerInventory as GridPageElementBase;
             GridPageElementBase targetGridPage = targetInventory as GridPageElementBase;
 
+            // Если предмет пришел из экипировки (старая логика)
             if (sourceEquipSlot != null && targetGridPage != null)
             {
                 var itemToMove = this.ItemDefinition;
@@ -307,11 +310,26 @@ namespace SkyClerik.Inventory
                 if (addedToTarget)
                 {
                     this.SetOwnerInventory(targetInventory);
+                    Debug.Log($"[ItemVisual][HandleEquipmentPlacementToInventory] После SetOwnerInventory, _ownerInventory: {_ownerInventory?.GetType().Name ?? "NULL"}");
                     targetGridPage.AddItemToInventoryGrid(this);
                     SetPosition(new Vector2(suggestedGridPosition.x * targetGridPage.CellSize.x, suggestedGridPosition.y * targetGridPage.CellSize.y));
                 }
                 else
                     sourceEquipSlot.Equip(this);
+            }
+            // Если предмет пришел из инвентаря (новая логика, взятая из FromContainers)
+            else if (sourceGridPage != null)
+            {
+                if (targetInventory == _ownerInventory) // Если перемещаем внутри того же инвентаря
+                {
+                    _ownerInventory.AddItemToInventoryGrid(this);
+                    _ownerInventory.Drop(this, suggestedGridPosition);
+                    SetPosition(new Vector2(suggestedGridPosition.x * _ownerInventory.CellSize.x, suggestedGridPosition.y * _ownerInventory.CellSize.y));
+                }
+                else // Если перемещаем в другой инвентарь (например, из инвентаря в сундук, когда открыта экипировка)
+                {
+                    Placement(suggestedGridPosition);
+                }
             }
 
             targetInventory.FinalizeDrag();
