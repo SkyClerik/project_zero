@@ -257,6 +257,7 @@ namespace SkyClerik.Inventory
             }
             else // Если цель - не EquipmentSlot (например, beyondTheGridBoundary)
             {
+                _placementResults = _itemsPage.HandleItemPlacement(this); // ОБНОВЛЯЕМ _placementResults
                 return HandleEquipmentToInventoryOrDropBack(_placementResults.TargetInventory, _placementResults.SuggestedGridPosition);
             }
         }
@@ -280,63 +281,58 @@ namespace SkyClerik.Inventory
 
         private void HandleEquipmentSwap(EquipmentSlot targetSlot)
         {
-            var itemToSwap = _placementResults.OverlapItem; // ItemVisual, который уже находится в слоте экипировки
-
-            // 1. Поднимаем предмет из слота экипировки
-            // Это установит ItemsPage.CurrentDraggedItem в itemToSwap
-            // И уберет itemToSwap из EquipmentSlot.
+            var itemToSwap = _placementResults.OverlapItem;
             targetSlot.PickUp(itemToSwap);
-
-            // 2. Экипируем текущий перетаскиваемый предмет (this) в целевой слот
-            targetSlot.Drop(this, Vector2Int.zero); // Vector2Int.zero - заглушка, так как для слотов экипировки не используется
-
-            // 3. Теперь ItemsPage.CurrentDraggedItem содержит itemToSwap (который мы подняли из слота)
-            // И текущий предмет (this) успешно помещен в слот экипировки.
-
-            _itemsPage.FinalizeDragOfItem(this); // Финализируем drag для текущего предмета (this), который теперь в слоте
-
-            // Теперь itemToSwap должен стать новым ItemsPage.CurrentDraggedItem,
-            // и пользователь продолжит его перетаскивать.
-            // ItemsPage.CurrentDraggedItem уже установлен в itemToSwap в PickUp(itemToSwap)
+            targetSlot.Drop(this, Vector2Int.zero);
+            _itemsPage.FinalizeDragOfItem(this);
         }
 
         private void HandleEquipmentToEmptySlot(EquipmentSlot targetSlot)
         {
-            // Помещаем текущий перетаскиваемый предмет в пустой слот экипировки
-            targetSlot.Drop(this, Vector2Int.zero); // Vector2Int.zero - заглушка
+            targetSlot.Drop(this, Vector2Int.zero);
             _itemsPage.FinalizeDragOfItem(this);
         }
 
         private void HandleEquipmentPlacementToInventory(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
         {
-            // Предмет из экипировки успешно перемещен в обычный инвентарь
-            _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, targetInventory, suggestedGridPosition);
+            EquipmentSlot sourceEquipSlot = _ownerInventory as EquipmentSlot;
+            GridPageElementBase targetGridPage = targetInventory as GridPageElementBase;
+
+            if (sourceEquipSlot != null && targetGridPage != null)
+            {
+                var itemToMove = this.ItemDefinition;
+                var targetContainer = targetGridPage.ItemContainer;
+                bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, suggestedGridPosition);
+
+                if (addedToTarget)
+                {
+                    this.SetOwnerInventory(targetInventory);
+                    targetGridPage.AddItemToInventoryGrid(this);
+                    SetPosition(new Vector2(suggestedGridPosition.x * targetGridPage.CellSize.x, suggestedGridPosition.y * targetGridPage.CellSize.y));
+                }
+                else
+                    sourceEquipSlot.Equip(this);
+            }
+
             targetInventory.FinalizeDrag();
-            // _itemsPage.FinalizeDragOfItem(this) будет вызван в FromEquipToInventoryOrDropBack
+            _itemsPage.FinalizeDragOfItem(this);
         }
 
         private void HandleEquipmentFailedPlacement()
         {
-            // Неудачное размещение предмета из экипировки, возвращаем на место
             TryDropBack();
             _itemsPage.FinalizeDragOfItem(this);
         }
 
         private bool HandleEquipmentToInventoryOrDropBack(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
         {
-            // Этот метод будет вызван, если предмет из экипировки пытаются положить в обычный инвентарь
-            // или если размещение вообще не удалось и нужно вернуть предмет на место.
-            // _placementResults уже должно быть установлено в FromEquip
-
             switch (_placementResults.Conflict)
             {
                 case ReasonConflict.None:
-                    // Успешное размещение в обычном инвентаре
                     HandleEquipmentPlacementToInventory(targetInventory, suggestedGridPosition);
                     _itemsPage.FinalizeDragOfItem(this);
                     return true;
                 default:
-                    // Неудачное размещение, возвращаем на место
                     HandleEquipmentFailedPlacement();
                     return false;
             }
@@ -393,18 +389,14 @@ namespace SkyClerik.Inventory
             switch (_placementResults.Conflict)
             {
                 case ReasonConflict.None:
-
-                    // Если перемещение происходит внутри того же инвентаря                                                                        
                     if (_placementResults.TargetInventory == _ownerInventory)
                     {
-                        // Просто перемещаем логически и визуально, без пересоздания                                                                    
-                        _ownerInventory.AddItemToInventoryGrid(this); // Возвращаем в сетку                                                              
+                        _ownerInventory.AddItemToInventoryGrid(this);
                         _ownerInventory.Drop(this, _placementResults.SuggestedGridPosition);
                         SetPosition(_placementResults.Position);
                     }
                     else
                     {
-                        // Если перемещение в другой инвентарь, используем старую логику трансфера                                              
                         Placement(_placementResults.SuggestedGridPosition);
                     }
                     break;

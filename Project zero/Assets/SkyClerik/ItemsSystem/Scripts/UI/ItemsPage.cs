@@ -307,28 +307,13 @@ namespace SkyClerik.Inventory
             //    }
             //}
 
-            //// --- NEW LOGIC TO HANDLE THE DRAGGED ITEM VISUAL ---
-            //if (CurrentDraggedItem != null)
-            //{
-            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem не равен null. ItemDefinition: {(CurrentDraggedItem.ItemDefinition != null ? CurrentDraggedItem.ItemDefinition.name : "NULL")}, HashCode: {CurrentDraggedItem.GetHashCode()}");
-            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem.parent: {CurrentDraggedItem.parent?.name ?? "NULL"}, _uiDocument.rootVisualElement: {_uiDocument.rootVisualElement.name}");
+            if (CurrentDraggedItem != null)
+            {
+                if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
+                    CurrentDraggedItem.RemoveFromHierarchy();
 
-            //    if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
-            //    {
-            //        Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem.parent ЯВЛЯЕТСЯ rootVisualElement. Удаляем из иерархии.");
-            //        CurrentDraggedItem.RemoveFromHierarchy();
-            //    }
-            //    else
-            //    {
-            //        Debug.LogWarning($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem НЕ является дочерним элементом rootVisualElement. Родитель: {CurrentDraggedItem.parent?.name ?? "NULL"}. Не удаляем из корня.");
-            //    }
-            //    CurrentDraggedItem = null; // Clear the static reference
-            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] Ссылка CurrentDraggedItem установлена в NULL.");
-            //}
-            //else
-            //{
-            //    Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem уже NULL. Нет визуального элемента для очистки из корня.");
-            //}
+                CurrentDraggedItem = null;
+            }
         }
 
 

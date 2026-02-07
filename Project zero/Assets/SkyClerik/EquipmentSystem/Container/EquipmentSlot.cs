@@ -38,7 +38,7 @@ namespace SkyClerik.EquipmentSystem
         public Rect Rect => _rect;
         public bool IsEmpty => _equippedItem == null;
         public ItemBaseDefinition EquippedItem => _equippedItem;
-        public ItemVisual ItemVisual => _itemVisual; 
+        public ItemVisual ItemVisual => _itemVisual;
 
         public VisualElement Cell
         {
@@ -76,12 +76,9 @@ namespace SkyClerik.EquipmentSystem
             return true;
         }
 
-        /// <summary>
-        /// Экипирует предмет в этот слот.
-        /// </summary>
-        /// <param name="item">Предмет для экипировки.</param>
         public void Equip(ItemVisual itemVisual)
         {
+            Debug.Log($"Equip '{itemVisual.ItemDefinition.name}'.");
             if (itemVisual == null)
                 return;
 
@@ -98,10 +95,11 @@ namespace SkyClerik.EquipmentSystem
 
             _equippedItem = itemVisual.ItemDefinition;
             _itemVisual = itemVisual;
+            itemVisual.SetOwnerInventory(this);
 
             _cell.Add(itemVisual);
             _telegraph.Hide();
-            
+
             itemVisual.style.left = 0;
             itemVisual.style.top = 0;
             itemVisual.style.position = Position.Absolute;
@@ -129,24 +127,6 @@ namespace SkyClerik.EquipmentSystem
             );
         }
 
-        /// <summary>
-        /// Снимает предмет из этого слота.
-        /// </summary>
-        /// <returns>Снятый ItemBaseDefinition, или null, если слот был пуст.</returns>
-        public ItemBaseDefinition Unequip()
-        {
-            if (_itemVisual != null)
-            {
-                _itemVisual.RemoveFromHierarchy();
-                _itemVisual = null;
-            }
-
-            _equippedItem = null;
-            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] _equippedItem обнулен для слота: {_cellNameDebug}.");
-
-            return null;
-        }
-
         // --- IDropTarget реализация ---
 
         public PlacementResults ShowPlacementTarget(ItemVisual itemVisual)
@@ -169,17 +149,12 @@ namespace SkyClerik.EquipmentSystem
                 }
             }
 
-            // Отображаем телеграф на позиции и размере слота
-            // _rect.position уже содержит корректную позицию Rect слота в мировых координатах.
-            // Телеграф является дочерним элементом rootVisualElement, поэтому его позиция style.left/top
-            // должна быть равна _rect.position, чтобы он появился над слотом.
-            _telegraph.SetPosition(_rect.position); // Устанавливаем позицию телеграфа напрямую в мировые координаты
+            _telegraph.SetPosition(_rect.position);
             _telegraph.SetPlacement(conflict, _rect.size.x, _rect.size.y);
 
-            // Инициализируем PlacementResults с данными слота
             return new PlacementResults().Init(
                 conflict: conflict,
-                position: _rect.position, // Позиция Rect слота
+                position: _rect.position,
                 suggestedGridPosition: Vector2Int.zero, // Не используется для экипировки
                 overlapItem: _itemVisual == null ? null : _itemVisual, // Возвращаем ItemVisual, если слот занят
                 targetInventory: this // Сам EquipmentSlot является целью перетаскивания
@@ -191,35 +166,21 @@ namespace SkyClerik.EquipmentSystem
             _telegraph.Hide();
         }
 
-        public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
-        {
-            //Equip(storedItem); // Просто вызываем Equip
-        }
-
-        public void RemoveStoredItem(ItemVisual storedItem)
-        {
-            Unequip(); // Просто вызываем Unequip
-        }
-
         public void PickUp(ItemVisual storedItem)
         {
-            Debug.Log($"[ItemVisual][PickUp] storedItem: {storedItem.ItemDefinition.name}");
-            Unequip();
+            Debug.Log($"[EquipmentSlot][PickUp] Поднимаем предмет: {storedItem.ItemDefinition.name} из слота {_cellNameDebug}");
+            _itemVisual = null;
+            _equippedItem = null;
+            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] Слот {_cellNameDebug} очищен (логика Unequip).");
             ItemsPage.CurrentDraggedItem = storedItem;
-            _document.rootVisualElement.Add(storedItem);
             ItemsPage.CurrentDraggedItem.SetOwnerInventory(this);
-            Debug.Log($"[EquipmentSlot][PickUp] Установлен ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.ItemDefinition.name}.");
+            _document.rootVisualElement.Add(storedItem);
+            Debug.Log($"[EquipmentSlot][PickUp] Установлен ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.ItemDefinition.name}. Его владелец: {ItemsPage.CurrentDraggedItem.OwnerInventory?.GetType().Name ?? "NULL"}.");
         }
 
         public void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
             Equip(storedItem); // Просто вызываем Equip
-        }
-
-        public void AddItemToInventoryGrid(VisualElement item)
-        {
-            // ItemVisual уже добавляется к _cell в методе Equip
-            // Этот метод может быть пустым
         }
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
@@ -229,13 +190,37 @@ namespace SkyClerik.EquipmentSystem
             return _itemVisual == null && CanEquip(item);
         }
 
+
+
+
+        public void AddItemToInventoryGrid(VisualElement item)
+        {
+            Debug.Log($"[AddItemToInventoryGrid][ЗАГЛУШКА] item: {item}");
+        }
+
+        public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
+        {
+            Debug.Log($"[AddStoredItem][ЗАГЛУШКА] storedItem: {storedItem}");
+        }
+
+        public void RemoveStoredItem(ItemVisual storedItem)
+        {
+            Debug.Log($"[RemoveStoredItem][ЗАГЛУШКА] storedItem: {storedItem}");
+        }
+
         public ItemGridData GetItemGridData(ItemVisual itemVisual)
         {
-            // EquipSlot не работает с ItemGridData, возвращаем null
+            Debug.Log($"[GetItemGridData][ЗАГЛУШКА] itemVisual: {itemVisual}");
             return null;
         }
 
-        public void RegisterVisual(ItemVisual visual, ItemGridData gridData) { }
-        public void UnregisterVisual(ItemVisual visual) { }
+        public void RegisterVisual(ItemVisual itemVisual, ItemGridData gridData)
+        {
+            Debug.Log($"[GetItemGridData][ЗАГЛУШКА] itemVisual: {itemVisual}");
+        }
+        public void UnregisterVisual(ItemVisual itemVisual)
+        {
+            Debug.Log($"[GetItemGridData][ЗАГЛУШКА] ItemVisual: {itemVisual}");
+        }
     }
 }

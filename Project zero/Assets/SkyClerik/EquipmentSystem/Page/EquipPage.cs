@@ -203,12 +203,6 @@ namespace SkyClerik.EquipmentSystem
             return false;
         }
 
-        public void RemoveStoredItem(EquipmentSlot equipmentSlot)
-        {
-            if (equipmentSlot != null)
-                equipmentSlot.Unequip(); // Изменено с equipmentSlot.Unequip(_uiDocument);
-        }
-
         public void OpenEquip()
         {
             EquipPage.IsShow = true;
