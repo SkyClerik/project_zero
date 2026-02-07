@@ -85,46 +85,39 @@ namespace SkyClerik.EquipmentSystem
 
         protected void FirstLoadInitialVisuals()
         {
-            for (int i = 0; i < _equipSlots.Count; i++)
+            // Обеспечиваем прямое соответствие между визуальными слотами и слотами данных
+            for (int i = 0; i < _equipSlots.Count && i < _visualSlots.Count; i++)
             {
-                if (i < _visualSlots.Count)
-                {
-                    var cell = _visualSlots[i];
-                    Vector2 cellPosition = new Vector2(cell.worldBound.x + 1, cell.worldBound.y + 1);
-                    var equipSlot = _equipSlots[i];
+                var cell = _visualSlots[i];
+                var equipSlot = _equipSlots[i];
 
-                    if (TryGetTargetSlot(cellPosition, out equipSlot))
-                    {
-                        if (cell == null)
-                        {
-                            Debug.LogWarning($"Ячейка UI по индексу {i} равна null. Пропускаем ее.", this);
-                            continue;
-                        }
-                        if (equipSlot == null)
-                        {
-                            Debug.LogWarning($"Слот экипировки по индексу {i} равен null в EquipmentContainerDefinition. Пропускаем его.", this);
-                            continue;
-                        }
-                        equipSlot.Cell = cell;
-                        //equipSlot.GetDocument = _uiDocument; // Устанавливаем UIDocument в существующий слот
-                        equipSlot.InitializeDocumentAndTelegraph(_uiDocument); // Инициализируем телеграф для этого слота
-                    }
+                if (cell == null)
+                {
+                    Debug.LogWarning($"Визуальная ячейка по индексу {i} равна null. Пропускаем ее.", this);
+                    continue;
                 }
+                if (equipSlot == null)
+                {
+                    Debug.LogWarning($"Данные слота экипировки по индексу {i} равны null. Пропускаем их.", this);
+                    continue;
+                }
+
+                equipSlot.Cell = cell;
+                equipSlot.InitializeDocumentAndTelegraph(_uiDocument); // Инициализируем телеграф для этого слота
             }
 
-            // В каждый созданный EquipmentSlot пробуем положить его содержимое
+            // Пытаемся экипировать предметы, которые уже определены в данных EquipmentSlot
             foreach (EquipmentSlot slot in _equipSlots)
             {
                 if (slot.EquippedItem != null)
                 {
                     // Просим EquipmentSlot создать ItemVisual для экипированного предмета
                     var newItemVisual = slot.CreateItemVisualForSlot(slot.EquippedItem, _itemsPage);
-                    // Экипируем полученный ItemVisual
+                    // Экипируем созданный ItemVisual
                     slot.Equip(newItemVisual);
                 }
             }
         }
-
         private bool TryGetTargetSlot(Vector2 position, out EquipmentSlot equipmentSlot)
         {
             equipmentSlot = null;
@@ -231,7 +224,7 @@ namespace SkyClerik.EquipmentSystem
             // ItemsPage.CurrentDraggedItem - это тот ItemVisual, который был в targetEquipSlot и теперь "в руке".
             // Мы получили его через itemToSwap.PickUp(true) в HandleSwap().
 
-            ItemVisual itemFromTargetSlotVisual = ItemsPage.CurrentDraggedItem; 
+            ItemVisual itemFromTargetSlotVisual = ItemsPage.CurrentDraggedItem;
 
             // 1. Проверяем, может ли initialDraggedItem быть помещен в целевой слот
             if (!targetEquipSlot.CanEquip(initialDraggedItem.ItemDefinition))
@@ -266,7 +259,7 @@ namespace SkyClerik.EquipmentSystem
             {
                 sourceEquipSlot.Equip(itemFromTargetSlotVisual);
             }
-            
+
             Debug.Log("[ЭКИПИРОВКА][EquipPage] Обмен завершен.");
         }
 
