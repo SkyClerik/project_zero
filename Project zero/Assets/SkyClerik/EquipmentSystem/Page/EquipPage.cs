@@ -29,6 +29,7 @@ namespace SkyClerik.EquipmentSystem
         private List<EquipmentSlot> _equipSlots = new List<EquipmentSlot>();
         public List<EquipmentSlot> EquipmentSlots => _equipSlots;
 
+
         [Header("Конфигурация")]
 
         [Tooltip("Ссылка на UI Document, в котором находятся слоты для экипировки.")]
@@ -43,9 +44,69 @@ namespace SkyClerik.EquipmentSystem
         private ItemsPage _itemsPage;
 
         // UI-элементы
-        internal VisualElement _root;
+        internal VisualElement _EquipRoot;
         private PlacementResults _placementResults;
         private List<VisualElement> _visualSlots;
+
+        private static bool _isShow;
+        public static bool IsShow { get => _isShow; set => _isShow = value; }
+
+        /// <summary>
+        /// Обрабатывает обратную связь при перетаскивании для слотов экипировки.
+        /// </summary>
+        /// <param name="draggedItem">Перетаскиваемый предмет.</param>
+        /// <param name="mousePosition">Текущая позиция мыши в мировых координатах UI.</param>
+        /// <returns>Результаты размещения, или null, если мышь не над слотом экипировки.</returns>
+        public PlacementResults ProcessDragFeedback(ItemVisual draggedItem, Vector2 mousePosition)
+        {
+            if (_EquipRoot == null || !_EquipRoot.enabledSelf || _EquipRoot.resolvedStyle.display == DisplayStyle.None || _EquipRoot.resolvedStyle.visibility == Visibility.Hidden)
+            {
+                ClearAllTelegraphs();
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Возвращаем некорректный результат
+            }
+
+            EquipmentSlot hoveredSlot = null;
+            foreach (var equipSlot in _equipSlots)
+            {
+                if (equipSlot.Rect.Contains(mousePosition))
+                {
+                    hoveredSlot = equipSlot;
+                    break;
+                }
+            }
+
+            if (hoveredSlot != null)
+            {
+                // Мышь находится над слотом, делегируем ему показ телеграфа
+                PlacementResults results = hoveredSlot.ShowPlacementTarget(draggedItem);
+                // Скрываем телеграфы всех других слотов
+                foreach (var equipSlot in _equipSlots)
+                {
+                    if (equipSlot != hoveredSlot)
+                    {
+                        equipSlot.FinalizeDrag(); // Скрывает телеграф
+                    }
+                }
+                return results;
+            }
+            else
+            {
+                // Мышь не над каким-либо слотом, скрываем все телеграфы
+                ClearAllTelegraphs();
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Возвращаем некорректный результат
+            }
+        }
+
+        /// <summary>
+        /// Скрывает все телеграфы для всех слотов экипировки.
+        /// </summary>
+        public void ClearAllTelegraphs()
+        {
+            foreach (var equipSlot in _equipSlots)
+            {
+                equipSlot.FinalizeDrag();
+            }
+        }
 
         private void OnValidate()
         {
@@ -65,13 +126,21 @@ namespace SkyClerik.EquipmentSystem
         private void Start()
         {
             _itemsPage = ServiceProvider.Get<ItemsPage>();
-            _root = _uiDocument.rootVisualElement.Q<VisualElement>(_rootPanelName);
-            _inventoryGrid = _root.Q<VisualElement>(_inventoryGridID);
-            _header = _root.Q(_headerID);
+            _EquipRoot = _uiDocument.rootVisualElement.Q<VisualElement>(_rootPanelName);
+            _inventoryGrid = _EquipRoot.Q<VisualElement>(_inventoryGridID);
+            _header = _EquipRoot.Q(_headerID);
             _title = _header.Q<Label>(_titleID);
             _title.text = _titleText;
 
             StartCoroutine(Initialize());
+        }
+
+        private void Update()
+        {
+            if (ItemsPage.CurrentDraggedItem != null)
+            {
+                ProcessDragFeedback(ItemsPage.CurrentDraggedItem, _itemsPage.MouseUILocalPosition);
+            }
         }
 
         protected IEnumerator Initialize()
@@ -142,8 +211,16 @@ namespace SkyClerik.EquipmentSystem
 
         public void OpenEquip()
         {
+            EquipPage.IsShow = true;
             _itemsPage.OpenInventoryNormal();
-            _root.SetDisplay(true);
+            _EquipRoot.SetDisplay(EquipPage.IsShow);
+        }
+
+        public void CloseEquip()
+        {
+            EquipPage.IsShow = false;
+            _itemsPage.CloseAll();
+            _EquipRoot.SetDisplay(EquipPage.IsShow);
         }
 
         ///// <summary>

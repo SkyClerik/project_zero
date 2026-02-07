@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.DataEditor;
+using SkyClerik.EquipmentSystem;
 
 namespace SkyClerik.Inventory
 {
@@ -223,16 +224,132 @@ namespace SkyClerik.Inventory
                 if (!_isDragging)
                     return;
 
-                _placementResults = _itemsPage.HandleItemPlacement(this);
-
-                if (_placementResults.Conflict == ReasonConflict.SwapAvailable)
+                if (EquipPage.IsShow)
                 {
-                    HandleSwap();
-                    return;
+                    bool flowControl = FromEquip();
+                    if (!flowControl)
+                    {
+                        return;
+                    }
                 }
-
-                if (_placementResults.Conflict == ReasonConflict.StackAvailable)
+                else
                 {
+
+                    bool flowControl = FromContainers();
+                    if (!flowControl)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        private bool FromEquip()
+        {
+            _placementResults = _itemsPage.HandleItemPlacement(this);
+
+            if (_placementResults.TargetInventory is EquipmentSlot targetEquipmentSlot)
+            {
+                return HandleEquipmentDrop(targetEquipmentSlot);
+            }
+            else // Если цель - не EquipmentSlot
+            {
+                return HandleEquipmentToInventoryOrDropBack(_placementResults.TargetInventory, _placementResults.SuggestedGridPosition);
+            }
+        }
+
+        private bool HandleEquipmentDrop(EquipmentSlot targetSlot)
+        {
+            switch (_placementResults.Conflict)
+            {
+                case ReasonConflict.SwapAvailable:
+                    HandleEquipmentSwap(targetSlot);
+                    return false; // Завершаем drag, так как произошел swap, и ItemsPage.CurrentDraggedItem должен быть сброшен в другом месте
+                case ReasonConflict.None:
+                    HandleEquipmentToEmptySlot(targetSlot);
+                    return true;
+                default:
+                    // Если слот не подходит по типу или какая-то другая причина, возвращаем на место
+                    HandleEquipmentFailedPlacement();
+                    return false;
+            }
+        }
+
+        private void HandleEquipmentSwap(EquipmentSlot targetSlot)
+        {
+            var itemToSwap = _placementResults.OverlapItem; // ItemVisual, который уже находится в слоте экипировки
+
+            // 1. Поднимаем предмет из слота экипировки
+            // Это установит ItemsPage.CurrentDraggedItem в itemToSwap
+            // И уберет itemToSwap из EquipmentSlot.
+            targetSlot.PickUp(itemToSwap); 
+
+            // 2. Экипируем текущий перетаскиваемый предмет (this) в целевой слот
+            targetSlot.Drop(this, Vector2Int.zero); // Vector2Int.zero - заглушка, так как для слотов экипировки не используется
+            
+            // 3. Теперь ItemsPage.CurrentDraggedItem содержит itemToSwap (который мы подняли из слота)
+            // И текущий предмет (this) успешно помещен в слот экипировки.
+
+            _itemsPage.FinalizeDragOfItem(this); // Финализируем drag для текущего предмета (this), который теперь в слоте
+
+            // Теперь itemToSwap должен стать новым ItemsPage.CurrentDraggedItem,
+            // и пользователь продолжит его перетаскивать.
+            // ItemsPage.CurrentDraggedItem уже установлен в itemToSwap в PickUp(itemToSwap)
+        }
+
+        private void HandleEquipmentToEmptySlot(EquipmentSlot targetSlot)
+        {
+            // Помещаем текущий перетаскиваемый предмет в пустой слот экипировки
+            targetSlot.Drop(this, Vector2Int.zero); // Vector2Int.zero - заглушка
+            _itemsPage.FinalizeDragOfItem(this);
+        }
+
+        private void HandleEquipmentPlacementToInventory(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
+        {
+            // Предмет из экипировки успешно перемещен в обычный инвентарь
+            _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, targetInventory, suggestedGridPosition);
+            targetInventory.FinalizeDrag();
+            // _itemsPage.FinalizeDragOfItem(this) будет вызван в FromEquipToInventoryOrDropBack
+        }
+
+        private void HandleEquipmentFailedPlacement()
+        {
+            // Неудачное размещение предмета из экипировки, возвращаем на место
+            TryDropBack();
+            _itemsPage.FinalizeDragOfItem(this);
+        }
+
+        private bool HandleEquipmentToInventoryOrDropBack(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
+        {
+            // Этот метод будет вызван, если предмет из экипировки пытаются положить в обычный инвентарь
+            // или если размещение вообще не удалось и нужно вернуть предмет на место.
+            // _placementResults уже должно быть установлено в FromEquip
+
+            switch (_placementResults.Conflict)
+            {
+                case ReasonConflict.None:
+                    // Успешное размещение в обычном инвентаре
+                    HandleEquipmentPlacementToInventory(targetInventory, suggestedGridPosition);
+                    _itemsPage.FinalizeDragOfItem(this);
+                    return true;
+                default:
+                    // Неудачное размещение, возвращаем на место
+                    HandleEquipmentFailedPlacement();
+                    return false;
+            }
+        }
+
+
+        private bool FromContainers()
+        {
+            _placementResults = _itemsPage.HandleItemPlacement(this);
+
+            switch (_placementResults.Conflict)
+            {
+                case ReasonConflict.SwapAvailable:
+                    HandleSwap();
+                    return false;
+                case ReasonConflict.StackAvailable:
                     var targetItemVisual = _placementResults.OverlapItem;
                     int spaceAvailable = targetItemVisual.ItemDefinition.MaxStack - targetItemVisual.ItemDefinition.Stack;
                     int amountToTransfer = Mathf.Min(spaceAvailable, this.ItemDefinition.Stack);
@@ -264,38 +381,37 @@ namespace SkyClerik.Inventory
                             this.RemoveFromHierarchy();
                         }).ExecuteLater(1);
                     }
-                    return;
-                }
-
-                _isDragging = false;
-                style.opacity = 1f;
-                // ItemsPage.CurrentDraggedItem = null; // Moved to FinalizeDragOfItem
-
-                switch (_placementResults.Conflict)
-                {
-                    case ReasonConflict.None:
-
-                        // Если перемещение происходит внутри того же инвентаря                                                                        
-                        if (_placementResults.TargetInventory == _ownerInventory)
-                        {
-                            // Просто перемещаем логически и визуально, без пересоздания                                                                    
-                            _ownerInventory.AddItemToInventoryGrid(this); // Возвращаем в сетку                                                              
-                            _ownerInventory.Drop(this, _placementResults.SuggestedGridPosition);
-                            SetPosition(_placementResults.Position);
-                        }
-                        else
-                        {
-                            // Если перемещение в другой инвентарь, используем старую логику трансфера                                              
-                            Placement(_placementResults.SuggestedGridPosition);
-                        }
-                        break;
-                    default:
-                        TryDropBack();
-                        break;
-                }
-
-                _itemsPage.FinalizeDragOfItem(this);
+                    return false;
             }
+
+            _isDragging = false;
+            style.opacity = 1f;
+
+            switch (_placementResults.Conflict)
+            {
+                case ReasonConflict.None:
+
+                    // Если перемещение происходит внутри того же инвентаря                                                                        
+                    if (_placementResults.TargetInventory == _ownerInventory)
+                    {
+                        // Просто перемещаем логически и визуально, без пересоздания                                                                    
+                        _ownerInventory.AddItemToInventoryGrid(this); // Возвращаем в сетку                                                              
+                        _ownerInventory.Drop(this, _placementResults.SuggestedGridPosition);
+                        SetPosition(_placementResults.Position);
+                    }
+                    else
+                    {
+                        // Если перемещение в другой инвентарь, используем старую логику трансфера                                              
+                        Placement(_placementResults.SuggestedGridPosition);
+                    }
+                    break;
+                default:
+                    TryDropBack();
+                    break;
+            }
+
+            _itemsPage.FinalizeDragOfItem(this);
+            return true;
         }
 
         private void OnMouseDown(MouseDownEvent mouseEvent)
