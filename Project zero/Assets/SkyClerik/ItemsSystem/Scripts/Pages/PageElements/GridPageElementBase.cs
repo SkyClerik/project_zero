@@ -126,11 +126,11 @@ string rootID)
 
         private void HandleItemAdded(ItemBaseDefinition item)
         {
-            Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded вызван для '{item.name}'. SuppressNextVisualCreation: {SuppressNextVisualCreation}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded вызван для '{item.name}'. SuppressNextVisualCreation: {SuppressNextVisualCreation}");
 
             if (SuppressNextVisualCreation)
             {
-                Debug.Log($"[GridPageElementBase:{_root.name}] SuppressNextVisualCreation установлен. Пропускаем создание/обновление visual для '{item.name}'.");
+                //Debug.Log($"[GridPageElementBase:{_root.name}] SuppressNextVisualCreation установлен. Пропускаем создание/обновление visual для '{item.name}'.");
                 SuppressNextVisualCreation = false;
                 return;
             }
@@ -138,14 +138,14 @@ string rootID)
             var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
             if (existingVisual != null)
             {
-                Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
+                //Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
                 existingVisual.UpdatePcs();
                 existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
                 _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
             }
             else
             {
-                Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
+                //Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
                 CreateVisualForItem(item);
             }
         }
@@ -172,23 +172,23 @@ string rootID)
 
         //private void CreateGridBoundaryVisualizer()
         //{
-            //if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
+        //if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
 
-            //var _gridRect = _itemContainer.GridWorldRect;
+        //var _gridRect = _itemContainer.GridWorldRect;
 
-            //Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
+        //Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
 
-            //var test1 = new VisualElement();
-            //test1.name = "test1";
-            //test1.style.width = _gridRect.width;
-            //test1.style.height = _gridRect.height;
-            //test1.style.left = _gridRect.x;
-            //test1.style.top = _gridRect.y;
-            //test1.SetBorderColor(Color.blue);
-            //test1.SetBorderWidth(5);
-            //test1.style.position = Position.Absolute;
-            //test1.pickingMode = PickingMode.Ignore;
-            //_document.rootVisualElement.Add(test1);
+        //var test1 = new VisualElement();
+        //test1.name = "test1";
+        //test1.style.width = _gridRect.width;
+        //test1.style.height = _gridRect.height;
+        //test1.style.left = _gridRect.x;
+        //test1.style.top = _gridRect.y;
+        //test1.SetBorderColor(Color.blue);
+        //test1.SetBorderWidth(5);
+        //test1.style.position = Position.Absolute;
+        //test1.pickingMode = PickingMode.Ignore;
+        //_document.rootVisualElement.Add(test1);
         //}
 
         // --- Логика UI ---
@@ -202,7 +202,7 @@ string rootID)
         }
         private void CreateVisualForItem(ItemBaseDefinition item)
         {
-            Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Создание НОВОГО ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Создание НОВОГО ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
             var newGridData = new ItemGridData(item, item.GridPosition);
             var newItemVisual = new ItemVisual(
                 itemsPage: _itemsPage,
@@ -211,7 +211,7 @@ string rootID)
                 gridPosition: item.GridPosition,
                 gridSize: new Vector2Int(item.Dimensions.Width, item.Dimensions.Height));
 
-            Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Новый ItemVisual '{newItemVisual.name}' создан. HashCode: {newItemVisual.GetHashCode()}. Owner: {this.GetType().Name}.");
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Новый ItemVisual '{newItemVisual.name}' создан. HashCode: {newItemVisual.GetHashCode()}. Owner: {this.GetType().Name}.");
             RegisterVisual(newItemVisual, newGridData);
             AddItemToInventoryGrid(newItemVisual);
             newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
@@ -404,14 +404,6 @@ gridData.GridSize.x, gridData.GridSize.y);
         /// Завершает операцию перетаскивания, скрывая телеграф.
         /// </summary>
         public virtual void FinalizeDrag() => _telegraph.Hide();
-
-        //public void SetLogicalGridVisualizerActive(bool active)
-        //{
-        //    if (LogicalGridVisualizer != null)
-        //        LogicalGridVisualizer.IsEnabled = active;
-        //    else
-        //        Debug.LogWarning($"[GridPageElementBase:{_root.name}] Попытка установить состояние LogicalGridVisualizer до его инициализации.");
-        //}
 
         /// <summary>
         /// Добавляет предмет в контейнер на указанную позицию.
