@@ -316,7 +316,7 @@ namespace SkyClerik.Inventory
         {
             if (_containerDefinition == null || _containerDefinition.Items == null)
             {
-                Debug.LogWarning("[ItemContainer] Попытка получить предмет по ID из неинициализированного хранилища.");
+                //Debug.LogWarning("[ItemContainer] Попытка получить предмет по ID из неинициализированного хранилища.");
                 return null;
             }
 
@@ -327,7 +327,7 @@ namespace SkyClerik.Inventory
                     return item;
                 }
             }
-            Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{itemID}' не найден в контейнере '{name}'.");
+            //Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{itemID}' не найден в контейнере '{name}'.");
             return null;
         }
 
@@ -339,25 +339,25 @@ namespace SkyClerik.Inventory
         /// <returns>True, если предмет успешно добавлен; иначе false.</returns>
         internal bool TryAddItemAtPosition(ItemBaseDefinition item, Vector2Int gridPosition)
         {
-            Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.Width}x{item.Dimensions.Width}) на позицию {gridPosition}.", this);
+            //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Попытка добавить '{item.name}' ({item.Dimensions.Width}x{item.Dimensions.Width}) на позицию {gridPosition}.", this);
             if (item == null)
             {
-                Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Предмет равен null.", this);
+                //Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Предмет равен null.", this);
                 return false;
             }
             Vector2Int itemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
 
-            Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
+            //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
             if (IsGridAreaFree(gridPosition, itemGridSize))
             {
-                Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
+                //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
                 item.GridPosition = gridPosition;
                 OccupyGridCells(item, true);
                 _containerDefinition.Items.Add(item);
                 OnItemAdded?.Invoke(item);
                 return true;
             }
-            Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Область занята или выходит за границы.", this);
+            //Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Область занята или выходит за границы.", this);
             return false;
         }
 

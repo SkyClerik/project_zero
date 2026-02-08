@@ -144,7 +144,7 @@ namespace SkyClerik.EquipmentSystem
                 }
                 else
                 {
-                    Debug.Log($"[ShowPlacementTarget] _itemVisual.ItemDefinition.name: {_itemVisual.ItemDefinition.name}.");
+                    //Debug.Log($"[ShowPlacementTarget] _itemVisual.ItemDefinition.name: {_itemVisual.ItemDefinition.name}.");
                     conflict = ReasonConflict.SwapAvailable;
                 }
             }
