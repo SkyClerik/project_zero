@@ -256,11 +256,13 @@ namespace SkyClerik.Inventory
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.SwapAvailable:
-                        var itemToSwap = _placementResults.OverlapItem;
-                        targetEquipmentSlot.PickUp(itemToSwap);
-                        targetEquipmentSlot.Drop(this, Vector2Int.zero);
-                        _itemsPage.FinalizeDragOfItem(this);
-                        return false; // Завершаем drag, так как произошел swap, и ItemsPage.CurrentDraggedItem должен быть сброшен в другом месте
+                        var itemToSwap = _placementResults.OverlapItem; // Это ItemVisual, который был в целевом слоте экипировки
+                        targetEquipmentSlot.Drop(this, Vector2Int.zero); // targetEquipmentSlot "роняет" наш ItemVisual
+                        targetEquipmentSlot.PickUp(itemToSwap); // targetEquipmentSlot "поднимает" ItemVisual, он становится ItemsPage.CurrentDraggedItem
+                        itemToSwap._isDragging = true; // Убеждаемся, что флаг перетаскивания установлен для itemToSwap
+                        // НЕ вызываем _itemsPage.FinalizeDragOfItem(this) для нашего ItemVisual,
+                        // потому что drag продолжается для itemToSwap.
+                        return true; // Возвращаем true, чтобы OnMouseUp не сбрасывал _isDragging для itemToSwap, так как drag продолжается.
                     case ReasonConflict.None:
                         targetEquipmentSlot.Drop(this, Vector2Int.zero);
                         _itemsPage.FinalizeDragOfItem(this);
@@ -292,7 +294,7 @@ namespace SkyClerik.Inventory
                         this.SetOwnerInventory(targetGridPage);
                         //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] RemoveFromHierarchy() вызван.");
                         this.RemoveFromHierarchy(); // Удаляем из старой иерархии
-                        //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] Добавляем в инвентарную сетку.");
+                                                    //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] Добавляем в инвентарную сетку.");
                         targetGridPage.AddItemToInventoryGrid(this); // Добавляем ItemVisual в сетку
                         targetGridPage.RegisterVisual(this, new ItemGridData(_itemDefinition, _itemDefinition.GridPosition)); // Регистрируем визуальный элемент
                         this.SetPosition(new Vector2(_placementResults.SuggestedGridPosition.x * targetGridPage.CellSize.x, _placementResults.SuggestedGridPosition.y * targetGridPage.CellSize.y));
