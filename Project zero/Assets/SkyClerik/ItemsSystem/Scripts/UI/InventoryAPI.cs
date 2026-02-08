@@ -33,6 +33,12 @@ namespace SkyClerik.Inventory
             OnItemGiven?.Invoke(item);
         }
 
+        public void SetGivinItemTracinColor(Color newColor, int width)
+        {
+            _itemsPage.GivenItem.TracingColor = newColor;
+            _itemsPage.GivenItem.TracingWidth = width;
+        }
+
         /// <summary>
         /// Указывает, виден ли наш инвентарь.
         /// </summary>
@@ -57,13 +63,13 @@ namespace SkyClerik.Inventory
         /// Откроет инвентарь, чтобы выбрать предмет по его ID. Если предмета нет, инвентарь не откроется.
         /// </summary>
         /// <param name="itemID">Индекс искомого предмета.</param>
-        public void OpenInventoryFromGiveItem(int itemID) => _itemsPage.OpenInventoryFromGiveItem(itemID);
+        public void OpenInventoryFromGiveItem(int itemID, bool tracing) => _itemsPage.OpenInventoryFromGiveItem(itemID, tracing);
 
         /// <summary>
         /// Откроет инвентарь для выбора конкретного предмета. Если ссылка на предмет пустая, инвентарь не откроется.
         /// </summary>
         /// <param name="item">Предмет, который нужно выбрать.</param>
-        public void OpenInventoryGiveItem(ItemBaseDefinition item) => _itemsPage.OpenInventoryGiveItem(item);
+        public void OpenInventoryGiveItem(ItemBaseDefinition item, bool tracing) => _itemsPage.OpenInventoryGiveItem(item, tracing);
 
         /// <summary>
         /// Открывает обычный инвентарь и страницу крафта.

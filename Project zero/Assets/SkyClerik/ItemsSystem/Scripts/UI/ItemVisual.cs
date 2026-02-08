@@ -36,7 +36,7 @@ namespace SkyClerik.Inventory
         public ItemBaseDefinition ItemDefinition
         {
             get => _itemDefinition;
-            set => _itemDefinition = value; // Добавляем сеттер
+            set => _itemDefinition = value;
         }
 
         /// <summary>
@@ -249,76 +249,69 @@ namespace SkyClerik.Inventory
         private bool FromEquip()
         {
             EquipPage equipPage = ServiceProvider.Get<EquipPage>();
-            _placementResults = equipPage.ProcessDragFeedback(this, _itemsPage.MouseUILocalPosition); // Получаем результаты от экипировки
+            _placementResults = equipPage.ProcessDragFeedback(this, _itemsPage.MouseUILocalPosition);
 
-            if (_placementResults.TargetInventory is EquipmentSlot targetEquipmentSlot) // Если цель - слот экипировки
+            if (_placementResults.TargetInventory is EquipmentSlot targetEquipmentSlot)
             {
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.SwapAvailable:
-                        var itemToSwap = _placementResults.OverlapItem; // Это ItemVisual, который был в целевом слоте экипировки
-                        targetEquipmentSlot.PickUp(itemToSwap); // targetEquipmentSlot "поднимает" ItemVisual, он становится ItemsPage.CurrentDraggedItem
-                        targetEquipmentSlot.Drop(this, Vector2Int.zero); // targetEquipmentSlot "роняет" наш ItemVisual
+                        var itemToSwap = _placementResults.OverlapItem;
+                        targetEquipmentSlot.PickUp(itemToSwap);
+                        targetEquipmentSlot.Drop(this, Vector2Int.zero);
                         ItemsPage.CurrentDraggedItem = itemToSwap;
-                        itemToSwap._isDragging = true; // Убеждаемся, что флаг перетаскивания установлен для itemToSwap
-                        // НЕ вызываем _itemsPage.FinalizeDragOfItem(this) для нашего ItemVisual,
-                        // потому что drag продолжается для itemToSwap.
-                        return true; // Возвращаем true, чтобы OnMouseUp не сбрасывал _isDragging для itemToSwap, так как drag продолжается.
+                        itemToSwap._isDragging = true;
+                        return true;
                     case ReasonConflict.None:
                         targetEquipmentSlot.Drop(this, Vector2Int.zero);
                         _itemsPage.FinalizeDragOfItem(this);
                         return true;
                     default:
-                        // Если слот не подходит по типу или какая-то другая причина, возвращаем на место
                         TryDropBack();
                         _itemsPage.FinalizeDragOfItem(this);
                         return false;
                 }
             }
-            else // Если цель - НЕ EquipmentSlot (т.е., инвентарь или за пределами UI)
+            else
             {
-                // Определяем, откуда пришел предмет
                 EquipmentSlot sourceEquipSlot = _ownerInventory as EquipmentSlot;
                 _placementResults = _itemsPage.HandleItemPlacement(this); // НЕ СМЕЙ ЭТО ТРОГАТЬ ДУРАЦКАЯ МАШИНА!!!
                 GridPageElementBase targetGridPage = _placementResults.TargetInventory as GridPageElementBase;
 
-                if (sourceEquipSlot != null && targetGridPage != null) // Если из экипировки в инвентарь
+                if (sourceEquipSlot != null && targetGridPage != null)
                 {
                     //Debug.Log($"[ItemVisual][Placement] Вызов TransferItemBetweenContainers. DraggedItem: {this.name}. Его ownerInventory: {this._ownerInventory?.GetType().Name ?? "NULL"}. TargetInventory: {_placementResults.TargetInventory?.GetType().Name ?? "NULL"}.");
                     var targetContainer = targetGridPage.ItemContainer;
                     //Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{_itemDefinition.name}' снят из слота '{sourceEquipSlot.Cell.name}'. Попытка добавить в инвентарь '{targetGridPage.Root.name}'.");
-                    targetGridPage.SuppressNextVisualCreation = true; // Устанавливаем флаг
+                    targetGridPage.SuppressNextVisualCreation = true;
                     bool addedToTarget = targetContainer.TryAddItemAtPosition(_itemDefinition, _placementResults.SuggestedGridPosition);
                     if (addedToTarget)
                     {
                         //Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{_itemDefinition.name}' успешно помещен в контейнер '{targetContainer.name}' в позицию: {_placementResults.SuggestedGridPosition}.");
                         this.SetOwnerInventory(targetGridPage);
                         //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] RemoveFromHierarchy() вызван.");
-                        this.RemoveFromHierarchy(); // Удаляем из старой иерархии
+                        this.RemoveFromHierarchy();
                                                     //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] Добавляем в инвентарную сетку.");
-                        targetGridPage.AddItemToInventoryGrid(this); // Добавляем ItemVisual в сетку
+                        targetGridPage.AddItemToInventoryGrid(this);
                         targetGridPage.RegisterVisual(this, new ItemGridData(_itemDefinition, _itemDefinition.GridPosition)); // Регистрируем визуальный элемент
                         this.SetPosition(new Vector2(_placementResults.SuggestedGridPosition.x * targetGridPage.CellSize.x, _placementResults.SuggestedGridPosition.y * targetGridPage.CellSize.y));
-                        _isDragging = false; // Сбрасываем флаг перетаскивания
-                        style.opacity = 1f; // Возвращаем полную непрозрачность
+                        _isDragging = false;
+                        style.opacity = 1f;
                     }
                     else
                     {
-                        // Если не удалось добавить в инвентарь, возвращаем его обратно в слот экипировки
                         sourceEquipSlot.Equip(this);
                         //Debug.LogWarning($"[ЭКИПИРОВКА][FromEquip] Не удалось поместить предмет '{_itemDefinition.name}' в инвентарь '{targetContainer.name}'. Возвращен в слот экипировки '{sourceEquipSlot.Cell.name}'.");
                     }
 
-                    targetGridPage.FinalizeDrag(); // FinalizeDrag для целевого инвентаря
-                    _itemsPage.FinalizeDragOfItem(this); // Общая финализация
+                    targetGridPage.FinalizeDrag();
+                    _itemsPage.FinalizeDragOfItem(this);
 
-                    _isDragging = false; // Явно сбрасываем флаг перетаскивания
-                    style.opacity = 1f; // Возвращаем полную непрозрачность
-                    return false; // Возвращаем false, чтобы OnMouseUp также сбросил _isDragging
+                    _isDragging = false;
+                    style.opacity = 1f;
+                    return false;
 
                 }
-                // Этот else блок теперь не должен достигаться в случае успешного перемещения из экипировки в инвентарь
-                // Если сюда попадаем, значит, логика выше не сработала или что-то пошло не так
                 //Debug.Log($"[ЭКИПИРОВКА][FromEquip] Неожиданное состояние: предмет из экипировки в инвентарь, но первый IF не сработал. Передаем в FromContainers.");
                 return FromContainers();
             }
@@ -400,7 +393,7 @@ namespace SkyClerik.Inventory
             {
                 //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] Событие MouseDown. GiveItem: {(_itemsPage.GiveItem != null ? _itemsPage.GiveItem.name : "NULL")}. CurrentDraggedItem: {(ItemsPage.CurrentDraggedItem != null ? ItemsPage.CurrentDraggedItem.name : "NULL")}. Этот ItemVisual: {this.name}.");
 
-                if (_itemsPage.GiveItem != null)
+                if (_itemsPage.GivenItem.DesiredProduct != null)
                 {
                     ServiceProvider.Get<InventoryAPI>().RiseItemGiveEvent(_itemDefinition);
                 }

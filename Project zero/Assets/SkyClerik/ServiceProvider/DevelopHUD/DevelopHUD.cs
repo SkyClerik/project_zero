@@ -41,6 +41,9 @@ namespace SkyClerik.Utils
         private InventoryContainersAPI _inventoryContainersAPI;
 
         [SerializeField]
+        private KeyCode _keyCode;
+
+        [SerializeField]
         private LutContainer _developLut;
 
         private void OnValidate()
@@ -99,6 +102,12 @@ namespace SkyClerik.Utils
             _bLut.clicked -= _bLut_clicked;
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(_keyCode))
+                _bInventory_clicked();
+        }
+
         private void _bInventory_clicked()
         {
             if (_inventoryAPI.IsInventoryVisible)
@@ -114,20 +123,19 @@ namespace SkyClerik.Utils
 
         private void _bEquip_clicked()
         {
-            ItemsPage itemsPage = ServiceProvider.Get<ItemsPage>();
             EquipPage equipPage = ServiceProvider.Get<EquipPage>();
 
-            if (equipPage.enabled)
+            if (EquipPage.IsShow == false)
             {
-                itemsPage.OpenInventoryNormal();
                 equipPage.OpenEquip();
             }
             else
             {
-                Debug.Log($"Это заклинание еще не готово!");
+                equipPage.CloseEquip();
             }
         }
 
+        // открыть инвентарь для выбора предмета (отписки обязательные)
         private void _bInventoryGive_clicked()
         {
             if (_inventoryAPI.IsInventoryVisible)
@@ -137,9 +145,8 @@ namespace SkyClerik.Utils
             }
             else
             {
-                // открыть инвентарь для выбора предмета (отписки обязательные)
                 _inventoryAPI.OnItemGiven += OnItemGivenCallback;
-                _inventoryAPI.OpenInventoryFromGiveItem(itemID: 0);
+                _inventoryAPI.OpenInventoryFromGiveItem(itemID: 0, tracing: true);
             }
         }
 

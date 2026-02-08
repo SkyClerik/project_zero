@@ -18,7 +18,8 @@ namespace SkyClerik.EquipmentSystem
 
         [JsonProperty]
         [SerializeField]
-        [ReadOnly] // Заполняется методом CalculateGridDimensionsFromUI
+        [ReadOnly]
+        [Tooltip("Заполняется методом CalculateGridDimensionsFromUI. Не редактировать руками")]
         private Rect _rect;
 
         [SerializeField]
@@ -76,63 +77,19 @@ namespace SkyClerik.EquipmentSystem
             return true;
         }
 
-        public void Equip(ItemVisual itemVisual)
+        public ItemVisual CreateItemVisualFromSlot(ItemBaseDefinition itemDefinition, ItemsPage itemsPage)
         {
-            Debug.Log($"Equip '{itemVisual.ItemDefinition.name}'.");
-            if (itemVisual == null)
-                return;
-
-            IDropTarget sourceOwner = itemVisual.OwnerInventory;
-            if (sourceOwner is GridPageElementBase sourceGridPage)
-            {
-                ItemContainer sourceContainer = sourceGridPage.ItemContainer;
-                if (sourceContainer != null)
-                {
-                    Debug.Log($"[EquipmentSlot][Equip] Удаляю '{itemVisual.ItemDefinition.name}' из исходного инвентаря '{sourceContainer.name}'.");
-                    sourceContainer.RemoveItem(itemVisual.ItemDefinition, destroy: false);
-                }
-            }
-
-            _equippedItem = itemVisual.ItemDefinition;
-            _itemVisual = itemVisual;
-            itemVisual.SetOwnerInventory(this);
-
-            _cell.Add(itemVisual);
-            _telegraph.Hide();
-
-            itemVisual.style.left = 0;
-            itemVisual.style.top = 0;
-            itemVisual.style.position = Position.Absolute;
-
-            ItemsPage.CurrentDraggedItem = null;
-        }
-
-        /// <summary>
-        /// Создает и экипирует ItemVisual для данного слота.
-        /// </summary>
-        /// <param name="itemDefinition">Определение предмета.</param>
-        /// <param name="itemsPage">Ссылка на ItemsPage.</param>
-        /// <returns>Созданный ItemVisual.</returns>
-        public ItemVisual CreateItemVisualForSlot(ItemBaseDefinition itemDefinition, ItemsPage itemsPage)
-        {
-            // Здесь мы используем существующий конструктор ItemVisual.
-            // Параметры ownerInventory, gridPosition и gridSize - это заглушки,
-            // так как ItemVisual для слотов экипировки не управляется напрямую сеткой инвентаря.
             return new ItemVisual(
                 itemsPage: itemsPage,
                 ownerInventory: this, // САМ СЛОТ ЭКИПИРОВКИ является ownerInventory
                 itemDefinition: itemDefinition,
-                gridPosition: Vector2Int.zero, // Заглушка
-                gridSize: Vector2Int.zero // Заглушка
+                gridPosition: Vector2Int.zero, // Не используется для экипировки
+                gridSize: Vector2Int.zero // Не используется для экипировки
             );
         }
 
-        // --- IDropTarget реализация ---
-
         public PlacementResults ShowPlacementTarget(ItemVisual itemVisual)
         {
-            // Здесь мы должны проверить, может ли itemVisual быть экипирован в этот слот.
-            // Используем существующий метод CanEquip.
             bool canEquip = CanEquip(itemVisual.ItemDefinition);
             ReasonConflict conflict = ReasonConflict.invalidSlotType;
 
@@ -156,8 +113,8 @@ namespace SkyClerik.EquipmentSystem
                 conflict: conflict,
                 position: _rect.position,
                 suggestedGridPosition: Vector2Int.zero, // Не используется для экипировки
-                overlapItem: _itemVisual == null ? null : _itemVisual, // Возвращаем ItemVisual, если слот занят
-                targetInventory: this // Сам EquipmentSlot является целью перетаскивания
+                overlapItem: _itemVisual == null ? null : _itemVisual,
+                targetInventory: this // Сам EquipmentSlot это сетка инвентаря
             );
         }
 
@@ -168,59 +125,97 @@ namespace SkyClerik.EquipmentSystem
 
         public void PickUp(ItemVisual storedItem)
         {
-            Debug.Log($"[EquipmentSlot][PickUp] Поднимаем предмет: {storedItem.ItemDefinition.name} из слота {_cellNameDebug}");
+            //Debug.Log($"[EquipmentSlot][PickUp] Поднимаем предмет: {storedItem.ItemDefinition.name} из слота {_cellNameDebug}");
             _itemVisual = null;
             _equippedItem = null;
-            Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] Слот {_cellNameDebug} очищен (логика Unequip).");
+            //Debug.Log($"[ЭКИПИРОВКА][EquipmentSlot] Слот {_cellNameDebug} очищен (логика Unequip).");
             ItemsPage.CurrentDraggedItem = storedItem;
             ItemsPage.CurrentDraggedItem.SetOwnerInventory(this);
             _document.rootVisualElement.Add(storedItem);
-            Debug.Log($"[EquipmentSlot][PickUp] Установлен ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.ItemDefinition.name}. Его владелец: {ItemsPage.CurrentDraggedItem.OwnerInventory?.GetType().Name ?? "NULL"}.");
+            //Debug.Log($"[EquipmentSlot][PickUp] Установлен ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.ItemDefinition.name}. Его владелец: {ItemsPage.CurrentDraggedItem.OwnerInventory?.GetType().Name ?? "NULL"}.");
         }
 
         public void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            Equip(storedItem); // Просто вызываем Equip
+            Equip(storedItem);
+        }
+
+        public void Equip(ItemVisual itemVisual)
+        {
+            //Debug.Log($"Equip '{itemVisual.ItemDefinition.name}'.");
+            if (itemVisual == null)
+                return;
+
+            IDropTarget sourceOwner = itemVisual.OwnerInventory;
+            if (sourceOwner is GridPageElementBase sourceGridPage)
+            {
+                ItemContainer sourceContainer = sourceGridPage.ItemContainer;
+                if (sourceContainer != null)
+                {
+                    //Debug.Log($"[EquipmentSlot][Equip] Удаляю '{itemVisual.ItemDefinition.name}' из исходного инвентаря '{sourceContainer.name}'.");
+                    sourceContainer.RemoveItem(itemVisual.ItemDefinition, destroy: false);
+                }
+            }
+
+            _equippedItem = itemVisual.ItemDefinition;
+            _itemVisual = itemVisual;
+            itemVisual.SetOwnerInventory(this);
+
+            _cell.Add(itemVisual);
+            _telegraph.Hide();
+
+            SetItemVisualPositionAndStyle(itemVisual);
+
+            ItemsPage.CurrentDraggedItem = null;
+        }
+
+        private void SetItemVisualPositionAndStyle(ItemVisual itemVisual)
+        {
+            float itemWidth = itemVisual.style.width.value.value;
+            float itemHeight = itemVisual.style.height.value.value;
+
+            float centerX = (_rect.size.x - itemWidth) / 2f;
+            float centerY = (_rect.size.y - itemHeight) / 2f;
+
+            itemVisual.style.left = centerX;
+            itemVisual.style.top = centerY;
+            itemVisual.style.position = Position.Absolute;
         }
 
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
-            suggestedGridPosition = Vector2Int.zero; // Не используется для слотов экипировки
-
+            suggestedGridPosition = Vector2Int.zero; // Не используется для экипировки
             return _itemVisual == null && CanEquip(item);
         }
 
-
-
-
         public void AddItemToInventoryGrid(VisualElement item)
         {
-            Debug.Log($"[AddItemToInventoryGrid][ЗАГЛУШКА] item: {item}");
+            //Debug.Log($"[AddItemToInventoryGrid][ЗАГЛУШКА] item: {item}");
         }
 
         public void AddStoredItem(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            Debug.Log($"[AddStoredItem][ЗАГЛУШКА] storedItem: {storedItem}");
+            //Debug.Log($"[AddStoredItem][ЗАГЛУШКА] storedItem: {storedItem}");
         }
 
         public void RemoveStoredItem(ItemVisual storedItem)
         {
-            Debug.Log($"[RemoveStoredItem][ЗАГЛУШКА] storedItem: {storedItem}");
+            //Debug.Log($"[RemoveStoredItem][ЗАГЛУШКА] storedItem: {storedItem}");
         }
 
         public ItemGridData GetItemGridData(ItemVisual itemVisual)
         {
-            Debug.Log($"[GetItemGridData][ЗАГЛУШКА] itemVisual: {itemVisual}");
+            //Debug.Log($"[GetItemGridData][ЗАГЛУШКА] itemVisual: {itemVisual}");
             return null;
         }
 
         public void RegisterVisual(ItemVisual itemVisual, ItemGridData gridData)
         {
-            Debug.Log($"[GetItemGridData][ЗАГЛУШКА] itemVisual: {itemVisual}");
+            //Debug.Log($"[GetItemGridData][ЗАГЛУШКА] itemVisual: {itemVisual}");
         }
         public void UnregisterVisual(ItemVisual itemVisual)
         {
-            Debug.Log($"[GetItemGridData][ЗАГЛУШКА] ItemVisual: {itemVisual}");
+            //Debug.Log($"[GetItemGridData][ЗАГЛУШКА] ItemVisual: {itemVisual}");
         }
     }
 }

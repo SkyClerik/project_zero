@@ -8,16 +8,9 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
-    /// <summary>
-    /// Базовый абстрактный класс для элементов UI, представляющих собой страницы с сеткой предметов.
-    /// Предоставляет общую логику для инициализации, управления визуальными элементами предметов,
-    /// обработки перетаскивания и взаимодействия с <see cref="ItemContainer"/>.
-    /// Реализует интерфейс <see cref="IDropTarget"/>.
-    /// </summary>
     [System.Serializable]
     public abstract class GridPageElementBase : IDropTarget, IDisposable
     {
-        // Словарь для хранения связей между визуальными элементами и их логическими данными
         protected Dictionary<ItemVisual, ItemGridData> _visuals = new Dictionary<ItemVisual, ItemGridData>();
         protected Rect _gridRect;
 
@@ -33,43 +26,15 @@ namespace SkyClerik.Inventory
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
-        //public LogicalGridVisualizer LogicalGridVisualizer;
         private readonly float _gridHoverSnapToBoundaryPixels = 64f;
 
-        // --- Свойства IDropTarget и прочие ---
-        /// <summary>
-        /// Возвращает UIDocument, к которому принадлежит эта страница.
-        /// </summary>
         public UIDocument GetDocument => _document;
-        /// <summary>
-        /// Возвращает связанный контейнер предметов, управляемый этой страницей.
-        /// </summary>
         public ItemContainer ItemContainer => _itemContainer;
-        /// <summary>
-        /// Возвращает размер одной ячейки сетки в пикселях.
-        /// </summary>
         public Vector2 CellSize => _itemContainer.CellSize;
-        /// <summary>
-        /// Возвращает корневой визуальный элемент этой страницы.
-        /// </summary>
         public VisualElement Root => _root;
-        /// <summary>
-        /// Возвращает "телеграф" - визуальный индикатор возможного места размещения предмета.
-        /// </summary>
         public Telegraph Telegraph => _telegraph;
-
-        public VisualElement InventoryGrid { get => _inventoryGrid; set => _inventoryGrid = value; }
-
         public bool SuppressNextVisualCreation { get; set; }
 
-
-        /// <summary>
-        /// Инициализирует новый экземпляр класса <see cref="GridPageElementBase"/>.
-        /// </summary>
-        /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
-        /// <param name="document">UIDocument, к которому принадлежит эта страница.</param>
-        /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей.</param>
-        /// <param name="rootID">Идентификатор корневого визуального элемента страницы в UIDocument.</param>
         protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer,
 string rootID)
         {
@@ -84,19 +49,12 @@ string rootID)
             _coroutineRunner.StartCoroutine(Initialize());
         }
 
-        // --- Инициализация и подписка на события ---
         protected IEnumerator Initialize()
         {
             Configure();
             yield return new WaitForEndOfFrame();
-            //CreateGridBoundaryVisualizer();
-
-            //LogicalGridVisualizer = new LogicalGridVisualizer();
-            //LogicalGridVisualizer.Init(_itemContainer);
-            //_document.rootVisualElement.Add(LogicalGridVisualizer);
 
             SubscribeToContainerEvents();
-
             LoadInitialVisuals();
         }
 
@@ -121,8 +79,6 @@ string rootID)
             _telegraph = new Telegraph();
             AddItemToInventoryGrid(_telegraph);
         }
-
-        // --- Обработчики событий от ItemContainer ---
 
         private void HandleItemAdded(ItemBaseDefinition item)
         {
@@ -170,14 +126,11 @@ string rootID)
             _visuals.Clear();
         }
 
-        //private void CreateGridBoundaryVisualizer()
+        //private void CreateGridBoundaryVisualizer() // Оставлен на случай необходимости дебага
         //{
         //if (_inventoryGrid == null || CellSize.x <= 0 || CellSize.y <= 0) return;
-
         //var _gridRect = _itemContainer.GridWorldRect;
-
         //Debug.Log($"[GridPageElementBase:{_root.name}] CreateGridBoundaryVisualizer: отрисовываем границу по Rect: {_gridRect}. CellSize: {CellSize}", _coroutineRunner);
-
         //var test1 = new VisualElement();
         //test1.name = "test1";
         //test1.style.width = _gridRect.width;
@@ -190,8 +143,6 @@ string rootID)
         //test1.pickingMode = PickingMode.Ignore;
         //_document.rootVisualElement.Add(test1);
         //}
-
-        // --- Логика UI ---
 
         private void LoadInitialVisuals()
         {
@@ -461,6 +412,23 @@ gridData.GridSize.x, gridData.GridSize.y);
         {
             _visuals.TryGetValue(itemVisual, out ItemGridData gridData);
             return gridData?.ItemDefinition;
+        }
+
+        /// <summary>
+        /// Возвращает визуальный элемент предмета по его определению.
+        /// </summary>
+        /// <param name="itemDefinition">Определение предмета.</param>
+        /// <returns>Визуальный элемент предмета (<see cref="ItemVisual"/>) или null, если не найден.</returns>
+        public ItemVisual GetItemVisual(ItemBaseDefinition itemDefinition)
+        {
+            foreach (var entry in _visuals)
+            {
+                if (entry.Key.ItemDefinition == itemDefinition)
+                {
+                    return entry.Key;
+                }
+            }
+            return null;
         }
 
         /// <summary>

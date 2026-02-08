@@ -9,36 +9,41 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
-    /// <summary>
-    /// Представляет собой связку между экземпляром контейнера предметов и его UI-страницей.
-    /// Используется для унификации управления страницами инвентаря.
-    /// </summary>
     public class ContainerAndPage
     {
         [SerializeField]
         private ItemContainer _container;
         [SerializeField]
         private GridPageElementBase _page;
-
-        /// <summary>
-        /// Возвращает связанный контейнер предметов.
-        /// </summary>
         public ItemContainer Container => _container;
-        /// <summary>
-        /// Возвращает связанную UI-страницу сетки.
-        /// </summary>
         public GridPageElementBase Page => _page;
-
-        /// <summary>
-        /// Инициализирует новый экземпляр класса <see cref="ContainerAndPage"/>.
-        /// </summary>
-        /// <param name="itemContainer">Контейнер предметов.</param>
-        /// <param name="gridPageElementBase">UI-страница сетки.</param>
         public ContainerAndPage(ItemContainer itemContainer, GridPageElementBase gridPageElementBase)
         {
             _container = itemContainer;
             _page = gridPageElementBase;
         }
+    }
+
+    public class GivenItem
+    {
+        private ItemBaseDefinition _desiredProduct = null;
+        private ItemVisual _visual;
+        private bool _tracing;
+        private Color _tracingColor = Color.white;
+        private int _tracingWidth = 2;
+        private int _tracingZero = 0;
+        private int _maxAttempt = 4;
+
+        // Предмет, который был выбран для отдачи (например, при передаче NPC).
+        public ItemBaseDefinition DesiredProduct { get => _desiredProduct; set => _desiredProduct = value; }
+        // Сразу получаю и храню ссылку на визуальный элемент
+        public ItemVisual Visual { get => _visual; set => _visual = value; }
+        // Если true то предмет в инвентаре подсвечивается постоянно
+        public bool Tracing { get => _tracing; set => _tracing = value; }
+        public Color TracingColor { get => _tracingColor; set => _tracingColor = value; }
+        public int TracingWidth { get => _tracingWidth; set => _tracingWidth = value; }
+        public int TracingZero => _tracingZero;
+        public int MaxAttempt { get => _maxAttempt; set => _maxAttempt = value; }
     }
 
     /// <summary>
@@ -55,6 +60,9 @@ namespace SkyClerik.Inventory
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
+        private GivenItem _givenItem = new GivenItem();
+
+        public GivenItem GivenItem => _givenItem;
 
         private Vector2 _mouseUILocalPosition;
         /// <summary>
@@ -62,14 +70,9 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal Vector2 MouseUILocalPosition => _mouseUILocalPosition;
 
+
         private static ItemVisual _currentDraggedItem;
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
-
-        private ItemBaseDefinition _givenItem = null;
-        /// <summary>
-        /// Предмет, который был выбран для отдачи (например, при передаче NPC).
-        /// </summary>
-        internal ItemBaseDefinition GiveItem => _givenItem;
 
         [SerializeField]
         private ItemContainer _inventoryItemContainer;
@@ -373,15 +376,15 @@ namespace SkyClerik.Inventory
         /// Если предмет не будет найден, инвентарь не откроется.
         /// </summary>
         /// <param name="itemID">WrapperIndex искомого предмета.</param>
-        internal void OpenInventoryFromGiveItem(int itemID)
+        internal void OpenInventoryFromGiveItem(int itemID, bool tracing)
         {
-            _givenItem = _inventoryItemContainer.GetItemByItemID(itemID);
-            if (_givenItem != null)
+            _givenItem.DesiredProduct = _inventoryItemContainer.GetItemByItemID(itemID);
+            GiveItemSettings(_givenItem.DesiredProduct, tracing);
+            if (_givenItem.DesiredProduct != null)
             {
                 //Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
-                SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
-                _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+                OpenInventoryNormal();
             }
         }
 
@@ -390,16 +393,55 @@ namespace SkyClerik.Inventory
         /// Если ссылка на предмет null, инвентарь не откроется.
         /// </summary>
         /// <param name="item">Предмет, который нужно выбрать.</param>
-        internal void OpenInventoryGiveItem(ItemBaseDefinition item)
+        internal void OpenInventoryGiveItem(ItemBaseDefinition item, bool tracing)
         {
-            _givenItem = item;
-            if (_givenItem != null)
+            GiveItemSettings(item, tracing);
+            if (_givenItem.DesiredProduct != null)
             {
                 //Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
-                SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
-                _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+                OpenInventoryNormal();
             }
+        }
+
+        private void GiveItemSettings(ItemBaseDefinition item, bool tracing)
+        {
+            _givenItem.DesiredProduct = item;
+            _givenItem.Visual = _inventoryPage.GetItemVisual(_givenItem.DesiredProduct);
+            _givenItem.Tracing = tracing;
+
+            if (_givenItem.Visual != null)
+                ApplyVisualItemHighlight(_givenItem.Visual, isZeroWidth: false);
+        }
+
+        private void ApplyVisualItemHighlight(ItemVisual visualToHighlight, bool isZeroWidth, int attempt = 0)
+        {
+            // Просто вызываем без attempt, он будет 0 по умолчанию
+            if (visualToHighlight == null)
+                return;
+
+            int curWidth = isZeroWidth == true ? _givenItem.TracingZero : _givenItem.TracingWidth;
+            int maxAttempts = _givenItem.MaxAttempt;
+            visualToHighlight.schedule.Execute(() =>
+            {
+                //Debug.LogWarning($"visualToHighlight.resolvedStyle.width {visualToHighlight.worldBound}.");
+                if (visualToHighlight.worldBound.width > maxAttempts)
+                {
+                    visualToHighlight.SetBorderColor(_givenItem.TracingColor);
+                    visualToHighlight.SetBorderWidth(curWidth);
+                }
+                else if (attempt < maxAttempts)
+                {
+                    //Debug.LogWarning($"[ApplyVisualItemHighlight] Размер для {visualToHighlight.name} ({visualToHighlight.resolvedStyle.width}x{visualToHighlight.resolvedStyle.height}) не соответствует ожидаемому {expectedSize}. Повторная попытка {attempt + 1}.");
+                    ApplyVisualItemHighlight(visualToHighlight, isZeroWidth, attempt + 1);
+                }
+                else
+                {
+                    //Debug.LogWarning($"Применяем сброс как стандартное решение {visualToHighlight.name}.");
+                    visualToHighlight.SetBorderColor(ColorExt.GetColorTransparent());
+                    visualToHighlight.SetBorderWidth(_givenItem.TracingZero);
+                }
+            }).ExecuteLater(250);
         }
 
         /// <summary>
@@ -407,16 +449,17 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal void OpenInventoryAndCraft()
         {
+            _givenItem.DesiredProduct = null;
             OpenInventoryNormal();
             OpenCraft();
         }
 
         public void OpenInventoryNormal()
         {
-            _givenItem = null;
             SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
             _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
         }
+
         /// <summary>
         /// Открывает страницу крафта. Доступность зависит от глобального свойства <see cref="GlobalGameProperty.MakeCraftAccessible"/>.
         /// </summary>
@@ -426,6 +469,7 @@ namespace SkyClerik.Inventory
             if (_globalGameProperty != null && _globalGameProperty.MakeCraftAccessible)
                 SetPage(_craftPage.Root, display: true, visible: true, enabled: true);
         }
+
         /// <summary>
         /// Открывает страницу сундука.
         /// </summary>
@@ -435,15 +479,17 @@ namespace SkyClerik.Inventory
             OpenInventoryNormal();
             SetPage(_cheastPage.Root, display: true, visible: true, enabled: true);
         }
+
         /// <summary>
         /// Открывает страницу лута.
         /// </summary>
         internal void OpenLut()
         {
-            SetPage(_craftPage.Root, display: false, visible: true, enabled: false);
+            SetPage(_craftPage.Root, display: false, visible: false, enabled: false);
             OpenInventoryNormal();
             SetPage(_lutPage.Root, display: true, visible: true, enabled: true);
         }
+
         /// <summary>
         /// Закрывает все страницы.
         /// </summary>
@@ -452,6 +498,9 @@ namespace SkyClerik.Inventory
             SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
             SetAllSelfPage(display: false, visible: false, enabled: false);
             _uiDocument.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
+
+            if (_givenItem.Visual != null)
+                ApplyVisualItemHighlight(_givenItem.Visual, isZeroWidth: true);
         }
 
         private void SetPage(VisualElement pageRoot, bool display, bool visible, bool enabled)
@@ -475,42 +524,5 @@ namespace SkyClerik.Inventory
             _lutPage.Root.SetVisibility(visible);
             _lutPage.Root.SetEnabled(enabled);
         }
-
-        /// <summary>
-        /// Закрывает инвентарь.
-        /// </summary>
-        //public void CloseInventory()
-        //{
-        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
-        //    SetAllSelfPage(display: false, visible: false, enabled: false);
-        //    _document.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
-        //}
-
-        /// <summary>
-        /// Закрывает страницу крафта.
-        /// </summary>
-        //public void CloseCraft()
-        //{
-        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
-        //    SetAllSelfPage(display: false, visible: false, enabled: false);
-        //}
-
-        /// <summary>
-        /// Закрывает страницу сундука.
-        /// </summary>
-        //public void CloseCheast()
-        //{
-        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
-        //    SetAllSelfPage(display: false, visible: false, enabled: false);
-        //}
-
-        /// <summary>
-        /// Закрывает страницу лута.
-        /// </summary>
-        //public void CloseLut()
-        //{
-        //    SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
-        //    SetAllSelfPage(display: false, visible: false, enabled: false);
-        //}
     }
 }
