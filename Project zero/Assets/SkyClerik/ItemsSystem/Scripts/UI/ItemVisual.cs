@@ -243,7 +243,7 @@ namespace SkyClerik.Inventory
                         _isDragging = false;
                         return;
                     }
-                }                
+                }
             }
         }
         private bool FromEquip()
@@ -287,13 +287,17 @@ namespace SkyClerik.Inventory
 
                     Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{_itemDefinition.name}' снят из слота '{sourceEquipSlot.Cell.name}'. Попытка добавить в инвентарь '{targetGridPage.Root.name}'.");
 
+                    targetGridPage.SuppressNextVisualCreation = true; // Устанавливаем флаг
                     bool addedToTarget = targetContainer.TryAddItemAtPosition(_itemDefinition, _placementResults.SuggestedGridPosition);
                     if (addedToTarget)
                     {
                         Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{_itemDefinition.name}' успешно помещен в контейнер '{targetContainer.name}' в позицию: {_placementResults.SuggestedGridPosition}.");
                         this.SetOwnerInventory(targetGridPage);
+                        Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] RemoveFromHierarchy() вызван.");
                         this.RemoveFromHierarchy(); // Удаляем из старой иерархии
+                        Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] Добавляем в инвентарную сетку.");
                         targetGridPage.AddItemToInventoryGrid(this); // Добавляем ItemVisual в сетку
+                        targetGridPage.RegisterVisual(this, new ItemGridData(_itemDefinition, _itemDefinition.GridPosition)); // Регистрируем визуальный элемент
                         this.SetPosition(new Vector2(_placementResults.SuggestedGridPosition.x * targetGridPage.CellSize.x, _placementResults.SuggestedGridPosition.y * targetGridPage.CellSize.y));
                         DebLog(targetGridPage.InventoryGrid, this);
                         _isDragging = false; // Сбрасываем флаг перетаскивания
@@ -310,25 +314,15 @@ namespace SkyClerik.Inventory
                     _itemsPage.FinalizeDragOfItem(this); // Общая финализация
                     DebLog(targetGridPage.InventoryGrid, this);
 
-                    //else
-                    //{
-                    //    Debug.LogWarning($"ПРИДУМАТЬ ЧТО ДЕЛАТЬ КОГДА ПРЕДМЕТ НЕ ГДЕ УПАЛ");
-                    //    // Если предмет был из слота экипировки, но не удалось его разместить ни в одном инвентаре,                                                                                
-                    //    // то нужно вернуть его обратно в слот экипировки, иначе он "потеряется".                                                                                                 
-                    //    slot.Equip(this);
-                    //    _itemsPage.FinalizeDragOfItem(this);
-                    //    // Дополнительно можно сбросить _isDragging и opacity, чтобы предмет не оставался в состоянии "перетаскивания"                                                             
-                    //    _isDragging = false;
-                    //    style.opacity = 1f;
-                    //}
+                    _isDragging = false; // Явно сбрасываем флаг перетаскивания
+                    style.opacity = 1f; // Возвращаем полную непрозрачность
+                    return false; // Возвращаем false, чтобы OnMouseUp также сбросил _isDragging
 
-                    return true; // Возвращаем true, так как обработка завершена
                 }
-                else // Если предмет из инвентаря (или другого контейнера) в инвентарь
-                {
-                    Debug.Log($"Проверяем вызывается ли эта строчка что бы не удалить лишнего при переносе логики");
-                    return FromContainers();
-                }
+                // Этот else блок теперь не должен достигаться в случае успешного перемещения из экипировки в инвентарь
+                // Если сюда попадаем, значит, логика выше не сработала или что-то пошло не так
+                Debug.Log($"[ЭКИПИРОВКА][FromEquip] Неожиданное состояние: предмет из экипировки в инвентарь, но первый IF не сработал. Передаем в FromContainers.");
+                return FromContainers();
             }
         }
 
@@ -406,6 +400,8 @@ namespace SkyClerik.Inventory
         {
             if (mouseEvent.button == 0)
             {
+                Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] Событие MouseDown. GiveItem: {(_itemsPage.GiveItem != null ? _itemsPage.GiveItem.name : "NULL")}. CurrentDraggedItem: {(ItemsPage.CurrentDraggedItem != null ? ItemsPage.CurrentDraggedItem.name : "NULL")}. Этот ItemVisual: {this.name}.");
+
                 if (_itemsPage.GiveItem != null)
                 {
                     ServiceProvider.Get<InventoryAPI>().RiseItemGiveEvent(_itemDefinition);
@@ -414,8 +410,13 @@ namespace SkyClerik.Inventory
                 {
                     if (ItemsPage.CurrentDraggedItem != this)
                     {
+                        Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] ItemsPage.CurrentDraggedItem НЕ равен этому ItemVisual. Вызываем PickUp.");
                         PickUp();
                         SetDraggedItemPosition(mouseEvent.mousePosition, mouseEvent.localMousePosition);
+                    }
+                    else
+                    {
+                        Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] ItemsPage.CurrentDraggedItem РАВЕН этому ItemVisual. НЕ вызываем PickUp (уже перетаскивается).");
                     }
                 }
             }

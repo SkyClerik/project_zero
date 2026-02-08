@@ -60,6 +60,8 @@ namespace SkyClerik.Inventory
 
         public VisualElement InventoryGrid { get => _inventoryGrid; set => _inventoryGrid = value; }
 
+        public bool SuppressNextVisualCreation { get; set; }
+
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="GridPageElementBase"/>.
@@ -124,17 +126,26 @@ string rootID)
 
         private void HandleItemAdded(ItemBaseDefinition item)
         {
+            Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded вызван для '{item.name}'. SuppressNextVisualCreation: {SuppressNextVisualCreation}");
+
+            if (SuppressNextVisualCreation)
+            {
+                Debug.Log($"[GridPageElementBase:{_root.name}] SuppressNextVisualCreation установлен. Пропускаем создание/обновление visual для '{item.name}'.");
+                SuppressNextVisualCreation = false;
+                return;
+            }
+
             var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
             if (existingVisual != null)
             {
-                //Debug.Log($"[GridPageElementBase] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
+                Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded: Найден существующий visual для '{item.name}', обновляем его.");
                 existingVisual.UpdatePcs();
                 existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
                 _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
             }
             else
             {
-                //Debug.Log($"[GridPageElementBase] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
+                Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded: Существующий visual для '{item.name}' не найден, создаем новый.");
                 CreateVisualForItem(item);
             }
         }
@@ -191,7 +202,7 @@ string rootID)
         }
         private void CreateVisualForItem(ItemBaseDefinition item)
         {
-            //Debug.Log($"[GridPageElementBase] CreateVisualForItem: Создание нового ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Создание НОВОГО ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
             var newGridData = new ItemGridData(item, item.GridPosition);
             var newItemVisual = new ItemVisual(
                 itemsPage: _itemsPage,
@@ -200,7 +211,7 @@ string rootID)
                 gridPosition: item.GridPosition,
                 gridSize: new Vector2Int(item.Dimensions.Width, item.Dimensions.Height));
 
-            //Debug.Log($"[GridPageElementBase] CreateVisualForItem: Новый ItemVisual создан. HashCode: {newItemVisual.GetHashCode()}");
+            Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Новый ItemVisual '{newItemVisual.name}' создан. HashCode: {newItemVisual.GetHashCode()}. Owner: {this.GetType().Name}.");
             RegisterVisual(newItemVisual, newGridData);
             AddItemToInventoryGrid(newItemVisual);
             newItemVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));

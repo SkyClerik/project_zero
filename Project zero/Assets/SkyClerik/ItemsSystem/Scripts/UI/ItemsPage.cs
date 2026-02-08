@@ -292,6 +292,8 @@ namespace SkyClerik.Inventory
         /// <param name="draggedItem">Визуальный элемент перетаскиваемого предмета.</param>
         public void FinalizeDragOfItem(ItemVisual draggedItem)
         {
+            Debug.Log($"[ItemsPage][FinalizeDragOfItem] Вызван для '{draggedItem.name}'. Parent: {(draggedItem.parent != null ? draggedItem.parent.name : "NULL")}. CurrentDraggedItem до сброса: {(CurrentDraggedItem != null ? CurrentDraggedItem.name : "NULL")}.");
+
             _inventoryPage.FinalizeDrag();
             _craftPage.FinalizeDrag();
             _cheastPage.FinalizeDrag();
@@ -310,9 +312,16 @@ namespace SkyClerik.Inventory
             if (CurrentDraggedItem != null)
             {
                 if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
+                {
+                    Debug.Log($"[ItemsPage][FinalizeDragOfItem] Удаляем '{CurrentDraggedItem.name}' из rootVisualElement.");
                     CurrentDraggedItem.RemoveFromHierarchy();
-
+                }
                 CurrentDraggedItem = null;
+                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem сброшен до NULL.");
+            }
+            else
+            {
+                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem уже NULL.");
             }
         }
 
