@@ -259,6 +259,7 @@ namespace SkyClerik.Inventory
                         var itemToSwap = _placementResults.OverlapItem; // Это ItemVisual, который был в целевом слоте экипировки
                         targetEquipmentSlot.PickUp(itemToSwap); // targetEquipmentSlot "поднимает" ItemVisual, он становится ItemsPage.CurrentDraggedItem
                         targetEquipmentSlot.Drop(this, Vector2Int.zero); // targetEquipmentSlot "роняет" наш ItemVisual
+                        ItemsPage.CurrentDraggedItem = itemToSwap;
                         itemToSwap._isDragging = true; // Убеждаемся, что флаг перетаскивания установлен для itemToSwap
                         // НЕ вызываем _itemsPage.FinalizeDragOfItem(this) для нашего ItemVisual,
                         // потому что drag продолжается для itemToSwap.
