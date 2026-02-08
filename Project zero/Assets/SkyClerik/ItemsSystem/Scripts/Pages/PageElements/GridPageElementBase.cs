@@ -29,7 +29,7 @@ namespace SkyClerik.Inventory
 
         // UI-элементы
         protected VisualElement _root;
-        protected VisualElement _inventoryGrid;
+        private VisualElement _inventoryGrid;
         private const string _inventoryGridID = "grid";
         protected Telegraph _telegraph;
         protected PlacementResults _placementResults;
@@ -57,6 +57,8 @@ namespace SkyClerik.Inventory
         /// Возвращает "телеграф" - визуальный индикатор возможного места размещения предмета.
         /// </summary>
         public Telegraph Telegraph => _telegraph;
+
+        public VisualElement InventoryGrid { get => _inventoryGrid; set => _inventoryGrid = value; }
 
 
         /// <summary>
