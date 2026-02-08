@@ -228,7 +228,6 @@ namespace SkyClerik.Inventory
 
                 if (EquipPage.IsShow)
                 {
-                    Debug.Log($"[ItemVisual][HandleEquipmentPlacementToInventory] После SetOwnerInventory, _ownerInventory: {_ownerInventory?.GetType().Name ?? "NULL"}");
                     bool flowControl = FromEquip();
                     if (!flowControl)
                     {
@@ -237,7 +236,6 @@ namespace SkyClerik.Inventory
                 }
                 else
                 {
-                    Debug.Log($"[ItemVisual][HandleEquipmentPlacementToInventory] После SetOwnerInventory, _ownerInventory: {_ownerInventory?.GetType().Name ?? "NULL"}");
                     bool flowControl = FromContainers();
                     if (!flowControl)
                     {
@@ -254,7 +252,24 @@ namespace SkyClerik.Inventory
 
             if (_placementResults.TargetInventory is EquipmentSlot targetEquipmentSlot) // Если цель - слот экипировки
             {
-                return HandleEquipmentDrop(targetEquipmentSlot);
+                switch (_placementResults.Conflict)
+                {
+                    case ReasonConflict.SwapAvailable:
+                        var itemToSwap = _placementResults.OverlapItem;
+                        targetEquipmentSlot.PickUp(itemToSwap);
+                        targetEquipmentSlot.Drop(this, Vector2Int.zero);
+                        _itemsPage.FinalizeDragOfItem(this);
+                        return false; // Завершаем drag, так как произошел swap, и ItemsPage.CurrentDraggedItem должен быть сброшен в другом месте
+                    case ReasonConflict.None:
+                        targetEquipmentSlot.Drop(this, Vector2Int.zero);
+                        _itemsPage.FinalizeDragOfItem(this);
+                        return true;
+                    default:
+                        // Если слот не подходит по типу или какая-то другая причина, возвращаем на место
+                        TryDropBack();
+                        _itemsPage.FinalizeDragOfItem(this);
+                        return false;
+                }
             }
             else // Если цель - НЕ EquipmentSlot (т.е., инвентарь или за пределами UI)
             {
@@ -264,112 +279,41 @@ namespace SkyClerik.Inventory
 
                 if (sourceEquipSlot != null && targetGridPage != null) // Если из экипировки в инвентарь
                 {
-                    HandleUnequipToInventory(_placementResults.TargetInventory, _placementResults.SuggestedGridPosition);
+                    Debug.Log($"Если цель - НЕ EquipmentSlot (т.е., инвентарь или за пределами UI)");
+                    //// Начало реализации "Случая 3" прямо здесь
+                    //var targetContainer = targetGridPage.ItemContainer;
+                    //ItemBaseDefinition itemToUnequip = this.ItemDefinition;
+
+                    //Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{itemToUnequip.name}' снят из слота '{sourceEquipSlot.Cell.name}'. Попытка добавить в инвентарь '{targetGridPage.Root.name}'.");
+
+                    //bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToUnequip, _placementResults.SuggestedGridPosition);
+                    //if (addedToTarget)
+                    //{
+                    //    Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{itemToUnequip.name}' успешно помещен в контейнер '{targetContainer.name}' в позицию: {_placementResults.SuggestedGridPosition}.");
+                    //    this.SetOwnerInventory(targetGridPage);
+                    //    this.RemoveFromHierarchy(); // Удаляем из старой иерархии
+                    //    targetGridPage.AddItemToInventoryGrid(this); // Добавляем ItemVisual в сетку
+                    //    this.SetPosition(new Vector2(_placementResults.SuggestedGridPosition.x * targetGridPage.CellSize.x, _placementResults.SuggestedGridPosition.y * targetGridPage.CellSize.y));
+                    //}
+                    //else
+                    //{
+                    //    // Если не удалось добавить в инвентарь, возвращаем его обратно в слот экипировки
+                    //    sourceEquipSlot.Equip(this);
+                    //    Debug.LogWarning($"[ЭКИПИРОВКА][FromEquip] Не удалось поместить предмет '{itemToUnequip.name}' в инвентарь '{targetContainer.name}'. Возвращен в слот экипировки '{sourceEquipSlot.Cell.name}'.");
+                    //}
+
+                    //targetGridPage.FinalizeDrag(); // FinalizeDrag для целевого инвентаря
+                    //_itemsPage.FinalizeDragOfItem(this); // Общая финализация
                     return true; // Возвращаем true, так как обработка завершена
                 }
                 else // Если предмет из инвентаря (или другого контейнера) в инвентарь
                 {
-                    // Получаем правильные _placementResults для инвентаря.
-                    // Затем передаем управление FromContainers(), который уже знает, как работать с этими результатами.
+                    Debug.Log($"Проверяем вызывается ли эта строчка что бы не удалить лишнего при переносе логики");
                     _placementResults = _itemsPage.HandleItemPlacement(this);
                     return FromContainers();
                 }
             }
         }
-
-        private bool HandleEquipmentDrop(EquipmentSlot targetSlot)
-        {
-            switch (_placementResults.Conflict)
-            {
-                case ReasonConflict.SwapAvailable:
-                    HandleEquipmentSwap(targetSlot);
-                    return false; // Завершаем drag, так как произошел swap, и ItemsPage.CurrentDraggedItem должен быть сброшен в другом месте
-                case ReasonConflict.None:
-                    HandleEquipmentToEmptySlot(targetSlot);
-                    return true;
-                default:
-                    // Если слот не подходит по типу или какая-то другая причина, возвращаем на место
-                    HandleEquipmentFailedPlacement();
-                    return false;
-            }
-        }
-
-        private void HandleEquipmentSwap(EquipmentSlot targetSlot)
-        {
-            var itemToSwap = _placementResults.OverlapItem;
-            targetSlot.PickUp(itemToSwap);
-            targetSlot.Drop(this, Vector2Int.zero);
-            _itemsPage.FinalizeDragOfItem(this);
-        }
-
-        private void HandleEquipmentToEmptySlot(EquipmentSlot targetSlot)
-        {
-            targetSlot.Drop(this, Vector2Int.zero);
-            _itemsPage.FinalizeDragOfItem(this);
-        }
-
-        private void HandleEquipmentPlacementToInventory(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
-        {
-            EquipmentSlot sourceEquipSlot = _ownerInventory as EquipmentSlot;
-            GridPageElementBase sourceGridPage = _ownerInventory as GridPageElementBase;
-            GridPageElementBase targetGridPage = targetInventory as GridPageElementBase;
-
-            // Если предмет пришел из экипировки (старая логика)
-            if (sourceEquipSlot != null && targetGridPage != null)
-            {
-                var itemToMove = this.ItemDefinition;
-                var targetContainer = targetGridPage.ItemContainer;
-                bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, suggestedGridPosition);
-
-                if (addedToTarget)
-                {
-                    this.SetOwnerInventory(targetInventory);
-                    Debug.Log($"[ItemVisual][HandleEquipmentPlacementToInventory] После SetOwnerInventory, _ownerInventory: {_ownerInventory?.GetType().Name ?? "NULL"}");
-                    targetGridPage.AddItemToInventoryGrid(this);
-                    SetPosition(new Vector2(suggestedGridPosition.x * targetGridPage.CellSize.x, suggestedGridPosition.y * targetGridPage.CellSize.y));
-                }
-                else
-                    sourceEquipSlot.Equip(this);
-            }
-            // Если предмет пришел из инвентаря (новая логика, взятая из FromContainers)
-            else if (sourceGridPage != null)
-            {
-                if (targetInventory == _ownerInventory) // Если перемещаем внутри того же инвентаря
-                {
-                    _ownerInventory.AddItemToInventoryGrid(this);
-                    _ownerInventory.Drop(this, suggestedGridPosition);
-                    SetPosition(new Vector2(suggestedGridPosition.x * _ownerInventory.CellSize.x, suggestedGridPosition.y * _ownerInventory.CellSize.y));
-                }
-                else // Если перемещаем в другой инвентарь (например, из инвентаря в сундук, когда открыта экипировка)
-                {
-                    Placement(suggestedGridPosition);
-                }
-            }
-
-            targetInventory.FinalizeDrag();
-            _itemsPage.FinalizeDragOfItem(this);
-        }
-
-        private void HandleEquipmentFailedPlacement()
-        {
-            TryDropBack();
-            _itemsPage.FinalizeDragOfItem(this);
-        }
-
-        private bool HandleEquipmentToInventoryOrDropBack(IDropTarget targetInventory, Vector2Int suggestedGridPosition)
-        {
-            switch (_placementResults.Conflict)
-            {
-                case ReasonConflict.None:
-                    HandleEquipmentPlacementToInventory(targetInventory, suggestedGridPosition);
-                    _itemsPage.FinalizeDragOfItem(this);
-                    return true;
-                default:
-                    HandleEquipmentFailedPlacement();
-                    return false;
-            }
-        }
-
 
         private bool FromContainers()
         {
@@ -478,10 +422,6 @@ namespace SkyClerik.Inventory
             _placementResults = _itemsPage.HandleItemPlacement(this);
         }
 
-        /// <summary>
-        /// Поднимает визуальный элемент предмета, инициируя процесс перетаскивания.
-        /// </summary>
-        /// <param name="isSwap">Указывает, является ли подъем частью операции обмена.</param>
         public void PickUp(bool isSwap = false)
         {
             Debug.Log($"[ItemVisual][PickUp] PickUp вызывается для {ItemDefinition.name}. isSwap: {isSwap}");
@@ -509,25 +449,61 @@ namespace SkyClerik.Inventory
             _placementResults = _itemsPage.HandleItemPlacement(this);
         }
 
-        /// <summary>
-        /// Устанавливает инвентарь-владелец для этого визуального элемента предмета.
-        /// </summary>
-        /// <param name="dropTarget">Новый инвентарь-владелец.</param>
         public void SetOwnerInventory(IDropTarget dropTarget)
         {
             Debug.Log($"[ItemVisual][SetOwnerInventory] Предмет '{this.name}'. Изменение владельца. Старый: {_ownerInventory?.GetType().Name ?? "NULL"}. Новый: {dropTarget?.GetType().Name ?? "NULL"}.");
             _ownerInventory = dropTarget;
-            if (ItemsPage.CurrentDraggedItem != null)
-            {
-                // Используем _ownerInventory (приватное поле), так как публичного свойства OwnerInventory нет.
-                Debug.Log($"[ItemVisual][SetOwnerInventory] ItemsPage.CurrentDraggedItem: {ItemsPage.CurrentDraggedItem.name}. Его владелец: {ItemsPage.CurrentDraggedItem._ownerInventory?.GetType().Name ?? "NULL"}");
-            }
         }
 
         private void Placement(Vector2Int gridPosition)
         {
-            Debug.Log($"[ItemVisual][Placement] Вызов TransferItemBetweenContainers. DraggedItem: {this.name}. Его ownerInventory: {this._ownerInventory?.GetType().Name ?? "NULL"}. TargetInventory: {_placementResults.TargetInventory?.GetType().Name ?? "NULL"}.");
-            _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
+            ItemBaseDefinition itemToUnequip = this.ItemDefinition;
+            if (_ownerInventory is EquipmentSlot slot)
+            {
+                Debug.Log($"[ItemVisual][Placement] Вызов TransferItemBetweenContainers. DraggedItem: {this.name}. Его ownerInventory: {this._ownerInventory?.GetType().Name ?? "NULL"}. TargetInventory: {_placementResults.TargetInventory?.GetType().Name ?? "NULL"}.");
+
+                if (_placementResults.TargetInventory is GridPageElementBase targetInventory)
+                {
+                    var targetContainer = targetInventory.ItemContainer;
+
+                    Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{itemToUnequip.name}' снят из слота '{slot.Cell.name}'. Попытка добавить в инвентарь '{targetInventory.Root.name}'.");
+
+                    bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToUnequip, _placementResults.SuggestedGridPosition);
+                    if (addedToTarget)
+                    {
+                        Debug.Log($"[ЭКИПИРОВКА][FromEquip] Предмет '{itemToUnequip.name}' успешно помещен в контейнер '{targetContainer.name}' в позицию: {_placementResults.SuggestedGridPosition}.");
+                        this.SetOwnerInventory(targetInventory);
+                        this.RemoveFromHierarchy(); // Удаляем из старой иерархии
+                        targetInventory.AddItemToInventoryGrid(this); // Добавляем ItemVisual в сетку
+                        this.SetPosition(new Vector2(_placementResults.SuggestedGridPosition.x * targetInventory.CellSize.x, _placementResults.SuggestedGridPosition.y * targetInventory.CellSize.y));
+                    }
+                    else
+                    {
+                        // Если не удалось добавить в инвентарь, возвращаем его обратно в слот экипировки
+                        slot.Equip(this);
+                        Debug.LogWarning($"[ЭКИПИРОВКА][FromEquip] Не удалось поместить предмет '{itemToUnequip.name}' в инвентарь '{targetContainer.name}'. Возвращен в слот экипировки '{slot.Cell.name}'.");
+                    }
+
+                    targetInventory.FinalizeDrag(); // FinalizeDrag для целевого инвентаря
+                    _itemsPage.FinalizeDragOfItem(this); // Общая финализация
+                }
+                else
+                {
+                    Debug.LogWarning($"ПРИДУМАТЬ ЧТО ДЕЛАТЬ КОГДА ПРЕДМЕТ НЕ ГДЕ УПАЛ");
+                    // Если предмет был из слота экипировки, но не удалось его разместить ни в одном инвентаре,                                                                                
+                    // то нужно вернуть его обратно в слот экипировки, иначе он "потеряется".                                                                                                 
+                    slot.Equip(this);
+                    _itemsPage.FinalizeDragOfItem(this);
+                    // Дополнительно можно сбросить _isDragging и opacity, чтобы предмет не оставался в состоянии "перетаскивания"                                                             
+                    _isDragging = false;
+                    style.opacity = 1f;
+                }
+            }
+            else
+            {
+                Debug.Log($"[ItemVisual][Placement] Вызов TransferItemBetweenContainers. DraggedItem: {itemToUnequip.name}. Его ownerInventory: {this._ownerInventory?.GetType().Name ?? "NULL"}. TargetInventory: {_placementResults.TargetInventory?.GetType().Name ?? "NULL"}.");
+                _itemsPage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
+            }
         }
 
         private void HandleSwap()
@@ -541,9 +517,6 @@ namespace SkyClerik.Inventory
             targetInventory.FinalizeDrag();
         }
 
-        /// <summary>
-        /// Обновляет отображение количества стаков предмета (PCS - Pieces).
-        /// </summary>
         public void UpdatePcs()
         {
             if (_pcsText != null)
@@ -580,46 +553,6 @@ namespace SkyClerik.Inventory
             RotateIcon(_saveAngle);
         }
 
-        private void HandleUnequipToInventory(IDropTarget targetInventory, Vector2Int gridPosition)
-        {
-            GridPageElementBase targetGridPage = targetInventory as GridPageElementBase;
-            EquipmentSlot sourceEquipSlot = _ownerInventory as EquipmentSlot; // _ownerInventory в этот момент - EquipmentSlot
 
-            if (targetGridPage == null || sourceEquipSlot == null)
-            {
-                Debug.LogError($"[ItemVisual][HandleUnequipToInventory] Некорректные типы инвентаря для перетаскивания из экипировки в инвентарь. Source: {_ownerInventory?.GetType().Name}, Target: {targetInventory?.GetType().Name}");
-                return;
-            }
-
-            // Логика из "Случая 3"
-            var targetContainer = targetGridPage.ItemContainer;
-            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
-            if (equipPage != null)
-            {
-                ItemBaseDefinition itemToUnequip = this.ItemDefinition;
-                // sourceEquipSlot.Unequip(); // Этот вызов уже происходит в EquipmentSlot.PickUp(), поэтому он закомментирован
-
-                Debug.Log($"[ЭКИПИРОВКА][HandleUnequipToInventory] Предмет '{itemToUnequip.name}' снят из слота '{sourceEquipSlot.Cell.name}'. Попытка добавить в инвентарь '{targetGridPage.Root.name}'.");
-
-                bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToUnequip, gridPosition);
-                if (addedToTarget)
-                {
-                    Debug.Log($"[ЭКИПИРОВКА][HandleUnequipToInventory] Предмет '{itemToUnequip.name}' успешно помещен в контейнер '{targetContainer.name}' в позицию: {gridPosition}.");
-                    this.SetOwnerInventory(targetGridPage);
-                    targetGridPage.AddItemToInventoryGrid(this); // Добавляем ItemVisual в сетку
-                    this.SetPosition(new Vector2(gridPosition.x * targetGridPage.CellSize.x, gridPosition.y * targetGridPage.CellSize.y));
-                }
-                else
-                {
-                    // Если не удалось добавить в инвентарь, возвращаем его обратно в слот экипировки
-                    sourceEquipSlot.Equip(this);
-                    Debug.LogWarning($"[ЭКИПИРОВКА][HandleUnequipToInventory] Не удалось поместить предмет '{itemToUnequip.name}' в инвентарь '{targetContainer.name}'. Возвращен в слот экипировки '{sourceEquipSlot.Cell.name}'.");
-                }
-            }
-
-            // Завершаем drag в ItemVisual
-            targetInventory.FinalizeDrag(); // FinalizeDrag для целевого инвентаря
-            _itemsPage.FinalizeDragOfItem(this); // Общая финализация
-        }
     }
 }
