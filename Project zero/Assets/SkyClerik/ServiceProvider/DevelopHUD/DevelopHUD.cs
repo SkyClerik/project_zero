@@ -66,13 +66,21 @@ namespace SkyClerik.Utils
             _uiDocument.enabled = true;
             var root = _uiDocument.rootVisualElement;
             _bInventoryNormal = root.Q<Button>(_bInventoryNormalID);
+            _bInventoryNormal.style.minHeight = 80;
             _bEquip = root.Q<Button>(_bEquipID);
+            _bEquip.style.minHeight = 80;
             _bInventoryGive = root.Q<Button>(_bInventoryGiveID);
+            _bInventoryGive.style.minHeight = 80;
             _bTrueCraft = root.Q<Button>(_bTrueCraftID);
+            _bTrueCraft.style.minHeight = 80;
             _bAddItem = root.Q<Button>(_bAddItemID);
+            _bAddItem.style.minHeight = 80;
             _bSave = root.Q<Button>(_bSaveID);
+            _bSave.style.minHeight = 80;
             _bCheast = root.Q<Button>(_bCheastID);
+            _bCheast.style.minHeight = 80;
             _bLut = root.Q<Button>(_bLutID);
+            _bLut.style.minHeight = 80;
 
             _bExitGame = root.Q<Button>(_bExitGameID);
 

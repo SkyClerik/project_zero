@@ -102,8 +102,8 @@ namespace SkyClerik.Inventory
 
             Add(_icon);
 
-            RegisterCallback<MouseUpEvent>(OnMouseUp);
-            RegisterCallback<MouseDownEvent>(OnMouseDown);
+            RegisterCallback<PointerUpEvent>(OnMouseUp);
+            RegisterCallback<PointerDownEvent>(OnMouseDown);
             RegisterCallback<MouseMoveEvent>(OnMouseMove);
             RegisterCallback<MouseEnterEvent>(OnMouseEnter);
             RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
@@ -111,8 +111,9 @@ namespace SkyClerik.Inventory
 
         ~ItemVisual()
         {
-            UnregisterCallback<MouseUpEvent>(OnMouseUp);
-            UnregisterCallback<MouseDownEvent>(OnMouseDown);
+
+            UnregisterCallback<PointerUpEvent>(OnMouseUp);
+            UnregisterCallback<PointerDownEvent>(OnMouseDown);
             UnregisterCallback<MouseMoveEvent>(OnMouseMove);
             UnregisterCallback<MouseEnterEvent>(OnMouseEnter);
             UnregisterCallback<MouseLeaveEvent>(OnMouseLeave);
@@ -213,10 +214,13 @@ namespace SkyClerik.Inventory
 
         private void SaveCurrentAngle(float angle) => _itemDefinition.Dimensions.Angle = angle;
 
-        private void OnMouseUp(MouseUpEvent mouseEvent)
+        private void OnMouseUp(PointerUpEvent mouseEvent)
         {
-            if (mouseEvent.button == 0)
+            if (mouseEvent.button == 0 && mouseEvent.clickCount == 1)
             {
+                if (ItemsPage.CurrentDraggedItem == null)
+                    return;
+
                 if (!_isDragging)
                     return;
 
@@ -240,6 +244,7 @@ namespace SkyClerik.Inventory
                 }
             }
         }
+
         private bool FromEquip()
         {
             EquipPage equipPage = ServiceProvider.Get<EquipPage>();
@@ -385,10 +390,14 @@ namespace SkyClerik.Inventory
             return true;
         }
 
-        private void OnMouseDown(MouseDownEvent mouseEvent)
+        private void OnMouseDown(PointerDownEvent mouseEvent)
         {
-            if (mouseEvent.button == 0)
+            Debug.Log($"mouseEvent.pointerId : {mouseEvent.pointerId}");
+            if (mouseEvent.button == 0 || mouseEvent.pointerId == 0)
             {
+                if (ItemsPage.CurrentDraggedItem != null)
+                    return;
+
                 _itemsPage.SetItemDescription(_itemDefinition);
                 //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] Событие MouseDown. GiveItem: {(_itemsPage.GiveItem != null ? _itemsPage.GiveItem.name : "NULL")}. CurrentDraggedItem: {(ItemsPage.CurrentDraggedItem != null ? ItemsPage.CurrentDraggedItem.name : "NULL")}. Этот ItemVisual: {this.name}.");
 
@@ -402,7 +411,7 @@ namespace SkyClerik.Inventory
                     {
                         //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] ItemsPage.CurrentDraggedItem НЕ равен этому ItemVisual. Вызываем PickUp.");
                         PickUp();
-                        SetDraggedItemPosition(mouseEvent.mousePosition, mouseEvent.localMousePosition);
+                        SetDraggedItemPosition(mouseEvent.position, mouseEvent.position);
                     }
                     else
                     {
@@ -412,7 +421,7 @@ namespace SkyClerik.Inventory
             }
         }
 
-        public void SetDraggedItemPosition(Vector2 globalClickPosition, Vector2 localClickOffset)
+        private void SetDraggedItemPosition(Vector2 globalClickPosition, Vector2 localClickOffset)
         {
             Vector2 rootOffset = _ownerInventory.GetDocument.rootVisualElement.worldBound.position;
             Vector2 correctedGlobalClickPosition = globalClickPosition - rootOffset;
@@ -430,7 +439,7 @@ namespace SkyClerik.Inventory
             _placementResults = _itemsPage.HandleItemPlacement(this);
         }
 
-        public void PickUp(bool isSwap = false)
+        private void PickUp(bool isSwap = false)
         {
             //Debug.Log($"[ItemVisual][PickUp] PickUp вызывается для {ItemDefinition.name}. isSwap: {isSwap}");
             //Debug.Log($"[ItemVisual][PickUp] ownerInventory Type: {_ownerInventory?.GetType().Name}");

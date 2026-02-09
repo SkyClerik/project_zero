@@ -1,0 +1,360 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SkyClerik/ItemsSystem/Scripts/UI/Style/CharacterPageStyle.uss?fileID=7433441132597879392&amp;guid=4fc497347cca2d840b4735a00f1e4e83&amp;type=3#CharacterPageStyle" />
+    <ui:VisualElement picking-mode="Ignore" name="root" style="flex-grow: 1; flex-direction: row; background-image: none;">
+        <ui:VisualElement picking-mode="Ignore" name="inventory_root" style="flex-grow: 0; flex-direction: row; align-items: auto; justify-content: flex-start; align-self: auto; position: relative; width: 100%; height: 100%;">
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 20%; height: 100%; display: flex; -unity-background-scale-mode: scale-and-crop; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; margin-left: 40px;">
+                <ui:VisualElement style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-scale-mode: scale-and-crop; border-top-left-radius: 0; border-top-right-radius: 0; -unity-background-image-tint-color: rgba(255, 255, 255, 0.4); height: 64px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px;" />
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: space-between; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 160px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 4px; border-right-width: 0; border-bottom-width: 4px; border-left-width: 4px; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:Label tabindex="-1" text="INVENTORY" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 50px; -unity-font-style: bold; color: rgb(241, 241, 241);" />
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_close" style="background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/cancel_button.png?fileID=21300000&amp;guid=cc4def3ba03bd1d4c9369323f4046b98&amp;type=3#cancel_button&quot;); width: 120px; height: 120px; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; background-color: rgba(188, 188, 188, 0); position: relative;" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: space-between; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 3px; border-bottom-width: 2px; border-left-width: 0; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" />
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: space-around; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 0; border-bottom-width: 2px; border-left-width: 3px; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:VisualElement style="flex-grow: 0; width: 100px; height: 30px; background-color: rgb(164, 82, 81); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;" />
+                    <ui:VisualElement style="flex-grow: 0; width: 100px; height: 30px; background-color: rgb(158, 155, 197); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;" />
+                    <ui:VisualElement style="flex-grow: 0; width: 100px; height: 30px; background-color: rgb(93, 171, 88); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;" />
+                    <ui:VisualElement style="flex-grow: 0; width: 100px; height: 30px; background-color: rgb(111, 40, 188); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: center; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 3px; border-bottom-width: 2px; border-left-width: 0; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:Label tabindex="-1" text="INVENTOR" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: normal; color: rgb(158, 155, 197);" />
+                    <ui:Label tabindex="-1" text="+1" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: bold; color: rgb(93, 171, 88);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: center; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 0; border-bottom-width: 2px; border-left-width: 3px; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:Label tabindex="-1" text="INVENTOR" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: normal; color: rgb(158, 155, 197);" />
+                    <ui:Label tabindex="-1" text="-2" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: bold; color: rgb(164, 82, 81);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: space-between; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 3px; border-bottom-width: 2px; border-left-width: 0; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" />
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: center; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 0; border-bottom-width: 2px; border-left-width: 3px; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:Label tabindex="-1" text="INVENTOR" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: normal; color: rgb(158, 155, 197);" />
+                    <ui:Label tabindex="-1" text="+1" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: bold; color: rgb(93, 171, 88);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: center; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 3px; border-bottom-width: 2px; border-left-width: 0; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:Label tabindex="-1" text="INVENTOR" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: normal; color: rgb(158, 155, 197);" />
+                    <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: bold; color: rgb(164, 82, 81);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: center; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 0; border-bottom-width: 2px; border-left-width: 3px; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <ui:Label tabindex="-1" text="INVENTOR" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: normal; color: rgb(158, 155, 197);" />
+                    <ui:Label tabindex="-1" text="+3" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: bold; color: rgb(93, 171, 88);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: center; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; margin-top: 0; margin-bottom: 0; border-top-width: 2px; border-right-width: 3px; border-bottom-width: 2px; border-left-width: 0; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-left-radius: 20px; border-bottom-left-radius: 20px; -unity-background-image-tint-color: rgb(255, 255, 255);">
+                    <ui:Label tabindex="-1" text="INVENTOR" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: normal; color: rgb(158, 155, 197);" />
+                    <ui:Label tabindex="-1" text="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 32px; -unity-font-style: bold; color: rgb(164, 82, 81);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; align-items: center; justify-content: space-between; background-color: rgba(15, 19, 48, 0.95); flex-direction: row; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 64px; padding-left: 20px; padding-right: 20px; border-left-color: rgb(111, 40, 188); border-right-color: rgb(111, 40, 188); border-top-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); border-top-width: 2px; border-right-width: 0; border-bottom-width: 2px; border-left-width: 3px; border-top-left-radius: 20px; border-bottom-left-radius: 20px; -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-scale-mode: scale-and-crop; border-top-left-radius: 20px; border-top-right-radius: 20px; -unity-background-image-tint-color: rgba(255, 255, 255, 0.4); justify-content: flex-end;">
+                    <ui:Button text="ROTATE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_rotate" style="background-color: rgb(33, 17, 99); color: rgb(214, 47, 46); -unity-font-style: bold; font-size: 64px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 40%; height: 100%;" />
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 40%; height: 100%; background-color: rgba(23, 101, 37, 0); margin-right: 40px;">
+                <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; min-height: 800px; height: 100%; background-color: rgba(255, 0, 13, 0); border-top-width: 27px; border-right-width: 27px; border-bottom-width: 27px; border-left-width: 27px; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); border-left-color: rgba(97, 255, 0, 0); border-right-color: rgba(97, 255, 0, 0); border-top-color: rgba(97, 255, 0, 0); border-bottom-color: rgba(97, 255, 0, 0); -unity-background-scale-mode: scale-and-crop; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; -unity-background-image-tint-color: rgba(255, 255, 255, 0.6); justify-content: space-around;">
+                    <ui:VisualElement name="description_background" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 0; border-bottom-left-radius: 0; flex-direction: column; align-items: flex-end; width: 100%; height: 400px; padding-bottom: 15px; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/ImphenziaPalette01-256-GradientX4.png?fileID=-971643855&amp;guid=d039faca18b8d3d4db36036c7a1ffc20&amp;type=3#ImphenziaPalette01-256-GradientX4_0&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.6);">
+                        <ui:VisualElement name="item_image" picking-mode="Ignore" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Develop/Statue%20of%20the%20goddess%20of%20testers.png?fileID=2800000&amp;guid=f946925a07946fa40a425f1b0198ff5a&amp;type=3#Statue of the goddess of testers&quot;); height: 400px; width: 300px; -unity-background-scale-mode: scale-to-fit; position: absolute; left: 0; top: 0;" />
+                        <ui:Label tabindex="-1" text="Не бросское описание небольшой каменной статуи в виде богини олицетворяющей покой и процветание в коде и душе. " parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_description" picking-mode="Ignore" class="testText" style="display: flex; flex-grow: 0; width: 670px; height: 100%;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; background-color: rgba(255, 0, 0, 0); height: 940px; align-items: center; justify-content: center; width: 940px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;">
+                        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center; height: 960px; background-image: none;">
+                            <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 960px; height: 960px;">
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                                <ui:VisualElement name="item_box" class="itemBox2" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; align-items: auto; justify-content: flex-start; align-self: auto; position: absolute; width: 100%; height: 100%; display: flex;">
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 20%; background-color: rgba(45, 30, 115, 0); height: 100%;" />
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 40%; height: 100%;">
+                <ui:VisualElement picking-mode="Ignore" name="craft_root" style="flex-grow: 0; flex-direction: column; align-items: center; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible; width: 100%; height: 100%;">
+                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; background-color: rgba(55, 55, 55, 0.67);">
+                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                            <ui:Label tabindex="-1" text="craft" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 705px; height: 940px;">
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="item_box" class="itemBox2" style="position: relative; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                        <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                                <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                            </ui:VisualElement>
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center;">
+                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_craft" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" name="cheast_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
+                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
+                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                            <ui:Label tabindex="-1" text="cheast" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 896px;">
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                </ui:VisualElement>
+                                <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center; flex-direction: row; justify-content: center;">
+                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" name="lut_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
+                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
+                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                            <ui:Label tabindex="-1" text="cheast" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 512px;">
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                    <ui:VisualElement name="item_box" class="item_box" />
+                                </ui:VisualElement>
+                                <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center; flex-direction: row; justify-content: center;">
+                                    <ui:Button text="Взять все" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_pickup_all" style="height: 128px; width: 256px; font-size: 34px; -unity-font-style: bold;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" name="equipment_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
+                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 100%; background-color: rgba(55, 55, 55, 0);">
+                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0); height: 100%;">
+                            <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 100%; height: 100%;">
+                                <ui:VisualElement name="item_box" class="itemBox2" style="position: absolute; top: 70px; left: 710px; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                    <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="item_box" class="itemBox2" style="position: absolute; top: 350px; left: 30px; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                    <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="item_box" class="itemBox2" style="position: absolute; top: 770px; left: 710px; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                    <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="item_box" class="itemBox2" style="position: absolute; top: 1070px; left: 30px; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/background_main.jpg?fileID=21300000&amp;guid=d5f8664d425939f4db82e6f03af6ce6d&amp;type=3#background_main&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.15);">
+                                    <ui:VisualElement name="style" style="flex-grow: 0; position: absolute; width: 100%; height: 100%;">
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: flex-start; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 20px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-color: rgb(111, 40, 188); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgb(111, 40, 188); border-right-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-items: flex-end; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                                            <ui:VisualElement style="flex-grow: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 20px; border-bottom-left-radius: 0; border-top-color: rgba(0, 0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgb(111, 40, 188); border-bottom-color: rgb(111, 40, 188); width: 25%; height: 50%;" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

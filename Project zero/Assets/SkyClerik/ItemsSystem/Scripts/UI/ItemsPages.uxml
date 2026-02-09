@@ -7,6 +7,8 @@
                     <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_close" style="background-image: url(&quot;project://database/Assets/SkyClerik/Images/Inventory/cancel_button.png?fileID=21300000&amp;guid=cc4def3ba03bd1d4c9369323f4046b98&amp;type=3#cancel_button&quot;); width: 160px; height: 160px; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; background-color: rgba(188, 188, 188, 0);" />
                     <ui:Label tabindex="-1" text="INVENTORY" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" style="font-size: 50px; -unity-font-style: bold; color: rgb(241, 241, 241);" />
                 </ui:VisualElement>
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Button text="ROTATE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_rotate" style="background-color: rgb(33, 17, 99); color: rgb(214, 47, 46); -unity-font-style: bold; font-size: 64px;" />
             </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 40%; height: 100%;" />
             <ui:VisualElement style="flex-grow: 0; width: 40%; height: 100%; background-color: rgb(23, 101, 37);">
@@ -31,153 +33,144 @@
                                 <ui:VisualElement name="item_box" class="item_box" />
                                 <ui:VisualElement name="item_box" class="item_box" />
                                 <ui:VisualElement name="item_box" class="item_box" />
-                                <ui:VisualElement name="item_box" class="item_box" />
-                                <ui:VisualElement name="item_box" class="item_box" />
-                                <ui:VisualElement name="item_box" class="item_box" />
-                                <ui:VisualElement name="item_box" class="item_box" />
-                                <ui:VisualElement name="item_box" class="item_box" />
-                                <ui:VisualElement name="item_box" class="item_box" />
                                 <ui:VisualElement name="item_box" class="item_box" style="justify-content: center; align-items: center;" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; align-items: auto; justify-content: flex-start; align-self: auto; position: absolute; width: 100%; height: 100%; display: flex;">
-            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 20%; background-color: rgba(45, 30, 115, 0); height: 100%;" />
-            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 40%; height: 100%;">
-                <ui:VisualElement picking-mode="Ignore" name="craft_root" style="flex-grow: 0; flex-direction: column; align-items: center; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible; width: 100%; height: 100%;">
-                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; background-color: rgba(55, 55, 55, 0.67);">
-                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
-                            <ui:Label tabindex="-1" text="craft" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
-                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
-                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 480px; height: 640px;">
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                </ui:VisualElement>
-                                <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center;">
-                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_craft" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
-                                </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; align-items: auto; justify-content: flex-start; align-self: auto; position: absolute; width: 100%; height: 100%; display: none;">
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 20%; background-color: rgba(45, 30, 115, 0); height: 100%;" />
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 40%; height: 100%;">
+            <ui:VisualElement picking-mode="Ignore" name="craft_root" style="flex-grow: 0; flex-direction: column; align-items: center; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible; width: 100%; height: 100%;">
+                <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; background-color: rgba(55, 55, 55, 0.67);">
+                    <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                        <ui:Label tabindex="-1" text="craft" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                            <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 480px; height: 640px;">
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                            </ui:VisualElement>
+                            <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center;">
+                                <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_craft" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement picking-mode="Ignore" name="cheast_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
-                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
-                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
-                            <ui:Label tabindex="-1" text="cheast" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
-                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
-                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 896px;">
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                </ui:VisualElement>
-                                <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center; flex-direction: row; justify-content: center;">
-                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
-                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
-                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
-                                    <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
-                                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" name="cheast_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
+                <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
+                    <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                        <ui:Label tabindex="-1" text="cheast" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                            <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 960px; height: 800px;">
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                            </ui:VisualElement>
+                            <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center; flex-direction: row; justify-content: center;">
+                                <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
+                                <ui:Button text="V" parse-escape-sequences="true" display-tooltip-when-elided="true" name="plugin" style="height: 128px; width: 128px; font-size: 68px; -unity-font-style: bold;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement picking-mode="Ignore" name="lut_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
-                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
-                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
-                            <ui:Label tabindex="-1" text="cheast" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
-                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
-                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 512px;">
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                    <ui:VisualElement name="item_box" class="item_box" />
-                                </ui:VisualElement>
-                                <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center; flex-direction: row; justify-content: center;">
-                                    <ui:Button text="Взять все" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_pickup_all" style="height: 128px; width: 256px; font-size: 34px; -unity-font-style: bold;" />
-                                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" name="lut_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
+                <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
+                    <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                        <ui:Label tabindex="-1" text="cheast" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                            <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 640px; height: 640px;">
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                                <ui:VisualElement name="item_box" class="item_box" />
+                            </ui:VisualElement>
+                            <ui:VisualElement style="flex-grow: 0; width: 384px; align-items: center; flex-direction: row; justify-content: center;">
+                                <ui:Button text="Взять все" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_pickup_all" style="height: 128px; width: 256px; font-size: 34px; -unity-font-style: bold;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement picking-mode="Ignore" name="equipment_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
-                    <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
-                        <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
-                            <ui:Label tabindex="-1" text="Equipment" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
-                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
-                                <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 896px; height: 1024px;">
-                                    <ui:VisualElement name="item_box" class="item_box" style="width: 256px; height: 384px; position: absolute; top: 71px; left: 38px;" />
-                                    <ui:VisualElement name="item_box" class="item_box" style="width: 256px; height: 256px; position: absolute; top: 519px; left: 44px;" />
-                                    <ui:VisualElement name="item_box" class="item_box" style="position: absolute; top: 835px; left: 47px;" />
-                                    <ui:VisualElement name="item_box" class="item_box" style="position: absolute; top: 839px; left: 198px;" />
-                                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" name="equipment_root" style="flex-grow: 1; flex-direction: column; align-items: flex-start; justify-content: center; align-self: auto; position: relative; display: none; visibility: visible;">
+                <ui:VisualElement name="inventory_background" picking-mode="Ignore" class="window_background" style="flex-grow: 0; width: 1000px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 8px; padding-bottom: 16px; padding-left: 16px; min-height: 800px; height: 1200px; background-color: rgba(55, 55, 55, 0.67);">
+                    <ui:VisualElement name="header" picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(0, 26, 243, 0.24);">
+                        <ui:Label tabindex="-1" text="Equipment" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="l_title" style="color: rgb(255, 255, 255); -unity-font-style: bold; padding-right: 0; padding-bottom: 0; padding-top: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body" picking-mode="Ignore" style="flex-grow: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 2px; padding-top: 11px; padding-right: 11px; padding-bottom: 11px; padding-left: 11px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; background-color: rgba(77, 3, 77, 0.16); height: 100%;">
+                        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; flex-wrap: nowrap; flex-direction: column; align-items: center; flex-shrink: 0; justify-content: center;">
+                            <ui:VisualElement name="grid" picking-mode="Ignore" style="flex-direction: row; flex-wrap: wrap; align-items: center; align-self: auto; justify-content: center; width: 896px; height: 1024px;">
+                                <ui:VisualElement name="item_box" class="item_box" style="width: 320px; height: 320px; position: absolute; top: 71px; left: 38px;" />
+                                <ui:VisualElement name="item_box" class="item_box" style="width: 320px; height: 320px; position: absolute; top: 87px; left: 528px;" />
+                                <ui:VisualElement name="item_box" class="item_box" style="position: absolute; top: 663px; left: 51px; width: 320px; height: 320px;" />
+                                <ui:VisualElement name="item_box" class="item_box" style="position: absolute; top: 671px; left: 538px; width: 320px; height: 320px;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>

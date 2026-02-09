@@ -171,8 +171,14 @@ namespace SkyClerik.Inventory
             if (_currentDraggedItem == null)
                 return;
 
-            if (Input.GetMouseButtonDown(1))
-                _currentDraggedItem.Rotate();
+            if (Application.platform != RuntimePlatform.Android)
+            {
+                if (Input.GetMouseButtonDown(1))
+                {
+                    Debug.Log("Проверка что мы не на винде работаем!!!");
+                    _currentDraggedItem.Rotate();
+                }
+            }
 
             SetDraggedItemPosition();
         }

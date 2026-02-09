@@ -22,3 +22,22 @@
     flex-grow: 1;
     white-space: normal;
 }
+
+.itemBox2 {
+    width: 235px;
+    height: 235px;
+    border-left-color: rgb(101, 110, 136);
+    border-right-color: rgb(101, 110, 136);
+    border-top-color: rgb(101, 110, 136);
+    border-bottom-color: rgb(101, 110, 136);
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0.95);
+}

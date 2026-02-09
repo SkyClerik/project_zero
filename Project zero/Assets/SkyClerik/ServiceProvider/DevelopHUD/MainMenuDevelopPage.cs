@@ -59,14 +59,17 @@ namespace SkyClerik
             root.Add(menuContainer);
 
             var newGameButton = ToolkitExt.CreateButton("Новая игра", OnNewGameClick);
+            newGameButton.style.minHeight = 80;
             StyleButton(newGameButton);
             menuContainer.Add(newGameButton);
 
             var loadButton = ToolkitExt.CreateButton("Загрузить", OnLoadGameClick);
+            loadButton.style.minHeight = 80;
             StyleButton(loadButton);
             menuContainer.Add(loadButton);
 
             var exitButton = ToolkitExt.CreateButton("Выход", OnExitClick);
+            exitButton.style.minHeight = 80;
             StyleButton(exitButton);
             menuContainer.Add(exitButton);
         }

@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
@@ -83,6 +82,7 @@ namespace SkyClerik.Inventory
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
         public void CalculateGridDimensionsFromUI()
         {
+            Debug.LogError($"CalculateGridDimensionsFromUI {_rootPanelName}", this);
             if (_uiDocument == null || string.IsNullOrEmpty(_rootPanelName))
             {
                 Debug.LogError("UIDocument или Root Panel Name не назначены. Расчет невозможен.", this);
@@ -244,7 +244,7 @@ namespace SkyClerik.Inventory
             {
                 if (TryFindPlacement(item, out var foundPosition))
                 {
-                    Debug.Log($"В контейнер добавится : {item} с поворотом {item.Dimensions.Angle}");
+                    //Debug.Log($"В контейнер добавится : {item} с поворотом {item.Dimensions.Angle}");
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
                     _containerDefinition.Items.Add(item);
@@ -349,7 +349,7 @@ namespace SkyClerik.Inventory
             Vector2Int itemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
 
             //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Проверяем доступность области {gridPosition} с размером {itemGridSize} с помощью IsGridAreaFree.", this);
-            if (IsGridAreaFree(gridPosition, itemGridSize))
+            if (IsGridAreaFree(gridPosition, itemGridSize, allowRotation: true))
             {
                 //Debug.Log($"[ItemContainer:{name}] TryAddItemAtPosition: Область свободна.", this);
                 item.GridPosition = gridPosition;
@@ -480,7 +480,7 @@ namespace SkyClerik.Inventory
         /// <param name="size">Размер области.</param>
         /// <param name="allowRotation">Разрешить ли проверку повернутого варианта предмета.</param>
         /// <returns>True, если область свободна и находится в пределах сетки (возможно, с поворотом); иначе false.</returns>
-        public bool IsGridAreaFree(Vector2Int start, Vector2Int size, bool allowRotation = true)
+        public bool IsGridAreaFree(Vector2Int start, Vector2Int size, bool allowRotation)
         {
             // Проверяем оригинальный размер
             if (CheckGridArea(start, size))

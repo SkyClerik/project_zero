@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
@@ -35,7 +36,11 @@ namespace SkyClerik.Inventory
 
             if (unplacedClones.Any())
             {
-                //Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
+                Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
+                foreach (var clonedItem in unplacedClones)
+                {
+                    Debug.Log($"clonedItem {clonedItem.ID} : {clonedItem.DefinitionName}");
+                }
                 itemsList.Items.AddRange(unplacedClones);
             }
         }

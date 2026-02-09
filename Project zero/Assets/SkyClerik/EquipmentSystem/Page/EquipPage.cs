@@ -14,14 +14,11 @@ namespace SkyClerik.EquipmentSystem
     public class EquipPage : MonoBehaviour
     {
         private const string _titleText = "Окно Экипировки";
-        private VisualElement _header;
-        private const string _headerID = "header";
-        private Label _title;
-        private const string _titleID = "l_title";
         private VisualElement _inventoryGrid;
         private const string _inventoryGridID = "grid";
         private ItemsPage _itemsPage;
         private VisualElement _equipRoot;
+
         private List<VisualElement> _visualSlots;
         private static bool _isShow;
 
@@ -117,15 +114,15 @@ namespace SkyClerik.EquipmentSystem
             _itemsPage = ServiceProvider.Get<ItemsPage>();
             _equipRoot = _uiDocument.rootVisualElement.Q<VisualElement>(_rootPanelName);
             _inventoryGrid = _equipRoot.Q<VisualElement>(_inventoryGridID);
-            _header = _equipRoot.Q(_headerID);
-            _title = _header.Q<Label>(_titleID);
-            _title.text = _titleText;
 
             StartCoroutine(Initialize());
         }
 
         private void Update()
         {
+            if (!_isShow)
+                return;
+
             if (ItemsPage.CurrentDraggedItem != null)
             {
                 ProcessDragFeedback(ItemsPage.CurrentDraggedItem, _itemsPage.MouseUILocalPosition);
@@ -175,10 +172,12 @@ namespace SkyClerik.EquipmentSystem
 
         public void OpenEquip()
         {
-            EquipPage.IsShow = true;
             _itemsPage.CloseAll();
             _itemsPage.OpenInventoryNormal();
-            _equipRoot.SetDisplay(EquipPage.IsShow);
+            EquipPage.IsShow = true;
+            _equipRoot.SetDisplay(true);
+
+            Debug.Log($"EquipPage.IsShow : {EquipPage.IsShow}");
         }
 
         public void CloseEquip()
