@@ -15,7 +15,8 @@ MonoBehaviour:
   _id: 3
   _definitionName: "\u0441\u0440\u0435\u0434\u043D\u0435\u0435 \u0437\u0435\u043B\u044C\u0435
     \u0432\u044B\u043D\u043E\u0441\u043B\u0438\u0432\u043E\u0441\u0442\u0438"
-  _description: 
+  _description: A simple description of a small stone statue in the form of a goddess
+    personifying peace and prosperity in the code and soul.
   _icon: {fileID: 21300000, guid: 13f5f3b3606866b40b80c99f8bef4002, type: 3}
   _price: 4
   _curStack: 1

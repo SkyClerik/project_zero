@@ -26,7 +26,7 @@ namespace SkyClerik.Inventory
         private bool _singleRotationMode;
         private float _saveAngle;
         private const string _iconName = "Icon";
-        private const int IconPadding = 5;
+        private const int IconPadding = 10;
 
         public IDropTarget OwnerInventory => _ownerInventory;
 
@@ -56,7 +56,6 @@ namespace SkyClerik.Inventory
             _singleRotationMode = singleRotationMode;
             name = _itemDefinition.DefinitionName;
             style.position = Position.Absolute;
-            this.SetPadding(IconPadding);
 
             style.left = gridPosition.x * _ownerInventory.CellSize.x;
             style.top = gridPosition.y * _ownerInventory.CellSize.y;
@@ -139,7 +138,7 @@ namespace SkyClerik.Inventory
             if (_isDragging)
                 return;
 
-            _itemsPage.StartTooltipDelay(this);
+            //_itemsPage.StartTooltipDelay(this);            
         }
 
         private void OnMouseLeave(MouseLeaveEvent evt)
@@ -291,7 +290,7 @@ namespace SkyClerik.Inventory
                         this.SetOwnerInventory(targetGridPage);
                         //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] RemoveFromHierarchy() вызван.");
                         this.RemoveFromHierarchy();
-                                                    //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] Добавляем в инвентарную сетку.");
+                        //Debug.Log($"[ЭКИПИРОВКА][FromEquip][{this.name}] Добавляем в инвентарную сетку.");
                         targetGridPage.AddItemToInventoryGrid(this);
                         targetGridPage.RegisterVisual(this, new ItemGridData(_itemDefinition, _itemDefinition.GridPosition)); // Регистрируем визуальный элемент
                         this.SetPosition(new Vector2(_placementResults.SuggestedGridPosition.x * targetGridPage.CellSize.x, _placementResults.SuggestedGridPosition.y * targetGridPage.CellSize.y));
@@ -391,6 +390,7 @@ namespace SkyClerik.Inventory
         {
             if (mouseEvent.button == 0)
             {
+                _itemsPage.SetItemDescription(_itemDefinition);
                 //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] Событие MouseDown. GiveItem: {(_itemsPage.GiveItem != null ? _itemsPage.GiveItem.name : "NULL")}. CurrentDraggedItem: {(ItemsPage.CurrentDraggedItem != null ? ItemsPage.CurrentDraggedItem.name : "NULL")}. Этот ItemVisual: {this.name}.");
 
                 if (_itemsPage.GivenItem.DesiredProduct != null)

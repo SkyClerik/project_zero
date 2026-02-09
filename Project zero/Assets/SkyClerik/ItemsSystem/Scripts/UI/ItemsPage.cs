@@ -287,7 +287,6 @@ namespace SkyClerik.Inventory
             }
         }
 
-
         /// <summary>
         /// Перемещает предмет между контейнерами.
         /// </summary>
@@ -337,6 +336,11 @@ namespace SkyClerik.Inventory
                     sourceContainer.AddItems(new List<ItemBaseDefinition> { itemToMove });
                 }
             }
+        }
+
+        public void SetItemDescription(ItemBaseDefinition itemBaseDefinition)
+        {
+            _inventoryPage.SetItemDescription(itemBaseDefinition);           
         }
 
         /// <summary>
@@ -458,6 +462,7 @@ namespace SkyClerik.Inventory
         {
             SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
             _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
+            _inventoryPage.DisableItemDescription();
         }
 
         /// <summary>
@@ -493,11 +498,14 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Закрывает все страницы.
         /// </summary>
-        internal void CloseAll()
+        public void CloseAll()
         {
             SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
             SetAllSelfPage(display: false, visible: false, enabled: false);
             _uiDocument.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
+
+            var equipPage = ServiceProvider.Get<EquipPage>();
+            equipPage?.SystemClosePage();
 
             if (_givenItem.Visual != null)
                 ApplyVisualItemHighlight(_givenItem.Visual, isZeroWidth: true);

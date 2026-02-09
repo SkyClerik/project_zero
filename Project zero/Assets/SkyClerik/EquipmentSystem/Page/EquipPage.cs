@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
@@ -184,8 +183,13 @@ namespace SkyClerik.EquipmentSystem
 
         public void CloseEquip()
         {
-            EquipPage.IsShow = false;
             _itemsPage.CloseAll();
+            SystemClosePage();
+        }
+
+        public void SystemClosePage()
+        {
+            EquipPage.IsShow = false;
             _equipRoot.SetDisplay(EquipPage.IsShow);
         }
 

@@ -117,7 +117,8 @@ namespace SkyClerik.Utils
             else
             {
                 // Открыть окно инвентаря (и попробовать открыть крафт потому что его доступность решается глобальным логическим свойством)
-                _inventoryAPI.OpenInventoryAndCraft();
+                _inventoryAPI.OpenInventoryNormal();
+                //_inventoryAPI.OpenInventoryAndCraft();
             }
         }
 

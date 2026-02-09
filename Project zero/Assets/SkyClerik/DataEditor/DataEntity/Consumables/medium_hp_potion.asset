@@ -15,7 +15,7 @@ MonoBehaviour:
   _id: 2
   _definitionName: "\u0441\u0440\u0435\u0434\u043D\u0435\u0435 \u0437\u0435\u043B\u044C\u0435
     \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F"
-  _description: 
+  _description: "\u6CD5\u3068\u9B42\u306E\u5E73\u548C\u3068\u7E41\u6804\u3092\u64EC\u4EBA\u5316\u3057\u305F\u5973\u795E\u306E\u5F62\u3092\u3057\u305F\u5C0F\u3055\u306A\u77F3\u50CF\u306E\u7C21\u5358\u306A\u8AAC\u660E\u3002"
   _icon: {fileID: 21300000, guid: d97ccd6843cc0ba46a5ff5054d62fad2, type: 3}
   _price: 8
   _curStack: 1
