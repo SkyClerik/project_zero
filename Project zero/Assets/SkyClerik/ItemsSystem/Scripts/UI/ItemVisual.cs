@@ -128,11 +128,6 @@ namespace SkyClerik.Inventory
             style.left = pos.x;
         }
 
-        /// <summary>
-        /// Возвращает текущую позицию визуального элемента предмета на UI.
-        /// </summary>
-        public Vector2 GetPosition => new Vector2(style.top.value.value, style.left.value.value);
-
         private void OnMouseEnter(MouseEnterEvent evt)
         {
             if (_isDragging)
@@ -356,6 +351,10 @@ namespace SkyClerik.Inventory
                             }
                             this.RemoveFromHierarchy();
                         }).ExecuteLater(1);
+                    }
+                    else
+                    {
+                        TryDropBack();
                     }
                     return false;
             }

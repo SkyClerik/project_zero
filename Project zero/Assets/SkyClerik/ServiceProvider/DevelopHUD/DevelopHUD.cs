@@ -117,8 +117,8 @@ namespace SkyClerik.Utils
             else
             {
                 // Открыть окно инвентаря (и попробовать открыть крафт потому что его доступность решается глобальным логическим свойством)
-                _inventoryAPI.OpenInventoryNormal();
-                //_inventoryAPI.OpenInventoryAndCraft();
+                //_inventoryAPI.OpenInventoryNormal();
+                _inventoryAPI.OpenInventoryAndCraft();
             }
         }
 
@@ -174,7 +174,10 @@ namespace SkyClerik.Utils
         private void _bAddItem_clicked()
         {
             // Отправить из контейнера в инвентарь игрока
-            _developLut.TransferItemsToPlayerInventoryContainer();
+
+            var item = new LutContainerWrapper(4);
+            item.TransferItemsToPlayerInventoryContainer();
+            //_developLut.TransferItemsToPlayerInventoryContainer();
         }
 
         private void _bSave_clicked()

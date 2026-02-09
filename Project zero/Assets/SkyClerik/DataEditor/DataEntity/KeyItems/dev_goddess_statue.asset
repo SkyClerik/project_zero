@@ -27,7 +27,7 @@ MonoBehaviour:
   _stackable: 0
   _viewStackable: 0
   _dimensions:
-    width: 1
-    height: 2
-    angle: 0
+    _width: 1
+    _height: 2
+    _angle: 0
   _gridPosition: {x: 0, y: 0}

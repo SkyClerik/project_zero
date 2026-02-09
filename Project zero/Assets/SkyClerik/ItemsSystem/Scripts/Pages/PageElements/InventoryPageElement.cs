@@ -22,7 +22,7 @@ namespace SkyClerik.Inventory
         private VisualElement _body;
         private const string _bodyID = "body";
 
-        private ItemsPage _itemsPage;
+        //private ItemsPage _itemsPage;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="InventoryPageElement"/>.

@@ -269,7 +269,8 @@ string rootID)
                     }
                     else
                     {
-                        _placementResults.Conflict = ReasonConflict.SwapAvailable;
+                        // Вырубили свап!!!
+                        //_placementResults.Conflict = ReasonConflict.SwapAvailable;
                         //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Пересечение с одним предметом. Тип: SwapAvailable", _coroutineRunner);
                     }
                     _placementResults.OverlapItem = overlapItem;

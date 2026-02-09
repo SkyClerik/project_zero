@@ -99,28 +99,21 @@ namespace UnityEngine.DataEditor
     {
         [JsonProperty]
         [SerializeField]
-        private int width = 1;
+        private int _width = 1;
         [JsonProperty]
         [SerializeField]
-        private int height = 1;
+        private int _height = 1;
         [JsonProperty]
         [SerializeField]
-        private float angle = 0;
+        private float _angle = 0;
 
-        public int Width { get => width; set => width = value; }
-        public int Height { get => height; set => height = value; }
-        public float Angle { get => angle; set => angle = value; }
-
-        public ItemDimensions()
-        {
-            width = 1;
-            height = 1;
-            angle = 0;
-        }
+        public int Width { get => _width; set => _width = value; }
+        public int Height { get => _height; set => _height = value; }
+        public float Angle { get => _angle; set => _angle = value; }
 
         public void Swap()
         {
-            (width, height) = (height, width);
+            (_width, _height) = (_height, _width);
         }
     }
 }

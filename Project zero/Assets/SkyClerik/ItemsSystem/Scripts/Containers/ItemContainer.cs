@@ -243,7 +243,7 @@ namespace SkyClerik.Inventory
             {
                 if (TryFindPlacement(item, out var foundPosition))
                 {
-                    //Debug.Log($"В контейнер добавится : {item}");
+                    Debug.Log($"В контейнер добавится : {item} с поворотом {item.Dimensions.Angle}");
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
                     _containerDefinition.Items.Add(item);
@@ -443,29 +443,62 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Проверяет, свободна ли указанная область в сетке.
+        /// Вспомогательный метод для проверки, свободна ли указанная область в сетке.
         /// </summary>
         /// <param name="start">Начальная позиция области в сетке.</param>
         /// <param name="size">Размер области.</param>
         /// <returns>True, если область свободна и находится в пределах сетки; иначе false.</returns>
-        public bool IsGridAreaFree(Vector2Int start, Vector2Int size)
+        private bool CheckGridArea(Vector2Int start, Vector2Int size)
         {
+            // Проверка на выход за границы сетки
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
             {
+                Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
                 return false;
             }
+
+            // Проверка на занятость ячеек
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
                 {
                     if (_gridOccupancy[start.x + x, start.y + y])
                     {
-                        //Debug.LogWarning($"[ItemContainer:{name}] IsGridAreaFree: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
+                        Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
                         return false;
                     }
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Проверяет, свободна ли указанная область в сетке.
+        /// </summary>
+        /// <param name="start">Начальная позиция области в сетке.</param>
+        /// <param name="size">Размер области.</param>
+        /// <param name="allowRotation">Разрешить ли проверку повернутого варианта предмета.</param>
+        /// <returns>True, если область свободна и находится в пределах сетки (возможно, с поворотом); иначе false.</returns>
+        public bool IsGridAreaFree(Vector2Int start, Vector2Int size, bool allowRotation = true)
+        {
+            // Проверяем оригинальный размер
+            if (CheckGridArea(start, size))
+            {
+                return true;
+            }
+
+            // Если разрешено вращение и предмет не квадратный, проверяем повернутый размер
+            if (allowRotation && size.x != size.y)
+            {
+                Vector2Int rotatedSize = new Vector2Int(size.y, size.x);
+                Debug.Log($"проверка для размера : {rotatedSize}");
+                if (CheckGridArea(start, rotatedSize))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -476,14 +509,41 @@ namespace SkyClerik.Inventory
         /// <returns>True, если свободное место найдено; иначе false.</returns>
         public bool TryFindPlacement(ItemBaseDefinition item, out Vector2Int suggestedGridPosition)
         {
-            Vector2Int itemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
-            for (int y = 0; y <= _gridDimensions.y - itemGridSize.y; y++)
+            Vector2Int originalItemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
+            Vector2Int rotatedItemGridSize = new Vector2Int(item.Dimensions.Height, item.Dimensions.Width);
+
+            // Определяем максимальные размеры, чтобы циклы поиска не выходили за пределы сетки
+            int searchGridWidth = _gridDimensions.x - Math.Min(originalItemGridSize.x, rotatedItemGridSize.x) + 1;
+            int searchGridHeight = _gridDimensions.y - Math.Min(originalItemGridSize.y, rotatedItemGridSize.y) + 1;
+
+            if (searchGridWidth <= 0 || searchGridHeight <= 0)
             {
-                for (int x = 0; x <= _gridDimensions.x - itemGridSize.x; x++)
+                suggestedGridPosition = Vector2Int.zero;
+                return false;
+            }
+
+            for (int y = 0; y < searchGridHeight; y++)
+            {
+                for (int x = 0; x < searchGridWidth; x++)
                 {
                     var currentPos = new Vector2Int(x, y);
-                    if (IsGridAreaFree(currentPos, itemGridSize))
+
+                    // Проверяем оригинальный размер
+                    if (CheckGridArea(currentPos, originalItemGridSize))
                     {
+                        suggestedGridPosition = currentPos;
+                        return true;
+                    }
+
+                    // Если предмет не квадратный и allowRotation было true в IsGridAreaFree (что по умолчанию так),
+                    // то TryFindPlacement должен принимать это во внимание.
+                    // Однако, IsGridAreaFree сам решает, проверять ли rotatedSize.
+                    // Здесь нам нужно явно проверить rotatedSize и, если подходит, сохранить его.
+                    if (originalItemGridSize.x != originalItemGridSize.y && CheckGridArea(currentPos, rotatedItemGridSize))
+                    {
+                        item.Dimensions.Width = rotatedItemGridSize.x;
+                        item.Dimensions.Height = rotatedItemGridSize.y;
+                        item.Dimensions.Angle = 90;
                         suggestedGridPosition = currentPos;
                         return true;
                     }

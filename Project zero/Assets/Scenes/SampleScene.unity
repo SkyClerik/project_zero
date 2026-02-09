@@ -932,7 +932,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.x
-      value: 777
+      value: 789
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.y
@@ -940,7 +940,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.width
-      value: 504
+      value: 480
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.height

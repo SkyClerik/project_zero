@@ -14,8 +14,10 @@ namespace SkyClerik.Inventory
         //TODO ПРОВЕРИТЬ РАБОТУ, я его вообще не проверял
         public LutContainerWrapper(List<int> wrapperItemIndexes)
         {
-            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
+            if (_itemsList == null)
+                _itemsList = new ItemsList();
 
+            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
             foreach (var wrapperIndex in wrapperItemIndexes)
             {
                 var result = playerItemContainer.GetItemByItemID(wrapperIndex);
@@ -24,6 +26,20 @@ namespace SkyClerik.Inventory
                 else
                     Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperIndex} в свой локальный контейнер лута");
             }
+
+        }
+
+        public LutContainerWrapper(int wrapperItemIndexe)
+        {
+            if (_itemsList == null)
+                _itemsList = new ItemsList();
+
+            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
+            var result = playerItemContainer.GetItemByItemID(wrapperItemIndexe);
+            if (result != null)
+                _itemsList.Items.Add(result);
+            else
+                Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperItemIndexe} в свой локальный контейнер лута");
 
         }
 
