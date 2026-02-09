@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
-using UnityEngine.UIElements;
 using UnityEngine.Toolbox;
+using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
@@ -453,7 +454,7 @@ namespace SkyClerik.Inventory
             // Проверка на выход за границы сетки
             if (start.x < 0 || start.y < 0 || start.x + size.x > _gridDimensions.x || start.y + size.y > _gridDimensions.y)
             {
-                Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
+                //Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Область ({start.x},{start.y}) с размером ({size.x}x{size.y}) выходит за границы сетки ({_gridDimensions.x}x{_gridDimensions.y}).", this);
                 return false;
             }
 
@@ -464,7 +465,7 @@ namespace SkyClerik.Inventory
                 {
                     if (_gridOccupancy[start.x + x, start.y + y])
                     {
-                        Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
+                        //Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
                         return false;
                     }
                 }
@@ -491,7 +492,7 @@ namespace SkyClerik.Inventory
             if (allowRotation && size.x != size.y)
             {
                 Vector2Int rotatedSize = new Vector2Int(size.y, size.x);
-                Debug.Log($"проверка для размера : {rotatedSize}");
+                //Debug.Log($"проверка для размера : {rotatedSize}");
                 if (CheckGridArea(start, rotatedSize))
                 {
                     return true;

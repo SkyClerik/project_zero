@@ -244,7 +244,7 @@ string rootID)
 
             //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: currentHoverGridPosition = {currentHoverGridPosition}, itemGridSize = {itemGridSize}", _coroutineRunner);
 
-            if (_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize))
+            if (_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize, allowRotation: false))
             {
                 _placementResults.Conflict = ReasonConflict.None;
                 _placementResults.SuggestedGridPosition = currentHoverGridPosition;
@@ -284,7 +284,7 @@ string rootID)
                 }
             }
 
-            if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize) && _placementResults.Conflict == ReasonConflict.None)
+            if (!_itemContainer.IsGridAreaFree(currentHoverGridPosition, itemGridSize, allowRotation: false) && _placementResults.Conflict == ReasonConflict.None)
             {
                 _placementResults.Conflict = ReasonConflict.beyondTheGridBoundary;
                 //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Предмет '{draggedItem.ItemDefinition.name}' находится за пределами сетки. Позиция: {currentHoverGridPosition}, Размер: {itemGridSize}", _coroutineRunner);
