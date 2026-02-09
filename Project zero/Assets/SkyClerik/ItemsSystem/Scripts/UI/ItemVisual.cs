@@ -392,7 +392,6 @@ namespace SkyClerik.Inventory
 
         private void OnMouseDown(PointerDownEvent mouseEvent)
         {
-            Debug.Log($"mouseEvent.pointerId : {mouseEvent.pointerId}");
             if (mouseEvent.button == 0 || mouseEvent.pointerId == 0)
             {
                 if (ItemsPage.CurrentDraggedItem != null)
@@ -407,6 +406,7 @@ namespace SkyClerik.Inventory
                 }
                 else
                 {
+                    _itemsPage.MouseUILocalPosition = mouseEvent.position;
                     if (ItemsPage.CurrentDraggedItem != this)
                     {
                         //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] ItemsPage.CurrentDraggedItem НЕ равен этому ItemVisual. Вызываем PickUp.");
@@ -460,7 +460,7 @@ namespace SkyClerik.Inventory
             _saveAngle = _itemDefinition.Dimensions.Angle;
             _originalScale = new Vector2Int(_itemDefinition.Dimensions.Width, _itemDefinition.Dimensions.Height);
 
-            _itemsPage.StopTooltipDelayAndHideTooltip();
+            //_itemsPage.StopTooltipDelayAndHideTooltip();
             this.style.position = Position.Absolute;
             _ownerInventory.PickUp(this);
             _placementResults = _itemsPage.HandleItemPlacement(this);

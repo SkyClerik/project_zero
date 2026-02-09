@@ -56,6 +56,8 @@ namespace SkyClerik.Inventory
         [ReadOnly]
         private UIDocument _uiDocument;
         private Vector2 _mousePositionOffset;
+        private Vector2 _draggedMouseUILocalPosition;
+        private Vector2 _draggedItemHalfSize;
         private GlobalGameProperty _globalGameProperty;
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
@@ -68,7 +70,10 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Текущая локальная позиция мыши в пространстве UI.
         /// </summary>
-        internal Vector2 MouseUILocalPosition => _mouseUILocalPosition;
+        internal Vector2 MouseUILocalPosition { get => _mouseUILocalPosition; set => _mouseUILocalPosition = value; }
+
+        private float _draggedItemStableWidth;
+        private float _draggedItemStableHeight;
 
 
         private static ItemVisual _currentDraggedItem;
@@ -134,6 +139,8 @@ namespace SkyClerik.Inventory
 
         protected void Start()
         {
+            Input.multiTouchEnabled = false;
+
             _inventoryPage = new InventoryPageElement(itemsPage: this, document: _uiDocument, itemContainer: _inventoryItemContainer);
             var inventoryCA = new ContainerAndPage(_inventoryItemContainer, _inventoryPage);
             _containersAndPages.Add(inventoryCA);
@@ -174,10 +181,9 @@ namespace SkyClerik.Inventory
             if (Application.platform != RuntimePlatform.Android)
             {
                 if (Input.GetMouseButtonDown(1))
-                {
-                    Debug.Log("Проверка что мы не на винде работаем!!!");
+                { 
                     _currentDraggedItem.Rotate();
-                }
+                }    
             }
 
             SetDraggedItemPosition();
@@ -188,8 +194,12 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void SetDraggedItemPosition()
         {
-            _mousePositionOffset.x = _mouseUILocalPosition.x - (_currentDraggedItem.resolvedStyle.width / 2);
-            _mousePositionOffset.y = _mouseUILocalPosition.y - (_currentDraggedItem.resolvedStyle.height / 2);
+                _draggedItemHalfSize.x = Mathf.Round(_currentDraggedItem.resolvedStyle.width / 2);
+                _draggedItemHalfSize.y = Mathf.Round(_currentDraggedItem.resolvedStyle.height / 2);
+
+            _draggedMouseUILocalPosition = new Vector2(Mathf.Round(_mouseUILocalPosition.x), Mathf.Round(_mouseUILocalPosition.y));
+            _mousePositionOffset.x = _draggedMouseUILocalPosition.x - _draggedItemHalfSize.x;
+            _mousePositionOffset.y = _draggedMouseUILocalPosition.y - _draggedItemHalfSize.y;
             _currentDraggedItem.SetPosition(_mousePositionOffset);
         }
 
@@ -285,6 +295,9 @@ namespace SkyClerik.Inventory
                     CurrentDraggedItem.RemoveFromHierarchy();
                 }
                 CurrentDraggedItem = null;
+                // Сбрасываем стабильные размеры перетаскиваемого предмета
+                _draggedItemStableWidth = 0;
+                _draggedItemStableHeight = 0;
                 //Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem сброшен до NULL.");
             }
             else
@@ -346,7 +359,7 @@ namespace SkyClerik.Inventory
 
         public void SetItemDescription(ItemBaseDefinition itemBaseDefinition)
         {
-            _inventoryPage.SetItemDescription(itemBaseDefinition);           
+            _inventoryPage.SetItemDescription(itemBaseDefinition);
         }
 
         /// <summary>

@@ -82,7 +82,7 @@ namespace SkyClerik.Inventory
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
         public void CalculateGridDimensionsFromUI()
         {
-            Debug.LogError($"CalculateGridDimensionsFromUI {_rootPanelName}", this);
+            Debug.Log($"CalculateGridDimensionsFromUI {_rootPanelName}", this);
             if (_uiDocument == null || string.IsNullOrEmpty(_rootPanelName))
             {
                 Debug.LogError("UIDocument или Root Panel Name не назначены. Расчет невозможен.", this);
