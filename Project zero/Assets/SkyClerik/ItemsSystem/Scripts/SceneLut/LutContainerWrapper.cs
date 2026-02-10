@@ -11,22 +11,24 @@ namespace SkyClerik.Inventory
     public class LutContainerWrapper
     {
         private ItemsList _itemsList;
+
+        public ItemsList ItemsList { get => _itemsList; }
+
         //TODO ПРОВЕРИТЬ РАБОТУ, я его вообще не проверял
         public LutContainerWrapper(List<int> wrapperItemIndexes)
         {
             if (_itemsList == null)
                 _itemsList = new ItemsList();
 
-            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
+            var globalItemStorage = ServiceProvider.Get<GlobalItemStorage>();
             foreach (var wrapperIndex in wrapperItemIndexes)
             {
-                var result = playerItemContainer.GetItemByItemID(wrapperIndex);
-                if (result != null)
-                    _itemsList.Items.Add(result);
+                var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(wrapperIndex);
+                if (originalItem != null)
+                    _itemsList.Items.Add(originalItem);
                 else
                     Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperIndex} в свой локальный контейнер лута");
             }
-
         }
 
         public LutContainerWrapper(int wrapperItemIndexe)
@@ -34,13 +36,12 @@ namespace SkyClerik.Inventory
             if (_itemsList == null)
                 _itemsList = new ItemsList();
 
-            var playerItemContainer = ServiceProvider.Get<PlayerItemContainer>();
-            var result = playerItemContainer.GetItemByItemID(wrapperItemIndexe);
-            if (result != null)
-                _itemsList.Items.Add(result);
+            var globalItemStorage = ServiceProvider.Get<GlobalItemStorage>();
+            var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(wrapperItemIndexe);
+            if (originalItem != null)
+                _itemsList.Items.Add(originalItem);
             else
                 Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperItemIndexe} в свой локальный контейнер лута");
-
         }
 
         // -- Через вызов окна для игрока

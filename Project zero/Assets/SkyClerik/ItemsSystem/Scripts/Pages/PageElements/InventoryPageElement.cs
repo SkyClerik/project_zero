@@ -133,9 +133,12 @@ namespace SkyClerik.Inventory
         public override void PickUp(ItemVisual storedItem)
         {
             base.PickUp(storedItem);
+
+            if (storedItem.ItemDefinition.Dimensions.Width == storedItem.ItemDefinition.Dimensions.Height)
+                return;
+
             SetDisableRotator(true);
             _draggerItem = storedItem;
-
             if (_overlapCheckCoroutine != null)
                 _itemsPage.StopCoroutine(_overlapCheckCoroutine);
 
@@ -146,8 +149,8 @@ namespace SkyClerik.Inventory
         {
             base.Drop(storedItem, gridPosition);
             SetDisableRotator(false);
-            _draggerItem = null;
 
+            _draggerItem = null;
             if (_overlapCheckCoroutine != null)
             {
                 _itemsPage.StopCoroutine(_overlapCheckCoroutine);

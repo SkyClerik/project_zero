@@ -210,12 +210,27 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="itemTemplates">Список шаблонов предметов для добавления.</param>
         /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
+        //internal List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
+        //{
+        //    if (itemTemplates == null || !itemTemplates.Any())
+        //        return new List<ItemBaseDefinition>();
+
+        //    var clones = itemTemplates.Select(template => Instantiate(template)).ToList();
+        //    return AddItems(clones);
+        //}
+
         internal List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
             if (itemTemplates == null || !itemTemplates.Any())
                 return new List<ItemBaseDefinition>();
 
-            var clones = itemTemplates.Select(template => Instantiate(template)).ToList();
+            List<ItemBaseDefinition> clones = new List<ItemBaseDefinition>();
+            foreach (ItemBaseDefinition template in itemTemplates)
+            {
+                Debug.Log($"template.Dimensions.Width {template.Dimensions.Width}");
+                clones.Add(UtilsExt.Clone(template));
+                //clones.Add(Instantiate(template));
+            }
             return AddItems(clones);
         }
 
@@ -313,7 +328,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="itemID">WrapperIndex искомого предмета.</param>
         /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
-        internal ItemBaseDefinition GetItemByItemID(int itemID)
+        internal ItemBaseDefinition GetOriginalItemByItemID(int itemID)
         {
             if (_containerDefinition == null || _containerDefinition.Items == null)
             {
@@ -324,9 +339,7 @@ namespace SkyClerik.Inventory
             foreach (var item in _containerDefinition.Items)
             {
                 if (item != null && item.ID == itemID)
-                {
                     return item;
-                }
             }
             //Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{itemID}' не найден в контейнере '{name}'.");
             return null;

@@ -401,7 +401,7 @@ namespace SkyClerik.Inventory
         /// <param name="itemID">WrapperIndex искомого предмета.</param>
         internal void OpenInventoryFromGiveItem(int itemID, bool tracing)
         {
-            _givenItem.DesiredProduct = _inventoryItemContainer.GetItemByItemID(itemID);
+            _givenItem.DesiredProduct = _inventoryItemContainer.GetOriginalItemByItemID(itemID);
             GiveItemSettings(_givenItem.DesiredProduct, tracing);
             if (_givenItem.DesiredProduct != null)
             {
