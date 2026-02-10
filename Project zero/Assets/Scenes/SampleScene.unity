@@ -916,7 +916,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1217899791473864697, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1217899791473864697, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: sourceAsset
@@ -928,43 +928,51 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.x
-      value: 235
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.y
-      value: 235
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.x
-      value: 676
+      value: 729
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.y
-      value: 202
+      value: 254
+      objectReference: {fileID: 0}
+    - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _gridDimensions.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _gridDimensions.y
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.width
-      value: 705
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 3082931858055872412, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.height
-      value: 940
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.x
-      value: 235
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.y
-      value: 235
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.x
-      value: 1546
+      value: 1649
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.y
-      value: 457
+      value: 597
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridDimensions.x
@@ -976,23 +984,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.width
-      value: 960
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 5845306660861489922, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.height
-      value: 949
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.x
-      value: 160
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.y
-      value: 160
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.x
-      value: 697
+      value: 729
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _gridWorldRect.y
+      value: 254
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _gridDimensions.x
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridDimensions.y
@@ -1000,7 +1016,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.width
-      value: 640
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636705637116334045, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
+      propertyPath: _gridWorldRect.height
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 6943209157565411911, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: m_Name
@@ -1048,23 +1068,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.x
-      value: 160
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _cellSize.y
-      value: 160
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.x
-      value: 537
+      value: 629
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.y
-      value: 272
+      value: 156
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridDimensions.x
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridDimensions.y
@@ -1072,11 +1092,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.width
-      value: 960
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 9080966158530640378, guid: 2a92dc6fe61b92d4ba5f753b1324f3a9, type: 3}
       propertyPath: _gridWorldRect.height
-      value: 800
+      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1132,7 +1152,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 4426855488001158020}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6721879763057257880}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
@@ -1150,16 +1170,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _equipSlots:
-  - rid: 2157767600757800972
-  - rid: 2157767600757800973
-  - rid: 2157767600757800974
-  - rid: 2157767600757800975
+  - rid: 2157767617744470016
+  - rid: 2157767617744470017
+  - rid: 2157767617744470018
+  - rid: 2157767617744470019
   _uiDocument: {fileID: 8712429768355902513}
   _rootPanelName: equipment_root
   references:
     version: 2
     RefIds:
-    - rid: 2157767600757800972
+    - rid: 2157767617744470016
       type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
       data:
         _equippedItem: {fileID: 0}
@@ -1167,10 +1187,10 @@ MonoBehaviour:
           serializedVersion: 2
           x: 1253
           y: 101
-          width: 235
-          height: 235
+          width: 200
+          height: 200
         _cellNameDebug: 
-    - rid: 2157767600757800973
+    - rid: 2157767617744470017
       type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
       data:
         _equippedItem: {fileID: 0}
@@ -1178,10 +1198,10 @@ MonoBehaviour:
           serializedVersion: 2
           x: 573
           y: 381
-          width: 235
-          height: 235
+          width: 200
+          height: 200
         _cellNameDebug: 
-    - rid: 2157767600757800974
+    - rid: 2157767617744470018
       type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
       data:
         _equippedItem: {fileID: 0}
@@ -1189,10 +1209,10 @@ MonoBehaviour:
           serializedVersion: 2
           x: 1253
           y: 801
-          width: 235
-          height: 235
+          width: 200
+          height: 200
         _cellNameDebug: 
-    - rid: 2157767600757800975
+    - rid: 2157767617744470019
       type: {class: EquipmentSlot, ns: SkyClerik.EquipmentSystem, asm: Assembly-CSharp}
       data:
         _equippedItem: {fileID: 0}
@@ -1200,8 +1220,8 @@ MonoBehaviour:
           serializedVersion: 2
           x: 573
           y: 1101
-          width: 235
-          height: 235
+          width: 200
+          height: 200
         _cellNameDebug: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

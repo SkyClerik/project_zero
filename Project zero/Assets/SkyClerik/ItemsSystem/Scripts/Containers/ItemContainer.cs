@@ -227,7 +227,6 @@ namespace SkyClerik.Inventory
             List<ItemBaseDefinition> clones = new List<ItemBaseDefinition>();
             foreach (ItemBaseDefinition template in itemTemplates)
             {
-                Debug.Log($"template.Dimensions.Width {template.Dimensions.Width}");
                 clones.Add(UtilsExt.Clone(template));
                 //clones.Add(Instantiate(template));
             }

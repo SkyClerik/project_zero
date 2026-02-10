@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
@@ -8,10 +8,6 @@ namespace SkyClerik.Inventory
 	public class LutPageElement : GridPageElementBase
 	{
 		private const string _craftPageTitleText = "Трофейня";
-		private VisualElement _header;
-		private const string _headerID = "header";
-		private Label _title;
-		private const string _titleID = "l_title";
 		private VisualElement _body;
 		private const string _bodyID = "body";
         private Button _bPickupAll;
@@ -23,13 +19,9 @@ namespace SkyClerik.Inventory
 	: base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
 		{
             _inventoryPageElement = inventoryPageElement;
-
-            _header = _root.Q(_headerID);
-			_title = _header.Q<Label>(_titleID);
 			_body = _root.Q(_bodyID);
             _bPickupAll = _root.Q<Button>(_bPickupAllID);
 
-            _title.text = _craftPageTitleText;
             _bPickupAll.clicked += TakeAllLootToInventory;
         }
 

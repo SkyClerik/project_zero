@@ -40,59 +40,7 @@ namespace SkyClerik.EquipmentSystem
 
         public static bool IsShow { get => _isShow; set => _isShow = value; }
 
-        /// <summary>
-        /// Обрабатывает обратную связь при перетаскивании для слотов экипировки.
-        /// </summary>
-        /// <param name="draggedItem">Перетаскиваемый предмет.</param>
-        /// <param name="mousePosition">Текущая позиция мыши в мировых координатах UI.</param>
-        /// <returns>Результаты размещения, или null, если мышь не над слотом экипировки.</returns>
-        public PlacementResults ProcessDragFeedback(ItemVisual draggedItem, Vector2 mousePosition)
-        {
-            if (_equipRoot == null || !_equipRoot.enabledSelf || _equipRoot.resolvedStyle.display == DisplayStyle.None || _equipRoot.resolvedStyle.visibility == Visibility.Hidden)
-            {
-                ClearAllTelegraphs();
-                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Возвращаем некорректный результат
-            }
 
-            EquipmentSlot hoveredSlot = null;
-            foreach (var equipSlot in _equipSlots)
-            {
-                if (equipSlot.Rect.Contains(mousePosition))
-                {
-                    hoveredSlot = equipSlot;
-                    break;
-                }
-            }
-
-            if (hoveredSlot != null)
-            {
-                PlacementResults results = hoveredSlot.ShowPlacementTarget(draggedItem);
-                foreach (var equipSlot in _equipSlots)
-                {
-                    if (equipSlot != hoveredSlot)
-                    {
-                        equipSlot.FinalizeDrag();
-                    }
-                }
-                return results;
-            }
-            else
-            {
-                ClearAllTelegraphs();
-                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
-            }
-        }
-
-        /// <summary>
-        /// Скрывает все телеграфы для всех слотов экипировки.
-        /// </summary>
-        public void ClearAllTelegraphs()
-        {
-            foreach (var equipSlot in _equipSlots)
-            {
-                equipSlot.FinalizeDrag();
-            }
-        }
 
         private void OnValidate()
         {
@@ -116,6 +64,7 @@ namespace SkyClerik.EquipmentSystem
             _inventoryGrid = _equipRoot.Q<VisualElement>(_inventoryGridID);
 
             StartCoroutine(Initialize());
+            SystemClosePage();
         }
 
         private void Update()
@@ -176,8 +125,6 @@ namespace SkyClerik.EquipmentSystem
             _itemsPage.OpenInventoryNormal();
             EquipPage.IsShow = true;
             _equipRoot.SetDisplay(true);
-
-            Debug.Log($"EquipPage.IsShow : {EquipPage.IsShow}");
         }
 
         public void CloseEquip()
@@ -192,6 +139,59 @@ namespace SkyClerik.EquipmentSystem
             _equipRoot.SetDisplay(EquipPage.IsShow);
         }
 
+        /// <summary>
+        /// Обрабатывает обратную связь при перетаскивании для слотов экипировки.
+        /// </summary>
+        /// <param name="draggedItem">Перетаскиваемый предмет.</param>
+        /// <param name="mousePosition">Текущая позиция мыши в мировых координатах UI.</param>
+        /// <returns>Результаты размещения, или null, если мышь не над слотом экипировки.</returns>
+        public PlacementResults ProcessDragFeedback(ItemVisual draggedItem, Vector2 mousePosition)
+        {
+            if (_equipRoot == null || !_equipRoot.enabledSelf || _equipRoot.resolvedStyle.display == DisplayStyle.None || _equipRoot.resolvedStyle.visibility == Visibility.Hidden)
+            {
+                ClearAllTelegraphs();
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null); // Возвращаем некорректный результат
+            }
+
+            EquipmentSlot hoveredSlot = null;
+            foreach (var equipSlot in _equipSlots)
+            {
+                if (equipSlot.Rect.Contains(mousePosition))
+                {
+                    hoveredSlot = equipSlot;
+                    break;
+                }
+            }
+
+            if (hoveredSlot != null)
+            {
+                PlacementResults results = hoveredSlot.ShowPlacementTarget(draggedItem);
+                foreach (var equipSlot in _equipSlots)
+                {
+                    if (equipSlot != hoveredSlot)
+                    {
+                        equipSlot.FinalizeDrag();
+                    }
+                }
+                return results;
+            }
+            else
+            {
+                ClearAllTelegraphs();
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
+            }
+        }
+
+        /// <summary>
+        /// Скрывает все телеграфы для всех слотов экипировки.
+        /// </summary>
+        public void ClearAllTelegraphs()
+        {
+            foreach (var equipSlot in _equipSlots)
+            {
+                equipSlot.FinalizeDrag();
+            }
+        }
 
 #if UNITY_EDITOR
         [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]

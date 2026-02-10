@@ -70,7 +70,6 @@ namespace SkyClerik.Inventory
 
         private void SetDisableRotator(bool enable)
         {
-            Debug.Log($"SetDisableRotator called with enable: {enable}. Current platform: {Application.platform}. Setting display to {enable}.");
             _rotationAreaRoot.SetDisplay(enable);
         }
 
@@ -104,7 +103,10 @@ namespace SkyClerik.Inventory
 
         private void CloseClicked()
         {
-            _itemsPage.CloseAll();
+            if (ItemsPage.CurrentDraggedItem == null)
+            {
+                _itemsPage.CloseAll();
+            }
         }
 
         public void SetItemDescription(ItemBaseDefinition itemBaseDefinition)

@@ -24,8 +24,8 @@
 }
 
 .itemBox2 {
-    width: 235px;
-    height: 235px;
+    width: 200px;
+    height: 200px;
     border-left-color: rgb(101, 110, 136);
     border-right-color: rgb(101, 110, 136);
     border-top-color: rgb(101, 110, 136);
