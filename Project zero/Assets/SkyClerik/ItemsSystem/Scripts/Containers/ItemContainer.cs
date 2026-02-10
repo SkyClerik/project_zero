@@ -179,7 +179,6 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[ItemContainer] Awake: Инициализирована _gridOccupancy с размерами: {_gridDimensions.x}x{_gridDimensions.y}", this);
         }
 
-
         /// <summary>
         /// Перестраивает логическую сетку контейнера и помечает занятые ячейки на основе загруженных предметов.
         /// Вызывается после загрузки данных из сохранения.
@@ -205,20 +204,6 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Логическая сетка инвентаря перестроена для {ItemDataStorageSO.Items.Count} предметов.", this);
         }
 
-        /// <summary>
-        /// Добавляет клонированные предметы в контейнер. Клонирует каждый предмет из списка шаблонов.
-        /// </summary>
-        /// <param name="itemTemplates">Список шаблонов предметов для добавления.</param>
-        /// <returns>Список предметов, которые не удалось разместить в контейнере.</returns>
-        //internal List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
-        //{
-        //    if (itemTemplates == null || !itemTemplates.Any())
-        //        return new List<ItemBaseDefinition>();
-
-        //    var clones = itemTemplates.Select(template => Instantiate(template)).ToList();
-        //    return AddItems(clones);
-        //}
-
         internal List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
             if (itemTemplates == null || !itemTemplates.Any())
@@ -228,7 +213,6 @@ namespace SkyClerik.Inventory
             foreach (ItemBaseDefinition template in itemTemplates)
             {
                 clones.Add(UtilsExt.Clone(template));
-                //clones.Add(Instantiate(template));
             }
             return AddItems(clones);
         }
@@ -436,22 +420,6 @@ namespace SkyClerik.Inventory
                 }
             }
 
-            //LogGridState();
-            //void LogGridState()
-            //{
-            //    Debug.Log($"--- Состояние логической сетки ({name}) {_gridDimensions.x}x{_gridDimensions.y} ---");
-            //    for (int y = _gridDimensions.y - 1; y >= 0; y--)
-            //    {
-            //        string row = "";
-            //        for (int x = 0; x < _gridDimensions.x; x++)
-            //        {
-            //            row += _gridOccupancy[x, y] ? "1 " : "0 ";
-            //        }
-            //        Debug.Log(row);
-            //    }
-            //    Debug.Log("-----------------------------------------");
-            //}
-
             OnGridOccupancyChanged?.Invoke();
         }
 
@@ -470,7 +438,6 @@ namespace SkyClerik.Inventory
                 return false;
             }
 
-            // Проверка на занятость ячеек
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
@@ -494,13 +461,9 @@ namespace SkyClerik.Inventory
         /// <returns>True, если область свободна и находится в пределах сетки (возможно, с поворотом); иначе false.</returns>
         public bool IsGridAreaFree(Vector2Int start, Vector2Int size, bool allowRotation)
         {
-            // Проверяем оригинальный размер
             if (CheckGridArea(start, size))
-            {
                 return true;
-            }
 
-            // Если разрешено вращение и предмет не квадратный, проверяем повернутый размер
             if (allowRotation && size.x != size.y)
             {
                 Vector2Int rotatedSize = new Vector2Int(size.y, size.x);
@@ -525,7 +488,6 @@ namespace SkyClerik.Inventory
             Vector2Int originalItemGridSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
             Vector2Int rotatedItemGridSize = new Vector2Int(item.Dimensions.Height, item.Dimensions.Width);
 
-            // Определяем максимальные размеры, чтобы циклы поиска не выходили за пределы сетки
             int searchGridWidth = _gridDimensions.x - Math.Min(originalItemGridSize.x, rotatedItemGridSize.x) + 1;
             int searchGridHeight = _gridDimensions.y - Math.Min(originalItemGridSize.y, rotatedItemGridSize.y) + 1;
 
@@ -541,17 +503,12 @@ namespace SkyClerik.Inventory
                 {
                     var currentPos = new Vector2Int(x, y);
 
-                    // Проверяем оригинальный размер
                     if (CheckGridArea(currentPos, originalItemGridSize))
                     {
                         suggestedGridPosition = currentPos;
                         return true;
                     }
 
-                    // Если предмет не квадратный и allowRotation было true в IsGridAreaFree (что по умолчанию так),
-                    // то TryFindPlacement должен принимать это во внимание.
-                    // Однако, IsGridAreaFree сам решает, проверять ли rotatedSize.
-                    // Здесь нам нужно явно проверить rotatedSize и, если подходит, сохранить его.
                     if (originalItemGridSize.x != originalItemGridSize.y && CheckGridArea(currentPos, rotatedItemGridSize))
                     {
                         item.Dimensions.Width = rotatedItemGridSize.x;
@@ -565,7 +522,6 @@ namespace SkyClerik.Inventory
             suggestedGridPosition = Vector2Int.zero;
             return false;
         }
-
         #endregion
     }
 }

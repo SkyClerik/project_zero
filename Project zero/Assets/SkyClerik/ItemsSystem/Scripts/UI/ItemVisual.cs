@@ -1,4 +1,5 @@
 ﻿using SkyClerik.EquipmentSystem;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
@@ -255,26 +256,81 @@ namespace SkyClerik.Inventory
                 switch (_placementResults.Conflict)
                 {
                     case ReasonConflict.SwapAvailable:
-                        var itemToSwap = _placementResults.OverlapItem;
-                        targetEquipmentSlot.PickUp(itemToSwap);
-                        targetEquipmentSlot.Drop(this, Vector2Int.zero);
-                        ItemsPage.CurrentDraggedItem = itemToSwap;
-                        itemToSwap._isDragging = true;
-                        return true;
+                        // Сохраняем данные
+                        var itemToSwapVisual = _placementResults.OverlapItem; // Визуальный элемент предмета, который был в слоте
+                        var itemToSwapDefinition = itemToSwapVisual.ItemDefinition; // Определение предмета, который был в слоте
+                        IDropTarget originalOwnerOfDraggedItem = this.OwnerInventory;
+
+                        // Если 'this' пришел из другого слота экипировки возвращаем 'this' на его место.
+                        if (_ownerInventory is EquipmentSlot)
+                        {
+                            TryDropBack();
+                            _itemsPage.FinalizeDragOfItem();
+                            return false;
+                        }
+
+                        // Если 'this' пришел из инвентаря
+                        if (originalOwnerOfDraggedItem is GridPageElementBase originalGridPage)
+                        {
+                            // Вызываем PickUp для itemToSwapVisual. Это очистит слот (_itemVisual = null; _equippedItem = null;)
+                            targetEquipmentSlot.PickUp(itemToSwapVisual);
+                            // --- 2. Экипируем this (предмет из руки) в targetEquipmentSlot ---
+                            targetEquipmentSlot.Drop(this, Vector2Int.zero);
+
+                            // --- 3. Положить itemToSwapVisual в место, откуда взяли this ---
+                            var originalContainer = originalGridPage.ItemContainer;
+                            if (originalContainer != null)
+                            {
+                                // Убедимся, что GridPosition itemToSwapDefinition соответствует месту this
+                                itemToSwapDefinition.GridPosition = GetOriginalPosition();
+                                Debug.LogWarning($"itemToSwapDefinition.GridPosition : {itemToSwapDefinition.GridPosition}");
+
+                                bool added = originalContainer.TryAddItemAtPosition(itemToSwapDefinition, itemToSwapDefinition.GridPosition);
+                                if (added)
+                                {
+                                    // Обновляем владельца и визуальное представление itemToSwap
+                                    itemToSwapVisual.SetOwnerInventory(originalGridPage);
+                                    originalGridPage.AddItemToInventoryGrid(itemToSwapVisual); // Добавляем визуально в сетку
+                                    originalGridPage.RegisterVisual(itemToSwapVisual, new ItemGridData(itemToSwapDefinition, itemToSwapDefinition.GridPosition)); // Регистрируем визуальный элемент
+                                    itemToSwapVisual.SetPosition(new Vector2(itemToSwapDefinition.GridPosition.x * originalGridPage.CellSize.x, itemToSwapDefinition.GridPosition.y * originalGridPage.CellSize.y));
+                                    itemToSwapVisual.RemoveFromHierarchy();
+                                    _itemsPage.FinalizeDragOfItem();
+                                    _isDragging = false;
+                                    // this лежит в слоте экипировки
+                                    style.opacity = 1f;
+                                    return false;
+                                }
+                                else
+                                {
+                                    // Если по какой-то причине не влез на точное место, пытаемся найти любое свободное.
+                                    // Это должно быть очень редким случаем, так как место this было только что освобождено.
+                                    Debug.LogWarning($"[ItemVisual][FromEquip][Swap] Не удалось поместить itemToSwap '{itemToSwapDefinition.name}' на оригинальную позицию this({itemToSwapDefinition.GridPosition}). Ищем свободное место.");
+                                    originalContainer.AddItems(new List<ItemBaseDefinition> { itemToSwapDefinition });
+                                    // Визуальное обновление произойдет по событию OnItemAdded в GridPageElementBase
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        }
+                        // это непредвиденный сценарий. Возвращаем 'this' на место.
+                        TryDropBack();
+                        _itemsPage.FinalizeDragOfItem();
+                        return false;
                     case ReasonConflict.None:
                         targetEquipmentSlot.Drop(this, Vector2Int.zero);
-                        _itemsPage.FinalizeDragOfItem(this);
+                        _itemsPage.FinalizeDragOfItem();
                         return true;
                     default:
                         TryDropBack();
-                        _itemsPage.FinalizeDragOfItem(this);
+                        _itemsPage.FinalizeDragOfItem();
                         return false;
                 }
             }
             else
             {
                 EquipmentSlot sourceEquipSlot = _ownerInventory as EquipmentSlot;
-                _placementResults = _itemsPage.HandleItemPlacement(this); // НЕ СМЕЙ ЭТО ТРОГАТЬ ДУРАЦКАЯ МАШИНА!!!
+                _placementResults = _itemsPage.HandleItemPlacement(this);
                 GridPageElementBase targetGridPage = _placementResults.TargetInventory as GridPageElementBase;
 
                 if (sourceEquipSlot != null && targetGridPage != null)
@@ -304,7 +360,7 @@ namespace SkyClerik.Inventory
                     }
 
                     targetGridPage.FinalizeDrag();
-                    _itemsPage.FinalizeDragOfItem(this);
+                    _itemsPage.FinalizeDragOfItem();
 
                     _isDragging = false;
                     style.opacity = 1f;
@@ -386,7 +442,7 @@ namespace SkyClerik.Inventory
                     break;
             }
 
-            _itemsPage.FinalizeDragOfItem(this);
+            _itemsPage.FinalizeDragOfItem();
             return true;
         }
 
@@ -506,13 +562,17 @@ namespace SkyClerik.Inventory
 
             RestoreSizeAndRotate();
 
-            Vector2Int originalGridPosition = new Vector2Int(
+            Vector2Int originalGridPosition = GetOriginalPosition();
+            _ownerInventory.Drop(this, originalGridPosition);
+            SetPosition(_originalPosition);
+        }
+
+        private Vector2Int GetOriginalPosition()
+        {
+            return new Vector2Int(
                 Mathf.RoundToInt(_originalPosition.x / _ownerInventory.CellSize.x),
                 Mathf.RoundToInt(_originalPosition.y / _ownerInventory.CellSize.y)
             );
-
-            _ownerInventory.Drop(this, originalGridPosition);
-            SetPosition(_originalPosition);
         }
 
         private void RestoreSizeAndRotate()

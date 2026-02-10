@@ -155,6 +155,7 @@ string rootID)
         {
             //Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Создание НОВОГО ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
             var newGridData = new ItemGridData(item, item.GridPosition);
+            Debug.Log("CreateVisualForItem");
             var newItemVisual = new ItemVisual(
                 itemsPage: _itemsPage,
                 ownerInventory: this,

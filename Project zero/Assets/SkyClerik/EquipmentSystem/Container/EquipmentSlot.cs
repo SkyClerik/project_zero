@@ -77,8 +77,9 @@ namespace SkyClerik.EquipmentSystem
             return true;
         }
 
-        public ItemVisual CreateItemVisualFromSlot(ItemBaseDefinition itemDefinition, ItemsPage itemsPage)
+        public ItemVisual CreateItemVisualForSlot(ItemBaseDefinition itemDefinition, ItemsPage itemsPage)
         {
+            Debug.Log("CreateItemVisualForSlot");
             return new ItemVisual(
                 itemsPage: itemsPage,
                 ownerInventory: this, // САМ СЛОТ ЭКИПИРОВКИ является ownerInventory

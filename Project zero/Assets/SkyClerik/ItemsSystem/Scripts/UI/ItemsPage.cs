@@ -34,11 +34,8 @@ namespace SkyClerik.Inventory
         private int _tracingZero = 0;
         private int _maxAttempt = 4;
 
-        // Предмет, который был выбран для отдачи (например, при передаче NPC).
         public ItemBaseDefinition DesiredProduct { get => _desiredProduct; set => _desiredProduct = value; }
-        // Сразу получаю и храню ссылку на визуальный элемент
         public ItemVisual Visual { get => _visual; set => _visual = value; }
-        // Если true то предмет в инвентаре подсвечивается постоянно
         public bool Tracing { get => _tracing; set => _tracing = value; }
         public Color TracingColor { get => _tracingColor; set => _tracingColor = value; }
         public int TracingWidth { get => _tracingWidth; set => _tracingWidth = value; }
@@ -62,8 +59,8 @@ namespace SkyClerik.Inventory
         private ItemTooltip _itemTooltip;
         private Coroutine _tooltipShowCoroutine;
         private const float _tooltipDelay = 0.5f;
-        private GivenItem _givenItem = new GivenItem();
 
+        private GivenItem _givenItem = new GivenItem();
         public GivenItem GivenItem => _givenItem;
 
         private Vector2 _mouseUILocalPosition;
@@ -71,10 +68,6 @@ namespace SkyClerik.Inventory
         /// Текущая локальная позиция мыши в пространстве UI.
         /// </summary>
         internal Vector2 MouseUILocalPosition { get => _mouseUILocalPosition; set => _mouseUILocalPosition = value; }
-
-        private float _draggedItemStableWidth;
-        private float _draggedItemStableHeight;
-
 
         private static ItemVisual _currentDraggedItem;
         public static ItemVisual CurrentDraggedItem { get => _currentDraggedItem; set => _currentDraggedItem = value; }
@@ -181,9 +174,9 @@ namespace SkyClerik.Inventory
             if (Application.platform != RuntimePlatform.Android)
             {
                 if (Input.GetMouseButtonDown(1))
-                { 
+                {
                     _currentDraggedItem.Rotate();
-                }    
+                }
             }
 
             SetDraggedItemPosition();
@@ -194,8 +187,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void SetDraggedItemPosition()
         {
-                _draggedItemHalfSize.x = Mathf.Round(_currentDraggedItem.resolvedStyle.width / 2);
-                _draggedItemHalfSize.y = Mathf.Round(_currentDraggedItem.resolvedStyle.height / 2);
+            _draggedItemHalfSize.x = Mathf.Round(_currentDraggedItem.resolvedStyle.width / 2);
+            _draggedItemHalfSize.y = Mathf.Round(_currentDraggedItem.resolvedStyle.height / 2);
 
             _draggedMouseUILocalPosition = new Vector2(Mathf.Round(_mouseUILocalPosition.x), Mathf.Round(_mouseUILocalPosition.y));
             _mousePositionOffset.x = _draggedMouseUILocalPosition.x - _draggedItemHalfSize.x;
@@ -278,10 +271,8 @@ namespace SkyClerik.Inventory
         /// Завершает операцию перетаскивания для всех страниц.
         /// </summary>
         /// <param name="draggedItem">Визуальный элемент перетаскиваемого предмета.</param>
-        public void FinalizeDragOfItem(ItemVisual draggedItem)
+        public void FinalizeDragOfItem()
         {
-            //Debug.Log($"[ItemsPage][FinalizeDragOfItem] Вызван для '{draggedItem.name}'. Parent: {(draggedItem.parent != null ? draggedItem.parent.name : "NULL")}. CurrentDraggedItem до сброса: {(CurrentDraggedItem != null ? CurrentDraggedItem.name : "NULL")}.");
-
             _inventoryPage.FinalizeDrag();
             _craftPage.FinalizeDrag();
             _cheastPage.FinalizeDrag();
@@ -291,18 +282,15 @@ namespace SkyClerik.Inventory
             {
                 if (CurrentDraggedItem.parent == _uiDocument.rootVisualElement)
                 {
-                    //Debug.Log($"[ItemsPage][FinalizeDragOfItem] Удаляем '{CurrentDraggedItem.name}' из rootVisualElement.");
+                    Debug.Log($"[ItemsPage][FinalizeDragOfItem] Удаляем '{CurrentDraggedItem.name}' из rootVisualElement.");
                     CurrentDraggedItem.RemoveFromHierarchy();
                 }
                 CurrentDraggedItem = null;
-                // Сбрасываем стабильные размеры перетаскиваемого предмета
-                _draggedItemStableWidth = 0;
-                _draggedItemStableHeight = 0;
-                //Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem сброшен до NULL.");
+                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem сброшен до NULL.");
             }
             else
             {
-                //Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem уже NULL.");
+                Debug.Log($"[ItemsPage][FinalizeDragOfItem] CurrentDraggedItem уже NULL.");
             }
         }
 
@@ -330,8 +318,6 @@ namespace SkyClerik.Inventory
 
             if (sourceGridPage != null && targetGridPage != null)
             {
-                //Debug.Log($"Случай 1: Из инвентаря в инвентарь");
-
                 var sourceContainer = sourceGridPage.ItemContainer;
                 var targetContainer = targetGridPage.ItemContainer;
 
@@ -472,13 +458,13 @@ namespace SkyClerik.Inventory
         /// </summary>
         internal void OpenInventoryAndCraft()
         {
-            _givenItem.DesiredProduct = null;
             OpenInventoryNormal();
             OpenCraft();
         }
 
         public void OpenInventoryNormal()
         {
+            Time.timeScale = 0;
             SetPage(_inventoryPage.Root, display: true, visible: true, enabled: true);
             _uiDocument.rootVisualElement.RegisterCallback<MouseMoveEvent>(OnRootMouseMove);
             _inventoryPage.DisableItemDescription();
@@ -519,6 +505,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void CloseAll()
         {
+            _givenItem.DesiredProduct = null;
             SetPage(_inventoryPage.Root, display: false, visible: false, enabled: false);
             SetAllSelfPage(display: false, visible: false, enabled: false);
             _uiDocument.rootVisualElement.UnregisterCallback<MouseMoveEvent>(OnRootMouseMove);
@@ -528,6 +515,8 @@ namespace SkyClerik.Inventory
 
             if (_givenItem.Visual != null)
                 ApplyVisualItemHighlight(_givenItem.Visual, isZeroWidth: true);
+
+            Time.timeScale = 1;
         }
 
         private void SetPage(VisualElement pageRoot, bool display, bool visible, bool enabled)

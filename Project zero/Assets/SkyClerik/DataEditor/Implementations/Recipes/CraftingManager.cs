@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
@@ -14,7 +14,6 @@ namespace SkyClerik.CraftingSystem
         [SerializeField]
         private RecipeDatabase _recipeDatabase;
 
-        // Словарь для молниеносного поиска рецептов по их "отпечатку".
         private readonly Dictionary<string, CraftingRecipe> _recipes = new Dictionary<string, CraftingRecipe>();
 
         private void Awake()
@@ -57,7 +56,6 @@ namespace SkyClerik.CraftingSystem
         /// </summary>
         public bool TryFindRecipe(List<ItemBaseDefinition> providedItems, out CraftingRecipe foundRecipe)
         {
-            // Генерируем ключ из предоставленных предметов.
             string key = GenerateItemsKey(providedItems);
             return _recipes.TryGetValue(key, out foundRecipe);
         }
@@ -68,10 +66,7 @@ namespace SkyClerik.CraftingSystem
         private string GenerateRecipeKey(List<Ingredient> ingredients)
         {
             var itemCounts = ingredients.Select(i => $"{i.Item.ID}:{i.Quantity}").ToList();
-
-            // Сортируем, чтобы порядок не имел значения.
             itemCounts.Sort();
-
             return string.Join(";", itemCounts);
         }
 
@@ -88,9 +83,7 @@ namespace SkyClerik.CraftingSystem
                 .Select(g => $"{g.Key}:{g.Count()}")
                 .ToList();
 
-            // Сортируем для консистентности.
             itemCounts.Sort();
-
             return string.Join(";", itemCounts);
         }
     }

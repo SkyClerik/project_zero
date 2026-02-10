@@ -40,8 +40,6 @@ namespace SkyClerik.EquipmentSystem
 
         public static bool IsShow { get => _isShow; set => _isShow = value; }
 
-
-
         private void OnValidate()
         {
             _uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
@@ -67,7 +65,7 @@ namespace SkyClerik.EquipmentSystem
             SystemClosePage();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!_isShow)
                 return;
@@ -113,7 +111,7 @@ namespace SkyClerik.EquipmentSystem
             {
                 if (slot.EquippedItem != null)
                 {
-                    var newItemVisual = slot.CreateItemVisualFromSlot(slot.EquippedItem, _itemsPage);
+                    var newItemVisual = slot.CreateItemVisualForSlot(slot.EquippedItem, _itemsPage);
                     slot.Drop(newItemVisual, Vector2Int.zero);
                 }
             }
@@ -219,21 +217,17 @@ namespace SkyClerik.EquipmentSystem
                     return;
                 }
 
-                var inventoryGrid = rootPanel.Q<VisualElement>("grid");
+                var inventoryGrid = rootPanel.Q<VisualElement>(_inventoryGridID);
                 if (inventoryGrid == null)
                 {
                     Debug.LogError($"Элемент с именем 'grid' не найден внутри '{_rootPanelName}'.", this);
                     return;
                 }
 
-                // Добавляем проверку, что _inventoryGrid имеет размеры
                 if (inventoryGrid.resolvedStyle.width == 0 || inventoryGrid.resolvedStyle.height == 0)
                 {
                     Debug.LogWarning("UI-элементы еще не отрисованы, откладываем расчет...", this);
-                    // Если размеры еще не получены, откладываем выполнение еще раз.
-                    // Можно сделать это более надежно, используя корутину, но для ContextMenu
-                    // откладывание - это простой способ.
-                    root.schedule.Execute(() => CalculateGridDimensionsFromUI()).ExecuteLater(1); // Рекурсивный вызов
+                    root.schedule.Execute(() => CalculateGridDimensionsFromUI()).ExecuteLater(1);
                     return;
                 }
 
@@ -244,8 +238,8 @@ namespace SkyClerik.EquipmentSystem
                 }
 
                 var allCell = inventoryGrid.Children().ToList();
-
                 _equipSlots.Clear();
+
                 foreach (var visualElement in allCell)
                 {
                     var calculatedCellSize = new Vector2(visualElement.resolvedStyle.width, visualElement.resolvedStyle.height);
