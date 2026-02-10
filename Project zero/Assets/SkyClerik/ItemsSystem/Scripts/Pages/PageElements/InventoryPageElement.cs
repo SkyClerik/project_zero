@@ -30,6 +30,8 @@ namespace SkyClerik.Inventory
 
         private ItemVisual _draggerItem;
         private Coroutine _overlapCheckCoroutine;
+        private bool _rotateOneBox = false;
+        private bool _rotateTwoBox = false;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="InventoryPageElement"/>.
@@ -40,6 +42,8 @@ namespace SkyClerik.Inventory
         public InventoryPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
+            _itemsPage = itemsPage;
+
             _body = _root.Q(_bodyID);
             _descriptionBackground = _root.Q(_descriptionBackgroundID);
             _rotationAreaRoot = _root.Q(_rotationAreaRootID);
@@ -66,6 +70,7 @@ namespace SkyClerik.Inventory
 
         private void SetDisableRotator(bool enable)
         {
+            Debug.Log($"SetDisableRotator called with enable: {enable}. Current platform: {Application.platform}. Setting display to {enable}.");
             _rotationAreaRoot.SetDisplay(enable);
         }
 
@@ -74,13 +79,26 @@ namespace SkyClerik.Inventory
             if (_draggerItem == null || _rotationAreaRoot.resolvedStyle.display == DisplayStyle.None)
                 return;
 
-            Rect draggerRect = _draggerItem.worldBound;
+            Rect draggerRect = new Rect(_itemsPage.MouseUILocalPosition.x, _itemsPage.MouseUILocalPosition.y, 10, 10);
+            Rect rotationAreaRootRect = _rotationAreaRoot.worldBound;
             Rect rotationAreaRect = _rotationArea.worldBound;
 
-            if (draggerRect.Overlaps(rotationAreaRect))
-            { 
-                _draggerItem.Rotate();
-                _draggerItem = null;
+            if (rotationAreaRootRect.Overlaps(draggerRect))
+            {
+                if (rotationAreaRect.Overlaps(draggerRect))
+                {
+                    _rotateTwoBox = false;
+                    if (_rotateOneBox && _rotateTwoBox == false)
+                    {
+                        _rotateOneBox = false;
+                        _rotateTwoBox = true;
+                        _draggerItem.Rotate();
+                    }
+                }
+                else
+                {
+                    _rotateOneBox = true;
+                }
             }
         }
 
@@ -108,7 +126,7 @@ namespace SkyClerik.Inventory
             while (true)
             {
                 CheckRotationAreaOverlap();
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.05f);
             }
         }
 
