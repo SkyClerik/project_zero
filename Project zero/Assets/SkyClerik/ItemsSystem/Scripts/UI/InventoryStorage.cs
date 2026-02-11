@@ -41,7 +41,7 @@ namespace SkyClerik.Inventory
         public int MaxAttempt { get => _maxAttempt; set => _maxAttempt = value; }
     }
 
-    public class InventoryContainer : MonoBehaviour
+    public class InventoryStorage : MonoBehaviour
     {
         [SerializeField]
         [ReadOnly]
@@ -108,11 +108,11 @@ namespace SkyClerik.Inventory
             var inventoryCAP = new ContainerAndPage(_inventoryItemContainer, _inventoryPage);
             _containersAndPages.Add(inventoryCAP);
 
-            _craftPage = new CraftPageElement(itemsPage: this, document: _uiDocument, itemContainer: _craftItemContainer);
+            _craftPage = new CraftPageElement(inventoryStorage: this, document: _uiDocument, itemContainer: _craftItemContainer);
             var craftCAP = new ContainerAndPage(_craftItemContainer, _craftPage);
             _containersAndPages.Add(craftCAP);
 
-            _cheastPage = new CheastPageElement(itemsPage: this, document: _uiDocument, itemContainer: _cheastItemContainer);
+            _cheastPage = new CheastPageElement(inventoryStorage: this, document: _uiDocument, itemContainer: _cheastItemContainer);
             var cheastCAP = new ContainerAndPage(_cheastItemContainer, _cheastPage);
             _containersAndPages.Add(cheastCAP);
 

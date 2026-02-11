@@ -46,7 +46,7 @@ namespace SkyClerik.Inventory
         /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
         /// <param name="document">UIDocument, содержащий корневой визуальный элемент.</param>
         /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей инвентаря.</param>
-        public InventoryPageElement(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer)
+        public InventoryPageElement(InventoryStorage itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
             _body = _root.Q(_bodyID);
@@ -109,7 +109,7 @@ namespace SkyClerik.Inventory
 
         private void CloseClicked()
         {
-            if (InventoryContainer.CurrentDraggedItem == null)
+            if (InventoryStorage.CurrentDraggedItem == null)
             {
                 _itemsPage.CloseAll();
             }

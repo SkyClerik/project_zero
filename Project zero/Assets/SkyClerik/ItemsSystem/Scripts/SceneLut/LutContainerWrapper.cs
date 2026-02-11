@@ -14,33 +14,33 @@ namespace SkyClerik.Inventory
 
         public ItemsList ItemsList { get => _itemsList; }
 
-        public LutContainerWrapper(List<int> wrapperItemIndexes)
+        public LutContainerWrapper(List<int> itemIndexes)
         {
             if (_itemsList == null)
                 _itemsList = new ItemsList();
 
             var globalItemStorage = ServiceProvider.Get<GlobalItemStorage>();
-            foreach (var wrapperIndex in wrapperItemIndexes)
+            foreach (var index in itemIndexes)
             {
-                var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(wrapperIndex);
+                var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(index);
                 if (originalItem != null)
                     _itemsList.Items.Add(originalItem);
                 else
-                    Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperIndex} в свой локальный контейнер лута");
+                    Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {index} в свой локальный контейнер лута");
             }
         }
 
-        public LutContainerWrapper(int wrapperItemIndexe)
+        public LutContainerWrapper(int itemIndexe)
         {
             if (_itemsList == null)
                 _itemsList = new ItemsList();
 
             var globalItemStorage = ServiceProvider.Get<GlobalItemStorage>();
-            var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(wrapperItemIndexe);
+            var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(itemIndexe);
             if (originalItem != null)
                 _itemsList.Items.Add(originalItem);
             else
-                Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {wrapperItemIndexe} в свой локальный контейнер лута");
+                Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {itemIndexe} в свой локальный контейнер лута");
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void TransferItemsToPlayerInventoryContainer()
         {
-            var inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
-            inventoryContainersAPI.AddItemsToPlayerInventory(_itemsList);
+            var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            inventoryAPI.AddItemsToPlayerInventory(_itemsList);
         }
     }
 }

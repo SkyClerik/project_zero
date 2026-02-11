@@ -37,7 +37,7 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Ссылка на основной контейнер инвентаря.
         /// </summary>
-        protected InventoryContainer _itemsPage;
+        protected InventoryStorage _itemsPage;
         /// <summary>
         /// Ссылка на логический контейнер предметов.
         /// </summary>
@@ -96,7 +96,7 @@ namespace SkyClerik.Inventory
         /// <param name="document">UIDocument, к которому принадлежит страница.</param>
         /// <param name="itemContainer">Логический контейнер предметов, связанный с этой страницей.</param>
         /// <param name="rootID">ID корневого визуального элемента страницы в UIDocument.</param>
-        protected GridPageElementBase(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer, string rootID)
+        protected GridPageElementBase(InventoryStorage itemsPage, UIDocument document, ItemContainer itemContainer, string rootID)
         {
             _itemsPage = itemsPage;
             _document = document;
@@ -167,7 +167,7 @@ namespace SkyClerik.Inventory
             // NEW CHECK: If the added item is the one currently being dragged,
             // we do NOT create a new visual, because the existing dragged visual
             // will be adopted by AdoptExistingVisual later.
-            if (InventoryContainer.CurrentDraggedItem != null && InventoryContainer.CurrentDraggedItem.ItemDefinition == item)
+            if (InventoryStorage.CurrentDraggedItem != null && InventoryStorage.CurrentDraggedItem.ItemDefinition == item)
             {
                 //Debug.Log($"[GridPageElementBase:{_root.name}] OnItemAddedCallback: Item '{item.name}' is the CurrentDraggedItem. Skipping visual creation.");
                 return;
@@ -280,7 +280,7 @@ namespace SkyClerik.Inventory
             //Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Создание НОВОГО ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
             var newGridData = new ItemGridData(item, item.GridPosition);
             var newItemVisual = new ItemVisual(
-                itemsPage: _itemsPage,
+                inventoryStorage: _itemsPage,
                 ownerInventory: this,
                 itemDefinition: item,
                 gridPosition: item.GridPosition,
@@ -436,14 +436,14 @@ namespace SkyClerik.Inventory
 
             if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary || _placementResults.Conflict == ReasonConflict.intersectsObjects)
             {
-                InventoryContainer.MainTelegraph.Hide();
+                InventoryStorage.MainTelegraph.Hide();
                 //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph скрыт из-за конфликта: {_placementResults.Conflict}", _coroutineRunner);
             }
             else
             {
                 Vector2 globalTelegraphPos = GetGlobalCellPosition(_placementResults.SuggestedGridPosition);
-                InventoryContainer.MainTelegraph.SetPosition(globalTelegraphPos);
-                InventoryContainer.MainTelegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x, itemGridSize.y * CellSize.y);
+                InventoryStorage.MainTelegraph.SetPosition(globalTelegraphPos);
+                InventoryStorage.MainTelegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x, itemGridSize.y * CellSize.y);
                 //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph показан на позиции {globalTelegraphPos} с размером {itemGridSize.x * CellSize.x}x{itemGridSize.y * CellSize.y}. Conflict: {_placementResults.Conflict}", _coroutineRunner);
             }
 
@@ -515,8 +515,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public virtual void FinalizeDrag()
         {
-            InventoryContainer.MainTelegraph.Hide();
-            InventoryContainer.CurrentDraggedItem = null;
+            InventoryStorage.MainTelegraph.Hide();
+            InventoryStorage.CurrentDraggedItem = null;
         }
 
         /// <summary>
@@ -551,7 +551,7 @@ namespace SkyClerik.Inventory
                 _itemContainer.OccupyGridCells(itemDef, false);
                 itemDef.GridPosition = new Vector2Int(-1, -1);
             }
-            InventoryContainer.CurrentDraggedItem = storedItem;
+            InventoryStorage.CurrentDraggedItem = storedItem;
             _document.rootVisualElement.Add(storedItem);
             storedItem.SetOwnerInventory(this);
         }

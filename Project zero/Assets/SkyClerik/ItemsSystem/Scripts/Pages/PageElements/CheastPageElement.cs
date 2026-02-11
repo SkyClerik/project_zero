@@ -12,8 +12,8 @@ namespace SkyClerik.Inventory
 		private VisualElement _body;
 		private const string _bodyID = "body";
 
-		public CheastPageElement(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer)
-	: base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
+		public CheastPageElement(InventoryStorage inventoryStorage, UIDocument document, ItemContainer itemContainer)
+	: base(inventoryStorage, document, itemContainer, itemContainer.RootPanelName)
 		{
 			_body = _root.Q(_bodyID);
 		}

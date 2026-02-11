@@ -15,7 +15,7 @@ namespace SkyClerik.Inventory
 
         private InventoryPageElement _inventoryPageElement;
 
-        public LutPageElement(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer, InventoryPageElement inventoryPageElement )
+        public LutPageElement(InventoryStorage itemsPage, UIDocument document, ItemContainer itemContainer, InventoryPageElement inventoryPageElement )
 	: base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
 		{
             _inventoryPageElement = inventoryPageElement;

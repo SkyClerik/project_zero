@@ -35,7 +35,6 @@ namespace SkyClerik.Utils
         private const string _bExitGameID = "b_exit_game";
         private GlobalGameProperty _globalGameProperty;
         private InventoryAPI _inventoryAPI;
-        private InventoryContainersAPI _inventoryContainersAPI;
 
         [SerializeField]
         private KeyCode _keyCode;
@@ -58,7 +57,6 @@ namespace SkyClerik.Utils
             //_itemsPage = ServiceProvider.Get<ItemsPage>();
             _globalGameProperty = ServiceProvider.Get<GlobalBox>()?.GlobalGameProperty;
             _inventoryAPI = ServiceProvider.Get<InventoryAPI>();
-            _inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
 
             _uiDocument.enabled = true;
             var root = _uiDocument.rootVisualElement;

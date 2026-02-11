@@ -19,16 +19,16 @@ namespace SkyClerik.Utils
         /// <param name="slotFolderPath">Путь к папке слота сохранения/загрузки.</param>
         public void LoadAll(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
-            var itemsPage = ServiceProvider.Get<InventoryContainer>();
-            if (itemsPage == null)
+            var inventoryStorage = ServiceProvider.Get<InventoryStorage>();
+            if (inventoryStorage == null)
                 return;
 
             // Загружаем данные
-            foreach (var containerAndPage in itemsPage.ContainersAndPages)
+            foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
                 LoadItemContainer(containerAndPage.Container, slotFolderPath);
 
             // Обновляем визуальные элементы после загрузки всех контейнеров
-            foreach (var containerAndPage in itemsPage.ContainersAndPages)
+            foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
                 containerAndPage.Page.RefreshVisuals();
 
             //Debug.Log($"Полная загрузка для слота {globalGameProperty.CurrentSaveSlotIndex} завершена.");
@@ -56,7 +56,7 @@ namespace SkyClerik.Utils
                 }
                 catch (JsonSerializationException ex)
                 {
-                    //Debug.LogError($"Не удалось загрузить глобальное состояние игры из-за ошибки сериализации: {ex.Message}. Используется текущее состояние.", null);
+                    Debug.LogError($"Не удалось загрузить глобальное состояние игры из-за ошибки сериализации: {ex.Message}. Используется текущее состояние.", null);
                 }
             }
             else

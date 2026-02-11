@@ -17,8 +17,8 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void TransferItemsToPlayerInventoryContainer()
         {
-            var inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
-            inventoryContainersAPI.AddItemsToPlayerInventory(_itemsList);
+            var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            inventoryAPI.AddItemsToPlayerInventory(_itemsList);
         }
     }
 }

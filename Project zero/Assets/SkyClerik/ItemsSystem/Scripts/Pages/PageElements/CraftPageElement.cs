@@ -23,11 +23,11 @@ namespace SkyClerik.Inventory
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="CraftPageElement"/>.
         /// </summary>
-        /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
+        /// <param name="inventoryStorage">Ссылка на главную страницу предметов.</param>
         /// <param name="document">UIDocument, содержащий корневой визуальный элемент.</param>
         /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей крафта.</param>
-        public CraftPageElement(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer)
-            : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
+        public CraftPageElement(InventoryStorage inventoryStorage, UIDocument document, ItemContainer itemContainer)
+            : base(inventoryStorage, document, itemContainer, itemContainer.RootPanelName)
         {
             _body = _root.Q(_bodyID);
             _craftButton = _body.Q<Button>(_craftButtonID);
