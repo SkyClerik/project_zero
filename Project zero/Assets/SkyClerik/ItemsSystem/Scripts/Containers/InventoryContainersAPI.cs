@@ -12,7 +12,6 @@ namespace SkyClerik.Inventory
     public class InventoryContainersAPI : MonoBehaviour
     {
         private PlayerItemContainer _playerInventory;
-        private PlayerLutContainer _lutContainer;
 
         private void Awake()
         {
@@ -22,7 +21,6 @@ namespace SkyClerik.Inventory
         private void Start()
         {
             _playerInventory = ServiceProvider.Get<PlayerItemContainer>();
-            _lutContainer = ServiceProvider.Get<PlayerLutContainer>();
         }
 
         private void OnDestroy()
@@ -31,6 +29,5 @@ namespace SkyClerik.Inventory
         }
 
         public void AddItemsToPlayerInventory(ItemsList itemsList) => _playerInventory.AddItems(itemsList);
-        public void AddItemsToLutContainer(ItemsList itemsList) => _lutContainer.AddItems(itemsList);
     }
 }

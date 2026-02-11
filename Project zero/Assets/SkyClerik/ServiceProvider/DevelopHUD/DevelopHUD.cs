@@ -1,5 +1,4 @@
-﻿using SkyClerik.EquipmentSystem;
-using SkyClerik.Inventory;
+﻿using SkyClerik.Inventory;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
@@ -31,8 +30,6 @@ namespace SkyClerik.Utils
         private const string _bSaveID = "b_save";
         private Button _bCheast;
         private const string _bCheastID = "b_cheast";
-        private Button _bLut;
-        private const string _bLutID = "b_lut";
 
         private Button _bExitGame;
         private const string _bExitGameID = "b_exit_game";
@@ -79,8 +76,6 @@ namespace SkyClerik.Utils
             _bSave.style.minHeight = 80;
             _bCheast = root.Q<Button>(_bCheastID);
             _bCheast.style.minHeight = 80;
-            _bLut = root.Q<Button>(_bLutID);
-            _bLut.style.minHeight = 80;
 
             _bExitGame = root.Q<Button>(_bExitGameID);
 
@@ -91,7 +86,6 @@ namespace SkyClerik.Utils
             _bAddItem.clicked += _bAddItem_clicked;
             _bSave.clicked += _bSave_clicked;
             _bCheast.clicked += _bCheast_clicked;
-            _bLut.clicked += _bLut_clicked;
 
             _bExitGame.clicked += _bExitGame_clicked;
         }
@@ -107,7 +101,6 @@ namespace SkyClerik.Utils
             _bExitGame.clicked -= _bExitGame_clicked;
             _bSave.clicked -= _bSave_clicked;
             _bCheast.clicked -= _bCheast_clicked;
-            _bLut.clicked -= _bLut_clicked;
         }
 
         private void Update()
@@ -125,22 +118,20 @@ namespace SkyClerik.Utils
             else
             {
                 // Открыть окно инвентаря (и попробовать открыть крафт потому что его доступность решается глобальным логическим свойством)
-                //_inventoryAPI.OpenInventoryNormal();
                 _inventoryAPI.OpenInventoryAndCraft();
             }
         }
 
         private void _bEquip_clicked()
         {
-            EquipPage equipPage = ServiceProvider.Get<EquipPage>();
-
-            if (EquipPage.IsShow == false)
+            if (_inventoryAPI.IsInventoryVisible)
             {
-                equipPage.OpenEquip();
+                _inventoryAPI.CloseAll();
             }
             else
             {
-                equipPage.CloseEquip();
+                // Открыть окно инвентаря и страницы экипировки
+                _inventoryAPI.OpenInventoryAndEquip();
             }
         }
 
@@ -214,20 +205,6 @@ namespace SkyClerik.Utils
                 _inventoryAPI.OpenCheast();
             }
         }
-
-        private void _bLut_clicked()
-        {
-            if (_inventoryAPI.IsLutVisible)
-            {
-                _inventoryAPI.CloseAll();
-            }
-            else
-            {
-                // Открыть окно с лутом (имеются баги)
-                _developLut.OpenLutPage();
-            }
-        }
-
 
         private void _bExitGame_clicked()
         {

@@ -10,15 +10,15 @@ namespace SkyClerik.Inventory
     /// функциям взаимодействия с инвентарем, крафтом, сундуком, лутом и экипировкой.
     /// Регистрируется в <see cref="ServiceProvider"/>.
     /// </summary>
-    [RequireComponent(typeof(ItemsPage))]
+    [RequireComponent(typeof(InventoryContainer))]
     public class InventoryAPI : MonoBehaviour
     {
-        private ItemsPage _itemsPage;
+        private InventoryContainer _itemsPage;
 
         private void Awake()
         {
             ServiceProvider.Register(this);
-            _itemsPage = GetComponentInChildren<ItemsPage>(includeInactive: false);
+            _itemsPage = GetComponentInChildren<InventoryContainer>(includeInactive: false);
         }
 
         private void OnDestroy()
@@ -55,11 +55,6 @@ namespace SkyClerik.Inventory
         public bool IsCheastVisible { get => _itemsPage.IsCheastVisible; set => _itemsPage.IsCheastVisible = value; }
 
         /// <summary>
-        /// Указывает, видна ли страница лута.
-        /// </summary>
-        public bool IsLutVisible { get => _itemsPage.IsLutVisible; set => _itemsPage.IsLutVisible = value; }
-
-        /// <summary>
         /// Откроет инвентарь, чтобы выбрать предмет по его ID. Если предмета нет, инвентарь не откроется.
         /// </summary>
         /// <param name="itemID">Индекс искомого предмета.</param>
@@ -77,6 +72,11 @@ namespace SkyClerik.Inventory
         public void OpenInventoryAndCraft() => _itemsPage.OpenInventoryAndCraft();
 
         /// <summary>
+        /// Открывает обычный инвентарь и страницу экипировки.
+        /// </summary>
+        public void OpenInventoryAndEquip() => _itemsPage.OpenInventoryAndEquip();
+
+        /// <summary>
         /// Открывает обычный режим отображения инвентаря.
         /// </summary>
         public void OpenInventoryNormal() => _itemsPage.OpenInventoryNormal();
@@ -85,11 +85,6 @@ namespace SkyClerik.Inventory
         /// Открывает страничку сундука.
         /// </summary>
         public void OpenCheast() => _itemsPage.OpenCheast();
-
-        /// <summary>
-        /// Открывает страничку лута.
-        /// </summary>
-        public void OpenLut() => _itemsPage.OpenLut();
 
         /// <summary>
         /// Закрывает вообще все странички UI инвентаря.

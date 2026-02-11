@@ -2,7 +2,7 @@
 
 namespace SkyClerik
 {
-    public class NewBehaviourScript : MonoBehaviour
+    public class CubeInFixedUpfateAutoRotate : MonoBehaviour
     {
         [SerializeField]
         private Vector3 _rotate = new Vector3(1, 0, 0);

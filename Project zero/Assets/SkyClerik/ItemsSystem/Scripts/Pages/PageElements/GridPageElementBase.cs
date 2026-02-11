@@ -8,35 +8,95 @@ using UnityEngine.UIElements;
 
 namespace SkyClerik.Inventory
 {
+    /// <summary>
+    /// Базовый класс для элементов страницы, которые представляют собой сетку инвентаря.
+    /// Предоставляет основную функциональность для управления визуальным отображением предметов в сетке,
+    /// обработки перетаскивания и взаимодействия с логическим контейнером предметов.
+    /// </summary>
     [System.Serializable]
-    public abstract class GridPageElementBase : IDropTarget, IDisposable
+    public abstract class GridPageElementBase : IDropTarget, IDisposable, IItemContainerViewCallbacks
     {
+        /// <summary>
+        /// Словарь, хранящий визуальные элементы предметов и их логические данные в сетке.
+        /// </summary>
         protected Dictionary<ItemVisual, ItemGridData> _visuals = new Dictionary<ItemVisual, ItemGridData>();
+        /// <summary>
+        /// Прямоугольник, представляющий границы сетки.
+        /// </summary>
         protected Rect _gridRect;
 
         // Зависимости
+        /// <summary>
+        /// Ссылка на UIDocument, к которому принадлежит страница.
+        /// </summary>
         protected UIDocument _document;
+        /// <summary>
+        /// Объект, используемый для запуска корутин.
+        /// </summary>
         protected MonoBehaviour _coroutineRunner;
-        protected ItemsPage _itemsPage;
+        /// <summary>
+        /// Ссылка на основной контейнер инвентаря.
+        /// </summary>
+        protected InventoryContainer _itemsPage;
+        /// <summary>
+        /// Ссылка на логический контейнер предметов.
+        /// </summary>
         protected ItemContainer _itemContainer;
 
         // UI-элементы
+        /// <summary>
+        /// Корневой визуальный элемент страницы.
+        /// </summary>
         protected VisualElement _root;
+        /// <summary>
+        /// Визуальный элемент сетки инвентаря.
+        /// </summary>
         private VisualElement _inventoryGrid;
-        private const string _inventoryGridID = "grid";
-        protected Telegraph _telegraph;
+
+        /// <summary>
+        /// Возвращает визуальный элемент сетки инвентаря.
+        /// </summary>
+        public VisualElement InventoryGridElement => _inventoryGrid;
+
+        /// <summary>
+        /// Возвращает мировые границы сетки инвентаря.
+        /// </summary>
+        public Rect InventoryGridWorldBound => _inventoryGrid.worldBound;
+
+        [SerializeField]
+        private string _inventoryGridID = "grid";
+        /// <summary>
+        /// Визуальный элемент-телеграф, показывающий потенциальное место размещения предмета.
+        /// </summary>
+
+        /// <summary>
+        /// Результаты размещения предмета в сетке.
+        /// </summary>
         protected PlacementResults _placementResults;
+        /// <summary>
+        /// Расстояние в пикселях для "прилипания" курсора к границам сетки при наведении.
+        /// </summary>
         private readonly float _gridHoverSnapToBoundaryPixels = 64f;
 
         public UIDocument GetDocument => _document;
         public ItemContainer ItemContainer => _itemContainer;
         public Vector2 CellSize => _itemContainer.CellSize;
         public VisualElement Root => _root;
-        public Telegraph Telegraph => _telegraph;
+
+        /// <summary>
+        /// Флаг, указывающий, нужно ли подавлять создание следующего визуального элемента.
+        /// Используется для предотвращения дублирования визуала при перемещении предмета.
+        /// </summary>
         public bool SuppressNextVisualCreation { get; set; }
 
-        protected GridPageElementBase(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer,
-string rootID)
+        /// <summary>
+        /// Инициализирует новый экземпляр базового класса GridPageElementBase.
+        /// </summary>
+        /// <param name="itemsPage">Главный контроллер инвентаря.</param>
+        /// <param name="document">UIDocument, к которому принадлежит страница.</param>
+        /// <param name="itemContainer">Логический контейнер предметов, связанный с этой страницей.</param>
+        /// <param name="rootID">ID корневого визуального элемента страницы в UIDocument.</param>
+        protected GridPageElementBase(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer, string rootID)
         {
             _itemsPage = itemsPage;
             _document = document;
@@ -49,6 +109,10 @@ string rootID)
             _coroutineRunner.StartCoroutine(Initialize());
         }
 
+        /// <summary>
+        /// Инициализирует страницу, настраивает UI, подписывается на события контейнера
+        /// и загружает начальные визуальные элементы предметов.
+        /// </summary>
         protected IEnumerator Initialize()
         {
             Configure();
@@ -58,29 +122,38 @@ string rootID)
             LoadInitialVisuals();
         }
 
+        /// <summary>
+        /// Подписывает страницу на колбэки от логического контейнера предметов.
+        /// </summary>
         protected virtual void SubscribeToContainerEvents()
         {
             if (_itemContainer == null) return;
-            _itemContainer.OnItemAdded += HandleItemAdded;
-            _itemContainer.OnItemRemoved += HandleItemRemoved;
-            _itemContainer.OnCleared += HandleContainerCleared;
+            _itemContainer.SetViewCallbacks(this);
         }
 
+        /// <summary>
+        /// Отписывает страницу от колбэков логического контейнера предметов.
+        /// </summary>
         protected virtual void UnsubscribeFromContainerEvents()
         {
             if (_itemContainer == null) return;
-            _itemContainer.OnItemAdded -= HandleItemAdded;
-            _itemContainer.OnItemRemoved -= HandleItemRemoved;
-            _itemContainer.OnCleared -= HandleContainerCleared;
+            _itemContainer.SetViewCallbacks(null);
         }
 
+        /// <summary>
+        /// Выполняет начальную настройку страницы, включая инициализацию телеграфа.
+        /// </summary>
         protected void Configure()
         {
-            _telegraph = new Telegraph();
-            AddItemToInventoryGrid(_telegraph);
+
         }
 
-        private void HandleItemAdded(ItemBaseDefinition item)
+        /// <summary>
+        /// Колбэк, вызываемый при добавлении предмета в логический контейнер.
+        /// Обновляет существующий визуальный элемент или создает новый, если предмет не является перетаскиваемым.
+        /// </summary>
+        /// <param name="item">Добавленный предмет.</param>
+        public void OnItemAddedCallback(ItemBaseDefinition item)
         {
             //Debug.Log($"[GridPageElementBase:{_root.name}] HandleItemAdded вызван для '{item.name}'. SuppressNextVisualCreation: {SuppressNextVisualCreation}");
 
@@ -88,6 +161,15 @@ string rootID)
             {
                 //Debug.Log($"[GridPageElementBase:{_root.name}] SuppressNextVisualCreation установлен. Пропускаем создание/обновление visual для '{item.name}'.");
                 SuppressNextVisualCreation = false;
+                return;
+            }
+
+            // NEW CHECK: If the added item is the one currently being dragged,
+            // we do NOT create a new visual, because the existing dragged visual
+            // will be adopted by AdoptExistingVisual later.
+            if (InventoryContainer.CurrentDraggedItem != null && InventoryContainer.CurrentDraggedItem.ItemDefinition == item)
+            {
+                //Debug.Log($"[GridPageElementBase:{_root.name}] OnItemAddedCallback: Item '{item.name}' is the CurrentDraggedItem. Skipping visual creation.");
                 return;
             }
 
@@ -106,7 +188,12 @@ string rootID)
             }
         }
 
-        private void HandleItemRemoved(ItemBaseDefinition item)
+        /// <summary>
+        /// Колбэк, вызываемый при удалении предмета из логического контейнера.
+        /// Удаляет соответствующий визуальный элемент из сетки.
+        /// </summary>
+        /// <param name="item">Удаленный предмет.</param>
+        public void OnItemRemovedCallback(ItemBaseDefinition item)
         {
             var visualToRemove = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
             if (visualToRemove != null)
@@ -117,13 +204,43 @@ string rootID)
             }
         }
 
-        private void HandleContainerCleared()
+        /// <summary>
+        /// Колбэк, вызываемый при полной очистке логического контейнера.
+        /// Удаляет все визуальные элементы из сетки.
+        /// </summary>
+        public void OnClearedCallback()
         {
             foreach (var visual in _visuals.Keys.ToList())
             {
                 visual.RemoveFromHierarchy();
             }
             _visuals.Clear();
+        }
+
+        /// <summary>
+        /// Колбэк, вызываемый при изменении занятости ячеек сетки.
+        /// Здесь можно реализовать логику обновления UI, если это необходимо.
+        /// </summary>
+        public void OnGridOccupancyChangedCallback()
+        {
+
+        }
+
+        /// <summary>
+        /// Колбэк, вызываемый при перемещении предмета в контейнере.
+        /// Обновляет позицию существующего визуального элемента предмета.
+        /// </summary>
+        /// <param name="item">Перемещенный предмет.</param>
+        /// <param name="oldPosition">Старая позиция предмета в сетке.</param>
+        public void OnItemMovedCallback(ItemBaseDefinition item, Vector2Int oldPosition)
+        {
+            var existingVisual = _visuals.Keys.FirstOrDefault(visual => GetItemDefinition(visual) == item);
+            if (existingVisual != null)
+            {
+                //Debug.Log($"[GridPageElementBase:{_root.name}] OnItemMovedCallback: Перемещенный visual для '{item.name}'. Обновляем позицию.");
+                existingVisual.SetPosition(new Vector2(item.GridPosition.x * CellSize.x, item.GridPosition.y * CellSize.y));
+                _visuals[existingVisual] = new ItemGridData(item, item.GridPosition);
+            }
         }
 
         //private void CreateGridBoundaryVisualizer() // Оставлен на случай необходимости дебага
@@ -144,6 +261,9 @@ string rootID)
         //_document.rootVisualElement.Add(test1);
         //}
 
+        /// <summary>
+        /// Загружает начальные визуальные элементы предметов из контейнера.
+        /// </summary>
         private void LoadInitialVisuals()
         {
             foreach (var item in _itemContainer.GetItems())
@@ -151,11 +271,14 @@ string rootID)
                 CreateVisualForItem(item);
             }
         }
+        /// <summary>
+        /// Создает новый визуальный элемент для заданного предмета и добавляет его в сетку.
+        /// </summary>
+        /// <param name="item">Определение предмета, для которого создается визуал.</param>
         private void CreateVisualForItem(ItemBaseDefinition item)
         {
             //Debug.Log($"[GridPageElementBase:{_root.name}] CreateVisualForItem: Создание НОВОГО ItemVisual для '{item.name}' с данными: Angle={item.Dimensions.Angle}, Size=({item.Dimensions.Width},{item.Dimensions.Height}), Pos={item.GridPosition}");
             var newGridData = new ItemGridData(item, item.GridPosition);
-            Debug.Log("CreateVisualForItem");
             var newItemVisual = new ItemVisual(
                 itemsPage: _itemsPage,
                 ownerInventory: this,
@@ -170,11 +293,31 @@ string rootID)
         }
 
         /// <summary>
+        /// Принимает существующий визуальный элемент предмета и адаптирует его к текущему контейнеру.
+        /// Используется при перемещении предметов между контейнерами, чтобы избежать пересоздания визуала.
+        /// </summary>
+        /// <param name="visual">Существующий визуальный элемент предмета.</param>
+        public void AdoptExistingVisual(ItemVisual visual)
+        {
+            var itemDef = visual.ItemDefinition;
+            var newGridData = new ItemGridData(itemDef, itemDef.GridPosition);
+
+            visual.RemoveFromHierarchy();
+
+            AddItemToInventoryGrid(visual);
+            RegisterVisual(visual, newGridData);
+            visual.SetOwnerInventory(this);
+            visual.SetPosition(new Vector2(itemDef.GridPosition.x * CellSize.x, itemDef.GridPosition.y * CellSize.y));
+            visual.UpdatePcs();
+        }
+
+        /// <summary>
         /// Добавляет визуальный элемент предмета в сетку инвентаря.
         /// </summary>
         /// <param name="item">Визуальный элемент, который нужно добавить.</param>
         public void AddItemToInventoryGrid(VisualElement item)
         {
+            //Debug.Log($"[GridPageElementBase:{Root.name}] AddItemToInventoryGrid: Добавляю visual '{item.name}' _inventoryGrid.name : {_inventoryGrid.name}.");
             _inventoryGrid.Add(item);
         }
 
@@ -230,7 +373,7 @@ string rootID)
         /// <returns>Результаты размещения, включающие информацию о конфликте, предложенной позиции и пересекающемся предмете.</returns>
         public virtual PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
-            //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'", _coroutineRunner);
+            //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Начало проверки для предмета '{draggedItem.ItemDefinition.name}'. Root enabledSelf: {_root.enabledSelf}, Display: {_root.resolvedStyle.display}, Visibility: {_root.resolvedStyle.visibility}. InventoryGrid name: {_inventoryGrid.name}, worldBound pos: {_inventoryGrid.worldBound.position}");
 
             if (!_root.enabledSelf || _root.resolvedStyle.display == DisplayStyle.None || _root.resolvedStyle.visibility == Visibility.Hidden)
             {
@@ -293,15 +436,15 @@ string rootID)
 
             if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary || _placementResults.Conflict == ReasonConflict.intersectsObjects)
             {
-                _telegraph.Hide();
+                InventoryContainer.MainTelegraph.Hide();
                 //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph скрыт из-за конфликта: {_placementResults.Conflict}", _coroutineRunner);
             }
             else
             {
-                var pos = new Vector2(_placementResults.SuggestedGridPosition.x * CellSize.x, _placementResults.SuggestedGridPosition.y * CellSize.y);
-                _telegraph.SetPosition(pos);
-                _telegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x, itemGridSize.y * CellSize.y);
-                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph показан на позиции {pos} с размером {itemGridSize.x * CellSize.x}x{itemGridSize.y * CellSize.y}. Conflict: {_placementResults.Conflict}", _coroutineRunner);
+                Vector2 globalTelegraphPos = GetGlobalCellPosition(_placementResults.SuggestedGridPosition);
+                InventoryContainer.MainTelegraph.SetPosition(globalTelegraphPos);
+                InventoryContainer.MainTelegraph.SetPlacement(_placementResults.Conflict, itemGridSize.x * CellSize.x, itemGridSize.y * CellSize.y);
+                //Debug.Log($"[GridPageElementBase:{_root.name}] ShowPlacementTarget: Telegraph показан на позиции {globalTelegraphPos} с размером {itemGridSize.x * CellSize.x}x{itemGridSize.y * CellSize.y}. Conflict: {_placementResults.Conflict}", _coroutineRunner);
             }
 
             return _placementResults.Init(conflict: _placementResults.Conflict,
@@ -311,9 +454,15 @@ string rootID)
                                           targetInventory: this);
         }
 
+        /// <summary>
+        /// Рассчитывает текущую позицию курсора над сеткой в координатах сетки.
+        /// </summary>
+        /// <returns>Позиция в сетке (X, Y).</returns>
         protected Vector2Int CalculateCurrentHoverGridPosition()
         {
             Vector2 mouseLocalPosition = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
+
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: MouseUILocalPosition: {_itemsPage.MouseUILocalPosition}, mouseLocalPosition: {mouseLocalPosition}, _inventoryGrid.localBound.width: {_inventoryGrid.localBound.width}, _inventoryGrid.localBound.height: {_inventoryGrid.localBound.height}, CellSize: {CellSize}.");
 
             float adjustedX = mouseLocalPosition.x;
             float adjustedY = mouseLocalPosition.y;
@@ -330,9 +479,18 @@ string rootID)
 
             int gridX = Mathf.FloorToInt(adjustedX / CellSize.x);
             int gridY = Mathf.FloorToInt(adjustedY / CellSize.y);
-            return new Vector2Int(gridX, gridY);
+            Vector2Int calculatedGridPosition = new Vector2Int(gridX, gridY);
+            //Debug.Log($"[GridPageElementBase:{_root.name}] CalculateCurrentHoverGridPosition: adjustedX: {adjustedX}, adjustedY: {adjustedY}, gridX: {gridX}, gridY: {gridY}. Возвращаю: {calculatedGridPosition}.");
+            return calculatedGridPosition;
         }
 
+        /// <summary>
+        /// Находит визуальные элементы предметов, которые перекрываются с заданной областью сетки.
+        /// </summary>
+        /// <param name="start">Начальная позиция области в сетке.</param>
+        /// <param name="size">Размер области.</param>
+        /// <param name="draggedItem">Перетаскиваемый предмет, который исключается из проверки на перекрытие.</param>
+        /// <returns>Список перекрывающихся визуальных элементов предметов.</returns>
         protected List<ItemVisual> FindOverlappingItems(Vector2Int start, Vector2Int size, ItemVisual draggedItem)
         {
             List<ItemVisual> overlappingItems = new List<ItemVisual>();
@@ -344,8 +502,7 @@ string rootID)
                 if (currentItem == draggedItem) continue;
 
                 ItemGridData gridData = entry.Value;
-                RectInt currentItemRect = new RectInt(gridData.GridPosition.x, gridData.GridPosition.y,
-gridData.GridSize.x, gridData.GridSize.y);
+                RectInt currentItemRect = new RectInt(gridData.GridPosition.x, gridData.GridPosition.y, gridData.GridSize.x, gridData.GridSize.y);
 
                 if (targetRect.Overlaps(currentItemRect))
                     overlappingItems.Add(currentItem);
@@ -356,7 +513,11 @@ gridData.GridSize.x, gridData.GridSize.y);
         /// <summary>
         /// Завершает операцию перетаскивания, скрывая телеграф.
         /// </summary>
-        public virtual void FinalizeDrag() => _telegraph.Hide();
+        public virtual void FinalizeDrag()
+        {
+            InventoryContainer.MainTelegraph.Hide();
+            InventoryContainer.CurrentDraggedItem = null;
+        }
 
         /// <summary>
         /// Добавляет предмет в контейнер на указанную позицию.
@@ -390,7 +551,7 @@ gridData.GridSize.x, gridData.GridSize.y);
                 _itemContainer.OccupyGridCells(itemDef, false);
                 itemDef.GridPosition = new Vector2Int(-1, -1);
             }
-            ItemsPage.CurrentDraggedItem = storedItem;
+            InventoryContainer.CurrentDraggedItem = storedItem;
             _document.rootVisualElement.Add(storedItem);
             storedItem.SetOwnerInventory(this);
         }
@@ -402,6 +563,7 @@ gridData.GridSize.x, gridData.GridSize.y);
         /// <param name="gridPosition">Позиция в сетке для размещения.</param>
         public virtual void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
+            //Debug.Log($"[GridPageElementBase:{Root.name}] Drop: Вызываю MoveItem для '{storedItem.name}' (ID: {storedItem.ItemDefinition.ID}) в позицию {gridPosition}.");
             _itemContainer.MoveItem(storedItem.ItemDefinition, gridPosition);
         }
 
@@ -454,6 +616,20 @@ gridData.GridSize.x, gridData.GridSize.y);
         public virtual void Dispose()
         {
             UnsubscribeFromContainerEvents();
+        }
+
+        /// <summary>
+        /// Конвертирует локальные координаты сетки в глобальные координаты относительно rootVisualElement.
+        /// </summary>
+        /// <param name="gridPosition">Позиция в сетке (X, Y).</param>
+        /// <returns>Глобальная позиция в пикселях.</returns>
+        public Vector2 GetGlobalCellPosition(Vector2Int gridPosition)
+        {
+            Vector2 inventoryGridGlobalPosition = _inventoryGrid.worldBound.position;
+            //Debug.Log($"gridPosition '{gridPosition} . (rootGlobalPosition {inventoryGridGlobalPosition}");
+            float globalX = inventoryGridGlobalPosition.x + gridPosition.x * CellSize.x;
+            float globalY = inventoryGridGlobalPosition.y + gridPosition.y * CellSize.y;
+            return new Vector2(globalX, globalY);
         }
     }
 }

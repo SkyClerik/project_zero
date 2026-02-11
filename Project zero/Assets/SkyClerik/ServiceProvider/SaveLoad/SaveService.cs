@@ -19,7 +19,7 @@ namespace SkyClerik.Utils
         /// <param name="slotIndex">Индекс слота сохранения.</param>
         public void SaveAll(GlobalGameProperty globalGameProperty, int slotIndex)
         {
-            var itemsPage = ServiceProvider.Get<ItemsPage>();
+            var itemsPage = ServiceProvider.Get<InventoryContainer>();
             if (itemsPage == null)
                 return;
 

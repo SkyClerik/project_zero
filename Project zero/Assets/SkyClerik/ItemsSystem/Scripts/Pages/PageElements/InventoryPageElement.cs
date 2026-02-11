@@ -19,6 +19,8 @@ namespace SkyClerik.Inventory
         private const string _descriptionBackgroundID = "description_background";
         private Label _lDescription;
         private const string _lDescriptionID = "l_description";
+        private Label _lPriceValue;
+        private const string _lPriceValueID = "l_price_value";
         private Button _bClose;
         private const string _bCloseID = "b_close";
         private VisualElement _rotationAreaRoot;
@@ -33,17 +35,20 @@ namespace SkyClerik.Inventory
         private bool _rotateOneBox = false;
         private bool _rotateTwoBox = false;
 
+        //Кеша
+        private Rect _draggerRect;
+        private Rect _rotationAreaRootRect;
+        private Rect _rotationAreaRect;
+
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="InventoryPageElement"/>.
         /// </summary>
         /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
         /// <param name="document">UIDocument, содержащий корневой визуальный элемент.</param>
         /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей инвентаря.</param>
-        public InventoryPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
+        public InventoryPageElement(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
-            _itemsPage = itemsPage;
-
             _body = _root.Q(_bodyID);
             _descriptionBackground = _root.Q(_descriptionBackgroundID);
             _rotationAreaRoot = _root.Q(_rotationAreaRootID);
@@ -51,6 +56,7 @@ namespace SkyClerik.Inventory
             _bClose = _root.Q<Button>(_bCloseID);
             _itemImage = _root.Q(_itemImageID);
             _lDescription = _root.Q<Label>(_lDescriptionID);
+            _lPriceValue = _root.Q<Label>(_lPriceValueID);
 
             _bClose.clicked += CloseClicked;
             SetDisableRotator(false);
@@ -78,13 +84,13 @@ namespace SkyClerik.Inventory
             if (_draggerItem == null || _rotationAreaRoot.resolvedStyle.display == DisplayStyle.None)
                 return;
 
-            Rect draggerRect = new Rect(_itemsPage.MouseUILocalPosition.x, _itemsPage.MouseUILocalPosition.y, 10, 10);
-            Rect rotationAreaRootRect = _rotationAreaRoot.worldBound;
-            Rect rotationAreaRect = _rotationArea.worldBound;
+            _draggerRect = new Rect(_itemsPage.MouseUILocalPosition.x, _itemsPage.MouseUILocalPosition.y, 10, 10);
+            _rotationAreaRootRect = _rotationAreaRoot.worldBound;
+            _rotationAreaRect = _rotationArea.worldBound;
 
-            if (rotationAreaRootRect.Overlaps(draggerRect))
+            if (_rotationAreaRootRect.Overlaps(_draggerRect))
             {
-                if (rotationAreaRect.Overlaps(draggerRect))
+                if (_rotationAreaRect.Overlaps(_draggerRect))
                 {
                     _rotateTwoBox = false;
                     if (_rotateOneBox && _rotateTwoBox == false)
@@ -103,7 +109,7 @@ namespace SkyClerik.Inventory
 
         private void CloseClicked()
         {
-            if (ItemsPage.CurrentDraggedItem == null)
+            if (InventoryContainer.CurrentDraggedItem == null)
             {
                 _itemsPage.CloseAll();
             }
@@ -113,6 +119,7 @@ namespace SkyClerik.Inventory
         {
             _itemImage.SetBackgroundImage(itemBaseDefinition.Icon);
             _lDescription.text = itemBaseDefinition.Description;
+            _lPriceValue.text = $"{itemBaseDefinition.Price}";
             _descriptionBackground.SetVisibility(true);
             _itemImage.SetVisibility(true);
         }
@@ -128,7 +135,7 @@ namespace SkyClerik.Inventory
             while (true)
             {
                 CheckRotationAreaOverlap();
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSecondsRealtime(0.05f);
             }
         }
 

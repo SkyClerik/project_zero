@@ -13,62 +13,50 @@ namespace SkyClerik.Inventory
     /// Отвечает за операции добавления, удаления, перемещения предметов,
     /// а также за отслеживание занятости ячеек сетки.
     /// </summary>
+    [SerializeField]
     public class ItemContainer : MonoBehaviour
     {
         [Header("Хранилище данных")]
         [SerializeField]
-        private ItemContainerDefinition _containerDefinition;
-        /// <summary>
-        /// ScriptableObject, хранящий данные о предметах в этом контейнере.
-        /// </summary>
+        protected ItemContainerDefinition _containerDefinition;
         public ItemContainerDefinition ContainerDefinition => _containerDefinition;
 
         [Header("Конфигурация сетки")]
         [Tooltip("Ссылка на UI Document, в котором находится сетка для этого контейнера.")]
-        [SerializeField] private UIDocument _uiDocument;
+        [SerializeField]
+        protected UIDocument _uiDocument;
+
         [Tooltip("Имя корневой панели в UI документе, внутри которой находится элемент 'grid'.")]
-        [SerializeField] private string _rootPanelName;
-        /// <summary>
-        /// Возвращает имя корневой панели UI, связанной с этим контейнером.
-        /// </summary>
+        [SerializeField]
+        protected string _rootPanelName;
         public string RootPanelName => _rootPanelName;
 
         [Tooltip("Рассчитанный размер сетки инвентаря (ширина, высота). Не редактировать вручную.")]
         [SerializeField]
         [ReadOnly]
         [Space]
-        private Vector2Int _gridDimensions;
+        protected Vector2Int _gridDimensions;
+
         [Tooltip("Рассчитанный размер ячейки в пикселях. Не редактировать вручную.")]
         [SerializeField]
         [ReadOnly]
         [Space]
-        private Vector2 _cellSize;
+        protected Vector2 _cellSize;
         [Tooltip("Рассчитанные мировые координаты сетки. Не редактировать вручную.")]
         [SerializeField]
         [ReadOnly]
-        private Rect _gridWorldRect;
-        /// <summary>
-        /// Возвращает размер одной ячейки сетки в пикселях.
-        /// </summary>
+        protected Rect _gridWorldRect;
+
         public Vector2 CellSize => _cellSize;
 
-        // --- События для UI ---
-        /// <summary>
-        /// Событие, вызываемое при добавлении предмета в контейнер.
-        /// </summary>
-        public event Action<ItemBaseDefinition> OnItemAdded;
-        /// <summary>
-        /// Событие, вызываемое при удалении предмета из контейнера.
-        /// </summary>
-        public event Action<ItemBaseDefinition> OnItemRemoved;
-        /// <summary>
-        /// Событие, вызываемое при полной очистке контейнера.
-        /// </summary>
-        public event Action OnCleared;
-        /// <summary>
-        /// Событие, вызываемое при изменении занятости ячеек сетки.
-        /// </summary>
-        public event Action OnGridOccupancyChanged;
+
+        private IItemContainerViewCallbacks _viewCallbacks;
+
+
+        public void SetViewCallbacks(IItemContainerViewCallbacks callbacks)
+        {
+            _viewCallbacks = callbacks;
+        }
 
         // --- Логика сетки ---
         private bool[,] _gridOccupancy;
@@ -79,9 +67,12 @@ namespace SkyClerik.Inventory
         /// [Контекстное меню редактора] Рассчитывает размеры сетки контейнера (ширина, высота ячеек)
         /// на основе текущего состояния UI. Должен вызываться в режиме Play Mode или при видимом UI.
         /// </summary>
-        [ContextMenu("Рассчитать размер сетки из UI (Нажать в Play Mode или при видимом UI)")]
-        public void CalculateGridDimensionsFromUI()
+        [ContextMenu("Рассчитать размер сетки из UI ItemContainer (Нажать в Play Mode или при видимом UI)")]
+        public virtual void CalculateGridDimensionsFromUI()
         {
+            if (_containerDefinition != null)
+                _containerDefinition.ValidateGuid();
+
             Debug.Log($"CalculateGridDimensionsFromUI {_rootPanelName}", this);
             if (_uiDocument == null || string.IsNullOrEmpty(_rootPanelName))
             {
@@ -200,10 +191,15 @@ namespace SkyClerik.Inventory
                     //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Предмет '{item.DefinitionName}' установлен на позицию {item.GridPosition}.");
                 }
             }
-            OnGridOccupancyChanged?.Invoke();
+            _viewCallbacks?.OnGridOccupancyChangedCallback();
             //Debug.Log($"[ItemContainer:{name}] SetupLoadedItemsGrid: Логическая сетка инвентаря перестроена для {ItemDataStorageSO.Items.Count} предметов.", this);
         }
 
+        /// <summary>
+        /// Клонирует предоставленные шаблоны предметов и добавляет их в контейнер.
+        /// </summary>
+        /// <param name="itemTemplates">Список шаблонов предметов для клонирования и добавления.</param>
+        /// <returns>Список предметов, которые не удалось разместить.</returns>
         internal List<ItemBaseDefinition> AddClonedItems(List<ItemBaseDefinition> itemTemplates)
         {
             if (itemTemplates == null || !itemTemplates.Any())
@@ -246,7 +242,7 @@ namespace SkyClerik.Inventory
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
                     _containerDefinition.Items.Add(item);
-                    OnItemAdded?.Invoke(item);
+                    _viewCallbacks?.OnItemAddedCallback(item);
                 }
                 else
                 {
@@ -270,7 +266,7 @@ namespace SkyClerik.Inventory
             if (removed)
             {
                 OccupyGridCells(item, false);
-                OnItemRemoved?.Invoke(item);
+                _viewCallbacks?.OnItemRemovedCallback(item);
                 if (destroy) Destroy(item);
             }
             return removed;
@@ -286,7 +282,7 @@ namespace SkyClerik.Inventory
             if (_gridOccupancy != null)
                 Array.Clear(_gridOccupancy, 0, _gridOccupancy.Length);
 
-            OnCleared?.Invoke();
+            _viewCallbacks?.OnClearedCallback();
 
             foreach (var item in itemsCopy) Destroy(item);
         }
@@ -351,7 +347,7 @@ namespace SkyClerik.Inventory
                 item.GridPosition = gridPosition;
                 OccupyGridCells(item, true);
                 _containerDefinition.Items.Add(item);
-                OnItemAdded?.Invoke(item);
+                _viewCallbacks?.OnItemAddedCallback(item);
                 return true;
             }
             //Debug.LogWarning($"[ItemContainer:{name}] TryAddItemAtPosition: Область занята или выходит за границы.", this);
@@ -365,11 +361,13 @@ namespace SkyClerik.Inventory
         /// <param name="newPosition">Новая позиция в сетке.</param>
         internal void MoveItem(ItemBaseDefinition item, Vector2Int newPosition)
         {
+            //Debug.Log($"[ItemContainer:{name}] MoveItem: Перемещаю '{item.DefinitionName}' (ID: {item.ID}) из {item.GridPosition} в {newPosition}.");
+            Vector2Int oldPosition = item.GridPosition; // Capture old position before update
             OccupyGridCells(item, false);
             item.GridPosition = newPosition;
             OccupyGridCells(item, true);
-            OnItemRemoved?.Invoke(item);
-            OnItemAdded?.Invoke(item);
+            _viewCallbacks?.OnItemMovedCallback(item, oldPosition);
+            //Debug.Log($"[ItemContainer:{name}] MoveItem: '{item.DefinitionName}' перемещен. Вызываю OnItemMovedCallback.");
         }
 
 
@@ -391,7 +389,7 @@ namespace SkyClerik.Inventory
                         {
                             existingItem.AddStack(amountToTransfer, out _);
                             item.RemoveStack(amountToTransfer);
-                            OnItemAdded?.Invoke(existingItem);
+                            _viewCallbacks?.OnItemAddedCallback(existingItem);
                         }
                     }
                 }
@@ -420,7 +418,7 @@ namespace SkyClerik.Inventory
                 }
             }
 
-            OnGridOccupancyChanged?.Invoke();
+            _viewCallbacks?.OnGridOccupancyChangedCallback();
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace SkyClerik.Inventory
         /// <param name="itemsPage">Ссылка на главную страницу предметов.</param>
         /// <param name="document">UIDocument, содержащий корневой визуальный элемент.</param>
         /// <param name="itemContainer">Контейнер предметов, связанный с этой страницей крафта.</param>
-        public CraftPageElement(ItemsPage itemsPage, UIDocument document, ItemContainer itemContainer)
+        public CraftPageElement(InventoryContainer itemsPage, UIDocument document, ItemContainer itemContainer)
             : base(itemsPage, document, itemContainer, itemContainer.RootPanelName)
         {
             _body = _root.Q(_bodyID);

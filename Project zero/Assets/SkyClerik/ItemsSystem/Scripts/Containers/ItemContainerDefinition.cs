@@ -83,7 +83,11 @@ namespace SkyClerik.Inventory
             if (string.IsNullOrEmpty(_containerGuid))
             {
                 _containerGuid = Guid.NewGuid().ToString();
-                Debug.Log($"Сгенерирован новый GUID для контейнера: {_containerGuid} (из ValidateGuid)");
+                Debug.Log($"Сгенерирован новый GUID для контейнера: {_containerGuid}");
+            }
+            else
+            {
+                Debug.Log($"Для контейнера: {_containerGuid} GUID уже валидный");
             }
         }
     }
