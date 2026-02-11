@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
@@ -269,11 +270,16 @@ namespace SkyClerik.Inventory
         {
             _givenItem.DesiredProduct = _inventoryItemContainer.GetOriginalItemByItemID(itemID);
             GiveItemSettings(_givenItem.DesiredProduct, tracing);
+
             if (_givenItem.DesiredProduct != null)
             {
                 //Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
                 OpenInventoryNormal();
+            }
+            else
+            {
+                ServiceProvider.Get<InventoryAPI>().RiseItemFindFall(itemID, this.GetType());
             }
         }
 
@@ -285,6 +291,10 @@ namespace SkyClerik.Inventory
                 //Debug.Log($"Открываю для выбора {_givenItem.DefinitionName}");
                 SetPage(_craftPage.Root, display: true, visible: false, enabled: false);
                 OpenInventoryNormal();
+            }
+            else
+            {
+                ServiceProvider.Get<InventoryAPI>().RiseItemFindFall(item.ID, this.GetType());
             }
         }
 

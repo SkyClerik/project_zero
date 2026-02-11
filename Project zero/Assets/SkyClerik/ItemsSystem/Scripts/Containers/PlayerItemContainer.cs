@@ -37,9 +37,11 @@ namespace SkyClerik.Inventory
             if (unplacedClones.Any())
             {
                 Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов. Возвращаем в LutContainer.");
+                var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
                 foreach (var clonedItem in unplacedClones)
                 {
                     Debug.Log($"clonedItem {clonedItem.ID} : {clonedItem.DefinitionName}");
+                    inventoryAPI.RaisePlayerAddItemFailed(clonedItem);
                 }
                 itemsList.Items.AddRange(unplacedClones);
             }

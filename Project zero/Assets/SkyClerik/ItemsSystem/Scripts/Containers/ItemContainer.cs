@@ -242,6 +242,7 @@ namespace SkyClerik.Inventory
                     item.GridPosition = foundPosition;
                     OccupyGridCells(item, true);
                     _containerDefinition.Items.Add(item);
+                    ServiceProvider.Get<InventoryAPI>().RaisePlayerItemAdded(item);
                     _viewCallbacks?.OnItemAddedCallback(item);
                 }
                 else
@@ -267,6 +268,7 @@ namespace SkyClerik.Inventory
             {
                 OccupyGridCells(item, false);
                 _viewCallbacks?.OnItemRemovedCallback(item);
+                ServiceProvider.Get<InventoryAPI>().RaisePlayerItemRemoved(item);
                 if (destroy) Destroy(item);
             }
             return removed;

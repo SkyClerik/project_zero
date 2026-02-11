@@ -87,7 +87,7 @@ namespace SkyClerik.Utils
         {
             _currentGameState = GameState.LoadGame;
             _isNewGame = false;
-            Debug.Log("Глобальное состояние игры установлено: Загрузка Игры.");
+            Debug.Log("Глобальное состояние игры установлено: <color=green>Загрузка Игры</color>.");
         }
 
         /// <summary>
