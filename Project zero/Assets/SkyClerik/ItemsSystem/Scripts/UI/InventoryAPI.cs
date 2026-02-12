@@ -73,6 +73,16 @@ namespace SkyClerik.Inventory
         /// </summary>
         public event Action<int, Type> OnItemFindFall;
 
+        /// <summary>
+        /// Вызывается, когда предмет подняли.
+        /// </summary>
+        public event Action<ItemVisual, GridPageElementBase> OnItemPickUp;
+
+        /// <summary>
+        /// Вызывается, когда предмет положили.
+        /// </summary>
+        public event Action<ItemVisual, GridPageElementBase> OnItemDrop;
+
         #endregion
 
         #region Внутренние методы вызова событий
@@ -111,6 +121,16 @@ namespace SkyClerik.Inventory
         /// Внутренний метод для вызова события OnItemFindFall.
         /// </summary>
         internal void RiseItemFindFall(int id, Type type) => OnItemFindFall?.Invoke(id, type);
+
+        /// <summary>
+        /// Внутренний метод для вызова события OnItemUsed.
+        /// </summary>
+        internal void RaiseItemPickUp(ItemVisual itemVisual, GridPageElementBase gridPage) => OnItemPickUp?.Invoke(itemVisual, gridPage);
+
+        /// <summary>
+        /// Внутренний метод для вызова события OnItemFindFall.
+        /// </summary>
+        internal void RiseItemDrop(ItemVisual itemVisual, GridPageElementBase gridPage) => OnItemDrop?.Invoke(itemVisual, gridPage);
 
         #endregion
 

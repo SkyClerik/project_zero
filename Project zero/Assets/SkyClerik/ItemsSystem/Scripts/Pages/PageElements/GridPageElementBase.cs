@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
+using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
@@ -535,7 +537,8 @@ namespace SkyClerik.Inventory
         /// <param name="storedItem">Визуальный элемент предмета, который нужно удалить.</param>
         public virtual void RemoveStoredItem(ItemVisual storedItem)
         {
-            _itemContainer.RemoveItem(GetItemDefinition(storedItem), true);
+            Debug.Log($"RemoveStoredItem : {ItemContainer.ItemRemoveReason.Destroy}");
+            _itemContainer.RemoveItem(GetItemDefinition(storedItem), ItemContainer.ItemRemoveReason.Destroy);
         }
 
         /// <summary>
@@ -554,6 +557,7 @@ namespace SkyClerik.Inventory
             InventoryStorage.CurrentDraggedItem = storedItem;
             _document.rootVisualElement.Add(storedItem);
             storedItem.SetOwnerInventory(this);
+            ServiceProvider.Get<InventoryAPI>().RaiseItemPickUp(storedItem, this);
         }
 
         /// <summary>
@@ -565,6 +569,7 @@ namespace SkyClerik.Inventory
         {
             //Debug.Log($"[GridPageElementBase:{Root.name}] Drop: Вызываю MoveItem для '{storedItem.name}' (ID: {storedItem.ItemDefinition.ID}) в позицию {gridPosition}.");
             _itemContainer.MoveItem(storedItem.ItemDefinition, gridPosition);
+            ServiceProvider.Get<InventoryAPI>().RiseItemDrop(storedItem, this);
         }
 
         /// <summary>

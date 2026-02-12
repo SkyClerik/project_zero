@@ -253,13 +253,29 @@ namespace SkyClerik.Inventory
             return unplacedItems;
         }
 
+        public enum ItemRemoveReason
+        {
+            /// <summary>
+            /// Предмет полностью уничтожается. Событие вызывается.
+            /// </summary>
+            Destroy,
+            /// <summary>
+            /// Предмет выбрасывается в мир. Не уничтожается, но событие вызывается.
+            /// </summary>
+            Drop,
+            /// <summary>
+            /// Предмет перемещается в другой контейнер игрока. Не уничтожается, событие НЕ вызывается.
+            /// </summary>
+            Transfer
+        }
+
         /// <summary>
         /// Удаляет указанный предмет из контейнера.
         /// </summary>
         /// <param name="item">Предмет для удаления.</param>
-        /// <param name="destroy">Если true, объект предмета будет уничтожен после удаления.</param>
+        /// <param name="reason">Причина удаления, от которой зависит логика и вызов событий.</param>
         /// <returns>True, если предмет успешно удален; иначе false.</returns>
-        internal bool RemoveItem(ItemBaseDefinition item, bool destroy = true)
+        internal bool RemoveItem(ItemBaseDefinition item, ItemRemoveReason reason = ItemRemoveReason.Destroy)
         {
             if (item == null) return false;
 
@@ -268,8 +284,22 @@ namespace SkyClerik.Inventory
             {
                 OccupyGridCells(item, false);
                 _viewCallbacks?.OnItemRemovedCallback(item);
-                ServiceProvider.Get<InventoryAPI>().RaisePlayerItemRemoved(item);
-                if (destroy) Destroy(item);
+
+                switch (reason)
+                {
+                    case ItemRemoveReason.Destroy:
+                        ServiceProvider.Get<InventoryAPI>().RaisePlayerItemRemoved(item);
+                        Destroy(item);
+                        break;
+
+                    case ItemRemoveReason.Drop:
+                        ServiceProvider.Get<InventoryAPI>().RaisePlayerItemRemoved(item);
+                        break;
+
+                    case ItemRemoveReason.Transfer:
+                        // Ничего не делаем: ни события, ни уничтожения
+                        break;
+                }
             }
             return removed;
         }

@@ -274,7 +274,8 @@ namespace SkyClerik.Inventory
                             var ownerGrid = _ownerInventory as GridPageElementBase;
                             if (ownerGrid != null)
                             {
-                                ownerGrid.ItemContainer.RemoveItem(this.ItemDefinition, destroy: true);
+                                Debug.Log($"TransferItemBetweenContainers : {ItemContainer.ItemRemoveReason.Transfer}");
+                                ownerGrid.ItemContainer.RemoveItem(this.ItemDefinition, ItemContainer.ItemRemoveReason.Destroy);
                             }
                             //Debug.Log($"[ItemVisual FromContainers] Вызываю RemoveFromHierarchy() для {ItemDefinition.name}. ID: {ItemDefinition.ID}. Причина: Stack <= 0. (Предполагается удаление)");
                             this.RemoveFromHierarchy();

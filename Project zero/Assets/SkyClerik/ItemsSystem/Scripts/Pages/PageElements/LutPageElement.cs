@@ -38,13 +38,10 @@ namespace SkyClerik.Inventory
             var itemsInLut = _itemContainer.GetItems().ToList();
             var unplacedInInventory = playerInventoryContainer.AddItems(itemsInLut);
 
-            // Очищаем текущий контейнер лута.
-            // При этом ItemBaseDefinition объекты не Destroy-ятся,
-            // так как они могут быть в unplacedInInventory или уже в инвентаре игрока.
-            // При RemoveItem destroy = false
             foreach (var item in itemsInLut)
             {
-                _itemContainer.RemoveItem(item, destroy: false);
+                Debug.Log($"TakeAllLootToInventory : {ItemContainer.ItemRemoveReason.Transfer}");
+                _itemContainer.RemoveItem(item, ItemContainer.ItemRemoveReason.Transfer);
             }
             
             // Возвращаем в лут те предметы, которые не поместились в инвентарь игрока

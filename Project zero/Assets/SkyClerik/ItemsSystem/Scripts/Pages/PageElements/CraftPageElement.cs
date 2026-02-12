@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using UnityEngine;
-using UnityEngine.UIElements;
-using SkyClerik.CraftingSystem;
-using UnityEngine.Toolbox;
+﻿using SkyClerik.CraftingSystem;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.DataEditor;
+using UnityEngine.Toolbox;
+using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
@@ -51,6 +52,12 @@ namespace SkyClerik.Inventory
             if (craftSystem.TryFindRecipe(ingredients, out var foundRecipe))
             {
                 Debug.Log($"Найден рецепт! Результат: {foundRecipe.Result.Item.DefinitionName}");
+
+                // вызываем событие что предметы пропали
+                foreach (var ingredient in ingredients)
+                {
+                    ServiceProvider.Get<InventoryAPI>().RaisePlayerItemRemoved(ingredient);
+                }
 
                 // 2. Очищаем контейнер крафта. Это удалит все ингредиенты из данных и вызовет событие для UI.
                 _itemContainer.Clear();

@@ -240,14 +240,15 @@ namespace SkyClerik.Inventory
                 }
 
                 //Debug.Log($"[ИНВЕНТАРЬ] Предмет '{itemToMove.name}' был забран из контейнера '{sourceContainer.name}'.");
-                sourceContainer.RemoveItem(itemToMove, destroy: false);
+                Debug.Log($"TransferItemBetweenContainers : {ItemContainer.ItemRemoveReason.Transfer}");
+                sourceContainer.RemoveItem(itemToMove, ItemContainer.ItemRemoveReason.Transfer);
 
                 bool addedToTarget = targetContainer.TryAddItemAtPosition(itemToMove, gridPosition);
 
                 if (addedToTarget)
                 {
                     //Debug.Log($"[ИНВЕНТАРЬ] Предмет '{itemToMove.name}' был положен в контейнер '{targetContainer.name}' в позицию: {gridPosition}.");
-                    targetGridPage.AdoptExistingVisual(draggedItem); // Adopt the existing visual
+                    targetGridPage.AdoptExistingVisual(draggedItem);
                 }
                 else
                 {
