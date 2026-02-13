@@ -79,6 +79,17 @@ namespace SkyClerik.Inventory
             }
         }
 
+        public override void Drop(ItemVisual storedItem, Vector2Int gridPosition)
+        {
+            // Пользовательская логика: если предмет повернут, развернуть его до 0 градусов
+            while (storedItem.ItemDefinition.Dimensions.Angle != 0)
+            {
+                storedItem.Rotate(); // Этот метод ItemVisual поворачивает данные и обновляет визуал.
+            }
+            
+            base.Drop(storedItem, gridPosition); // Вызываем базовую логику для перемещения данных и визуала
+        }
+
         public override void FinalizeDrag()
         {
             base.FinalizeDrag();
