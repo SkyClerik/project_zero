@@ -60,6 +60,9 @@ namespace SkyClerik.Inventory
 
             _bClose.clicked += CloseClicked;
             SetDisableRotator(false);
+
+            ServiceProvider.Get<InventoryAPI>().OnItemPickUp += EquipPageElement_OnItemPickUp;
+            ServiceProvider.Get<InventoryAPI>().OnItemDrop += EquipPageElement_OnItemDrop;
         }
 
         public override void Dispose()
@@ -72,6 +75,9 @@ namespace SkyClerik.Inventory
                 _itemsPage.StopCoroutine(_overlapCheckCoroutine);
                 _overlapCheckCoroutine = null;
             }
+
+            ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemPickUp;
+            ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemDrop;
         }
 
         private void SetDisableRotator(bool enable)
@@ -139,24 +145,49 @@ namespace SkyClerik.Inventory
             }
         }
 
-        public override void PickUp(ItemVisual storedItem)
-        {
-            base.PickUp(storedItem);
+        //public override void PickUp(ItemVisual storedItem)
+        //{
+        //    base.PickUp(storedItem);
 
-            if (storedItem.ItemDefinition.Dimensions.Width == storedItem.ItemDefinition.Dimensions.Height)
+        //    if (storedItem.ItemDefinition.Dimensions.Width == storedItem.ItemDefinition.Dimensions.Height)
+        //        return;
+
+        //    SetDisableRotator(true);
+        //    _draggerItem = storedItem;
+        //    if (_overlapCheckCoroutine != null)
+        //        _itemsPage.StopCoroutine(_overlapCheckCoroutine);
+
+        //    _overlapCheckCoroutine = _itemsPage.StartCoroutine(OverlapCheckCoroutine());
+        //}
+
+        //public override void Drop(ItemVisual storedItem, Vector2Int gridPosition)
+        //{
+        //    base.Drop(storedItem, gridPosition);
+        //    SetDisableRotator(false);
+
+        //    _draggerItem = null;
+        //    if (_overlapCheckCoroutine != null)
+        //    {
+        //        _itemsPage.StopCoroutine(_overlapCheckCoroutine);
+        //        _overlapCheckCoroutine = null;
+        //    }
+        //}
+
+        private void EquipPageElement_OnItemPickUp(ItemVisual item, GridPageElementBase gridPage)
+        {
+            if (item.ItemDefinition.Dimensions.Width == item.ItemDefinition.Dimensions.Height)
                 return;
 
             SetDisableRotator(true);
-            _draggerItem = storedItem;
+            _draggerItem = item;
             if (_overlapCheckCoroutine != null)
                 _itemsPage.StopCoroutine(_overlapCheckCoroutine);
 
             _overlapCheckCoroutine = _itemsPage.StartCoroutine(OverlapCheckCoroutine());
         }
 
-        public override void Drop(ItemVisual storedItem, Vector2Int gridPosition)
+        private void EquipPageElement_OnItemDrop(ItemVisual item, GridPageElementBase gridPage)
         {
-            base.Drop(storedItem, gridPosition);
             SetDisableRotator(false);
 
             _draggerItem = null;

@@ -1,6 +1,5 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
@@ -16,7 +15,7 @@ namespace SkyClerik.Inventory
         private VisualElement _body;
         private const string _bodyID = "body";
 
-        private VisualElement _style;
+        private List<VisualElement> _styles;
         private const string _styleID = "style";
 
         private Coroutine _draggedItemCoroutine;
@@ -35,9 +34,12 @@ namespace SkyClerik.Inventory
 
             Debug.Log($"rootID : {rootID} -  _body : {_body.name}");
 
-            _style = _body.Q(_styleID);
+            _styles = _body.Query<VisualElement>(name: _styleID).ToList();
 
-            Debug.Log($"_style : {_style.name}");
+            foreach (var style in _styles)
+            {
+                Debug.Log($"_style : {style.name}");
+            }
 
             ServiceProvider.Get<InventoryAPI>().OnItemPickUp += EquipPageElement_OnItemPickUp;
             ServiceProvider.Get<InventoryAPI>().OnItemDrop += EquipPageElement_OnItemDrop;
@@ -45,16 +47,22 @@ namespace SkyClerik.Inventory
 
         private void EquipPageElement_OnItemPickUp(ItemVisual item, GridPageElementBase gridPage)
         {
-            _style.SetBorderWidth(3);
-            _style.SetBorderRadius(3);
-            _style.SetBorderColor(Color.red);
+            foreach (var style in _styles)
+            {
+                style.SetBorderWidth(3);
+                style.SetBorderRadius(3);
+                style.SetBorderColor(Color.red);
+            }
         }
 
         private void EquipPageElement_OnItemDrop(ItemVisual item, GridPageElementBase gridPage)
         {
-            _style.SetBorderWidth(0);
-            _style.SetBorderRadius(0);
-            _style.SetBorderColor(Color.red);
+            foreach (var style in _styles)
+            {
+                style.SetBorderWidth(0);
+                style.SetBorderRadius(0);
+                style.SetBorderColor(Color.red);
+            }
         }
 
         public override void Dispose()
@@ -62,6 +70,11 @@ namespace SkyClerik.Inventory
             base.Dispose();
             ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemPickUp;
             ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemDrop;
+        }
+
+        public override void FinalizeDrag()
+        {
+            base.FinalizeDrag();
         }
     }
 }

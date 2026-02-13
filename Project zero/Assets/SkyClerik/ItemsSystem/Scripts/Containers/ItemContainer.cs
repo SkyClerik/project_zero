@@ -115,8 +115,15 @@ namespace SkyClerik.Inventory
                 if (calculatedCellSize.x > 0 && calculatedCellSize.y > 0)
                 {
                     var gridStyle = inventoryGrid.resolvedStyle;
+
                     int widthCount = Mathf.RoundToInt(gridStyle.width / calculatedCellSize.x);
                     int heightCount = Mathf.RoundToInt(gridStyle.height / calculatedCellSize.y);
+
+                    // New defensive check
+                    if (widthCount * calculatedCellSize.x > gridStyle.width + 1 || heightCount * calculatedCellSize.y > gridStyle.height + 1) // +1 for float inaccuracies
+                    {
+                        Debug.LogError($"<color=red>[ItemContainer:{name}] WARNING: Parent grid '{inventoryGrid.name}' (Width: {gridStyle.width}, Height: {gridStyle.height}) is smaller than the calculated grid dimensions (Cells: {widthCount}x{heightCount}, CellSize: {calculatedCellSize.x}x{calculatedCellSize.y}). Visual artifacts or placement issues are likely!</color>", this);
+                    }
 
                     bool changed = false;
                     if (_gridDimensions.x != widthCount || _gridDimensions.y != heightCount)

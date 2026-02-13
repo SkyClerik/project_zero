@@ -246,6 +246,8 @@ namespace SkyClerik.Inventory
             OnItemMoved += (args) => Debug.Log($"<color=yellow>[InventoryAPI]</color> Предмет перемещен: <b>{args.Item.DefinitionName}</b> из <i>{args.SourceContainer.name}</i> в <i>{args.DestinationContainer.name}</i>");
             OnItemUsed += (item) => Debug.Log($"<color=green>[InventoryAPI]</color> Предмет использован: <b>{item.DefinitionName}</b> (ID: {item.ID})");
             OnItemFindFall += (id, type) => Debug.Log($"<color=red>[InventoryAPI]</color> Не удалось найти предмет с id: <b>{id}</b> в объекте типа: {type.FullName}");
+            OnItemPickUp += (item, grid) => Debug.Log($"<color=yellow>[InventoryAPI]</color> Поднял предмет : <b>{item.ItemDefinition.DefinitionName}</b> (<b>{item.ItemDefinition.ID}</b>) из сетки <i>{grid.Root.name}</i>");
+            OnItemDrop += (item, grid) => Debug.Log($"<color=yellow>[InventoryAPI]</color> Брошен предмет: <b>{item.ItemDefinition.DefinitionName}</b> (<b>{item.ItemDefinition.ID}</b>) в сетку <i>{grid.Root.name}</i>");
 
             Debug.Log("<color=lime>[InventoryAPI]</color> Отладочное логирование событий инвентаря включено.");
         }
