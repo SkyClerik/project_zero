@@ -68,8 +68,12 @@ namespace SkyClerik.Inventory
         public override void Dispose()
         {
             base.Dispose();
-            ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemPickUp;
-            ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemDrop;
+            var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            if (inventoryAPI != null)
+            {
+                inventoryAPI.OnItemPickUp -= EquipPageElement_OnItemPickUp;
+                inventoryAPI.OnItemDrop -= EquipPageElement_OnItemDrop;
+            }
         }
 
         public override void FinalizeDrag()

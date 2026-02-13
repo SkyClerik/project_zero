@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace UnityEngine.Toolbox
@@ -8,6 +8,7 @@ namespace UnityEngine.Toolbox
     /// </summary>
     public static class ServiceProvider
     {
+        private static bool _isShuttingDown = false;
         // Словарь для хранения всех зарегистрированных сервисов.
         // Ключ - это тип сервиса (интерфейс), Значение - его реализация (объект).
         private static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
@@ -44,8 +45,12 @@ namespace UnityEngine.Toolbox
                 return (T)service;
             }
 
-            Debug.LogError($"[ServiceProvider] Сервис типа '{serviceType.Name}' не найден.");
-            return default; // default для обобщенного типа T будет null для ссылочных типов.
+            // Проверяем наш собственный флаг завершения работы
+            if (!_isShuttingDown)
+            {
+                Debug.LogError($"[ServiceProvider] Сервис типа '{serviceType.Name}' не найден.");
+            }
+            return default;
         }
 
         /// <summary>
@@ -111,6 +116,7 @@ namespace UnityEngine.Toolbox
         /// </summary>
         public static void ClearAllServices()
         {
+            _isShuttingDown = true; // Устанавливаем флаг, что началось завершение работы
             _services.Clear();
             Debug.Log("[ServiceProvider] Все сервисы были сброшены.");
         }

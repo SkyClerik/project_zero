@@ -19,6 +19,7 @@ namespace SkyClerik.Inventory
         [SerializeField]
         [ReadOnly]
         private string _containerGuid;
+
         public string ContainerGuid { get => _containerGuid; private set => _containerGuid = value; }
 
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]

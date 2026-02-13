@@ -76,8 +76,12 @@ namespace SkyClerik.Inventory
                 _overlapCheckCoroutine = null;
             }
 
-            ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemPickUp;
-            ServiceProvider.Get<InventoryAPI>().OnItemPickUp -= EquipPageElement_OnItemDrop;
+            var inventoryAPI = ServiceProvider.Get<InventoryAPI>();
+            if (inventoryAPI != null)
+            {
+                inventoryAPI.OnItemPickUp -= EquipPageElement_OnItemPickUp;
+                inventoryAPI.OnItemDrop -= EquipPageElement_OnItemDrop;
+            }
         }
 
         private void SetDisableRotator(bool enable)
