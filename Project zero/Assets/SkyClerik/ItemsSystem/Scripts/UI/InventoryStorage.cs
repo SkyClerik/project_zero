@@ -183,7 +183,7 @@ namespace SkyClerik.Inventory
                 {
                     var page = containerAndPage.Page;
                     // Только если корневой элемент страницы активен и курсор мыши находится над ее сеткой.
-                    if (page.Root.enabledSelf && page.InventoryGridWorldBound.Contains(_mouseUILocalPosition))
+                    if (page.Root.enabledSelf && page.HoverableGridWorldBound.Contains(_mouseUILocalPosition))
                     {
                         //Debug.Log($"[ЛОГ] Страница {containerAndPage.Container.RootPanelName} активна и мышь над ней.");
                         PlacementResults results = page.ShowPlacementTarget(draggedItem);

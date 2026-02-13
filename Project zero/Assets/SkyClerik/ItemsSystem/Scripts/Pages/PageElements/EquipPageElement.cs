@@ -97,6 +97,13 @@ namespace SkyClerik.Inventory
 
         public override PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
+            Vector2Int currentHoverGridPosition = CalculateCurrentHoverGridPosition();
+            if (currentHoverGridPosition.x < 0)
+            {
+                InventoryStorage.MainTelegraph.Hide();
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
+            }
+
             if (!_root.enabledSelf || !_root.visible)
             {
                 return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
