@@ -300,8 +300,6 @@ namespace SkyClerik.Inventory
                     if (_placementResults.TargetInventory == _ownerInventory)
                     {
                         Debug.Log($"<color=purple>[Self-Drop] Возвращаю '{this.ItemDefinition.name}' в тот же контейнер '{(_ownerInventory as GridPageElementBase).Root.name}' на позицию {_placementResults.SuggestedGridPosition}</color>");
-                        Debug.Log($"_placementResults.SuggestedGridPosition : '{_placementResults.SuggestedGridPosition}");
-                        Debug.Log($"_placementResults.Position : '{_placementResults.Position}");
 
                         _ownerInventory.AddItemToInventoryGrid(this);
                         _ownerInventory.Drop(this, _placementResults.SuggestedGridPosition);
