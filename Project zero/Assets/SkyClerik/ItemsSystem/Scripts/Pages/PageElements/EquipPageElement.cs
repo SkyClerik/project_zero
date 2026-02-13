@@ -18,8 +18,6 @@ namespace SkyClerik.Inventory
         private List<VisualElement> _styles;
         private const string _styleID = "style";
 
-        private Coroutine _draggedItemCoroutine;
-
         /// <summary>
         /// Инициализирует новый экземпляр класса EquipPageElement.
         /// </summary>
@@ -79,6 +77,18 @@ namespace SkyClerik.Inventory
         public override void FinalizeDrag()
         {
             base.FinalizeDrag();
+        }
+
+        public override PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
+        {
+            var equipContainer = _itemContainer as PlayerEquipContainer;
+            if (equipContainer != null && equipContainer.AllowedItemType != UnityEngine.DataEditor.ItemType.Any && draggedItem.ItemDefinition.ItemType != equipContainer.AllowedItemType)
+            {
+                // Типы не совпадают, сразу возвращаем конфликт
+                return new PlacementResults().Init(ReasonConflict.invalidSlotType, Vector2.zero, Vector2Int.zero, null, this);
+            }
+
+            return base.ShowPlacementTarget(draggedItem);
         }
     }
 }

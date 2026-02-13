@@ -954,9 +954,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2239800392422886393, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
+      propertyPath: _allowedItemType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4241194125343031671, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
       propertyPath: _cellSize.y
       value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241194125343031671, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
+      propertyPath: _allowedItemType
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4241194125343031671, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
       propertyPath: _gridWorldRect.y
@@ -970,9 +978,17 @@ PrefabInstance:
       propertyPath: _gridWorldRect.height
       value: 400
       objectReference: {fileID: 0}
+    - target: {fileID: 5627883376927029510, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
+      propertyPath: _allowedItemType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5907377988203251739, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
       propertyPath: m_Name
       value: Inventory
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909653578630780542, guid: 50e60b20d2cfb1346a7a76131a730b26, type: 3}
+      propertyPath: _allowedItemType
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

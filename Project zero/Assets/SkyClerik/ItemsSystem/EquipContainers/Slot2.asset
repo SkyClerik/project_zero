@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb0a68e101715d4f9bb1203d7d51430, type: 3}
   m_Name: Slot2
   m_EditorClassIdentifier: 
-  _containerGuid: 
+  _containerGuid: 130dddea-61ca-4643-8e38-2d30e6a2b559
   _items: []

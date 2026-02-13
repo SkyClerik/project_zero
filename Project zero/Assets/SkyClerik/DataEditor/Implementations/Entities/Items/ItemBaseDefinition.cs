@@ -3,6 +3,16 @@ using System;
 
 namespace UnityEngine.DataEditor
 {
+    public enum ItemType
+    {
+        Any,
+        Consumable,
+        Weapon,
+        Armor,
+        Trinket,
+        Quest
+    }
+
     /// <summary>
     /// Абстрактный базовый класс для всех предметов.
     /// </summary>
@@ -10,6 +20,12 @@ namespace UnityEngine.DataEditor
     [JsonObject(MemberSerialization.Fields)]
     public class ItemBaseDefinition : BaseDefinition
     {
+        [JsonProperty]
+        [SerializeField]
+        [Tooltip("Тип предмета (для слотов экипировки)")]
+        private ItemType _itemType = ItemType.Any;
+        public ItemType ItemType => _itemType;
+
         [JsonProperty]
         [SerializeField]
         [Tooltip("Цена предмета в магазинах.")]
