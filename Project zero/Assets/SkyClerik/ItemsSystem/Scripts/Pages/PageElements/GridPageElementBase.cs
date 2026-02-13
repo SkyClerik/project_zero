@@ -60,24 +60,6 @@ namespace SkyClerik.Inventory
         /// </summary>
         public VisualElement InventoryGridElement => _inventoryGrid;
 
-        /// <summary>
-        /// Возвращает мировые границы сетки инвентаря.
-        /// </summary>
-        public Rect InventoryGridWorldBound => _inventoryGrid.worldBound;
-
-        public Rect HoverableGridWorldBound
-        {
-            get
-            {
-                Rect bounds = _inventoryGrid.worldBound;
-                bounds.xMin -= _gridHoverSnapToBoundaryPixels;
-                bounds.yMin -= _gridHoverSnapToBoundaryPixels;
-                bounds.xMax += _gridHoverSnapToBoundaryPixels;
-                bounds.yMax += _gridHoverSnapToBoundaryPixels;
-                return bounds;
-            }
-        }
-
 
         [SerializeField]
         private string _inventoryGridID = "grid";
@@ -131,13 +113,10 @@ namespace SkyClerik.Inventory
         /// </summary>
         protected IEnumerator Initialize()
         {
-            Configure();
             yield return new WaitForEndOfFrame();
-
             SubscribeToContainerEvents();
             LoadInitialVisuals();
         }
-
         /// <summary>
         /// Подписывает страницу на колбэки от логического контейнера предметов.
         /// </summary>
@@ -154,14 +133,6 @@ namespace SkyClerik.Inventory
         {
             if (_itemContainer == null) return;
             _itemContainer.SetViewCallbacks(null);
-        }
-
-        /// <summary>
-        /// Выполняет начальную настройку страницы, включая инициализацию телеграфа.
-        /// </summary>
-        protected void Configure()
-        {
-
         }
 
         /// <summary>
@@ -481,47 +452,20 @@ namespace SkyClerik.Inventory
         /// Рассчитывает текущую позицию курсора над сеткой в координатах сетки.
         /// </summary>
         /// <returns>Позиция в сетке (X, Y).</returns>
-                protected Vector2Int CalculateCurrentHoverGridPosition()
-                {
-                    // Логи, которые ты добавил. Я их не трогаю.
-                    Debug.Log($"_document.rootVisualElement.worldBound : {_document.rootVisualElement.worldBound }");
-                    Debug.Log($"_document.rootVisualElement.localBound : {_document.rootVisualElement.localBound}");
-                    Debug.Log($"_document.rootVisualElement.contentRect : {_document.rootVisualElement.contentRect}");
-                    Debug.Log($"mouseLocalPosition is World: {_itemsPage.MouseUILocalPosition}"); // Переименовано для ясности
-                    Debug.Log($"_gridRect : {_gridRect}");
-        
-                    // Преобразуем МИРОВЫЕ координаты мыши в ЛОКАЛЬНЫЕ координаты РОДИТЕЛЬСКОГО элемента сетки.
-                    // Это единственно верный способ, так как localBound сетки находится в той же системе координат.
-                    Vector2 mouseInParentSpace = _inventoryGrid.parent.WorldToLocal(_itemsPage.MouseUILocalPosition);
-                    var localBounds = _inventoryGrid.localBound;
-                    
-                    Debug.Log($"mouseInParentSpace: {mouseInParentSpace}"); // Новый лог для отладки
-                    Debug.Log($"_inventoryGrid.worldBound : {_inventoryGrid.worldBound}");
-                    Debug.Log($"_inventoryGrid.localBound : {_inventoryGrid.localBound}");
-                    Debug.Log($"_inventoryGrid.layout : {_inventoryGrid.layout}");
-                    Debug.Log($"_inventoryGrid.languageDirection : {_inventoryGrid.languageDirection}");
-                    Debug.Log($"_inventoryGrid.worldTransform : {_inventoryGrid.worldTransform}");
-        
-        
-                    // Проверяем, находится ли мышь строго ВНУТРИ границ сетки.
-                    if (mouseInParentSpace.x < localBounds.xMin || mouseInParentSpace.x > localBounds.xMax ||
-                        mouseInParentSpace.y < localBounds.yMin || mouseInParentSpace.y > localBounds.yMax)
-                    {
-                        return new Vector2Int(-1, -1);
-                    }
-        
-                    // Прижимаем значение к границам.
-                    float adjustedX = Mathf.Clamp(mouseInParentSpace.x, localBounds.xMin, localBounds.xMax);
-                    float adjustedY = Mathf.Clamp(mouseInParentSpace.y, localBounds.yMin, localBounds.yMax);
-        
-                    // Вычисляем индекс ячейки, учитывая смещение сетки (localBounds.xMin, yMin).
-                    int gridX = Mathf.FloorToInt((adjustedX - localBounds.xMin) / CellSize.x);
-                    int gridY = Mathf.FloorToInt((adjustedY - localBounds.yMin) / CellSize.y);
-        
-                    Vector2Int calculatedGridPosition = new Vector2Int(gridX, gridY);
-                    return calculatedGridPosition;
-                }
+        protected Vector2Int CalculateCurrentHoverGridPosition()
+        {
+            _gridRect = _inventoryGrid.worldBound;
+            Vector2 mouseInParentSpace = _inventoryGrid.WorldToLocal(_itemsPage.MouseUILocalPosition);
+            if (!_gridRect.Contains(_itemsPage.MouseUILocalPosition))
+                return new Vector2Int(-1, -1);
 
+            float adjustedX = Mathf.Clamp(_itemsPage.MouseUILocalPosition.x, _gridRect.xMin, _gridRect.xMax);
+            float adjustedY = Mathf.Clamp(_itemsPage.MouseUILocalPosition.y, _gridRect.yMin, _gridRect.yMax);
+            int gridX = Mathf.FloorToInt((adjustedX - _gridRect.xMin) / CellSize.x);
+            int gridY = Mathf.FloorToInt((adjustedY - _gridRect.yMin) / CellSize.y);
+
+            return new Vector2Int(gridX, gridY);
+        }
 
         /// <summary>
         /// Находит визуальные элементы предметов, которые перекрываются с заданной областью сетки.

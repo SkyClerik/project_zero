@@ -182,17 +182,15 @@ namespace SkyClerik.Inventory
                 foreach (ContainerAndPage containerAndPage in _containersAndPages)
                 {
                     var page = containerAndPage.Page;
-                    // Только если корневой элемент страницы активен и курсор мыши находится над ее сеткой.
-                    if (page.Root.enabledSelf && page.HoverableGridWorldBound.Contains(_mouseUILocalPosition))
+                    var inventoryGrid = page.InventoryGridElement;
+
+                    if (page.Root.enabledSelf && inventoryGrid.worldBound.Contains(_mouseUILocalPosition))
                     {
                         //Debug.Log($"[ЛОГ] Страница {containerAndPage.Container.RootPanelName} активна и мышь над ней.");
                         PlacementResults results = page.ShowPlacementTarget(draggedItem);
-                        // Если результат не "за пределами сетки" (т.е. мышка находится над действительной областью сетки),
-                        // то возвращаем этот результат.
+
                         if (results.Conflict != ReasonConflict.beyondTheGridBoundary)
-                        {
                             return results.Init(results.Conflict, results.Position, results.SuggestedGridPosition, results.OverlapItem, page);
-                        }
                     }
                 }
             }

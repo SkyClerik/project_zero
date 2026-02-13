@@ -365,6 +365,13 @@ namespace SkyClerik.Inventory
                 return;
 
             _placementResults = _inventoryStorage.HandleItemPlacement(this);
+
+            // Если HandleItemPlacement не нашел ни одной сетки под курсором
+            // и вернул "за пределами", мы должны сами спрятать телеграф.
+            if (_placementResults.Conflict == ReasonConflict.beyondTheGridBoundary)
+            {
+                InventoryStorage.MainTelegraph.Hide();
+            }
         }
 
         private void PickUp(bool isSwap = false)
