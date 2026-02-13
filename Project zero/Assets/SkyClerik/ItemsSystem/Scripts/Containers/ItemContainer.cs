@@ -481,7 +481,7 @@ namespace SkyClerik.Inventory
                 {
                     if (_gridOccupancy[start.x + x, start.y + y])
                     {
-                        //Debug.LogWarning($"[ItemContainer:{name}] CheckGridArea: Ячейка ({start.x + x},{start.y + y}) уже занята.", this);
+                        Debug.LogWarning($"<color=orange>[CheckGridArea] КОНФЛИКТ для контейнера '{name}': Ячейка ({start.x + x},{start.y + y}) помечена как занятая.</color>");
                         return false;
                     }
                 }

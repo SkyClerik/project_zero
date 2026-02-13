@@ -12,27 +12,20 @@ namespace SkyClerik.Inventory
     public class EquipPageElement : GridPageElementBase
     {
         private const string _titleText = "Хранилище предметов";
-        private VisualElement _rootElement;
+        private VisualElement _body;
+        private const string _bodyID = "body";
+
         private List<VisualElement> _styles;
         private const string _styleID = "style";
 
         /// <summary>
         /// Инициализирует новый экземпляр класса EquipPageElement.
         /// </summary>
-        /// <param name="inventoryStorage">Главный контроллер инвентаря.</param>
-        /// <param name="document">UIDocument, к которому принадлежит страница.</param>
-        /// <param name="itemContainer">Логический контейнер предметов, связанный с этим слотом экипировки.</param>
-        /// <param name="rootID">ID корневого визуального элемента страницы/слота в UIDocument.</param>
         public EquipPageElement(InventoryStorage inventoryStorage, UIDocument document, ItemContainer itemContainer, string rootID)
             : base(inventoryStorage, document, itemContainer, rootID)
         {
-            _rootElement = _root.Q(rootID);
-            _styles = _rootElement.Query<VisualElement>(name: _styleID).ToList();
-
-            foreach (var style in _styles)
-            {
-                Debug.Log($"_style : {style.name}");
-            }
+            _body = _root.Q(rootID);
+            _styles = _body.Query<VisualElement>(name: _styleID).ToList();
 
             ServiceProvider.Get<InventoryAPI>().OnItemPickUp += EquipPageElement_OnItemPickUp;
             ServiceProvider.Get<InventoryAPI>().OnItemDrop += EquipPageElement_OnItemDrop;
@@ -40,22 +33,18 @@ namespace SkyClerik.Inventory
 
         private void EquipPageElement_OnItemPickUp(ItemVisual item, GridPageElementBase gridPage)
         {
-            if (gridPage == this)
-                return;
+            if (gridPage == this) return;
 
             var equipContainer = _itemContainer as PlayerEquipContainer;
-            if (equipContainer == null)
-                return;
+            if (equipContainer == null) return;
 
-            bool typeMatch = (equipContainer.AllowedItemType == UnityEngine.DataEditor.ItemType.Any) || (equipContainer.AllowedItemType == item.ItemDefinition.ItemType);
+            bool typeMatch = (equipContainer.AllowedItemType == UnityEngine.DataEditor.ItemType.Any) ||
+                             (equipContainer.AllowedItemType == item.ItemDefinition.ItemType);
 
             Color borderColor;
             if (typeMatch)
             {
-                if (_itemContainer.GetItems().Count > 0)
-                    borderColor = Color.yellow;
-                else
-                    borderColor = Color.green;
+                borderColor = (_itemContainer.GetItems().Count > 0) ? Color.yellow : Color.green;
             }
             else
             {
@@ -76,7 +65,6 @@ namespace SkyClerik.Inventory
             {
                 style.SetBorderWidth(0);
                 style.SetBorderRadius(0);
-                style.SetBorderColor(Color.red);
             }
         }
 
@@ -99,7 +87,9 @@ namespace SkyClerik.Inventory
         public override PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
             if (!_root.enabledSelf || !_root.visible)
+            {
                 return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
+            }
 
             var equipContainer = _itemContainer as PlayerEquipContainer;
             if (equipContainer != null &&
@@ -117,15 +107,31 @@ namespace SkyClerik.Inventory
             }
             else if (_itemContainer.GetItems().Count == 1)
             {
-                _placementResults = new PlacementResults().Init(
-                    conflict: ReasonConflict.SwapAvailable,
-                    position: GetGlobalCellPosition(Vector2Int.zero),
-                    suggestedGridPosition: Vector2Int.zero,
-                    overlapItem: GetItemVisual(_itemContainer.GetItems()[0]),
-                    targetInventory: this);
+                var equippedItemVisual = GetItemVisual(_itemContainer.GetItems()[0]);
 
-                InventoryStorage.MainTelegraph.SetPosition(GetGlobalCellPosition(Vector2Int.zero));
-                InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.SwapAvailable, _itemContainer.CellSize.x, _itemContainer.CellSize.y);
+                if (equippedItemVisual == draggedItem)
+                {
+                    _placementResults = new PlacementResults().Init(
+                        conflict: ReasonConflict.None,
+                        position: GetGlobalCellPosition(Vector2Int.zero),
+                        suggestedGridPosition: Vector2Int.zero,
+                        overlapItem: null,
+                        targetInventory: this);
+                    InventoryStorage.MainTelegraph.SetPosition(GetGlobalCellPosition(Vector2Int.zero));
+                    InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.None, _itemContainer.CellSize.x, _itemContainer.CellSize.y);
+                }
+                else
+                {
+                    _placementResults = new PlacementResults().Init(
+                        conflict: ReasonConflict.SwapAvailable,
+                        position: GetGlobalCellPosition(Vector2Int.zero),
+                        suggestedGridPosition: Vector2Int.zero,
+                        overlapItem: equippedItemVisual,
+                        targetInventory: this);
+
+                    InventoryStorage.MainTelegraph.SetPosition(GetGlobalCellPosition(Vector2Int.zero));
+                    InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.SwapAvailable, _itemContainer.CellSize.x, _itemContainer.CellSize.y);
+                }
             }
             else
             {
