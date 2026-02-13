@@ -18,13 +18,14 @@ MonoBehaviour:
   _description: "Una semplice descrizione di una piccola statua di pietra a forma
     di dea che personifica la pace e la prosperit\xE0 nel codice e nell'anima."
   _icon: {fileID: 21300000, guid: ca525d827c9bb7c46863445068867b30, type: 3}
+  _itemType: 1
   _price: 2
   _curStack: 1
   _maxStack: 1
   _stackable: 0
   _viewStackable: 1
   _dimensions:
-    width: 1
-    height: 1
-    angle: 0
+    _width: 1
+    _height: 1
+    _angle: 0
   _gridPosition: {x: 0, y: 0}

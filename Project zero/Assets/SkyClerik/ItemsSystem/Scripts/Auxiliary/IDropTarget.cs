@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.DataEditor; // Для ItemBaseDefinition
+using UnityEngine.DataEditor;
 
 namespace SkyClerik.Inventory
 {

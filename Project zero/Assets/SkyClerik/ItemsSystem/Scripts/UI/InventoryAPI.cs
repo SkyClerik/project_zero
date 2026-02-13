@@ -59,16 +59,6 @@ namespace SkyClerik.Inventory
         public event Action<ItemBaseDefinition> OnPlayerAddItemFailed;
 
         /// <summary>
-        /// Вызывается, когда предмет перемещается между контейнерами.
-        /// </summary>
-        public event Action<ItemMovedEventArgs> OnItemMoved;
-
-        /// <summary>
-        /// Вызывается, когда игрок использует предмет.
-        /// </summary>
-        public event Action<ItemBaseDefinition> OnItemUsed;
-
-        /// <summary>
         /// Вызывается, когда предмет не найден.
         /// </summary>
         public event Action<int, Type> OnItemFindFall;
@@ -106,16 +96,6 @@ namespace SkyClerik.Inventory
         /// Внутренний метод для вызова события OnPlayerAddItemFailed.
         /// </summary>
         internal void RaisePlayerAddItemFailed(ItemBaseDefinition itemDef) => OnPlayerAddItemFailed?.Invoke(itemDef);
-
-        /// <summary>
-        /// Внутренний метод для вызова события OnItemMoved.
-        /// </summary>
-        internal void RaiseItemMoved(ItemMovedEventArgs eventArgs) => OnItemMoved?.Invoke(eventArgs);
-
-        /// <summary>
-        /// Внутренний метод для вызова события OnItemUsed.
-        /// </summary>
-        internal void RaiseItemUsed(ItemBaseDefinition item) => OnItemUsed?.Invoke(item);
 
         /// <summary>
         /// Внутренний метод для вызова события OnItemFindFall.
@@ -181,11 +161,6 @@ namespace SkyClerik.Inventory
         public void OpenInventoryAndEquip() => _inventoryStorage.OpenInventoryAndEquip();
 
         /// <summary>
-        /// Открывает обычный режим отображения инвентаря.
-        /// </summary>
-        public void OpenInventoryNormal() => _inventoryStorage.OpenInventoryNormal();
-
-        /// <summary>
         /// Открывает страничку сундука.
         /// </summary>
         public void OpenCheast() => _inventoryStorage.OpenCheast();
@@ -196,40 +171,7 @@ namespace SkyClerik.Inventory
         public void CloseAll() => _inventoryStorage.CloseAll();
 
 
-        /// <summary>
-        /// Уведомляет систему о том, что предмет был перемещен между контейнерами.
-        /// Предназначен для вызова из UI-логики (например, после drag-n-drop).
-        /// </summary>
-        /// <param name="item">Перемещенный предмет.</param>
-        /// <param name="from">Контейнер-источник.</param>
-        /// <param name="to">Контейнер-получатель.</param>
-        public void NotifyItemMoved(ItemBaseDefinition item, ItemContainer from, ItemContainer to)
-        {
-            RaiseItemMoved(new ItemMovedEventArgs(item, from, to));
-        }
-
-        /// <summary>
-        /// Пытается использовать указанный предмет.
-        /// Если предмет реализует интерфейс IUsable, выполняет его логику и вызывает событие OnItemUsed.
-        /// </summary>
-        /// <param name="item">Предмет для использования.</param>
-        public void UseItem(ItemBaseDefinition item)
-        {
-            if (item is IUsable usableItem)
-            {
-                // Тут может быть дополнительная логика, например, проверка условий использования.
-                usableItem.Use();
-                RaiseItemUsed(item);
-            }
-            else
-            {
-                Debug.LogWarning($"Предмет '{item.DefinitionName}' не является используемым (не реализует IUsable).");
-            }
-        }
-
-
         // --- PlayerItemContainer ---
-
 
         public void AddItemsToPlayerInventory(ItemsList itemsList) => _playerInventory.AddItems(itemsList);
 
@@ -243,8 +185,6 @@ namespace SkyClerik.Inventory
             OnPlayerItemAdded += (item) => Debug.Log($"<color=cyan>[InventoryAPI]</color> Предмет добавлен: <b>{item.DefinitionName}</b> (ID: {item.ID})");
             OnPlayerItemRemoved += (item) => Debug.Log($"<color=orange>[InventoryAPI]</color> Предмет удален: <b>{item.DefinitionName}</b> (ID: {item.ID})");
             OnPlayerAddItemFailed += (itemDef) => Debug.Log($"<color=red>[InventoryAPI]</color> Не удалось добавить предмет: <b>{itemDef.DefinitionName}</b>");
-            OnItemMoved += (args) => Debug.Log($"<color=yellow>[InventoryAPI]</color> Предмет перемещен: <b>{args.Item.DefinitionName}</b> из <i>{args.SourceContainer.name}</i> в <i>{args.DestinationContainer.name}</i>");
-            OnItemUsed += (item) => Debug.Log($"<color=green>[InventoryAPI]</color> Предмет использован: <b>{item.DefinitionName}</b> (ID: {item.ID})");
             OnItemFindFall += (id, type) => Debug.Log($"<color=red>[InventoryAPI]</color> Не удалось найти предмет с id: <b>{id}</b> в объекте типа: {type.FullName}");
             OnItemPickUp += (item, grid) => Debug.Log($"<color=yellow>[InventoryAPI]</color> Поднял предмет : <b>{item.ItemDefinition.DefinitionName}</b> (<b>{item.ItemDefinition.ID}</b>) из сетки <i>{grid.Root.name}</i>");
             OnItemDrop += (item, grid) => Debug.Log($"<color=yellow>[InventoryAPI]</color> Брошен предмет: <b>{item.ItemDefinition.DefinitionName}</b> (<b>{item.ItemDefinition.ID}</b>) в сетку <i>{grid.Root.name}</i>");

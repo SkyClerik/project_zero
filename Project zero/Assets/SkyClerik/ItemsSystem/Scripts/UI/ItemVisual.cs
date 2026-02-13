@@ -2,7 +2,6 @@
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 namespace SkyClerik.Inventory
 {
@@ -27,6 +26,8 @@ namespace SkyClerik.Inventory
         private float _saveAngle;
         private const string _iconName = "Icon";
         private const int _iconPadding = 30;
+        private const float _opacityMinValue = 0.5f;
+        private const float _opacityMaxValue = 1f;
 
         public IDropTarget OwnerInventory => _ownerInventory;
 
@@ -289,9 +290,9 @@ namespace SkyClerik.Inventory
                     return false;
             }
 
-            //Debug.Log($"[ItemVisual FromContainers] Не SwapAvailable/StackAvailable. Устанавливаю _isDragging = false и style.opacity = 1f для {ItemDefinition.name}. ID: {ItemDefinition.ID}.");
+            //Debug.Log($"[ItemVisual FromContainers] Не SwapAvailable/StackAvailable. Устанавливаю _isDragging = false и style.opacity = _opacityMaxValue для {ItemDefinition.name}. ID: {ItemDefinition.ID}.");
             _isDragging = false;
-            style.opacity = 1f;
+            style.opacity = _opacityMaxValue;
 
             switch (_placementResults.Conflict)
             {
@@ -299,16 +300,13 @@ namespace SkyClerik.Inventory
                     //Debug.Log($"[ItemVisual FromContainers] Conflict: None для {ItemDefinition.name}. ID: {ItemDefinition.ID}. TargetInventory: {_placementResults.TargetInventory?.GetType().Name ?? "NULL"}.");
                     if (_placementResults.TargetInventory == _ownerInventory)
                     {
-                        Debug.Log($"<color=purple>[Self-Drop] Возвращаю '{this.ItemDefinition.name}' в тот же контейнер '{(_ownerInventory as GridPageElementBase).Root.name}' на позицию {_placementResults.SuggestedGridPosition}</color>");
-
+                        //Debug.Log($"<color=purple>[Self-Drop] Возвращаю '{this.ItemDefinition.name}' в тот же контейнер '{(_ownerInventory as GridPageElementBase).Root.name}' на позицию {_placementResults.SuggestedGridPosition}</color>");
                         _ownerInventory.AddItemToInventoryGrid(this);
                         _ownerInventory.Drop(this, _placementResults.SuggestedGridPosition);
-                        //SetPosition(_placementResults.Position);
                     }
                     else
                     {
                         //Debug.Log($"[ItemVisual FromContainers] Conflict: None. TargetInventory != OwnerInventory. Вызываю Placement() для {ItemDefinition.name}. ID: {ItemDefinition.ID}.");
-                        //Placement(_placementResults.SuggestedGridPosition);
                         _inventoryStorage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, _placementResults.SuggestedGridPosition);
                     }
                     break;
@@ -325,14 +323,15 @@ namespace SkyClerik.Inventory
 
         private void OnMouseDown(PointerDownEvent mouseEvent)
         {
-            //Debug.Log($"[ItemVisual OnMouseDown] MouseDown для {ItemDefinition.name}. ID: {ItemDefinition.ID}. Button: {mouseEvent.button}. PointerId: {mouseEvent.pointerId}. CurrentDraggedItem: {InventoryContainer.CurrentDraggedItem?.ItemDefinition.DefinitionName ?? "NULL"}.");
-            if (mouseEvent.button == 0 || mouseEvent.pointerId == 0)
-            {
-                if (InventoryStorage.CurrentDraggedItem != null)
-                    return;
+            if (InventoryStorage.CurrentDraggedItem != null)
+                return;
 
+            if (mouseEvent.button != 0)
+                return;
+
+            if (mouseEvent.pointerId == 0)
+            {
                 _inventoryStorage.SetItemDescription(_itemDefinition);
-                //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] Событие MouseDown. GiveItem: {(_itemsPage.GiveItem != null ? _itemsPage.GiveItem.name : "NULL")}. CurrentDraggedItem: {(ItemsPage.CurrentDraggedItem != null ? ItemsPage.CurrentDraggedItem.name : "NULL")}. Этот ItemVisual: {this.name}.");
 
                 if (_inventoryStorage.GivenItem.DesiredProduct != null)
                 {
@@ -343,13 +342,8 @@ namespace SkyClerik.Inventory
                     _inventoryStorage.MouseUILocalPosition = mouseEvent.position;
                     if (InventoryStorage.CurrentDraggedItem != this)
                     {
-                        //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] ItemsPage.CurrentDraggedItem НЕ равен этому ItemVisual. Вызываем PickUp.");
                         PickUp();
                         SetDraggedItemPosition(mouseEvent.position, mouseEvent.position);
-                    }
-                    else
-                    {
-                        //Debug.Log($"[ItemVisual][OnMouseDown][{this.name}] ItemsPage.CurrentDraggedItem РАВЕН этому ItemVisual. НЕ вызываем PickUp (уже перетаскивается).");
                     }
                 }
             }
@@ -377,7 +371,7 @@ namespace SkyClerik.Inventory
         {
             _isDragging = true;
             _hasNoHome = isSwap;
-            style.opacity = 0.7f;
+            style.opacity = _opacityMinValue;
 
             if (!_hasNoHome)
                 _originalGridPosition = _itemDefinition.GridPosition;

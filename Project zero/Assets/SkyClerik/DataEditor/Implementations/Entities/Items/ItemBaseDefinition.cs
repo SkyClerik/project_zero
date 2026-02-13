@@ -3,14 +3,20 @@ using System;
 
 namespace UnityEngine.DataEditor
 {
-    public enum ItemType
+    public enum ItemType : byte
     {
-        Any,
-        Consumable,
-        Weapon,
-        Armor,
-        Trinket,
-        Quest
+        [InspectorName("Any (Любой)")]
+        Any = 0,
+        [InspectorName("Consumable (Расходный)")]
+        Consumable = 1,
+        [InspectorName("Weapon (Оружие) 2х1")]
+        Weapon = 2,
+        [InspectorName("Armor (Броня) 1х1")]
+        Armor = 3,
+        [InspectorName("Trinket (Брелок) 1х1")]
+        Trinket = 4,
+        [InspectorName("Quest (Квест)")]
+        Quest = 5,
     }
 
     /// <summary>

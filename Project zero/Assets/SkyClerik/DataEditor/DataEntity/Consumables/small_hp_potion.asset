@@ -18,13 +18,14 @@ MonoBehaviour:
   _description: "Eine einfache Beschreibung einer kleinen Steinstatue in Form einer
     G\xF6ttin, die Frieden und Wohlstand in Code und Seele verk\xF6rpert."
   _icon: {fileID: 21300000, guid: e98a0bdc16bd6854ea99f01a79574505, type: 3}
+  _itemType: 1
   _price: 3
   _curStack: 1
   _maxStack: 2
   _stackable: 1
   _viewStackable: 1
   _dimensions:
-    width: 1
-    height: 1
-    angle: 0
+    _width: 1
+    _height: 1
+    _angle: 0
   _gridPosition: {x: 0, y: 0}

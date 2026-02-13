@@ -16,6 +16,7 @@ MonoBehaviour:
   _definitionName: Test
   _description: None
   _icon: {fileID: 21300000, guid: d97ccd6843cc0ba46a5ff5054d62fad2, type: 3}
+  _itemType: 1
   _price: 12
   _curStack: 1
   _maxStack: 1

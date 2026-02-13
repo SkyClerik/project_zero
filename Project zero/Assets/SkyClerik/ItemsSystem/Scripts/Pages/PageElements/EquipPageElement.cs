@@ -12,9 +12,9 @@ namespace SkyClerik.Inventory
     public class EquipPageElement : GridPageElementBase
     {
         private const string _titleText = "Хранилище предметов";
-        private VisualElement _body;
-        private const string _bodyID = "body";
-
+        private VisualElement _rootElement;
+        private VisualElement _gridElement;
+        private const string _gridElementID = "grid";
         private List<VisualElement> _styles;
         private const string _styleID = "style";
 
@@ -24,8 +24,9 @@ namespace SkyClerik.Inventory
         public EquipPageElement(InventoryStorage inventoryStorage, UIDocument document, ItemContainer itemContainer, string rootID)
             : base(inventoryStorage, document, itemContainer, rootID)
         {
-            _body = _root.Q(rootID);
-            _styles = _body.Query<VisualElement>(name: _styleID).ToList();
+            _rootElement = _root.Q(rootID);
+            _gridElement = _rootElement.Q(_gridElementID);
+            _styles = _gridElement.Query<VisualElement>(name: _styleID).ToList();
 
             ServiceProvider.Get<InventoryAPI>().OnItemPickUp += EquipPageElement_OnItemPickUp;
             ServiceProvider.Get<InventoryAPI>().OnItemDrop += EquipPageElement_OnItemDrop;
@@ -81,13 +82,12 @@ namespace SkyClerik.Inventory
 
         public override void Drop(ItemVisual storedItem, Vector2Int gridPosition)
         {
-            // Пользовательская логика: если предмет повернут, развернуть его до 0 градусов
             while (storedItem.ItemDefinition.Dimensions.Angle != 0)
             {
-                storedItem.Rotate(); // Этот метод ItemVisual поворачивает данные и обновляет визуал.
+                storedItem.Rotate();
             }
-            
-            base.Drop(storedItem, gridPosition); // Вызываем базовую логику для перемещения данных и визуала
+
+            base.Drop(storedItem, gridPosition);
         }
 
         public override void FinalizeDrag()
@@ -129,7 +129,7 @@ namespace SkyClerik.Inventory
                         overlapItem: null,
                         targetInventory: this);
                     InventoryStorage.MainTelegraph.SetPosition(GetGlobalCellPosition(Vector2Int.zero));
-                    InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.None, _itemContainer.CellSize.x, _itemContainer.CellSize.y);
+                    InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.None, _gridElement.resolvedStyle.width, _gridElement.resolvedStyle.height);
                 }
                 else
                 {
@@ -141,7 +141,7 @@ namespace SkyClerik.Inventory
                         targetInventory: this);
 
                     InventoryStorage.MainTelegraph.SetPosition(GetGlobalCellPosition(Vector2Int.zero));
-                    InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.SwapAvailable, _itemContainer.CellSize.x, _itemContainer.CellSize.y);
+                    InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.SwapAvailable, _gridElement.resolvedStyle.width, _gridElement.resolvedStyle.height);
                 }
             }
             else

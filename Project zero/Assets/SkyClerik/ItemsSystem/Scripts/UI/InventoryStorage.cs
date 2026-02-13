@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
