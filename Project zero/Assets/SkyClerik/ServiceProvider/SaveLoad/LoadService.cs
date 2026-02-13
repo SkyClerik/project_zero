@@ -31,7 +31,7 @@ namespace SkyClerik.Utils
             foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
                 containerAndPage.Page.RefreshVisuals();
 
-            //Debug.Log($"Полная загрузка для слота {globalGameProperty.CurrentSaveSlotIndex} завершена.");
+            Debug.Log($"Полная загрузка для слота {globalGameProperty.CurrentSaveSlotIndex} завершена.");
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace SkyClerik.Utils
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     });
-                    //Debug.Log($"Глобальное состояние игры загружено из: {filePath}");
+                    Debug.Log($"Глобальное состояние игры загружено из: {filePath}");
                 }
                 catch (JsonSerializationException ex)
                 {
@@ -61,7 +61,7 @@ namespace SkyClerik.Utils
             }
             else
             {
-                //Debug.LogWarning($"Файл сохранения глобального состояния не найден по пути: {filePath}. Используется текущее состояние.", null);
+                Debug.LogWarning($"Файл сохранения глобального состояния не найден по пути: {filePath}. Используется текущее состояние.", null);
             }
         }
 
@@ -74,13 +74,13 @@ namespace SkyClerik.Utils
         {
             if (targetContainer == null)
             {
-                //Debug.LogWarning("Попытка загрузить в пустой (null) ItemContainer.");
+                Debug.LogWarning("Попытка загрузить в пустой (null) ItemContainer.");
                 return;
             }
 
             if (targetContainer.ContainerDefinition == null || string.IsNullOrEmpty(targetContainer.ContainerDefinition.ContainerGuid))
             {
-                //Debug.LogError($"GUID целевого контейнера '{targetContainer.name}' не может быть пустым для загрузки!");
+                Debug.LogError($"GUID целевого контейнера '{targetContainer.name}' не может быть пустым для загрузки!");
                 return;
             }
 
@@ -96,18 +96,18 @@ namespace SkyClerik.Utils
 
                 if (loadedContainerDefinition != null)
                 {
-                    //Debug.Log($"Контейнер '{containerGuid}' загружен из: {filePath}. Десериализовано {loadedContainerDefinition.Items.Count} предметов.");
+                    Debug.Log($"Контейнер '{containerGuid}' загружен из: {filePath}. Десериализовано {loadedContainerDefinition.Items.Count} предметов.");
 
                     int itemIndex = 0;
                     foreach (var item in loadedContainerDefinition.Items)
                     {
                         if (item != null)
                         {
-                            //Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.ID}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
+                            Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.ID}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
                         }
                         else
                         {
-                            //Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: NULL (Возможно, потеряна ссылка)");
+                            Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: NULL (Возможно, потеряна ссылка)");
                         }
                         itemIndex++;
                     }
@@ -115,6 +115,12 @@ namespace SkyClerik.Utils
                     // Копируем данные из загруженного определения в существующее
                     // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
                     targetContainer.ContainerDefinition.SetDataFromOtherContainer(loadedContainerDefinition);
+                    
+                    Debug.Log($"<color=cyan>[LoadService] After SetDataFromOtherContainer, target container '{targetContainer.name}' now has {targetContainer.ContainerDefinition.Items.Count} items.</color>");
+                    foreach(var item in targetContainer.ContainerDefinition.Items)
+                    {
+                        Debug.Log($"<color=cyan>  - Item: {item.DefinitionName}, Pos: {item.GridPosition}</color>");
+                    }
 
                     // После загрузки данных в ItemDataStorageSO, настраиваем логическую сетку контейнера
                     targetContainer.SetupLoadedItemsGrid();
@@ -123,12 +129,12 @@ namespace SkyClerik.Utils
                 }
                 else
                 {
-                    //Debug.LogError($"Не удалось десериализовать ItemContainerDefinition из файла: {filePath}");
+                    Debug.LogError($"Не удалось десериализовать ItemContainerDefinition из файла: {filePath}");
                 }
             }
             else
             {
-                //Debug.LogWarning($"Файл сохранения для контейнера '{containerGuid}' не найден по пути: {filePath}");
+                Debug.LogWarning($"Файл сохранения для контейнера '{containerGuid}' не найден по пути: {filePath}");
             }
         }
 

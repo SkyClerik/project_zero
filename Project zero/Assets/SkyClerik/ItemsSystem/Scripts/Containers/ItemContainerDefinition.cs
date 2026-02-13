@@ -84,6 +84,9 @@ namespace SkyClerik.Inventory
             {
                 _containerGuid = Guid.NewGuid().ToString();
                 Debug.Log($"Сгенерирован новый GUID для контейнера: {_containerGuid}");
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this);
+#endif
             }
             else
             {
