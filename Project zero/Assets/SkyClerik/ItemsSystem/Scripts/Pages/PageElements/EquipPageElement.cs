@@ -12,9 +12,7 @@ namespace SkyClerik.Inventory
     public class EquipPageElement : GridPageElementBase
     {
         private const string _titleText = "Хранилище предметов";
-        private VisualElement _body;
-        private const string _bodyID = "body";
-
+        private VisualElement _rootElement;
         private List<VisualElement> _styles;
         private const string _styleID = "style";
 
@@ -28,11 +26,8 @@ namespace SkyClerik.Inventory
         public EquipPageElement(InventoryStorage inventoryStorage, UIDocument document, ItemContainer itemContainer, string rootID)
             : base(inventoryStorage, document, itemContainer, rootID)
         {
-            _body = _root.Q(rootID);
-
-            Debug.Log($"rootID : {rootID} -  _body : {_body.name}");
-
-            _styles = _body.Query<VisualElement>(name: _styleID).ToList();
+            _rootElement = _root.Q(rootID);
+            _styles = _rootElement.Query<VisualElement>(name: _styleID).ToList();
 
             foreach (var style in _styles)
             {
@@ -45,11 +40,33 @@ namespace SkyClerik.Inventory
 
         private void EquipPageElement_OnItemPickUp(ItemVisual item, GridPageElementBase gridPage)
         {
+            if (gridPage == this)
+                return;
+
+            var equipContainer = _itemContainer as PlayerEquipContainer;
+            if (equipContainer == null)
+                return;
+
+            bool typeMatch = (equipContainer.AllowedItemType == UnityEngine.DataEditor.ItemType.Any) || (equipContainer.AllowedItemType == item.ItemDefinition.ItemType);
+
+            Color borderColor;
+            if (typeMatch)
+            {
+                if (_itemContainer.GetItems().Count > 0)
+                    borderColor = Color.yellow;
+                else
+                    borderColor = Color.green;
+            }
+            else
+            {
+                borderColor = Color.red;
+            }
+
             foreach (var style in _styles)
             {
                 style.SetBorderWidth(3);
                 style.SetBorderRadius(3);
-                style.SetBorderColor(Color.red);
+                style.SetBorderColor(borderColor);
             }
         }
 
@@ -81,14 +98,42 @@ namespace SkyClerik.Inventory
 
         public override PlacementResults ShowPlacementTarget(ItemVisual draggedItem)
         {
+            if (!_root.enabledSelf || !_root.visible)
+                return new PlacementResults().Init(ReasonConflict.beyondTheGridBoundary, Vector2.zero, Vector2Int.zero, null, null);
+
             var equipContainer = _itemContainer as PlayerEquipContainer;
-            if (equipContainer != null && equipContainer.AllowedItemType != UnityEngine.DataEditor.ItemType.Any && draggedItem.ItemDefinition.ItemType != equipContainer.AllowedItemType)
+            if (equipContainer != null &&
+                equipContainer.AllowedItemType != UnityEngine.DataEditor.ItemType.Any &&
+                draggedItem.ItemDefinition.ItemType != equipContainer.AllowedItemType)
             {
-                // Типы не совпадают, сразу возвращаем конфликт
-                return new PlacementResults().Init(ReasonConflict.invalidSlotType, Vector2.zero, Vector2Int.zero, null, this);
+                _placementResults = new PlacementResults().Init(ReasonConflict.invalidSlotType, Vector2.zero, Vector2Int.zero, null, this);
+                InventoryStorage.MainTelegraph.Hide();
+                return _placementResults;
             }
 
-            return base.ShowPlacementTarget(draggedItem);
+            if (_itemContainer.GetItems().Count == 0)
+            {
+                return base.ShowPlacementTarget(draggedItem);
+            }
+            else if (_itemContainer.GetItems().Count == 1)
+            {
+                _placementResults = new PlacementResults().Init(
+                    conflict: ReasonConflict.SwapAvailable,
+                    position: GetGlobalCellPosition(Vector2Int.zero),
+                    suggestedGridPosition: Vector2Int.zero,
+                    overlapItem: GetItemVisual(_itemContainer.GetItems()[0]),
+                    targetInventory: this);
+
+                InventoryStorage.MainTelegraph.SetPosition(GetGlobalCellPosition(Vector2Int.zero));
+                InventoryStorage.MainTelegraph.SetPlacement(ReasonConflict.SwapAvailable, _itemContainer.CellSize.x, _itemContainer.CellSize.y);
+            }
+            else
+            {
+                _placementResults = new PlacementResults().Init(ReasonConflict.intersectsObjects, Vector2.zero, Vector2Int.zero, null, this);
+                InventoryStorage.MainTelegraph.Hide();
+            }
+
+            return _placementResults;
         }
     }
 }

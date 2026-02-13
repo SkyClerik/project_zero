@@ -2,6 +2,7 @@
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 namespace SkyClerik.Inventory
 {
@@ -241,7 +242,6 @@ namespace SkyClerik.Inventory
             switch (_placementResults.Conflict)
             {
                 case ReasonConflict.SwapAvailable:
-                    //Debug.Log($"[ItemVisual FromContainers] Conflict: SwapAvailable для {ItemDefinition.name}. ID: {ItemDefinition.ID}. Вызываю HandleSwap().");
                     HandleSwap();
                     return false;
                 case ReasonConflict.StackAvailable:
@@ -307,7 +307,8 @@ namespace SkyClerik.Inventory
                     else
                     {
                         //Debug.Log($"[ItemVisual FromContainers] Conflict: None. TargetInventory != OwnerInventory. Вызываю Placement() для {ItemDefinition.name}. ID: {ItemDefinition.ID}.");
-                        Placement(_placementResults.SuggestedGridPosition);
+                        //Placement(_placementResults.SuggestedGridPosition);
+                        _inventoryStorage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, _placementResults.SuggestedGridPosition);
                     }
                     break;
                 default:
@@ -393,27 +394,67 @@ namespace SkyClerik.Inventory
             _ownerInventory = dropTarget;
         }
 
-        private void Placement(Vector2Int gridPosition)
-        {
-            ItemBaseDefinition itemToUnequip = this.ItemDefinition;
-            _inventoryStorage.TransferItemBetweenContainers(this, _ownerInventory, _placementResults.TargetInventory, gridPosition);
-        }
-
-        private void HandleSwap()
-        {
-            var itemToSwap = _placementResults.OverlapItem;
-            var targetInventory = _placementResults.TargetInventory;
-            var swapPosition = _placementResults.SuggestedGridPosition;
-
-            itemToSwap.PickUp(isSwap: true);
-            _inventoryStorage.TransferItemBetweenContainers(this, _ownerInventory, targetInventory, swapPosition);
-            targetInventory.FinalizeDrag();
-        }
-
         public void UpdatePcs()
         {
             if (_pcsText != null)
                 _pcsText.text = $"{_itemDefinition.Stack}";
+        }
+
+        private void HandleSwap()
+        {
+            // 1. Определяем все стороны обмена
+            var equippedItemVisual = _placementResults.OverlapItem;
+            var equipSlotInventory = (GridPageElementBase)_placementResults.TargetInventory;
+            var originalInventory = (GridPageElementBase)this.OwnerInventory;
+            var originalPosition = this._originalGridPosition;
+            var draggedItemVisual = this;
+
+            var equippedItemData = equippedItemVisual.ItemDefinition;
+            var draggedItemData = draggedItemVisual.ItemDefinition;
+
+            // 2. Подавляем автоматическое создание визуалов, чтобы избежать дубликатов
+            originalInventory.SuppressNextVisualCreation = true;
+            equipSlotInventory.SuppressNextVisualCreation = true;
+
+            // 3. Удаляем данные из обоих контейнеров
+            originalInventory.ItemContainer.RemoveItem(draggedItemData, ItemContainer.ItemRemoveReason.Transfer);
+            equipSlotInventory.ItemContainer.RemoveItem(equippedItemData, ItemContainer.ItemRemoveReason.Transfer);
+
+            // 4. Выполняем обмен в указанном порядке
+
+            // 4a. Помещаем предмет ИЗ ЭКИПИРОВКИ в исходный слот ИНВЕНТАРЯ.
+            if (originalInventory.ItemContainer.TryAddItemAtPosition(equippedItemData, originalPosition))
+            {
+                originalInventory.AdoptExistingVisual(equippedItemVisual);
+                ServiceProvider.Get<InventoryAPI>().RiseItemDrop(equippedItemVisual, originalInventory);
+            }
+            else
+            {
+                // Откат
+                Debug.LogError("Swap failed: Could not place equipped item in original slot.");
+                equipSlotInventory.ItemContainer.TryAddItemAtPosition(equippedItemData, Vector2Int.zero);
+                TryDropBack();
+                return;
+            }
+
+            // 4b. Помещаем ПЕРЕТАСКИВАЕМЫЙ предмет в СЛОТ ЭКИПИРОВКИ.
+            if (equipSlotInventory.ItemContainer.TryAddItemAtPosition(draggedItemData, Vector2Int.zero))
+            {
+                equipSlotInventory.AdoptExistingVisual(draggedItemVisual);
+                ServiceProvider.Get<InventoryAPI>().RiseItemDrop(draggedItemVisual, equipSlotInventory);
+            }
+            else
+            {
+                // Откат
+                Debug.LogError("CRITICAL SWAP ERROR: Could not place dragged item in empty equip slot.");
+                originalInventory.ItemContainer.RemoveItem(equippedItemData, ItemContainer.ItemRemoveReason.Transfer);
+                originalInventory.ItemContainer.TryAddItemAtPosition(equippedItemData, originalPosition);
+                TryDropBack();
+                return;
+            }
+
+            // 5. Завершаем операцию.
+            _inventoryStorage.FinalizeDragOfItem();
         }
 
         private void TryDropBack()

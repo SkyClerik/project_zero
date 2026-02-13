@@ -401,7 +401,7 @@ namespace SkyClerik.Inventory
         internal void MoveItem(ItemBaseDefinition item, Vector2Int newPosition)
         {
             //Debug.Log($"[ItemContainer:{name}] MoveItem: Перемещаю '{item.DefinitionName}' (ID: {item.ID}) из {item.GridPosition} в {newPosition}.");
-            Vector2Int oldPosition = item.GridPosition; // Capture old position before update
+            Vector2Int oldPosition = item.GridPosition;
             OccupyGridCells(item, false);
             item.GridPosition = newPosition;
             OccupyGridCells(item, true);
