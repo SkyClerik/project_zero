@@ -284,7 +284,8 @@ namespace SkyClerik.Inventory
         /// <returns>True, если предмет успешно удален; иначе false.</returns>
         internal bool RemoveItem(ItemBaseDefinition item, ItemRemoveReason reason = ItemRemoveReason.Destroy)
         {
-            if (item == null) return false;
+            if (item == null)
+                return false;
 
             bool removed = _containerDefinition.Items.Remove(item);
             if (removed)
@@ -309,6 +310,83 @@ namespace SkyClerik.Inventory
                 }
             }
             return removed;
+        }
+
+        /// <summary>
+        /// Удаляет указанное количество предметов из контейнера по их ID, учитывая стакинг.
+        /// </summary>
+        /// <param name="itemId">ID предмета для удаления.</param>
+        /// <param name="count">Количество предметов для удаления.</param>
+        /// <returns>True, если удалось удалить все запрошенные предметы; иначе false.</returns>
+        internal RemoveResult RemoveItem(int itemId, int count)
+        {
+            RemoveResult result = new RemoveResult() { IDidLook = false, NotEnough = count, IsDeleted = false, };
+
+            if (count <= 0)
+                return result; // Nothing to remove, consider it successful
+
+            // Проверяем, достаточно ли предметов в контейнере для удаления
+            int totalAvailableCount = GetTotalItemCount(itemId);
+            result.NotEnough -= totalAvailableCount;
+            if (totalAvailableCount < count)
+            {
+                //Debug.LogWarning($"[ItemContainer:{name}] Недостаточно предметов с ID '{itemId}' для удаления. Запрошено: {count}, доступно: {totalAvailableCount}.");
+                result.IDidLook = true;
+                return result; // Недостаточно предметов
+            }
+
+            List<ItemBaseDefinition> itemsToRemoveFrom = GetAllItemByItemID(itemId);
+            if (itemsToRemoveFrom == null || !itemsToRemoveFrom.Any())
+            {
+                //Debug.LogWarning($"[ItemContainer:{name}] Попытка удалить предметы с ID '{itemId}', но таких нет в контейнере.");
+                result.IDidLook = false;
+                return result; // No items of this ID found
+            }
+
+            // Создаем копию списка, так как мы будем изменять _containerDefinition.Items внутри цикла
+            // и итерация по изменяемому списку может привести к ошибкам.
+            List<ItemBaseDefinition> itemsToProcess = itemsToRemoveFrom.ToList();
+
+            int removedCount = 0;
+            // Проходим по найденным предметам и удаляем их, пока не наберем нужное количество
+            for (int i = 0; i < itemsToProcess.Count && count > 0; i++)
+            {
+                ItemBaseDefinition currentItem = itemsToProcess[i];
+                if (currentItem == null) continue;
+
+                // Определяем, сколько взять из текущего стака
+                int amountToTake = Mathf.Min(count, currentItem.Stack);
+
+                currentItem.RemoveStack(amountToTake);
+                removedCount += amountToTake;
+                count -= amountToTake;
+
+                if (currentItem.Stack <= 0)
+                {
+                    // Стак предмета опустел, удаляем предмет полностью
+                    RemoveItem(currentItem, ItemRemoveReason.Destroy); // Этот метод уже вызывает _containerDefinition.Items.Remove и Destroy(item)
+                    // (Примечание: не нужно явно изменять itemsToProcess, так как мы итерируемся по копии,
+                    // а исходный список _containerDefinition.Items будет обновлен вызовом RemoveItem).
+                }
+                else
+                {
+                    // Если у предмета ещё остались единицы, обновляем его представление в UI (если есть коллбэк)
+                    _viewCallbacks?.OnItemStackChangedCallback(currentItem);
+                }
+            }
+
+            // Возвращаем true, если удалось удалить все запрошенные предметы
+            result.IDidLook = true;
+            result.NotEnough = 0;
+            result.IsDeleted = true;
+            return result;
+        }
+
+        public struct RemoveResult
+        {
+            public bool IDidLook;
+            public int NotEnough;
+            public bool IsDeleted;
         }
 
         /// <summary>
@@ -337,7 +415,7 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
-        /// Ищет предмет в контейнере по его WrapperIndex.
+        /// Ищет предмет в контейнере по его itemID.
         /// </summary>
         /// <param name="itemID">WrapperIndex искомого предмета.</param>
         /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
@@ -346,7 +424,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         /// <param name="itemID">WrapperIndex искомого предмета.</param>
         /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
-        internal ItemBaseDefinition GetOriginalItemByItemID(int itemID)
+        internal ItemBaseDefinition GetItemByItemID(int itemID)
         {
             if (_containerDefinition == null || _containerDefinition.Items == null)
             {
@@ -362,6 +440,59 @@ namespace SkyClerik.Inventory
             //Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{itemID}' не найден в контейнере '{name}'.");
             return null;
         }
+
+        /// <summary>
+        /// Ищет одинаковые предметы в контейнере по itemID.
+        /// </summary>
+        /// <param name="itemID">WrapperIndex искомого предмета.</param>
+        /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
+        /// <summary>
+        /// Ищет предмет в контейнере по его WrapperIndex.
+        /// </summary>
+        /// <param name="itemID">WrapperIndex искомого предмета.</param>
+        /// <returns>Найденный ItemBaseDefinition или null, если предмет не найден.</returns>
+        internal List<ItemBaseDefinition> GetAllItemByItemID(int itemID)
+        {
+            if (_containerDefinition == null || _containerDefinition.Items == null)
+            {
+                //Debug.LogWarning("[ItemContainer] Попытка получить предмет по ID из неинициализированного хранилища.");
+                return null;
+            }
+
+            List<ItemBaseDefinition> result = new List<ItemBaseDefinition>();
+
+            foreach (var item in _containerDefinition.Items)
+            {
+                if (item != null && item.ID == itemID)
+                    result.Add(item);
+            }
+            //Debug.LogWarning($"[ItemContainer] Предмет с WrapperIndex '{itemID}' не найден в контейнере '{name}'.");
+            return result;
+        }
+
+        /// <summary>
+        /// Подсчитывает общее количество предметов с заданным ID во всех стаках в контейнере.
+        /// </summary>
+        /// <param name="itemID">ID предмета для подсчета.</param>
+        /// <returns>Общее количество предметов.</returns>
+        internal int GetTotalItemCount(int itemID)
+        {
+            if (_containerDefinition == null || _containerDefinition.Items == null)
+            {
+                return 0;
+            }
+
+            int totalCount = 0;
+            foreach (var item in _containerDefinition.Items)
+            {
+                if (item != null && item.ID == itemID)
+                {
+                    totalCount += item.Stack;
+                }
+            }
+            return totalCount;
+        }
+
 
         /// <summary>
         /// Пытается добавить предмет в контейнер по указанной позиции в сетке.

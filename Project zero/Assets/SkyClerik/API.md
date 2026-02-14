@@ -1,21 +1,4 @@
-
-- [х] Открытие и закрытие на клавишу клавы
-- [х] Подсвечивать требование
-- [x] Установить цвет обводки требуемого
-- [x] Установить ширину обводки требуемого
-- [x] Отображение информации при наведении как окно или в фиксированном окне на выбор
-- [ ] Отключить для этого проекта окно для лута, получаем через отправку
-- [x] Исправить баг переноса из экипировки в экипировку
-- [x] Исправить баг переноса из инвентаря в занятую экипировку
-- [x] Исправить баг переноса из экипировки в занятую экипировку
-- [x] Положить этот API в проект 
-- [x] UserInterfaceRaycaster
-
-- [ ] обмен ячейками а не предметами
-- [ ] стандарт размера для экипировки
-- [ ] подсвечивать ячейки экипировки по типу
-
-БАГ - предмет на поворот. попробовать обновить кадр и попробовать lateUpdate
+- [ ] При добавлении предмета в стак не срабатывает событие добавления в инвентарь потому что не создается предмет
 
 #### GlobalBox.cs
 
@@ -122,26 +105,38 @@ InventoryAPI inventoryAPI = ServiceProvider.Get<InventoryAPI>();
 ```
 
 ```cs
-// СОБЫТИЕ для получения колбека когда игрок нажал на предмет в инвентаре
- internal event Action<ItemBaseDefinition> OnItemGiven;
+// Вызывается когда игрок нажал на предмет в инвентаре
+internal event Action<ItemBaseDefinition> OnItemGiven;
+
+// Вызывается, когда предмет успешно добавлен в инвентарь игрока.
+public event Action<ItemBaseDefinition> OnPlayerItemAdded;
+
+// Вызывается, когда предмет удален из инвентаря игрока.
+public event Action<ItemBaseDefinition> OnPlayerItemRemoved;
+
+// Вызывается при неудачной попытке добавить предмет (например, нет места).
+public event Action<ItemBaseDefinition> OnPlayerAddItemFailed;
+
+// Вызывается, когда предмет не найден.
+public event Action<int, Type> OnItemFindFall;
+
+// Вызывается, когда предмет подняли.
+public event Action<ItemVisual, GridPageElementBase> OnItemPickUp;
+
+// Вызывается, когда предмет положили.
+public event Action<ItemVisual, GridPageElementBase> OnItemDrop;
 
 // Назначить свойства для обводки требуемого предмета (цвет и ширина)
 public void SetGivinItemTracinColor(Color newColor, int width)
 
 // Указывает, виден ли наш инвентарь.
-public bool IsInventoryVisible { get => _itemsPage.IsInventoryVisible; set => _itemsPage.IsInventoryVisible = value; }
+public bool IsInventoryVisible { get; set; }
 
 // Указывает, видна ли страница крафта.
-public bool IsCraftVisible { get => _itemsPage.IsCraftVisible; set => _itemsPage.IsCraftVisible = value; }
+public bool IsCraftVisible { get; set; }
 
 // Указывает, видна ли страница сундука.
-public bool IsCheastVisible { get => _itemsPage.IsCheastVisible; set => _itemsPage.IsCheastVisible = value; }
-
-// Указывает, видна ли страница лута.
-public bool IsLutVisible { get => _itemsPage.IsLutVisible; set => _itemsPage.IsLutVisible = value; }
-
-// Указывает, видна ли страница экипировки.
- public bool IsEquipVisible { get => _itemsPage.IsEquipVisible; set => _itemsPage.IsEquipVisible = value; }
+public bool IsCheastVisible { get; set; }
 
 // Откроет инвентарь, чтобы выбрать предмет по его ID. Если предмета нет, инвентарь не откроется. tracing true если предмет должен подсвечиваться в инвентаре
 public void OpenInventoryFromGiveItem(int itemID, bool tracing);
@@ -152,21 +147,26 @@ public void OpenInventoryGiveItem(ItemBaseDefinition item, bool tracing);
 // Открывает обычный инвентарь и страницу крафта.
 public void OpenInventoryAndCraft();
 
+// Открывает обычный инвентарь и страницу экипировки.
+public void OpenInventoryAndEquip();
+
 // Открывает обычный режим отображения инвентаря.
 public void OpenInventoryNormal();
 
 // Открывает страничку сундука.
 public void OpenCheast();
 
-// Открывает страничку лута.
-public void OpenLut();
-
-// Открывает страничку экипировки.
-public void OpenEquip();
-
 // Закрывает вообще все странички UI инвентаря.
 public void CloseAll();
 
+// Пытается добавить предмет в инвентарь
+public bool TryAddItemsToPlayerInventory(int itemID, out ItemBaseDefinition itemBaseDefinition)
+
+// Прямое добавление в инвентарь игрока листа из ItemsList (Клоны создаются сами).
+public void AddItemsToPlayerInventory(ItemsList itemsList)
+
+// Пытается удалить предмет из инвентаря в указанном количестве в стаке
+public ItemContainer.RemoveResult TryRemoveItemInPlayerInventory(int itemId, int count)
 ```
 
 Пример для запроса предмета через itemID с возвратом по событию.
@@ -239,28 +239,4 @@ private LutContainer _developLut;
 private LutContainer _developLut;
  
  _developLut.OpenLutPage();
-```
-
-
-#### InventoryContainersAPI.cs 
-* Пространство имён (Namespace): SkyClerik.Inventory
-* Описание: Фасад (API) для управления всеми контейнерами инвентаря игрока: основного инвентаря, контейнера крафта, сундука и лута. Предоставляет централизованный доступ к основным операциям с предметами для каждого типа контейнера.
-* **InventoryContainersAPI** регистрируется в **ServiceProvider** автоматически (в Awake() и отменяет регистрацию в OnDestroy()).
-
-Чтобы получить доступ к его сервисам или свойствам, нужно просто взять его из ServiceProvider так:
-
-```cs
-InventoryContainersAPI inventoryContainersAPI = ServiceProvider.Get<InventoryContainersAPI>();
-```
-
-```
-// Я напишу только доступные на данный момент времени методы
-// --- Методы для PlayerInventory ---
-// Добавляет предметы из указанного контейнера лута в инвентарь.
-public void AddItemsToPlayerInventory(ItemsList itemsList) => _playerInventory.AddItems(itemsList);
-
- // --- Методы для LutContainer ---
- // Отрабатывают в LutContainer и LutContainerWrappe не желательно пользовать на прямую
- // Добавляет предметы из указанного контейнера лута в окно лута.
- public void AddItemsToLutContainer(ItemsList itemsList) => _lutContainer.AddItems(itemsList);
 ```

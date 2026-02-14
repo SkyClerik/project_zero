@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
+using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {
@@ -44,6 +47,41 @@ namespace SkyClerik.Inventory
                     inventoryAPI.RaisePlayerAddItemFailed(clonedItem);
                 }
                 itemsList.Items.AddRange(unplacedClones);
+            }
+        }
+
+        internal bool AddItems(int itemID, out ItemBaseDefinition itemBaseDefinition)
+        {
+            var storege = ServiceProvider.Get<GlobalItemStorage>();
+            itemBaseDefinition = null;
+            if (storege == null)
+            {
+                Debug.Log($"Потерялось хранилище предметов");
+                return false;
+            }
+            else
+            {
+                itemBaseDefinition = storege.GlobalItemsStorageDefinition.GetClonedItem(itemID);
+                if (itemBaseDefinition == null)
+                {
+                    Debug.Log($"{itemBaseDefinition.ID} не найден в хранилище");
+                    return false;
+                }
+                else
+                {
+                    List<ItemBaseDefinition> items = new List<ItemBaseDefinition>();
+                    items.Add(itemBaseDefinition);
+                    var unplacedClones = AddClonedItems(items);
+                    items.Clear();
+
+                    if (unplacedClones.Any())
+                    {
+                        Debug.Log($"Не удалось разместить {unplacedClones.Count} предметов.");
+                        return false;
+                    }
+
+                    return true;
+                }
             }
         }
     }

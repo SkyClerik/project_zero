@@ -32,5 +32,10 @@ namespace SkyClerik.Inventory
         /// <param name="item">Перемещенный предмет.</param>
         /// <param name="oldPosition">Старая позиция предмета в сетке.</param>
         void OnItemMovedCallback(ItemBaseDefinition item, Vector2Int oldPosition);
+        /// <summary>
+        /// Вызывается при изменении количества стака предмета в контейнере (например, часть стака была удалена).
+        /// </summary>
+        /// <param name="item">Предмет, у которого изменилось количество стака.</param>
+        void OnItemStackChangedCallback(ItemBaseDefinition item);
     }
 }

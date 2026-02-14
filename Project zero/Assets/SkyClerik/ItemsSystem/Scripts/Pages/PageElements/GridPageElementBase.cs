@@ -214,6 +214,18 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
+        /// Колбэк, вызываемый при изменении стака у предмета.
+        /// </summary>
+        public void OnItemStackChangedCallback(ItemBaseDefinition item)
+        {
+            var visual = GetItemVisual(item);
+            if (visual != null)
+            {
+                visual.UpdatePcs();
+            }
+        }
+
+        /// <summary>
         /// Колбэк, вызываемый при перемещении предмета в контейнере.
         /// Обновляет позицию существующего визуального элемента предмета.
         /// </summary>

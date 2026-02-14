@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
+using static SkyClerik.Inventory.ItemContainer;
 
 namespace SkyClerik.Utils
 {
@@ -150,10 +151,23 @@ namespace SkyClerik.Utils
 
         private void OnItemGivenCallback(ItemBaseDefinition itemBaseDefinition)
         {
+            var id = 0;
+            var needCount = 3;
             if (itemBaseDefinition.ID == 0)
             {
                 _inventoryAPI.OnItemGiven -= OnItemGivenCallback;
                 Debug.Log($"выбран нужный предмет : {itemBaseDefinition.ID} - {itemBaseDefinition}");
+                RemoveResult RemoveResult = _inventoryAPI.TryRemoveItemInPlayerInventory(id, count: needCount);
+                if (RemoveResult.IDidLook)
+                {
+                    Debug.Log($"Есть хоть один предмет");
+                }
+                if (RemoveResult.IsDeleted)
+                {
+                    Debug.Log($"Еще один лог о удалении предмета с id : {id}");
+                }
+                Debug.Log($"Мне не хватает: {RemoveResult.NotEnough}");
+
                 _inventoryAPI.CloseAll();
             }
             else
@@ -170,11 +184,15 @@ namespace SkyClerik.Utils
 
         private void _bAddItem_clicked()
         {
-            // Отправить из контейнера в инвентарь игрока
-
-            var item = new LutContainerWrapper(4);
-            item.TransferItemsToPlayerInventoryContainer();
-            //_developLut.TransferItemsToPlayerInventoryContainer();
+            // Попробовать отправить предмет в инвентарь игрока
+            if (_inventoryAPI.TryAddItemsToPlayerInventory(itemID: 0, out ItemBaseDefinition item))
+            {
+                Debug.Log($"Добавление в инвентарь предмета с id : {item.ID} Name : {item.DefinitionName} Price : {item.Price}");
+            }
+            else
+            {
+                Debug.Log($"Не удалось добавление в инвентарь предмет с id : 0");
+            }
         }
 
         private void _bSave_clicked()
