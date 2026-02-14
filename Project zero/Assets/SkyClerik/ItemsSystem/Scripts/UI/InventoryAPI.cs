@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.Toolbox;
+﻿using System;
+using UnityEngine;
 using UnityEngine.DataEditor;
-using System;
+using UnityEngine.Toolbox;
 
 namespace SkyClerik.Inventory
 {
@@ -170,11 +170,24 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void CloseAll() => _inventoryStorage.CloseAll();
 
+        // --- LutContainer ---
+
+        // Пытается добавить предмет в инвентарь
+        public bool TryAddItemsToPlayerInventory(int itemID, out ItemBaseDefinition itemBaseDefinition)
+        {
+            if (_playerInventory.AddItems(itemID, out itemBaseDefinition))
+            {
+                return true;
+            }
+            return false;
+        }
 
         // --- PlayerItemContainer ---
 
         public void AddItemsToPlayerInventory(ItemsList itemsList) => _playerInventory.AddItems(itemsList);
 
+        // Пытается удалить предмет из инвентаря в указанном количестве в стаке
+        public ItemContainer.RemoveResult TryRemoveItemInPlayerInventory(int itemId, int count) => _playerInventory.RemoveItem(itemId, count);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         /// <summary>
