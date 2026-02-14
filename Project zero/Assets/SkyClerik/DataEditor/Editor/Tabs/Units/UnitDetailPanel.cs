@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -61,7 +61,8 @@ namespace UnityEditor.DataEditor
             {
                 do
                 {
-                    if (propertyIterator.name == "m_Script") continue;
+                    if (propertyIterator.name == "m_Script") 
+                        continue;
 
                     VisualElement currentFieldElement = null;
 
@@ -129,7 +130,7 @@ namespace UnityEditor.DataEditor
                     else
                     {
                         var propertyField = new PropertyField(propertyIterator.Copy());
-                        if (propertyIterator.name == "_id") 
+                        if (propertyIterator.name == "_id")
                             propertyField.SetEnabled(false);
 
                         currentFieldElement = propertyField;
@@ -164,7 +165,7 @@ namespace UnityEditor.DataEditor
 
             var header = new Label(skillsProperty.displayName) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
 
-            float recommendedItemHeight = 96f; 
+            float recommendedItemHeight = 96f;
 
             Func<VisualElement> makeItem = () =>
             {
@@ -200,7 +201,7 @@ namespace UnityEditor.DataEditor
                 fixedItemHeight: recommendedItemHeight,
                 showButtons: false
                 );
-            
+
             var addSkillButton = new Button(() =>
             {
                 TypeSelectionWindow.ShowWindow(typeof(SkillBaseDefinition), (selectedType) =>
@@ -217,7 +218,7 @@ namespace UnityEditor.DataEditor
             {
                 text = "Add Skill from Selector"
             };
-            
+
             container.Add(header);
             container.Add(addSkillButton);
             container.Add(skillsListView);

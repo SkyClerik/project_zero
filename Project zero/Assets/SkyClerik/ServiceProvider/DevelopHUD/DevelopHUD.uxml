@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 100%; width: 100%; justify-content: flex-start;">
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 10%; align-items: center; justify-content: space-between; flex-direction: row;">
+            <ui:VisualElement name="button_group" picking-mode="Ignore" style="flex-grow: 0; flex-direction: column; height: 100%;">
+                <ui:Button text="Стандартное окно инвентаря" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory_normal" />
+                <ui:Button text="Окно экипировки" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_equip" />
+                <ui:Button text="Инвентарь для выдачи" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory_give" />
+                <ui:Button text="Разрешить крафт" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_true_craft" />
+                <ui:Button text="Добавить лут" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_add_item" />
+                <ui:Button text="Сохранить в слот 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_save" />
+                <ui:Button text="Открыть сундук" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_cheast" />
+                <ui:Button text="Открыть лут" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_lut" />
+            </ui:VisualElement>
+            <ui:VisualElement name="button_group" picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; height: 100%;">
+                <ui:Button text="Выход из игры" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_exit_game" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -12,31 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3af78f0e58052142899f84e6b5d72fe, type: 3}
   m_Name: DataEditorSettings
   m_EditorClassIdentifier: 
-  _databaseAssetPath: Assets/DataEditor/Databases
-  _dataEntityAssetPath: Assets/DataEditor/DataEntity
-  _dataEditorWindow: {fileID: 9197481963319205126, guid: bb75bb067f071ec4cbec6a8bdadc1dd7,
-    type: 3}
-  _skillsTabUxml: {fileID: 9197481963319205126, guid: e3766d3a298fe354fa2ef1cc1177e4fc,
-    type: 3}
-  _unitsTabUxml: {fileID: 9197481963319205126, guid: 193e674fa4ee1944bab48eec6cc3a22b,
-    type: 3}
-  _actionsTabUxml: {fileID: 9197481963319205126, guid: 70aa9701e554bf942a7422ab8738743a,
-    type: 3}
-  _settingsTabUxml: {fileID: 9197481963319205126, guid: d9497e1d557278841b5b3f0abe0e4821,
-    type: 3}
-  _itemsTabUxml: {fileID: 9197481963319205126, guid: 1cde5d634d57fe044b4b57116b24829a,
-    type: 3}
-  _weaponsTabUxml: {fileID: 9197481963319205126, guid: ac030e8b2b8078d4ebc22f03cb1f0f3a,
-    type: 3}
-  _armorsTabUxml: {fileID: 9197481963319205126, guid: 4a6cc0bd2bc32d44ca7cbec3bb067d9e,
-    type: 3}
-  _enemyGroupsTabUxml: {fileID: 9197481963319205126, guid: d9ce7177501869b43b1e7936c04568e2,
-    type: 3}
-  _partySettingsTabUxml: {fileID: 9197481963319205126, guid: 0652be43c416b354db70d2fe237d2986,
-    type: 3}
-  _classTabUxml: {fileID: 9197481963319205126, guid: ae2a800f239cc264a99901f1f58a3be3,
-    type: 3}
-  _stateTabUxml: {fileID: 9197481963319205126, guid: 7710d532f4b09ac488526aa7b8630c00,
-    type: 3}
-  _typeTabUxml: {fileID: 9197481963319205126, guid: a3dcf0d7ca345ea4e9f5c4404b3cfec6,
-    type: 3}
+  _databaseAssetPath: Assets/SkyClerik/DataEditor/Databases
+  _dataEntityAssetPath: Assets/SkyClerik/DataEditor/DataEntity

@@ -1,9 +1,10 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEditor.DataEditor;
+using SkyClerik.CraftingSystem;
 
 namespace UnityEngine.DataEditor
 {
@@ -11,63 +12,16 @@ namespace UnityEngine.DataEditor
     {
         private VisualElement _mainContentArea;
         private ITabController _activeTabController;
-        private TabButtonGroup _tabButtonGroup; // Added for managing tabs
+        private TabButtonGroup _tabButtonGroup;
 
         private readonly Dictionary<string, Func<ITabController>> _tabControllerFactories = new Dictionary<string, Func<ITabController>>();
         private readonly Dictionary<Type, string> _definitionTypeToTabName = new Dictionary<Type, string>();
 
-        [MenuItem("Tools/Data Editor")]
+        [MenuItem("SkyClerik/Tools/Data Editor")]
         public static void ShowWindow()
         {
             GetWindow<DataEditorWindow>("Data Editor");
         }
-
-        private void OnEnable()
-        {
-            //EnsureCategoriesExist();
-        }
-
-        //public static void EnsureCategoriesExist()
-        //{
-        //    string[] requiredCategoryNames = { "Эффект", "Характеристика", "Атака", "Навык", "Экипировка", "Прочее" };
-
-        //    var categoryDatabase = LoadOrCreateDatabase<TraitCategoryDatabase>();
-        //    var existingNamesInDb = new HashSet<string>(categoryDatabase.Items.Select(c => c.DefinitionName));
-
-        //    bool databaseModified = false;
-        //    foreach (var requiredName in requiredCategoryNames)
-        //    {
-        //        if (!existingNamesInDb.Contains(requiredName))
-        //        {
-        //            // Create the actual TraitCategoryDefinition asset
-        //            var newAsset = CreateInstance<TraitCategoryDefinition>();
-        //            newAsset.SetDefinitionName(requiredName); // Use the new method
-        //            newAsset.name = requiredName; // Set the asset's file name
-
-        //            // Create asset file (optional, but good practice for organization)
-        //            string directory = "Assets/Game/TraitCategories";
-        //            if (!AssetDatabase.IsValidFolder(directory))
-        //            {
-        //                AssetDatabase.CreateFolder("Assets/Game", "TraitCategories");
-        //            }
-        //            string assetPath = AssetDatabase.GenerateUniqueAssetPath($"{directory}/{requiredName}.asset");
-        //            AssetDatabase.CreateAsset(newAsset, assetPath);
-
-        //            // Add the new asset to the database's list
-        //            categoryDatabase.Items.Add(newAsset);
-        //            databaseModified = true;
-        //            Debug.Log($"Created missing Trait Category Definition: {requiredName}");
-        //        }
-        //    }
-
-        //    if (databaseModified)
-        //    {
-        //        EditorUtility.SetDirty(categoryDatabase); // Mark database as dirty to save changes
-        //        AssetDatabase.SaveAssets();
-        //        AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
-        //    }
-        //}
-
 
         public void CreateGUI()
         {
@@ -99,27 +53,20 @@ namespace UnityEngine.DataEditor
             };
             root.Add(_mainContentArea);
 
-            // Collect all tab buttons first
             var tabButtonsList = new List<Button>();
 
-            // Register tabs and collect their buttons
             RegisterTabAndCollectButton("Навыки", () => new SkillsTabController(_mainContentArea, settings), typeof(SkillBaseDefinition), tabButtonsList);
             RegisterTabAndCollectButton("Юниты", () => new UnitsTabController(_mainContentArea, settings), typeof(UnitBaseDefinition), tabButtonsList);
-            
             RegisterTabAndCollectButton("Предметы", () => new ItemsTabController(_mainContentArea, settings), typeof(ItemBaseDefinition), tabButtonsList);
-            
+            RegisterTabAndCollectButton("Рецепты", () => new RecipesTabController(_mainContentArea, settings), typeof(CraftingRecipe), tabButtonsList);
             RegisterTabAndCollectButton("Классы", () => new ClassTabController(_mainContentArea, settings), typeof(ClassDefinition), tabButtonsList);
             RegisterTabAndCollectButton("Состояния", () => new StateTabController(_mainContentArea, settings), typeof(StateDefinition), tabButtonsList);
             RegisterTabAndCollectButton("Типы", () => new TypeTabController(_mainContentArea, settings), typeof(TypeDefinition), tabButtonsList);
-            
-            //RegisterTabAndCollectButton("Настройки", () => new SettingsTabController(_mainContentArea, settings), null, tabButtonsList);
 
-            // Initialize TabButtonGroup with collected buttons
-            _tabButtonGroup = new TabButtonGroup(tabButtonsList, Color.green, new Border4(l:2, r:2, t:1, b:0), FlexDirection.Row);
-            _tabButtonGroup.OnSelectedButtonChanged += OnTabButtonChanged; // Subscribe to its event
-            tabsContainer.Add(_tabButtonGroup); // Add the TabButtonGroup to the tabsContainer
+            _tabButtonGroup = new TabButtonGroup(tabButtonsList, Color.green, new Border4(l: 2, r: 2, t: 1, b: 0), FlexDirection.Row);
+            _tabButtonGroup.OnSelectedButtonChanged += OnTabButtonChanged;
+            tabsContainer.Add(_tabButtonGroup);
 
-            // Set initial selection
             if (tabButtonsList.Any())
             {
                 _tabButtonGroup.SetSelected(tabButtonsList.First());
@@ -130,23 +77,16 @@ namespace UnityEngine.DataEditor
         {
             var tabType = _definitionTypeToTabName.Keys.FirstOrDefault(key => key.IsAssignableFrom(definitionType));
             if (tabType != null && _definitionTypeToTabName.TryGetValue(tabType, out string tabName))
-            {
                 SwitchToTab(tabName);
-            }
             else
-            {
                 Debug.LogWarning($"No tab mapping found for type: {definitionType.Name}");
-            }
         }
 
         public void SwitchToTab(string tabName)
         {
-            // Now we don't look up in _tabButtons, we only use the tabName
             if (_tabControllerFactories.TryGetValue(tabName, out Func<ITabController> factory))
             {
                 var controller = factory();
-                // We pass a dummy button here, as SwitchTab no longer uses activeTabButton
-                // The actual active state is managed by TabButtonGroup
                 SwitchTab(new Button { text = tabName }, controller);
             }
             else
@@ -158,31 +98,19 @@ namespace UnityEngine.DataEditor
         private void SwitchTab(Button tabButton, ITabController controller)
         {
             _activeTabController?.Unload();
-
-            // The TabButtonGroup handles button highlighting, so we no longer need to do it here
-            // if (_activeTabButton != null)
-            // {
-            //     _activeTabButton.style.backgroundColor = StyleKeyword.Null;
-            // }
-
-            // _activeTabButton = tabButton; // No longer needed
-            // _activeTabButton.style.backgroundColor = new Color(0.3f, 0.3f, 0.3f); // No longer needed
-
             _activeTabController = controller;
             _activeTabController.LoadTab();
         }
 
         private void OnTabButtonChanged(Button selectedButton)
         {
-            // The userData is not set for the buttons created for TabButtonGroup directly in DataEditorWindow
-            // So we rely on the button's text which corresponds to the tabName
             SwitchToTab(selectedButton.text);
         }
 
         private void RegisterTabAndCollectButton(string tabName, Func<ITabController> controllerFactory, Type definitionType, List<Button> tabButtonsList)
         {
             var button = new Button { text = tabName };
-            tabButtonsList.Add(button); // Add button to the list for TabButtonGroup
+            tabButtonsList.Add(button);
 
             _tabControllerFactories[tabName] = controllerFactory;
             if (definitionType != null)
@@ -270,13 +198,10 @@ namespace UnityEngine.DataEditor
             string settingsFolderPath = "Assets/DataEditor/Settings";
 
             if (!AssetDatabase.IsValidFolder("Assets/DataEditor"))
-            {
                 AssetDatabase.CreateFolder("Assets", "DataEditor");
-            }
+
             if (!AssetDatabase.IsValidFolder(settingsFolderPath))
-            {
                 AssetDatabase.CreateFolder("Assets/DataEditor", "Settings");
-            }
 
             string settingsPath = $"{settingsFolderPath}/{typeof(DataEditorSettings).Name}.asset";
             AssetDatabase.CreateAsset(settings, settingsPath);

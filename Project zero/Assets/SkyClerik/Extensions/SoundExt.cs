@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace UnityEngine.Toolbox
 {
     public static partial class SoundExt

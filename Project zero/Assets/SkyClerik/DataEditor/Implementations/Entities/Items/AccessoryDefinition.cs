@@ -3,7 +3,7 @@ namespace UnityEngine.DataEditor
 	/// <summary>
 	/// Определение для аксессуаров.
 	/// </summary>
-	[CreateAssetMenu(fileName = "AccessoryDefinition", menuName = "Definition/Item/AccessoryDefinition")]
+	[CreateAssetMenu(fileName = "AccessoryDefinition", menuName = "SkyClerik/Definition/Item/AccessoryDefinition")]
 	public class AccessoryDefinition : ItemBaseDefinition
 	{
 		// Аксессуары часто являются носителями трейтов/особенностей,

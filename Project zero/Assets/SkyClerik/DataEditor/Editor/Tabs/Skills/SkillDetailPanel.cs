@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -58,38 +58,19 @@ namespace UnityEditor.DataEditor
             {
                 do
                 {
-                    if (propertyIterator.name == "m_Script") continue;
-
                     VisualElement currentFieldElement = null;
 
                     var fieldInfo = ToolkitExt.GetFieldInfoForProperty(propertyIterator);
                     var iconAttribute = fieldInfo?.GetCustomAttribute<DrawWithIconFieldAttribute>();
-                    var selectorAttribute = fieldInfo?.GetCustomAttribute<DrawWithDefinitionSelectorAttribute>();
 
-                    if (propertyIterator.name == "_modifier" && propertyIterator.isArray)
-                    {
-                        currentFieldElement = new ModifierListElement(propertyIterator.Copy());
-                    }
-                    else if (iconAttribute != null)
+                    if (propertyIterator.name == "m_Script")
+                        continue;
+
+                    if (propertyIterator.name == "_icon")
                     {
                         currentFieldElement = new SquareIconField();
                         (currentFieldElement as SquareIconField).BindProperty(propertyIterator.Copy());
-                    }
-                    else if (selectorAttribute != null && !propertyIterator.isArray)
-                    {
-                        var fieldInfoForSelector = ToolkitExt.GetFieldInfoForProperty(propertyIterator);
-                        Type fieldTypeForSelector = fieldInfoForSelector?.FieldType;
-                        if (fieldTypeForSelector != null && typeof(BaseDefinition).IsAssignableFrom(fieldTypeForSelector))
-                        {
-                            var selector = new DefinitionSelectorField(propertyIterator.displayName, fieldTypeForSelector, 32);
-                            selector.BindProperty(propertyIterator.Copy());
-                            currentFieldElement = selector;
-                        }
-                        else
-                        {
-                            currentFieldElement = new PropertyField(propertyIterator.Copy());
-                        }
-                    }
+                    }                   
                     else
                     {
                         var propertyField = new PropertyField(propertyIterator.Copy());

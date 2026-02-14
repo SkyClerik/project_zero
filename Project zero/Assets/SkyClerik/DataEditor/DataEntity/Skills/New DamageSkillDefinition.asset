@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c362c808673e144be42c4719582208, type: 3}
   m_Name: New DamageSkillDefinition
   m_EditorClassIdentifier: 
-  _id: f9e89c50-3355-4f75-98fb-21e0f95832b1
-  _definitionName: New DamageSkillDefinition
+  _id: 0
+  _definitionName: 
   _description: 
   _icon: {fileID: 0}
   damageAmount: 10
   _cost: 0
   _cooldown: 0
-  _skillType: {fileID: 11400000, guid: 83dac164fdf74804b97c2c626d192970, type: 2}
+  _skillType: {fileID: 0}

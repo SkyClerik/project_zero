@@ -1,6 +1,6 @@
 namespace UnityEngine.DataEditor
 {
-    [CreateAssetMenu(fileName = "DamageSkillDefinition", menuName = "Definition/Skill/DamageSkillDefinition")]
+    [CreateAssetMenu(fileName = "DamageSkillDefinition", menuName = "SkyClerik/Definition/Skill/DamageSkillDefinition")]
     public class DamageSkillDefinition : SkillBaseDefinition
     {
         [Header("Параметры Навыка")]

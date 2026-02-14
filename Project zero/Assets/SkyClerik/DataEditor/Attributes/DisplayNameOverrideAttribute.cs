@@ -1,5 +1,4 @@
 using System;
-using UnityEngine; // PropertyAttribute is in UnityEngine
 
 namespace UnityEngine.DataEditor
 {

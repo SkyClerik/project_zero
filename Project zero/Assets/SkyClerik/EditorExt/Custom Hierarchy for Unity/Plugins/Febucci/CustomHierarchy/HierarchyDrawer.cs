@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -156,9 +157,14 @@ namespace Febucci.HierarchyData
         private static bool initialized = false;
         private static HierarchyData data;
         private static int firstInstanceID = 0;
-        private static List<int> iconsPositions = new List<int>();
-        private static Dictionary<int, InstanceInfo> sceneGameObjects = new Dictionary<int, InstanceInfo>();
-        private static Dictionary<int, Color> prefabColors = new Dictionary<int, Color>();
+        private static List<int> iconsPositions = new List<int>(); // Восстановлено
+        private static Dictionary<int, InstanceInfo> sceneGameObjects = new Dictionary<int, InstanceInfo>(); // Восстановлено
+        private static Dictionary<int, Color> prefabColors = new Dictionary<int, Color>(); // Восстановлено
+
+        // Поля для реализации задержки
+        private static float _initializationStartTime;
+        private static bool _isInitializationPending;
+        private const float DelayDuration = 5f; // Задержка в секундах
 
         #region Menu Items
 
@@ -167,7 +173,7 @@ namespace Febucci.HierarchyData
         [MenuItem("Tools/Febucci/Custom Hierarchy/Initialize or Create", priority = 1)]
         public static void InitializeOrCreate()
         {
-            if (TryLoadData(out HierarchyData data)) //file exists
+            if (TryLoadDataForCurrentUser(out HierarchyData data)) //file exists
             {
                 Initialize();
                 SelectData();
@@ -188,7 +194,7 @@ namespace Febucci.HierarchyData
 
         static bool SelectData()
         {
-            if (TryLoadData(out HierarchyData data))
+            if (TryLoadDataForCurrentUser(out HierarchyData data))
             {
                 //EditorUtility.FocusProjectWindow();
                 Selection.activeObject = data;
@@ -223,32 +229,67 @@ namespace Febucci.HierarchyData
 
         private const string fileName = "HierarchyData";
 
-        private static bool TryLoadData(out HierarchyData data)
+        /// <summary>
+        /// Попытаться загрузить HierarchyData. Ищет актив, созданный текущим пользователем редактора.
+        /// </summary>
+        /// <param name="data">Загруженный объект HierarchyData.</param>
+        /// <returns>True, если HierarchyData успешно загружен; иначе false.</returns>
+        private static bool TryLoadDataForCurrentUser(out HierarchyData data)
         {
-            // Находим все GUID активов с именем типа LocationData
-            string[] guids = AssetDatabase.FindAssets(typeof(HierarchyData).Name);
+            data = null;
+            string currentUser = GetCurrentEditorUser();
+
+            // Находим все GUID активов типа HierarchyData
+            string[] guids = AssetDatabase.FindAssets("t:HierarchyData");
+                        
+            List<HierarchyData> foundDatas = new List<HierarchyData>();
 
             foreach (string guid in guids)
             {
-                // Получаем путь к активу по его GUID
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-
-                // Проверяем, что это не .cs файл
-                if (!path.EndsWith(".cs"))
+                
+                HierarchyData asset = AssetDatabase.LoadAssetAtPath<HierarchyData>(path);
+                if (asset != null)
                 {
-                    // Загружаем актив по пути и присваиваем его переменной data
-                    data = AssetDatabase.LoadAssetAtPath<HierarchyData>(path);
-                    if (data != null)
-                    {
-                        //Debug.Log($"Загружен актив: {path}");
-                        return true; // Успешная загрузка
-                    }
+                    foundDatas.Add(asset);
                 }
             }
 
-            data = null; // Если актив не найден, присваиваем null
-            Debug.LogWarning("LocationData не найдено или все найденные активы являются .cs файлами.");
-            return false; // Не удалось загрузить
+            data = foundDatas.FirstOrDefault(hd => hd.User == currentUser);
+
+            if (data != null)
+            {
+                //Debug.Log($"Загружен актив HierarchyData для текущего пользователя '{currentUser}': {AssetDatabase.GetAssetPath(data)}");
+                return true;
+            }
+            else
+            {
+                Debug.LogWarning($"HierarchyData для текущего пользователя '{currentUser}' не найдено. Попытка найти актив для 'Default' пользователя.");
+                data = foundDatas.FirstOrDefault(hd => hd.User == "Default");
+
+                if (data != null)
+                {
+                    Debug.Log($"Загружен актив HierarchyData для пользователя 'Default': {AssetDatabase.GetAssetPath(data)}");
+                    return true;
+                }
+                else
+                {
+                    Debug.LogWarning($"HierarchyData для пользователя 'Default' не найдено. Всего найдено активов HierarchyData: {foundDatas.Count}.");
+                    return false;
+                }
+            }
+        }
+
+
+        // Вспомогательный метод для получения текущего пользователя редактора
+        public static string GetCurrentEditorUser()
+        {
+            string userName = CloudProjectSettings.userName;
+            // Если Unity ID user name пустой (пользователь не вошел или не настроен), используем имя пользователя ОС
+            if (string.IsNullOrEmpty(userName))
+                userName = System.Environment.UserName;
+
+            return userName;
         }
 
         /// <summary>
@@ -256,7 +297,7 @@ namespace Febucci.HierarchyData
         /// </summary>
         static void CreateAsset()
         {
-            if (TryLoadData(out HierarchyData data))
+            if (TryLoadDataForCurrentUser(out HierarchyData data))
             {
                 Debug.LogWarning("HierarchyIcons: Data already exists, won't create a new one.");
                 return;
@@ -298,6 +339,28 @@ namespace Febucci.HierarchyData
         /// </summary>
         public static void Initialize()
         {
+            if (_isInitializationPending) return; // Инициализация уже запланирована
+
+            _initializationStartTime = (float)EditorApplication.timeSinceStartup;
+            _isInitializationPending = true;
+            EditorApplication.update += DelayedInitializeUpdate;
+        }
+
+        private static void DelayedInitializeUpdate()
+        {
+            if (EditorApplication.timeSinceStartup - _initializationStartTime < DelayDuration)
+            {
+                return; // Ждем, пока не пройдет нужное время
+            }
+
+            EditorApplication.update -= DelayedInitializeUpdate; // Отписываемся от события
+            _isInitializationPending = false; // Сбрасываем флаг
+
+            ExecuteInitialization(); // Выполняем фактическую инициализацию
+        }
+
+        private static void ExecuteInitialization()
+        {
             #region Unregisters previous events
 
             if (initialized)
@@ -310,7 +373,7 @@ namespace Febucci.HierarchyData
             #endregion
 
             initialized = false;
-            TryLoadData(out data);
+            TryLoadDataForCurrentUser(out data);
 
             if (!data) return; //no data found
 

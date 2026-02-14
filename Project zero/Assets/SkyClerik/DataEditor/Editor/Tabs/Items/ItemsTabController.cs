@@ -21,7 +21,21 @@ namespace UnityEditor.DataEditor
         private Type _activeItemType;
         private readonly Dictionary<Type, VisualElement> _tabContents = new Dictionary<Type, VisualElement>();
         private VisualElement _currentActiveTabContent;
-        private TabButtonGroup _innerTabButtonGroup; // Added for internal tabs
+        private TabButtonGroup _innerTabButtonGroup; // Добавлено для внутренних вкладок
+
+        // Конкретные базы данных предметов и их аналоги SerializedObject
+        private ConsumableItemDatabase _consumableItemDatabase;
+        private SerializedObject _serializedConsumableItemDatabase;
+        private KeyItemDatabase _keyItemDatabase;
+        private SerializedObject _serializedKeyItemDatabase;
+        private ArmorDatabase _armorDatabase;
+        private SerializedObject _serializedArmorDatabase;
+        private WeaponDatabase _weaponDatabase;
+        private SerializedObject _serializedWeaponDatabase;
+        private AccessoryDatabase _accessoryDatabase;
+        private SerializedObject _serializedAccessoryDatabase;
+        private Dictionary<Type, SerializedObject> _itemTypeToSerializedDatabase;
+
 
         public ItemsTabController(VisualElement container, DataEditorSettings settings)
         {
@@ -49,8 +63,31 @@ namespace UnityEditor.DataEditor
             var listContainer = new VisualElement { name = "item-lists-container", style = { flexGrow = 1 } };
             leftPanel.Add(listContainer);
 
-            var database = DataEditorWindow.LoadOrCreateDatabase<ItemDatabase>();
-            var serializedDatabase = new SerializedObject(database);
+            // Загрузка всех конкретных баз данных предметов
+            _consumableItemDatabase = DataEditorWindow.LoadOrCreateDatabase<ConsumableItemDatabase>();
+            _serializedConsumableItemDatabase = new SerializedObject(_consumableItemDatabase);
+
+            _keyItemDatabase = DataEditorWindow.LoadOrCreateDatabase<KeyItemDatabase>();
+            _serializedKeyItemDatabase = new SerializedObject(_keyItemDatabase);
+
+            _armorDatabase = DataEditorWindow.LoadOrCreateDatabase<ArmorDatabase>();
+            _serializedArmorDatabase = new SerializedObject(_armorDatabase);
+
+            _weaponDatabase = DataEditorWindow.LoadOrCreateDatabase<WeaponDatabase>();
+            _serializedWeaponDatabase = new SerializedObject(_weaponDatabase);
+
+            _accessoryDatabase = DataEditorWindow.LoadOrCreateDatabase<AccessoryDatabase>();
+            _serializedAccessoryDatabase = new SerializedObject(_accessoryDatabase);
+
+            // Сопоставление типов предметов с их сериализованными базами данных
+            _itemTypeToSerializedDatabase = new Dictionary<Type, SerializedObject>
+            {
+                { typeof(ConsumableItemDefinition), _serializedConsumableItemDatabase },
+                { typeof(KeyItemDefinition), _serializedKeyItemDatabase },
+                { typeof(ArmorDefinition), _serializedArmorDatabase },
+                { typeof(WeaponDefinition), _serializedWeaponDatabase },
+                { typeof(AccessoryDefinition), _serializedAccessoryDatabase }
+            };
 
             var itemTypes = new List<Type>
                 {
@@ -72,8 +109,19 @@ namespace UnityEditor.DataEditor
                 var propertyName = GetPropertyNameForType(itemType);
                 if (string.IsNullOrEmpty(propertyName)) continue;
 
-                var itemsProperty = serializedDatabase.FindProperty(propertyName);
-                if (itemsProperty == null) continue;
+                // Получаем правильную сериализованную базу данных на основе itemType
+                if (!_itemTypeToSerializedDatabase.TryGetValue(itemType, out SerializedObject currentSerializedDatabase))
+                {
+                    Debug.LogError($"No serialized database found for item type: {itemType.Name}");
+                    continue;
+                }
+
+                var itemsProperty = currentSerializedDatabase.FindProperty(propertyName);
+                if (itemsProperty == null)
+                {
+                    Debug.LogError($"Property '{propertyName}' not found in database for item type: {itemType.Name}");
+                    continue;
+                }
 
                 var tabContent = ToolkitExt.CreateCustomListView(
                     itemsProperty,
@@ -334,12 +382,9 @@ namespace UnityEditor.DataEditor
 
         private string GetPropertyNameForType(Type itemType)
         {
-            if (itemType == typeof(ConsumableItemDefinition)) return "ConsumableItems";
-            if (itemType == typeof(KeyItemDefinition)) return "KeyItems";
-            if (itemType == typeof(ArmorDefinition)) return "ArmorItems";
-            if (itemType == typeof(WeaponDefinition)) return "WeaponItems";
-            if (itemType == typeof(AccessoryDefinition)) return "AccessoryItems";
-            return null;
+            // Все экземпляры DefinitionDatabase<T> хранят свои элементы в приватном поле с именем "_items".
+            // Нам нужно вернуть это имя, чтобы корректно найти SerializedProperty.
+            return "_items";
         }
 
         private string GetSubfolderName(Type itemType)

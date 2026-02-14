@@ -1,4 +1,5 @@
-using System;
+﻿using Newtonsoft.Json;
+using UnityEngine.Toolbox;
 
 namespace UnityEngine.DataEditor
 {
@@ -7,77 +8,49 @@ namespace UnityEngine.DataEditor
     /// Предоставляет общий набор данных, таких как ID, имя, описание и иконка,
     /// чтобы все производные классы имели единую структуру.
     /// </summary>
+    [JsonObject(MemberSerialization.Fields)]
     public abstract class BaseDefinition : ScriptableObject
     {
         [Header("Базовая информация")]
 
+        [JsonProperty]
         [SerializeField]
-        [Tooltip("Уникальный идентификатор. Может быть числом или строкой.")]
-        private string _id;
+        [Tooltip("Уникальный идентификатор. Индекс полученный от общей базы предметов")]
+        [ReadOnly]
+        protected int _id;
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Имя, отображаемое в игре. Используем другое имя, чтобы избежать конфликта с 'name' из ScriptableObject.")]
-        private string _definitionName;
+        protected string _definitionName;
 
+        [JsonProperty]
         [SerializeField, TextArea(3, 10)]
         [Tooltip("Подробное описание, которое может отображаться в UI.")]
-        private string _description;
+        protected string _description;
 
         [SerializeField]
         [Tooltip("Иконка для отображения в инвентаре, меню навыков и т.д.")]
+        [JsonIgnore]
         [DrawWithIconField]
-        private Sprite _icon;
+        protected Sprite _icon;
 
-        /// <summary>
-        /// Уникальный идентификатор определения.
-        /// </summary>
-        public string ID => _id;
+        public int ID { get => _id; set => _id = value; }
 
         /// <summary>
         /// Имя определения, отображаемое в игре.
         /// </summary>
-        public string DefinitionName => _definitionName;
+        public string DefinitionName { get => _definitionName; set => _definitionName = value; }
 
         /// <summary>
         /// Подробное описание определения.
         /// </summary>
-        public string Description => _description;
+        public string Description { get => _description; set => _description = value; }
 
         /// <summary>
         /// Иконка определения.
         /// </summary>
-        public Sprite Icon => _icon;
-
-        /// <summary>
-        /// Вызывается при загрузке объекта.
-        /// Гарантирует, что у объекта есть ID и имя.
-        /// </summary>
-        protected virtual void OnEnable()
-        {
-            if (string.IsNullOrEmpty(_id))
-            {
-                _id = Guid.NewGuid().ToString();
-                // TODO: Рассмотреть, следует ли раскомментировать эту строку, чтобы
-                // автоматически присваивать DefinitionName имя ассета при создании.
-                // _definitionName = name; // ScriptableObject.name
-            }
-            if (string.IsNullOrEmpty(_definitionName))
-            {
-                _definitionName = name;
-            }
-        }
-
-        /// <summary>
-        /// Устанавливает новое имя для определения.
-        /// </summary>
-        /// <param name="name">Новое имя.</param>
-        public void SetDefinitionName(string name)
-        {
-            // TODO: Рассмотреть удаление этого публичного сеттера, если DefinitionName
-            // должен быть неизменяемым после создания.
-            // Если он необходим, убедиться, что его использование контролируется.
-            _definitionName = name;
-        }
+        public Sprite Icon { get => _icon; set => _icon = value; }
 
         /// <summary>
         /// Возвращает строковое представление объекта, используя его игровое имя.
@@ -85,7 +58,7 @@ namespace UnityEngine.DataEditor
         /// <returns>Имя определения.</returns>
         public override string ToString()
         {
-            return string.IsNullOrEmpty(_definitionName) ? name : _definitionName;
+            return string.IsNullOrEmpty(DefinitionName) ? name : DefinitionName;
         }
     }
 }

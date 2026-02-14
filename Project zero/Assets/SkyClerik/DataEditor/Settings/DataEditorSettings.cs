@@ -1,6 +1,6 @@
 namespace UnityEngine.DataEditor
 {
-    [CreateAssetMenu(fileName = "DataEditorSettings", menuName = "Game Data/Data Editor Settings")]
+    [CreateAssetMenu(fileName = "DataEditorSettings", menuName = "SkyClerik/Game Data/Data Editor Settings")]
     public class DataEditorSettings : ScriptableObject
     {
         [Header("Пути к базам данных")]

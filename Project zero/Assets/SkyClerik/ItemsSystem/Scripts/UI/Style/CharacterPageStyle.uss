@@ -1,0 +1,43 @@
+.item_box {
+    width: 160px;
+    height: 160px;
+    background-color: rgb(101, 101, 101);
+    border-left-color: rgba(53, 19, 19, 0);
+    border-right-color: rgba(53, 19, 19, 0);
+    border-top-color: rgba(53, 19, 19, 0);
+    border-bottom-color: rgba(53, 19, 19, 0);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    background-image: url("project://database/Assets/SkyClerik/Images/Inventory/background_Cell.jpg?fileID=21300000&guid=7d8efb10ce181cc4c9c88425510cb177&type=3#background_Cell");
+}
+
+.testText {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 40px;
+    color: rgb(207, 207, 207);
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+    white-space: normal;
+}
+
+.itemBox2 {
+    width: 200px;
+    height: 200px;
+    border-left-color: rgb(101, 110, 136);
+    border-right-color: rgb(101, 110, 136);
+    border-top-color: rgb(101, 110, 136);
+    border-bottom-color: rgb(101, 110, 136);
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0.95);
+}

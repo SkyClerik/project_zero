@@ -1,21 +1,75 @@
+﻿using Newtonsoft.Json;
 using System;
 
 namespace UnityEngine.DataEditor
 {
+    public enum ItemType : byte
+    {
+        [InspectorName("Any (Любой)")]
+        Any = 0,
+        [InspectorName("Consumable (Расходный)")]
+        Consumable = 1,
+        [InspectorName("Weapon (Оружие) 2х1")]
+        Weapon = 2,
+        [InspectorName("Armor (Броня) 1х1")]
+        Armor = 3,
+        [InspectorName("Trinket (Брелок) 1х1")]
+        Trinket = 4,
+        [InspectorName("Quest (Квест)")]
+        Quest = 5,
+    }
+
     /// <summary>
     /// Абстрактный базовый класс для всех предметов.
     /// </summary>
-    public abstract class ItemBaseDefinition : BaseDefinition
+    [System.Serializable]
+    [JsonObject(MemberSerialization.Fields)]
+    public class ItemBaseDefinition : BaseDefinition
     {
+        [JsonProperty]
+        [SerializeField]
+        [Tooltip("Тип предмета (для слотов экипировки)")]
+        private ItemType _itemType = ItemType.Any;
+        public ItemType ItemType => _itemType;
+
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Цена предмета в магазинах.")]
-        private int _price;
-        public int Price => _price;
+        protected int _price;
+        public int Price { get => _price; set => _price = value; }
 
+        [JsonProperty]
         [SerializeField]
         [Tooltip("Текущее кол-во")]
-        private int _curStack;
+        protected int _curStack;
         public int Stack { get => _curStack; set => _curStack = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        [Tooltip("Максимальное кол-во")]
+        protected int _maxStack;
+        public int MaxStack { get => _maxStack; set => _maxStack = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        protected bool _stackable = true;
+        public bool Stackable { get => _stackable; set => _stackable = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        protected bool _viewStackable = true;
+        public bool ViewStackable { get => _viewStackable; set => _viewStackable = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        [Tooltip("Размер и поворот предмета")]
+        protected ItemDimensions _dimensions;
+        public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
+
+        [JsonProperty]
+        [SerializeField]
+        protected Vector2Int _gridPosition;
+        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
 
         /// <summary>
         /// Добавляет предметы в стак.
@@ -59,48 +113,29 @@ namespace UnityEngine.DataEditor
             _curStack -= amount;
             return amount;
         }
-
-        [SerializeField]
-        [Tooltip("Максимальное кол-во")]
-        private int _maxStack;
-        public int MaxStack => _maxStack;
-
-        [SerializeField]
-        private bool _stackable = true;
-        public bool Stackable => _stackable;
-
-        [SerializeField]
-        [Tooltip("Размер и поворот предмета")]
-        private ItemDimensions _dimensions;
-        public ItemDimensions Dimensions { get => _dimensions; set => _dimensions = value; }
     }
 
     [Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public class ItemDimensions
     {
+        [JsonProperty]
         [SerializeField]
-        private int defaultWidth = 1;
+        private int _width = 1;
+        [JsonProperty]
         [SerializeField]
-        private int defaultHeight = 1;
+        private int _height = 1;
+        [JsonProperty]
         [SerializeField]
-        private float defaultAngle = 0;
-        [SerializeField]
-        private int currentHeight = 1;
-        [SerializeField]
-        private int currentWidth = 1;
-        [SerializeField]
-        private float currentAngle = 0;
+        private float _angle = 0;
 
-        public int DefaultWidth { get => defaultWidth; set => defaultWidth = value; }
-        public int DefaultHeight { get => defaultHeight; set => defaultHeight = value; }
-        public float DefaultAngle { get => defaultAngle; set => defaultAngle = value; }
-        public int CurrentHeight { get => currentHeight; set => currentHeight = value; }
-        public int CurrentWidth { get => currentWidth; set => currentWidth = value; }
-        public float CurrentAngle { get => currentAngle; set => currentAngle = value; }
+        public int Width { get => _width; set => _width = value; }
+        public int Height { get => _height; set => _height = value; }
+        public float Angle { get => _angle; set => _angle = value; }
 
         public void Swap()
         {
-            (currentWidth, currentHeight) = (currentHeight, currentWidth);
+            (_width, _height) = (_height, _width);
         }
     }
 }
