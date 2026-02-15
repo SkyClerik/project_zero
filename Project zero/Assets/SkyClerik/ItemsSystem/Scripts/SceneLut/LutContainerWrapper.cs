@@ -38,7 +38,7 @@ namespace SkyClerik.Inventory
             var globalItemStorage = ServiceProvider.Get<GlobalItemStorage>();
             var originalItem = globalItemStorage.GlobalItemsStorageDefinition.GetOriginalItem(itemIndexe);
             if (originalItem != null)
-                _itemsList.Items.Add(originalItem);
+                _itemsList.Items.Add(originalItem); 
             else
                 Debug.Log($"LutContainerWrapper не смог найти и добавить предмет под индексом {itemIndexe} в свой локальный контейнер лута");
         }

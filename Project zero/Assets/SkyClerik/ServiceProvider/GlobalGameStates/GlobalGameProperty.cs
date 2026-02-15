@@ -24,7 +24,7 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Возвращает True, если игра является новой; False, если загруженной.
         /// </summary>
-        public bool IsNewGame => _isNewGame;
+        public bool IsNewGame { get => _isNewGame; set => _isNewGame = value; }
 
         [Header("Глобальные флаги")]
         [Tooltip("Установлено в 'true', если игрок уже посмотрел вступительный ролик/обучение.")]

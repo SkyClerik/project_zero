@@ -198,9 +198,18 @@ namespace SkyClerik.Inventory
 
         public void SaveInventory()
         {
-            ServiceProvider.Get<SaveService>().SaveAll(ServiceProvider.Get<GlobalBox>().GlobalGameProperty, 0);
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox == null)
+                return;
+
+            var saveService = globalBox.SaveService;
+            var globalState = globalBox.GlobalGameProperty;
+
+            // Сохраняем и глобальные настройки и инвентарь
+            // slotIndex будет 0 всегда так как мы не планируем слоты сохранения            
+            saveService.SaveAll(globalState, 0);
         }
-        public void LoadInventory()
+        private void LoadInventory()
         {
             var globalBox = ServiceProvider.Get<GlobalBox>();
             if (globalBox == null)
@@ -216,6 +225,13 @@ namespace SkyClerik.Inventory
             var slotFolderPath = loadService.GetSaveSlotFolderPath(slotIndex: 0);
             loadService.LoadGlobalState(globalProperty, slotFolderPath);
             loadService.LoadAll(globalProperty, slotFolderPath);
+        }
+
+        public void LoadInventory_()
+        {
+            ServiceProvider.Get<GlobalBox>().GlobalGameProperty.CurrentGameState = GameState.InGame;
+            ServiceProvider.Get<GlobalBox>().GlobalGameProperty.IsNewGame = false;
+            LoadInventory();
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
