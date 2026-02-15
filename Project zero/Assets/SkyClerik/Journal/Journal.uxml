@@ -1,0 +1,93 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; flex-direction: row; display: flex;">
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 128px; background-color: rgb(51, 51, 51); align-items: center; justify-content: center;">
+            <ui:Button text="Inventory" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 120px; height: 240px;" />
+            <ui:Button text="Journal" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 120px; height: 240px;" />
+            <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 120px; height: 240px;" />
+            <ui:Button text="Close" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 120px; height: 240px;" />
+        </ui:VisualElement>
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1;">
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 7%; flex-direction: row; align-items: center; justify-content: space-between; background-color: rgba(59, 36, 113, 0.62);">
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 100%; width: 600px;">
+                    <ui:Label tabindex="-1" text="22 LEVEL" parse-escape-sequences="true" display-tooltip-when-elided="true" style="height: 100%; width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; white-space: normal; font-size: 40px; -unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 100%; width: 600px; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="R 201" parse-escape-sequences="true" display-tooltip-when-elided="true" style="height: 100%; width: 50%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; white-space: normal; font-size: 40px; -unity-font-style: bold;" />
+                    <ui:Label tabindex="-1" text="6 Martch  02:20 PM" parse-escape-sequences="true" display-tooltip-when-elided="true" style="height: 100%; width: 50%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; white-space: normal; font-size: 40px; -unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(60, 60, 60, 0.78); flex-shrink: 1; height: 86%;">
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 10%; flex-direction: row; justify-content: space-between;">
+                    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 50%; height: 100%; flex-direction: row;">
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 50%; height: 100%; flex-direction: row-reverse;">
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; flex-direction: row; width: 100%; height: 90%; flex-shrink: 0;">
+                    <ui:ScrollView scroll-deceleration-rate="0,135" elasticity="0,1" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" style="width: 100%;">
+                        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; width: 100%; flex-shrink: 0; flex-direction: row;">
+                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 25%; align-items: center;">
+                                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(238, 80, 80, 0.77); width: 360px; height: 512px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px;" />
+                                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(238, 80, 80, 0.77); width: 360px; height: 80px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px;">
+                                    <ui:ProgressBar value="22" title="my-progress" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:VisualElement picking-mode="Ignore" name="text_wrap" style="flex-grow: 0; background-color: rgba(238, 80, 80, 0.77); width: 360px; height: 80px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: row; align-items: center; justify-content: space-between;">
+                                    <ui:Label tabindex="-1" text="Возраст : " parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="title" style="height: 100%; font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-left; padding-left: 40px;" />
+                                    <ui:Label tabindex="-1" text="30" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="value" style="height: 100%; font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-right; padding-right: 40px;" />
+                                </ui:VisualElement>
+                                <ui:VisualElement picking-mode="Ignore" name="text_wrap" style="flex-grow: 0; background-color: rgba(238, 80, 80, 0.77); width: 360px; height: 80px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: row; align-items: center; justify-content: space-between;">
+                                    <ui:Label tabindex="-1" text="Пол :" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="title" style="height: 100%; font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-left; padding-left: 40px;" />
+                                    <ui:Label tabindex="-1" text="М" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="value" style="height: 100%; font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-right; padding-right: 40px;" />
+                                </ui:VisualElement>
+                                <ui:VisualElement picking-mode="Ignore" name="text_wrap" style="flex-grow: 0; background-color: rgba(238, 80, 80, 0.77); width: 360px; height: 100px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: column; align-items: center; justify-content: space-between;">
+                                    <ui:Label tabindex="-1" text="Место рождения :" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="title" style="font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-center; padding-left: 5px; width: 100%; padding-right: 5px;" />
+                                    <ui:Label tabindex="-1" text="Аунс - прайм 6" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="value" style="font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-center; padding-right: 5px; width: 100%; padding-left: 5px;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 75%;">
+                                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); width: 96%; height: 384px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: row; align-items: center;">
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(255, 122, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; width: 128px; height: 128px;" />
+                                    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 188, 52, 0.42); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%;" />
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(65, 255, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%; width: 600px;" />
+                                </ui:VisualElement>
+                                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); width: 96%; height: 384px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: row; align-items: center;">
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(255, 122, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; width: 128px; height: 128px;" />
+                                    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 188, 52, 0.42); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%; background-image: url(&quot;project://database/Assets/SkyClerik/Images/Gradients/GradientUI_128px.png?fileID=1748469223&amp;guid=c2e0cfac60defd4448176276b174acbc&amp;type=3#GradientUI_128px__0&quot;);" />
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(65, 255, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%; width: 600px;" />
+                                </ui:VisualElement>
+                                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); width: 96%; height: 384px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: row; align-items: center;">
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(255, 122, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; width: 128px; height: 128px;" />
+                                    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 188, 52, 0.42); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%;" />
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(65, 255, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%; width: 600px;" />
+                                </ui:VisualElement>
+                                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); width: 96%; height: 384px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-direction: row; align-items: center;">
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(255, 122, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; width: 128px; height: 128px;" />
+                                    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 188, 52, 0.42); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%;" />
+                                    <ui:VisualElement style="flex-grow: 0; background-color: rgba(65, 255, 0, 0.28); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; height: 100%; width: 600px;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:ScrollView>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; height: 7%; flex-direction: row; justify-content: space-between; background-color: rgba(59, 36, 113, 0.67);">
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 50%; height: 100%; flex-direction: row;">
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; width: 50%; height: 100%; flex-direction: row-reverse;">
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 240px; height: 96px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
