@@ -81,6 +81,7 @@ namespace SkyClerik.Inventory
             {
                 inventoryAPI.OnItemPickUp -= EquipPageElement_OnItemPickUp;
                 inventoryAPI.OnItemDrop -= EquipPageElement_OnItemDrop;
+                inventoryAPI.ClearOnItemGivenSubscriptions(); // Очищаем подписки на OnItemGiven
             }
         }
 
@@ -121,6 +122,7 @@ namespace SkyClerik.Inventory
         {
             if (InventoryStorage.CurrentDraggedItem == null)
             {
+                ServiceProvider.Get<InventoryAPI>().ClearOnItemGivenSubscriptions();
                 _itemsPage.CloseAll();
             }
         }

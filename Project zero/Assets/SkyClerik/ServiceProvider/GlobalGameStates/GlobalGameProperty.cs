@@ -16,7 +16,7 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Возвращает текущее состояние игры.
         /// </summary>
-        public GameState CurrentGameState => _currentGameState;
+        public GameState CurrentGameState { get => _currentGameState; set => _currentGameState = value; }
 
         [Tooltip("Установлено в 'true', если это новая игра. 'false' - если загруженная.")]
         [SerializeField]

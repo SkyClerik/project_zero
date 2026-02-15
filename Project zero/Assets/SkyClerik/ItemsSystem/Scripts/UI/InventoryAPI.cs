@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
+using SkyClerik.Utils;
 
 namespace SkyClerik.Inventory
 {
@@ -86,7 +87,11 @@ namespace SkyClerik.Inventory
         /// Внутренний метод для вызова события OnPlayerItemAdded.
         /// </summary>
         internal void RaisePlayerItemAdded(ItemBaseDefinition item) => OnPlayerItemAdded?.Invoke(item);
-
+        /// <summary>
+        /// Очищает все подписки на событие OnItemGiven.
+        /// Используется для предотвращения утечек памяти при закрытии UI.
+        /// </summary>
+        public void ClearOnItemGivenSubscriptions() => OnItemGiven = null;
         /// <summary>
         /// Внутренний метод для вызова события OnPlayerItemRemoved.
         /// </summary>
@@ -170,7 +175,7 @@ namespace SkyClerik.Inventory
         /// </summary>
         public void CloseAll() => _inventoryStorage.CloseAll();
 
-        // --- LutContainer ---
+        // --- PlayerItemContainer ---
 
         // Пытается добавить предмет в инвентарь
         public bool TryAddItemsToPlayerInventory(int itemID, out ItemBaseDefinition itemBaseDefinition)
@@ -182,12 +187,36 @@ namespace SkyClerik.Inventory
             return false;
         }
 
-        // --- PlayerItemContainer ---
-
-        public void AddItemsToPlayerInventory(ItemsList itemsList) => _playerInventory.AddItems(itemsList);
-
         // Пытается удалить предмет из инвентаря в указанном количестве в стаке
         public ItemContainer.RemoveResult TryRemoveItemInPlayerInventory(int itemId, int count) => _playerInventory.RemoveItem(itemId, count);
+
+        public bool TryRemoveItem(ItemBaseDefinition item, int count, ItemContainer.ItemRemoveReason itemRemoveReason) => _playerInventory.RemoveItem(item, count, itemRemoveReason);
+
+        // --- LutContainer ---
+        public void AddItemsToPlayerInventory(ItemsList itemsList) => _playerInventory.AddItems(itemsList);
+
+
+        public void SaveInventory()
+        {
+            ServiceProvider.Get<SaveService>().SaveAll(ServiceProvider.Get<GlobalBox>().GlobalGameProperty, 0);
+        }
+        public void LoadInventory()
+        {
+            var globalBox = ServiceProvider.Get<GlobalBox>();
+            if (globalBox == null)
+                return;
+
+            var loadService = globalBox.LoadService;
+            var globalProperty = globalBox.GlobalGameProperty;
+
+            if (globalProperty.IsNewGame)
+                return;
+
+            // slotIndex будет 0 всегда так как мы не планируем слоты сохранения
+            var slotFolderPath = loadService.GetSaveSlotFolderPath(slotIndex: 0);
+            loadService.LoadGlobalState(globalProperty, slotFolderPath);
+            loadService.LoadAll(globalProperty, slotFolderPath);
+        }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         /// <summary>

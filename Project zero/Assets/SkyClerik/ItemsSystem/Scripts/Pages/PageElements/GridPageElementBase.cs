@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
@@ -60,21 +59,13 @@ namespace SkyClerik.Inventory
         /// </summary>
         public VisualElement InventoryGridElement => _inventoryGrid;
 
-
         [SerializeField]
         private string _inventoryGridID = "grid";
-        /// <summary>
-        /// Визуальный элемент-телеграф, показывающий потенциальное место размещения предмета.
-        /// </summary>
 
         /// <summary>
         /// Результаты размещения предмета в сетке.
         /// </summary>
         protected PlacementResults _placementResults;
-        /// <summary>
-        /// Расстояние в пикселях для "прилипания" курсора к границам сетки при наведении.
-        /// </summary>
-        private readonly float _gridHoverSnapToBoundaryPixels = 64f;
 
         public UIDocument GetDocument => _document;
         public ItemContainer ItemContainer => _itemContainer;
