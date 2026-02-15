@@ -313,6 +313,59 @@ namespace SkyClerik.Inventory
         }
 
         /// <summary>
+        /// Удаляет указанное количество предметов из контейнера, начиная с определенного экземпляра предмета.
+        /// Если в начальном стаке не хватает, ищет другие стаки того же предмета.
+        /// </summary>
+        /// <param name="startingItem">Экземпляр предмета, с которого нужно начать удаление.</param>
+        /// <param name="count">Количество предметов для удаления.</param>
+        /// <param name="reason">Причина удаления, от которой зависит логика и вызов событий.</param>
+        /// <returns>True, если удалось удалить все запрошенные предметы; иначе false.</returns>
+        internal bool RemoveItem(ItemBaseDefinition startingItem, int count, ItemRemoveReason reason = ItemRemoveReason.Destroy)
+        {
+            if (count <= 0) 
+                return true;
+
+            if (startingItem == null) 
+                return false;
+
+            // Сначала проверяем, достаточно ли вообще предметов этого типа
+            int totalAvailable = GetTotalItemCount(startingItem.ID);
+            if (totalAvailable < count)
+            {
+                return false; // Сразу выходим, если не хватает
+            }
+
+            // Собираем все стаки этого предмета и ставим указанный стак первым в списке для обработки
+            List<ItemBaseDefinition> itemsToProcess = GetAllItemByItemID(startingItem.ID)
+                .OrderBy(item => item == startingItem ? 0 : 1)
+                .ToList();
+
+            for (int i = 0; i < itemsToProcess.Count && count > 0; i++)
+            {
+                ItemBaseDefinition currentItem = itemsToProcess[i];
+                if (currentItem == null) continue;
+
+                int amountToTake = Mathf.Min(count, currentItem.Stack);
+
+                currentItem.RemoveStack(amountToTake);
+                count -= amountToTake;
+
+                if (currentItem.Stack <= 0)
+                {
+                    // Стак опустел, удаляем экземпляр предмета полностью, используя существующий метод
+                    RemoveItem(currentItem, reason);
+                }
+                else
+                {
+                    // Стак только уменьшился, обновляем UI
+                    _viewCallbacks?.OnItemStackChangedCallback(currentItem);
+                }
+            }
+
+            return count <= 0;
+        }
+
+        /// <summary>
         /// Удаляет указанное количество предметов из контейнера по их ID, учитывая стакинг.
         /// </summary>
         /// <param name="itemId">ID предмета для удаления.</param>
@@ -331,7 +384,11 @@ namespace SkyClerik.Inventory
             if (totalAvailableCount < count)
             {
                 //Debug.LogWarning($"[ItemContainer:{name}] Недостаточно предметов с ID '{itemId}' для удаления. Запрошено: {count}, доступно: {totalAvailableCount}.");
-                result.IDidLook = true;
+                if (totalAvailableCount > 0)
+                {
+                    result.IDidLook = true;
+                }
+
                 return result; // Недостаточно предметов
             }
 

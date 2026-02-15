@@ -153,7 +153,7 @@ namespace SkyClerik.Utils
         {
             var id = 0;
             var needCount = 3;
-            if (itemBaseDefinition.ID == 0)
+            if (itemBaseDefinition.ID == id)
             {
                 _inventoryAPI.OnItemGiven -= OnItemGivenCallback;
                 Debug.Log($"выбран нужный предмет : {itemBaseDefinition.ID} - {itemBaseDefinition}");

@@ -16,7 +16,7 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Возвращает текущее состояние игры.
         /// </summary>
-        public GameState CurrentGameState => _currentGameState;
+        public GameState CurrentGameState { get => _currentGameState; set => _currentGameState = value; }
 
         [Tooltip("Установлено в 'true', если это новая игра. 'false' - если загруженная.")]
         [SerializeField]
@@ -24,7 +24,7 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Возвращает True, если игра является новой; False, если загруженной.
         /// </summary>
-        public bool IsNewGame => _isNewGame;
+        public bool IsNewGame { get => _isNewGame; set => _isNewGame = value; }
 
         [Header("Глобальные флаги")]
         [Tooltip("Установлено в 'true', если игрок уже посмотрел вступительный ролик/обучение.")]

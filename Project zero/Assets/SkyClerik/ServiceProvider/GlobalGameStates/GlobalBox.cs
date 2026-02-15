@@ -15,7 +15,7 @@ namespace SkyClerik.Utils
         /// <summary>
         /// Возвращает текущие глобальные свойства игры.
         /// </summary>
-        public GlobalGameProperty GlobalGameProperty => _globalGameProperty;
+        public GlobalGameProperty GlobalGameProperty => _globalGameProperty; 
         /// <summary>
         /// Возвращает экземпляр сервиса сохранения данных.
         /// </summary>
