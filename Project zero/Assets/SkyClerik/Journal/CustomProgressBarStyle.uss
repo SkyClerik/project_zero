@@ -1,0 +1,52 @@
+﻿ProgressBarExt {
+    position: relative;
+    border-radius: 4px;
+    background-color: rgb(56, 56, 56);
+    border-width: 1px;
+    border-color: rgb(40, 40, 40);
+    overflow: hidden;
+    min-height: 20px;
+    min-width: 100px;
+}
+
+ProgressBarExt #custom-progress-bar {
+    height: 100%;
+    width: 100%;
+    padding-top: 1px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+}
+
+ProgressBarExt #custom-progress-bar__background {
+    height: 100%;
+    width: 100%;
+    padding-top: 1px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+}
+
+ProgressBarExt #custom-progress-bar__progress {
+    border-radius: 3px;
+    height: 100%;
+    background-color: rgb(238, 100, 17);
+    margin: 2px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
+ProgressBarExt #custom-progress-bar__title {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    -unity-font-style: bold;
+    visibility: visible;
+}

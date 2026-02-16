@@ -1,0 +1,186 @@
+.unity-root-visual-element {
+    -unity-font-definition: var(--unity-font-regular);
+    color: rgb(224, 224, 224);
+    background-color: rgb(30, 30, 30);
+}
+
+ScrollView {
+    background-color: rgb(30, 30, 30);
+    border-color: rgb(56, 56, 56);
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.unity-scroller__high-button {
+    background-color: rgb(56, 56, 56);
+    border-radius: 3px;
+}
+
+.unity-scroller__low-button {
+    background-color: rgb(56, 56, 56);
+    border-radius: 3px;
+}
+
+.unity-base-slider .unity-base-slider__dragger {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    align-self: center;
+    background-color: rgb(76, 79, 175);
+    flex-shrink: 0;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+.unity-base-slider.int-slider .unity-base-slider__dragger {
+    background-color: rgb(76, 175, 80);
+    margin-top: -8px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    width: 16px;
+    height: 16px;
+}
+
+.unity-base-slider__tracker {
+    background-color: rgb(56, 56, 56);
+    border-radius: 5px;
+}
+
+.unity-base-slider__drag-container {
+    align-items: center;
+    justify-content: center;
+}
+
+DropdownField {
+    background-color: rgb(44, 44, 44);
+    border-color: rgb(85, 85, 85);
+    border-width: 1px;
+    border-radius: 4px;
+    color: rgb(224, 224, 224);
+    padding: 4px 6px;
+    margin: 5px;
+}
+
+DropdownField:hover {
+    background-color: rgb(56, 56, 56);
+}
+
+.unity-base-field__label {
+    color: rgb(224, 224, 224);
+    font-size: 22px;
+    -unity-text-align: upper-left;
+}
+
+.unity-progress-bar {
+    height: 18px;
+    border-radius: 4px;
+    background-color: rgb(56, 56, 56);
+    border-width: 1px;
+    border-color: rgb(40, 40, 40);
+    justify-content: center;
+}
+
+.unity-progress-bar__background {
+    background-color: transparent;
+    border-width: 0;
+}
+
+.unity-progress-bar__progress {
+    background-color: rgb(76, 175, 80);
+    border-radius: 3px;
+    margin-top: 2px;
+    margin-right: 0;
+    margin-bottom: 2px;
+    margin-left: 0;
+}
+
+.unity-progress-bar__title {
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+}
+
+Button {
+    background-color: rgb(76, 175, 80);
+    color: rgb(255, 255, 255);
+    -unity-font-definition: var(--unity-font-regular);
+    font-size: 14px;
+    border-radius: 5px;
+    border-width: 0;
+    padding: 6px 12px;
+    margin: 5px;
+    -unity-text-align: middle-center;
+}
+
+Button:hover {
+    background-color: rgb(92, 184, 92);
+}
+
+Button:active {
+    background-color: rgb(63, 140, 64);
+}
+
+TextField {
+    background-color: rgb(44, 44, 44);
+    border-color: rgb(85, 85, 85);
+    border-width: 1px;
+    border-radius: 4px;
+    color: rgb(224, 224, 224);
+    padding: 4px 6px;
+    margin: 5px;
+}
+
+TextField:focus {
+    border-color: rgb(76, 175, 80);
+}
+
+.unity-text-field__input {
+    background-color: transparent;
+    color: rgb(224, 224, 224);
+}
+
+Label {
+    color: rgb(224, 224, 224);
+    -unity-font-definition: var(--unity-font-regular);
+    font-size: 13px;
+    margin: 2px;
+}
+
+Toggle .unity-toggle__checkmark {
+    background-color: rgb(56, 56, 56);
+    border-color: rgb(85, 85, 85);
+    border-width: 1px;
+    border-radius: 3px;
+    width: 16px;
+    height: 16px;
+}
+
+Toggle:checked .unity-toggle__checkmark {
+    background-color: rgb(76, 175, 80);
+    border-color: rgb(76, 175, 80);
+}
+
+Toggle .unity-toggle__label {
+    color: rgb(224, 224, 224);
+    margin-left: 5px;
+}
+
+.unity-radio-button__checkmark {
+    background-color: rgb(76, 175, 80);
+}
+
+.unity-radio-button__checkmark-background {
+    background-color: rgb(44, 44, 44);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(188, 188, 188);
+    border-right-color: rgb(188, 188, 188);
+    border-top-color: rgb(188, 188, 188);
+    border-bottom-color: rgb(188, 188, 188);
+}
