@@ -225,6 +225,8 @@ GameObject:
   - component: {fileID: 285522149}
   - component: {fileID: 285522148}
   - component: {fileID: 285522150}
+  - component: {fileID: 285522153}
+  - component: {fileID: 285522152}
   m_Layer: 0
   m_Name: Journal
   m_TagString: Untagged
@@ -275,6 +277,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f3ceaa786d4d814e8dda3c3010b6d7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &285522152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 285522147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b0c55479a201e46934376e9b757596, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glitchFrequencyMs: 200
+  maxGlitchHeight: 150
+  useCustomColors: 0
+  customGlitchColors:
+  - {r: 0, g: 0.90196085, b: 1, a: 1}
+  - {r: 0.121568635, g: 0.039215688, b: 0.37647063, a: 1}
+  - {r: 0.22352943, g: 0.16470589, b: 0.38431376, a: 1}
+  glitchOpacity: 0.3
+  targetElementNames:
+  - character_area
+--- !u!114 &285522153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 285522147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 855f68659e7c5a645b41e32a12f32c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  globalFlickerFrequencyMs: 200
+  flickerProfiles:
+  - profileName: 
+    targetElementNames: []
+    flickerDurationMs: 0
+    affectBackground: 0
+    backgroundColors: []
+    affectBorder: 0
+    borderColors: []
+    affectText: 0
+    textColors: []
 --- !u!1 &1043860470
 GameObject:
   m_ObjectHideFlags: 0

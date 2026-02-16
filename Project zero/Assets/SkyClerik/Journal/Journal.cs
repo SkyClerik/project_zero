@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 
@@ -10,13 +10,13 @@ namespace SkyClerik
 
         private void Start()
         {
-            var uiDocument = GetComponent<UIDocument>();
+            var uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
             if (uiDocument == null)
             {
                 Debug.LogError("Journal: UIDocument component not found on this GameObject!", this);
                 return;
             }
-
+            uiDocument.enabled = true;
             _journalDocument = new JournalDocument();
             _journalDocument.Initialize(uiDocument.rootVisualElement);
 

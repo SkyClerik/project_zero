@@ -1,0 +1,30 @@
+/* Base style for a button */
+.button-style-a {
+    background-color: #3a3a3a; /* Темно-серый */
+    color: white; /* Белый текст */
+    border-color: #6a6a6a; /* Серый цвет рамки */
+    border-width: 2px; /* Толщина рамки */
+    border-radius: 5px; /* Скругление углов */
+    padding: 8px 12px; /* Отступы внутри кнопки */
+    -unity-font-style: normal; /* Обычный шрифт */
+    transition-duration: 0.2s; /* Плавный переход за 0.2 секунды */
+    transition-property: background-color, color, border-color, -unity-font-style, scale; /* Какие свойства анимировать */
+}
+
+/* Hover state (при наведении мыши) */
+.button-style-a:hover {
+    background-color: #5a5a5a; /* Светлее серый */
+    color: #e0e0e0; /* Светлее текст */
+    border-color: #8a8a8a; /* Светлее рамка */
+    -unity-font-style: bold; /* Жирный шрифт */
+}
+
+/* Active state (при нажатии) */
+.button-style-a:active {
+    background-color: #2a2a2a; /* Еще темнее серый */
+    color: #a0a0a0; /* Темнее текст */
+    border-color: #4a4a4a; /* Темнее рамка */
+    -unity-font-style: bold; /* Жирный шрифт */
+    scale: 0.98; /* Немного уменьшить кнопку */
+    transition-duration: 0.1s; /* Более быстрый переход для нажатия */
+}

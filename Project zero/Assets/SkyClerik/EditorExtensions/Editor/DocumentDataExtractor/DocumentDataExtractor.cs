@@ -10,6 +10,9 @@ namespace SkyClerik.Editor
     {
         private VisualTreeAsset _uxmlAsset;
         private PanelSettings _panelSettings;
+        
+        private VisualElement _calculationHost;
+        private IVisualElementScheduledItem _pollingScheduler;
 
         [MenuItem("SkyClerik/Tools/DocumentDataExtractor")]
         public static void ShowWindow()
@@ -21,7 +24,6 @@ namespace SkyClerik.Editor
 
         public void CreateGUI()
         {
-            // Create fields for user input
             var uxmlField = new ObjectField("UXML Document")
             {
                 objectType = typeof(VisualTreeAsset),
@@ -36,18 +38,17 @@ namespace SkyClerik.Editor
             };
             panelSettingsField.RegisterValueChangedCallback(evt => _panelSettings = evt.newValue as PanelSettings);
 
-            var calculateButton = new Button(CalculateLayout)
+            var calculateButton = new Button(StartLayoutCalculation)
             {
                 text = "Расчитать"
             };
 
-            // Add elements to the window's root
             rootVisualElement.Add(uxmlField);
             rootVisualElement.Add(panelSettingsField);
             rootVisualElement.Add(calculateButton);
         }
 
-        private void CalculateLayout()
+        private void StartLayoutCalculation()
         {
             if (_uxmlAsset == null)
             {
@@ -60,76 +61,90 @@ namespace SkyClerik.Editor
                 return;
             }
 
-            // Create an in-memory representation of the UXML tree
-            var rootElement = _uxmlAsset.CloneTree();
-            Vector2 screenSize = _panelSettings.referenceResolution;
+            // If a previous calculation is somehow running, stop it.
+            _pollingScheduler?.Pause();
             
-            // Set the root element's size to the reference screen size to start calculations
-            rootElement.style.width = screenSize.x;
-            rootElement.style.height = screenSize.y;
+            // Create a temporary, off-screen host for the UXML tree
+            _calculationHost = new VisualElement();
+            _uxmlAsset.CloneTree(_calculationHost);
 
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("--- Расчет размеров элементов UI ---");
-            stringBuilder.AppendLine("| Имя элемента | Ширина (px) | Высота (px) |");
-            stringBuilder.AppendLine("|--------------|-------------|-------------|");
+            _calculationHost.style.width = _panelSettings.referenceResolution.x;
+            _calculationHost.style.height = _panelSettings.referenceResolution.y;
+            _calculationHost.style.position = Position.Absolute;
+            _calculationHost.style.left = -10000; // Move it far off-screen
 
-            ProcessElement(rootElement, screenSize, 0, stringBuilder);
+            rootVisualElement.Add(_calculationHost);
 
-            Debug.Log(stringBuilder.ToString());
+            // Start polling every 10ms to check if the layout engine has run.
+            _pollingScheduler = rootVisualElement.schedule.Execute(CheckLayoutReady).Every(10);
         }
 
-        private void ProcessElement(VisualElement element, Vector2 parentSize, int depth, StringBuilder sb)
+        private void CheckLayoutReady()
         {
-            Vector2 calculatedSize = Vector2.zero;
-
-            // Get the Length struct for width
-            Length widthLength = element.style.width.value;
-
-            // Calculate width
-            if (element.style.width.keyword == StyleKeyword.Auto)
+            // Once the host element has a calculated layout width, we know the engine has started its work.
+            if (_calculationHost == null || _calculationHost.layout.width <= 0)
             {
-                // In a real scenario, this would depend on content. We'll treat as parent size for this tool.
-                calculatedSize.x = parentSize.x;
-            }
-            else if (widthLength.unit == LengthUnit.Pixel)
-            {
-                calculatedSize.x = widthLength.value;
-            }
-            else if (widthLength.unit == LengthUnit.Percent)
-            {
-                calculatedSize.x = parentSize.x * (widthLength.value / 100f);
-            }
-
-            // Get the Length struct for height
-            Length heightLength = element.style.height.value;
-
-            // Calculate height
-            if (element.style.height.keyword == StyleKeyword.Auto)
-            {
-                calculatedSize.y = parentSize.y;
-            }
-            else if (heightLength.unit == LengthUnit.Pixel)
-            {
-                calculatedSize.y = heightLength.value;
-            }
-            else if (heightLength.unit == LengthUnit.Percent)
-            {
-                calculatedSize.y = parentSize.y * (heightLength.value / 100f);
+                return;
             }
             
-            // Append to string builder if the element has a name
-            if (!string.IsNullOrEmpty(element.name))
+            // Stop polling.
+            _pollingScheduler?.Pause();
+            
+            // Per user suggestion, add a small extra delay to allow deeply nested elements
+            // like ScrollView components to finalize their layout.
+            rootVisualElement.schedule.Execute(ProcessAndLogLayout).ExecuteLater(150); // Increased delay
+        }
+
+        private void ProcessAndLogLayout()
+        {
+            if (_calculationHost == null) return;
+
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"--- Расчет для разрешения: {_panelSettings.referenceResolution.x}x{_panelSettings.referenceResolution.y} ---");
+            stringBuilder.AppendLine("| Имя элемента | X (px) | Y (px) | Ширина (px) | Высота (px) |");
+            stringBuilder.AppendLine("|--------------|--------|--------|-------------|-------------|");
+
+            // Get the root's absolute position to use as the origin (0,0) for all calculations.
+            Vector2 rootOffset = _calculationHost.worldBound.position;
+            ProcessElement(_calculationHost, rootOffset, 0, stringBuilder);
+
+            Debug.Log(stringBuilder.ToString());
+
+            // Clean up by removing the temporary host
+            if (rootVisualElement.Contains(_calculationHost))
             {
+                rootVisualElement.Remove(_calculationHost);
+            }
+            _calculationHost = null;
+        }
+
+        private void ProcessElement(VisualElement element, Vector2 rootOffset, int depth, StringBuilder sb)
+        {
+            // Read the final, computed world-space rect.
+            Rect worldBound = element.worldBound;
+            
+            // Normalize the element's position by subtracting the root's offset to get coordinates relative to the root.
+            float relativeX = worldBound.x - rootOffset.x;
+            float relativeY = worldBound.y - rootOffset.y;
+
+            if (!string.IsNullOrEmpty(element.name) && (worldBound.width > 0 || worldBound.height > 0))
+            {
+                // Indent based on depth in the hierarchy to create a tree view.
                 string indent = new string(' ', depth * 2);
-                sb.AppendLine($"| {indent}{element.name} | {calculatedSize.x:F2} | {calculatedSize.y:F2} |");
+                sb.AppendLine($"| {indent}{element.name} | {relativeX:F0} | {relativeY:F0} | {worldBound.width:F0} | {worldBound.height:F0} |");
             }
 
-            // Recurse through children
             foreach (var child in element.hierarchy.Children())
             {
-                // Pass the newly calculated size of the current element as the parent size for its children
-                ProcessElement(child, calculatedSize, depth + 1, sb);
+                // Pass the same rootOffset down to all children.
+                ProcessElement(child, rootOffset, depth + 1, sb);
             }
+        }
+        
+        private void OnDestroy()
+        {
+            // Ensure the scheduler is stopped when the window is closed.
+            _pollingScheduler?.Pause();
         }
     }
 }
