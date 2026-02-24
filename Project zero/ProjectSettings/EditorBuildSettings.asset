@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/SkyClerik/Scenes/ufu.unity
+    guid: bcf03dc8bcd5d854da60a69188de20e7
   m_configObjects: {}
