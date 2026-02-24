@@ -50,7 +50,7 @@ namespace SkyClerik.Utils
 
         private void Awake()
         {
-            _uiDocument.enabled = true;
+            _uiDocument.enabled = false;
             //_uiDocument.rootVisualElement.SetDisplay(false);
         }
         void Start()
@@ -87,6 +87,8 @@ namespace SkyClerik.Utils
             _bCheast.clicked += _bCheast_clicked;
 
             _bExitGame.clicked += _bExitGame_clicked;
+
+            _uiDocument.enabled = false;
         }
 
 
