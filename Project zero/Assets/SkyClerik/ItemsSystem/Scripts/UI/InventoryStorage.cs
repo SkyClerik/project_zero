@@ -315,6 +315,19 @@ namespace SkyClerik.Inventory
 
             int curWidth = isZeroWidth == true ? _givenItem.TracingZero : _givenItem.TracingWidth;
             int maxAttempts = _givenItem.MaxAttempt;
+
+            if (_givenItem.Tracing == false)
+            {
+                visualToHighlight.schedule.Execute(() =>
+                {
+                    {
+                        visualToHighlight.SetBorderColor(ColorExt.GetColorTransparent());
+                        visualToHighlight.SetBorderWidth(_givenItem.TracingZero);
+                    }
+                }).ExecuteLater(100);
+                return;
+            }
+
             visualToHighlight.schedule.Execute(() =>
             {
                 //Debug.LogWarning($"visualToHighlight.resolvedStyle.width {visualToHighlight.worldBound}.");
@@ -334,7 +347,7 @@ namespace SkyClerik.Inventory
                     visualToHighlight.SetBorderColor(ColorExt.GetColorTransparent());
                     visualToHighlight.SetBorderWidth(_givenItem.TracingZero);
                 }
-            }).ExecuteLater(250);
+            }).ExecuteLater(100);
         }
 
         internal void OpenInventoryAndCraft()

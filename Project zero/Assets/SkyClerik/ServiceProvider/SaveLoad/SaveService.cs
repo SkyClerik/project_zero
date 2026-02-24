@@ -3,6 +3,7 @@ using SkyClerik.Inventory;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Toolbox;
+using System.Collections.Generic; // Добавлено для использования List
 
 namespace SkyClerik.Utils
 {
@@ -20,14 +21,24 @@ namespace SkyClerik.Utils
         public void SaveAll(GlobalGameProperty globalGameProperty, int slotIndex)
         {
             var inventoryStorage = ServiceProvider.Get<InventoryStorage>();
-            if (inventoryStorage == null)
+            var questsContainer = ServiceProvider.Get<SkyClerik.QuestsContainer>(); // Получаем экземпляр QuestsContainer
+
+            if (inventoryStorage == null && questsContainer == null)
                 return;
 
             var slotFolderPath = GetSaveSlotFolderPath(slotIndex);
 
-            foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
+            if (inventoryStorage != null)
             {
-                SaveItemContainer(containerAndPage.Container, slotFolderPath);
+                foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
+                {
+                    SaveItemContainer(containerAndPage.Container, slotFolderPath);
+                }
+            }
+
+            if (questsContainer != null)
+            {
+                SaveQuestsContainer(questsContainer, slotFolderPath); // Вызываем новый метод для сохранения квестов
             }
 
             SaveGlobalState(globalGameProperty, slotFolderPath);
@@ -93,6 +104,39 @@ namespace SkyClerik.Utils
                 }
                 itemIndex++;
             }
+        }
+
+        /// <summary>
+        /// Сохраняет данные квестов из <see cref="QuestsContainer"/> в указанную папку слота.
+        /// </summary>
+        /// <param name="questsContainer">Контейнер квестов для сохранения.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения.</param>
+        public void SaveQuestsContainer(SkyClerik.QuestsContainer questsContainer, string slotFolderPath)
+        {
+            if (questsContainer == null)
+            {
+                Debug.LogWarning("Попытка сохранить пустой (null) QuestsContainer.");
+                return;
+            }
+
+            string fileName = "quests.json";
+            string filePath = Path.Combine(slotFolderPath, fileName);
+
+            // Создаем временный анонимный объект для сериализации обоих списков
+            var questDataToSerialize = new
+            {
+                Relations = questsContainer.relations,
+                Quests = questsContainer.quests
+            };
+
+            string json = JsonConvert.SerializeObject(questDataToSerialize, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+
+            File.WriteAllText(filePath, json);
+            Debug.Log($"Данные квестов сохранены в: {filePath}");
         }
 
         /// <summary>

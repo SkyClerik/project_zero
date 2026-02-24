@@ -21,18 +21,33 @@ namespace SkyClerik
         private long _amount;
 
         /// <summary>
-        /// Текущее количество денег на счету. Доступно только для чтения извне.
-        /// </summary>
-        public long Amount => _amount;
-
-        /// <summary>
         /// Инициализирует кошелек, вызывая событие с текущим количеством денег.
         /// </summary>
         public void Initialize()
         {
             OnMoneyChanged?.Invoke(_amount, 0);
         }
-        
+
+        /// <summary>
+        /// Текущее количество денег на счету и устанавка точного значение денег на счету.
+        /// </summary>
+        public long Amount
+        {
+            get => _amount;
+            set
+            {
+                if (value < 0)
+                    value = 0;
+
+                if (_amount == value)
+                    return;
+
+                var oldAmount = _amount;
+                _amount = value;
+                OnMoneyChanged?.Invoke(_amount, _amount - oldAmount);
+            }
+        }
+
         /// <summary>
         /// Проверяет, достаточно ли денег на счету для выполнения операции.
         /// </summary>
@@ -46,10 +61,10 @@ namespace SkyClerik
         /// </summary>
         public bool HasEnough(long amountToSpend, out long shortfall)
         {
-            if (amountToSpend < 0) 
+            if (amountToSpend < 0)
             {
                 shortfall = 0;
-                return false; 
+                return false;
             }
 
             if (_amount >= amountToSpend)
@@ -57,7 +72,7 @@ namespace SkyClerik
                 shortfall = 0;
                 return true;
             }
-            
+
             shortfall = amountToSpend - _amount;
             return false;
         }
@@ -69,7 +84,7 @@ namespace SkyClerik
         {
             return TrySpend(amountToSpend, out _);
         }
-        
+
         /// <summary>
         /// Пытается списать указанную сумму со счета и возвращает недостающую сумму в случае неудачи.
         /// </summary>
@@ -82,9 +97,7 @@ namespace SkyClerik
             }
 
             if (!HasEnough(amountToSpend, out shortfall))
-            {
                 return false;
-            }
 
             var oldAmount = _amount;
             _amount -= amountToSpend;
@@ -98,32 +111,10 @@ namespace SkyClerik
         public void Add(long amountToAdd)
         {
             if (amountToAdd <= 0)
-            {
                 return;
-            }
-            
+
             var oldAmount = _amount;
             _amount += amountToAdd;
-            OnMoneyChanged?.Invoke(_amount, _amount - oldAmount);
-        }
-
-        /// <summary>
-        /// Устанавливает точное значение денег на счету.
-        /// </summary>
-        public void Set(long newAmount)
-        {
-            if (newAmount < 0)
-            {
-                newAmount = 0;
-            }
-
-            if (_amount == newAmount)
-            {
-                return;
-            }
-            
-            var oldAmount = _amount;
-            _amount = newAmount;
             OnMoneyChanged?.Invoke(_amount, _amount - oldAmount);
         }
 
@@ -133,9 +124,7 @@ namespace SkyClerik
         public static bool TryTransfer(Money from, Money to, long amount)
         {
             if (from == null || to == null || amount <= 0)
-            {
                 return false;
-            }
 
             if (from.TrySpend(amount))
             {

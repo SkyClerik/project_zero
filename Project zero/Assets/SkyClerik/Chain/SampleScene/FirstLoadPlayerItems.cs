@@ -10,6 +10,8 @@ namespace SkyClerik
         private MonoBehaviour _nextStep;
         public IChain NextComponent { get; set; }
 
+        private GlobalBox _globalBox;
+
         private void Awake()
         {
             if (_nextStep != null && _nextStep is IChain)
@@ -18,8 +20,14 @@ namespace SkyClerik
 
         public void ExecuteStep()
         {
-            LoadItems();
-            Next();
+            _globalBox = ServiceProvider.Get<GlobalBox>();
+            if (_globalBox == null)
+                return;
+
+            if (!_globalBox.GlobalGameProperty.IsNewGame)
+                LoadItems();
+            else
+                Next();
         }
 
         private void Next()
@@ -30,15 +38,8 @@ namespace SkyClerik
 
         private void LoadItems()
         {
-            var globalBox = ServiceProvider.Get<GlobalBox>();
-            if (globalBox == null)
-                return;
-
-            var loadService = globalBox.LoadService;
-            var globalProperty = globalBox.GlobalGameProperty;
-
-            if (globalProperty.IsNewGame)
-                return;
+            var loadService = _globalBox.LoadService;
+            var globalProperty = _globalBox.GlobalGameProperty;
 
             // slotIndex будет 0 всегда так как мы не планируем слоты сохранения
             var slotFolderPath = loadService.GetSaveSlotFolderPath(slotIndex: 0);

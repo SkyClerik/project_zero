@@ -3,6 +3,7 @@ using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine.Toolbox;
+using System.Collections.Generic;
 
 namespace SkyClerik.Utils
 {
@@ -20,16 +21,24 @@ namespace SkyClerik.Utils
         public void LoadAll(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
             var inventoryStorage = ServiceProvider.Get<InventoryStorage>();
-            if (inventoryStorage == null)
-                return;
+            var questsContainer = ServiceProvider.Get<QuestsContainer>();
 
-            // Загружаем данные
-            foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
-                LoadItemContainer(containerAndPage.Container, slotFolderPath);
+            // Загружаем инвентарь
+            if (inventoryStorage != null)
+            {
+                foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
+                    LoadItemContainer(containerAndPage.Container, slotFolderPath);
 
-            // Обновляем визуальные элементы после загрузки всех контейнеров
-            foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
-                containerAndPage.Page.RefreshVisuals();
+                // Обновляем визуальные элементы после загрузки всех контейнеров
+                foreach (var containerAndPage in inventoryStorage.ContainersAndPages)
+                    containerAndPage.Page.RefreshVisuals();
+            }
+
+            // Загружаем квесты
+            if (questsContainer != null)
+            {
+                LoadQuestsContainer(questsContainer, slotFolderPath);
+            }
 
             Debug.Log($"Полная загрузка для слота {globalGameProperty.CurrentSaveSlotIndex} завершена.");
         }
@@ -102,25 +111,20 @@ namespace SkyClerik.Utils
                     foreach (var item in loadedContainerDefinition.Items)
                     {
                         if (item != null)
-                        {
                             Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: Name='{item.DefinitionName}', WrapperIndex={item.ID}, Stack={item.Stack}, GridPosition={item.GridPosition}, RuntimeID={item.GetInstanceID()}, Type={item.GetType().Name}");
-                        }
                         else
-                        {
                             Debug.Log($"[LoadService]   Загруженный предмет {itemIndex}: NULL (Возможно, потеряна ссылка)");
-                        }
+
                         itemIndex++;
                     }
 
                     // Копируем данные из загруженного определения в существующее
                     // Это важно для ScriptableObject, чтобы сохранить ссылки в Unity
                     targetContainer.ContainerDefinition.SetDataFromOtherContainer(loadedContainerDefinition);
-                    
+
                     Debug.Log($"<color=cyan>[LoadService] After SetDataFromOtherContainer, target container '{targetContainer.name}' now has {targetContainer.ContainerDefinition.Items.Count} items.</color>");
-                    foreach(var item in targetContainer.ContainerDefinition.Items)
-                    {
+                    foreach (var item in targetContainer.ContainerDefinition.Items)
                         Debug.Log($"<color=cyan>  - Item: {item.DefinitionName}, Pos: {item.GridPosition}</color>");
-                    }
 
                     // После загрузки данных в ItemDataStorageSO, настраиваем логическую сетку контейнера
                     targetContainer.SetupLoadedItemsGrid();
@@ -128,13 +132,66 @@ namespace SkyClerik.Utils
 
                 }
                 else
-                {
                     Debug.LogError($"Не удалось десериализовать ItemContainerDefinition из файла: {filePath}");
+            }
+            else
+                Debug.LogWarning($"Файл сохранения для контейнера '{containerGuid}' не найден по пути: {filePath}");
+        }
+
+        /// <summary>
+        /// Загружает данные квестов в <see cref="QuestsContainer"/> из указанной папки слота.
+        /// </summary>
+        /// <param name="questsContainer">Контейнер квестов, в который будут загружены данные.</param>
+        /// <param name="slotFolderPath">Путь к папке слота сохранения/загрузки.</param>
+        public void LoadQuestsContainer(SkyClerik.QuestsContainer questsContainer, string slotFolderPath)
+        {
+            if (questsContainer == null)
+            {
+                Debug.LogWarning("Попытка загрузить в пустой (null) QuestsContainer.");
+                return;
+            }
+
+            string fileName = "quests.json";
+            string filePath = Path.Combine(slotFolderPath, fileName);
+
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                try
+                {
+                    // Используем анонимный тип для десериализации, соответствующий структуре сохранения
+                    var loadedQuestData = JsonConvert.DeserializeAnonymousType(json, new
+                    {
+                        Relations = new List<SkyClerik.PlayerNPCRelation>(),
+                        Quests = new List<SkyClerik.QuestInfo>()
+                    }, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    });
+
+                    if (loadedQuestData != null)
+                    {
+                        questsContainer.relations.Clear();
+                        questsContainer.relations.AddRange(loadedQuestData.Relations);
+
+                        questsContainer.quests.Clear();
+                        questsContainer.quests.AddRange(loadedQuestData.Quests);
+
+                        Debug.Log($"Данные квестов успешно загружены из: {filePath}. Загружено {loadedQuestData.Quests.Count} квестов и {loadedQuestData.Relations.Count} отношений.");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Не удалось десериализовать данные квестов из файла: {filePath}");
+                    }
+                }
+                catch (JsonSerializationException ex)
+                {
+                    Debug.LogError($"Не удалось загрузить данные квестов из-за ошибки сериализации: {ex.Message}. Используются текущие данные.", null);
                 }
             }
             else
             {
-                Debug.LogWarning($"Файл сохранения для контейнера '{containerGuid}' не найден по пути: {filePath}");
+                Debug.LogWarning($"Файл сохранения квестов не найден по пути: {filePath}. Используются текущие данные.", null);
             }
         }
 
@@ -151,9 +208,8 @@ namespace SkyClerik.Utils
             string slotPath = Path.Combine(baseSavePath, slotFolderName);
 
             if (!Directory.Exists(slotPath))
-            {
                 Directory.CreateDirectory(slotPath);
-            }
+
             return slotPath;
         }
     }

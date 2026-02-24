@@ -1,4 +1,4 @@
-namespace SkyClerik.Utils
+﻿namespace SkyClerik.Utils
 {
     /// <summary>
     /// Перечисление, определяющее различные глобальные состояния игры.
@@ -10,14 +10,6 @@ namespace SkyClerik.Utils
         /// </summary>
         MainMenu = 0,
         /// <summary>
-        /// Идет процесс создания новой игры.
-        /// </summary>
-        NewGame = 1,
-        /// <summary>
-        /// Идет процесс загрузки игры.
-        /// </summary>
-        LoadGame = 2,
-        /// <summary>
         /// Игра активно запущена.
         /// </summary>
         InGame = 3,
@@ -25,9 +17,5 @@ namespace SkyClerik.Utils
         /// Игра поставлена на паузу.
         /// </summary>
         Paused = 4,
-        /// <summary>
-        /// Игра завершена (состояние Game Over).
-        /// </summary>
-        GameOver = 5,
     }
 }

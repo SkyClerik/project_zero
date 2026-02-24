@@ -27,9 +27,7 @@ namespace SkyClerik
             ServiceProvider.Register(this);
 
             if (_wallet != null)
-            {
                 _wallet.OnMoneyChanged += HandleMoneyChanged;
-            }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             SubscribeToEventsForLogging();
@@ -47,9 +45,7 @@ namespace SkyClerik
             ServiceProvider.Unregister(this);
 
             if (_wallet != null)
-            {
                 _wallet.OnMoneyChanged -= HandleMoneyChanged;
-            }
         }
         #endregion
 
@@ -88,11 +84,6 @@ namespace SkyClerik
         public void Add(long amount) => _wallet.Add(amount);
 
         /// <summary>
-        /// Устанавливает точное значение на счету. Отрицательные значения будут заменены на 0.
-        /// </summary>
-        public void Set(long amount) => _wallet.Set(amount);
-
-        /// <summary>
         /// Пытается перевести деньги на счет другого получателя.
         /// </summary>
         /// <param name="recipientAPI">API кошелька-получателя.</param>
@@ -128,13 +119,9 @@ namespace SkyClerik
             OnMoneyChanged += (newAmount, delta) =>
             {
                 if (delta > 0)
-                {
                     Debug.Log($"<color=cyan>[MoneyAPI]</color> Баланс изменен: <b>{newAmount}</b> (+{delta})");
-                }
                 else if (delta < 0)
-                {
                     Debug.Log($"<color=orange>[MoneyAPI]</color> Баланс изменен: <b>{newAmount}</b> ({delta})");
-                }
             };
 
             Debug.Log("<color=lime>[MoneyAPI]</color> Отладочное логирование кошелька включено.");

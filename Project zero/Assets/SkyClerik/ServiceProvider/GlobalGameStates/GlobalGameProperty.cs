@@ -45,11 +45,11 @@ namespace SkyClerik.Utils
 
         [Tooltip("Текущий счет или очки игрока.")]
         [SerializeField]
-        private int _playerScore = 0;
+        private Money _playerMoney;
         /// <summary>
         /// Возвращает текущий счет или очки игрока.
         /// </summary>
-        public int PlayerScore => _playerScore;
+        public Money PlayerMoney => _playerMoney;
 
         [Tooltip("Установлено в 'true', если игроку разрешено открыть окно крафта")]
         [SerializeField]
@@ -73,10 +73,9 @@ namespace SkyClerik.Utils
         /// </summary>
         public void SetNewGame()
         {
-            _currentGameState = GameState.NewGame;
             _isNewGame = true;
             _hasSeenIntro = false;
-            _playerScore = 0;
+            _playerMoney.Amount = 0;
             Debug.Log("Глобальное состояние игры установлено: Новая Игра.");
         }
 
@@ -85,7 +84,6 @@ namespace SkyClerik.Utils
         /// </summary>
         public void SetLoadGame()
         {
-            _currentGameState = GameState.LoadGame;
             _isNewGame = false;
             Debug.Log("Глобальное состояние игры установлено: <color=green>Загрузка Игры</color>.");
         }
@@ -108,15 +106,6 @@ namespace SkyClerik.Utils
             Debug.Log("Глобальное состояние игры установлено: Пауза.");
         }
 
-        /// <summary>
-        /// Устанавливает игровое состояние на "Игра окончена".
-        /// </summary>
-        public void SetGameOver()
-        {
-            _currentGameState = GameState.GameOver;
-            Debug.Log("Глобальное состояние игры установлено: Игра Окончена.");
-        }
-
         // Методы для обновления других флагов
         /// <summary>
         /// Устанавливает флаг, указывающий, просмотрен ли вступительный ролик/обучение.
@@ -126,16 +115,6 @@ namespace SkyClerik.Utils
         {
             _hasSeenIntro = value;
             Debug.Log($"Просмотрено Вступление: {_hasSeenIntro}");
-        }
-
-        /// <summary>
-        /// Добавляет указанное количество очков к текущему счету игрока.
-        /// </summary>
-        /// <param name="amount">Количество очков для добавления.</param>
-        public void AddPlayerScore(int amount)
-        {
-            _playerScore += amount;
-            Debug.Log($"Счет игрока обновлен: {_playerScore}");
         }
 
         /// <summary>
@@ -156,7 +135,7 @@ namespace SkyClerik.Utils
             _currentGameState = GameState.MainMenu;
             _isNewGame = true;
             _hasSeenIntro = false;
-            _playerScore = 0;
+            _playerMoney = new Money();
             _currentSaveSlotIndex = 0;
             Debug.Log("Глобальное состояние игры сброшено до значений Главного Меню.");
         }

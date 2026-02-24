@@ -2,13 +2,13 @@
     <ui:Template name="QuestDescription" src="project://database/Assets/SkyClerik/Journal/QuestDescription.uxml?fileID=9197481963319205126&amp;guid=38be7282a18165946be4f73587d17ec7&amp;type=3#QuestDescription" />
     <Style src="project://database/Assets/SkyClerik/Journal/CustomProgressBarStyle.uss?fileID=7433441132597879392&amp;guid=030f678b1818d894b8ab504dc8523977&amp;type=3#CustomProgressBarStyle" />
     <Style src="project://database/Assets/SkyClerik/Journal/ButtonStyleA.uss?fileID=7433441132597879392&amp;guid=fcc0c6be171466b419eca66e4f6b6d21&amp;type=3#ButtonStyleA" />
-    <ui:VisualElement picking-mode="Ignore" name="window_area" style="flex-grow: 0; flex-direction: row; display: flex; align-items: center; justify-content: center; background-color: rgb(0, 0, 0); height: 100%; width: 100%;">
-        <ui:VisualElement name="job_area" style="flex-grow: 0; width: 90%; height: 100%; flex-direction: row;">
-            <ui:VisualElement picking-mode="Ignore" name="main_insets_area" style="flex-grow: 0; width: 120px; align-items: center; justify-content: center;">
-                <ui:Button text="Inventory" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory" class="button-style-a" style="width: 120px; height: 120px; align-items: auto;" />
-                <ui:Button text="Journal" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_journal" class="button-style-a" style="width: 120px; height: 120px;" />
-                <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_settings" class="button-style-a" style="width: 120px; height: 120px;" />
-                <ui:Button text="Close" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_close" class="button-style-a" style="width: 120px; height: 120px;" />
+    <ui:VisualElement picking-mode="Ignore" name="window_area" style="flex-grow: 0; flex-direction: row; display: flex; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.21); height: 100%; width: 100%;">
+        <ui:VisualElement name="job_area" style="flex-grow: 0; width: 95%; height: 100%; flex-direction: row;">
+            <ui:VisualElement picking-mode="Ignore" name="main_insets_area" style="flex-grow: 0; width: 160px; align-items: center; justify-content: space-around;">
+                <ui:Button text="Inventory" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_inventory" class="button-style-a" style="width: 160px; height: 160px; align-items: auto;" />
+                <ui:Button text="Journal" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_journal" class="button-style-a" style="width: 160px; height: 160px;" />
+                <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_settings" class="button-style-a" style="width: 160px; height: 160px;" />
+                <ui:Button text="Close" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_close" class="button-style-a" style="width: 160px; height: 160px;" />
             </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1;">
                 <ui:VisualElement picking-mode="Ignore" name="top_panel" style="flex-grow: 0; height: 7%; flex-direction: row; align-items: center; justify-content: space-between; background-color: rgba(59, 36, 113, 0.62);">
@@ -26,13 +26,13 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement picking-mode="Ignore" class="hologram-panel" style="flex-grow: 1; background-color: rgb(60, 60, 60); flex-shrink: 1; justify-content: flex-end;">
-                    <ui:VisualElement picking-mode="Ignore" name="up_insets" style="flex-grow: 0; height: 96px; flex-direction: row; justify-content: flex-start; align-items: flex-end;">
-                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 96px; height: 96px;" />
-                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 96px; height: 96px;" />
-                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 96px; height: 96px;" />
+                    <ui:VisualElement picking-mode="Ignore" name="up_insets" style="flex-grow: 0; height: 120px; flex-direction: row; justify-content: flex-start; align-items: flex-end;">
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 120px; height: 120px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 120px; height: 120px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 120px; height: 120px;" />
                     </ui:VisualElement>
                     <ui:VisualElement picking-mode="Ignore" name="page" style="flex-grow: 1; width: 100%; flex-shrink: 0; flex-direction: row;">
-                        <ui:VisualElement picking-mode="Ignore" name="character_area" style="flex-grow: 0; width: 25%; align-items: flex-start; margin-left: 40px; margin-top: 20px;">
+                        <ui:VisualElement picking-mode="Ignore" name="character_area" style="flex-grow: 0; width: 22%; align-items: flex-start; margin-left: 40px; margin-top: 20px;">
                             <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; background-color: rgba(238, 80, 80, 0.77); width: 480px; height: 640px; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px;">
                                 <ui:VisualElement picking-mode="Ignore" class="hologram-panel" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/FungusExamples/Sherlock/Portraits/Sherlock/sherlock_neutral.png?fileID=-1482042274&amp;guid=cec88ab3171afc54b92db075974123ea&amp;type=3#sherlock_neutral_0&quot;); -unity-background-scale-mode: scale-and-crop; -unity-slice-scale: 1px; scale: -1 1; border-left-color: rgb(0, 230, 255); border-right-color: rgb(0, 230, 255); border-top-color: rgb(0, 230, 255); border-bottom-color: rgb(0, 230, 255); border-top-width: 8px; border-right-width: 8px; border-bottom-width: 8px; border-left-width: 8px;" />
                             </ui:VisualElement>
@@ -48,7 +48,7 @@
                                 <ui:Label tabindex="-1" text="1" parse-escape-sequences="true" display-tooltip-when-elided="true" picking-mode="Ignore" name="value" style="height: 100%; font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-right; padding-right: 40px;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
-                        <ui:VisualElement picking-mode="Ignore" name="quests_area" style="flex-grow: 0; width: 75%; height: 100%;">
+                        <ui:VisualElement picking-mode="Ignore" name="quests_area" style="flex-grow: 0; width: 78%; height: 100%;">
                             <ui:ScrollView scroll-deceleration-rate="0,135" elasticity="0,1" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
                                 <ui:VisualElement picking-mode="Ignore" name="scroll_view_content">
                                     <ui:Instance template="QuestDescription" name="QuestDescription" />
@@ -56,10 +56,10 @@
                             </ui:ScrollView>
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement picking-mode="Ignore" name="down_inserts" style="flex-grow: 0; height: 96px; flex-direction: row; justify-content: flex-end; background-color: rgba(59, 36, 113, 0.67); align-items: flex-start;">
-                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 96px; height: 96px;" />
-                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 96px; height: 96px;" />
-                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 96px; height: 96px;" />
+                    <ui:VisualElement picking-mode="Ignore" name="down_inserts" style="flex-grow: 0; height: 120px; flex-direction: row; justify-content: flex-end; background-color: rgba(59, 36, 113, 0.67); align-items: flex-start;">
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 120px; height: 120px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 120px; height: 120px;" />
+                        <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_test_inset" class="button-style-a" style="width: 120px; height: 120px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>

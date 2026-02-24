@@ -1,6 +1,6 @@
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityEngine.Toolbox
 {
@@ -146,6 +146,25 @@ namespace UnityEngine.Toolbox
             int count = components.Count();
             for (int i = 0; i < count; i++)
                 GameObject.DestroyImmediate(components.ElementAt(i));
+        }
+
+        /// <summary>
+        /// Безопасно пытается получить компонент типа T среди дочерних объектов, включая или исключая неактивные.
+        /// Возвращает true, если компонент найден, и присваивает его в out параметр.
+        /// </summary>
+        public static bool TryGetComponentInChildren<T>(this MonoBehaviour behaviour, out T component, bool includeInactive = false) where T : Component
+        {
+            component = behaviour.GetComponentInChildren<T>(includeInactive);
+            return component != null;
+        }
+
+        /// <summary>
+        /// Упрощённая перегрузка без out-параметра — возвращает true, если компонент найден.
+        /// Используйте, если вам не нужен сам компонент, только проверка наличия.
+        /// </summary>
+        public static bool TryGetComponentInChildren<T>(this MonoBehaviour behaviour, bool includeInactive = false) where T : Component
+        {
+            return behaviour.GetComponentInChildren<T>(includeInactive) != null;
         }
     }
 }
