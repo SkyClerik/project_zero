@@ -42,6 +42,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c973eca228944443af540d456f8df93
+    m_Address: Assets/Ufu/Prefabs/Factory/FactoryMat.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 90d0f01eb359f97418df4d2c8203210e
     m_Address: Assets/SkyClerik/DataEditor/Databases/ArmorDatabase.asset
     m_ReadOnly: 0
