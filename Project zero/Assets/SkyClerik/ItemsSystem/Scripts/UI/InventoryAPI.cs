@@ -1,8 +1,9 @@
-﻿using System;
+﻿using SkyClerik.Utils;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
-using SkyClerik.Utils;
 
 namespace SkyClerik.Inventory
 {
@@ -187,6 +188,9 @@ namespace SkyClerik.Inventory
             return false;
         }
 
+        // Проверяет поместится ли список предметов в клон сетки инвентаря.
+        public bool CanFitItems(List<ItemBaseDefinition> itemsToTest) => _playerInventory.CanFitItems(itemsToTest);
+
         // Пытается удалить предмет из инвентаря в указанном количестве в стаке
         public ItemContainer.RemoveResult TryRemoveItemInPlayerInventory(int itemId, int count) => _playerInventory.RemoveItem(itemId, count);
 
@@ -209,8 +213,12 @@ namespace SkyClerik.Inventory
             // slotIndex будет 0 всегда так как мы не планируем слоты сохранения            
             saveService.SaveAll(globalState, 0);
         }
-        private void LoadInventory()
+
+        public void LoadInventory_()
         {
+            ServiceProvider.Get<GlobalBox>().GlobalGameProperty.CurrentGameState = GameState.InGame;
+            ServiceProvider.Get<GlobalBox>().GlobalGameProperty.IsNewGame = false;
+
             var globalBox = ServiceProvider.Get<GlobalBox>();
             if (globalBox == null)
                 return;
@@ -225,13 +233,6 @@ namespace SkyClerik.Inventory
             var slotFolderPath = loadService.GetSaveSlotFolderPath(slotIndex: 0);
             loadService.LoadGlobalState(globalProperty, slotFolderPath);
             loadService.LoadAll(globalProperty, slotFolderPath);
-        }
-
-        public void LoadInventory_()
-        {
-            ServiceProvider.Get<GlobalBox>().GlobalGameProperty.CurrentGameState = GameState.InGame;
-            ServiceProvider.Get<GlobalBox>().GlobalGameProperty.IsNewGame = false;
-            LoadInventory();
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

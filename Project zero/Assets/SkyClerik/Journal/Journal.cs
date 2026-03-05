@@ -87,7 +87,6 @@ namespace SkyClerik
             /// </summary>
             public List<Label> value;
 
-
             public void Initialize(VisualElement root)
             {
                 // Запрашиваем уникальные элементы

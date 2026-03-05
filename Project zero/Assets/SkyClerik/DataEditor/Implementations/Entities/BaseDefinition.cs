@@ -17,7 +17,7 @@ namespace UnityEngine.DataEditor
         [SerializeField]
         [Tooltip("Уникальный идентификатор. Индекс полученный от общей базы предметов")]
         [ReadOnly]
-        protected int _id;
+        protected int _id = -1;
 
         [JsonProperty]
         [SerializeField]

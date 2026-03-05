@@ -264,7 +264,7 @@ namespace Febucci.HierarchyData
             }
             else
             {
-                Debug.LogWarning($"HierarchyData для текущего пользователя '{currentUser}' не найдено. Попытка найти актив для 'Default' пользователя.");
+                //Debug.LogWarning($"HierarchyData для текущего пользователя '{currentUser}' не найдено. Попытка найти актив для 'Default' пользователя.");
                 data = foundDatas.FirstOrDefault(hd => hd.User == "Default");
 
                 if (data != null)

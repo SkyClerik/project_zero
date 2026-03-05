@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
-using static UnityEditor.Progress;
 
 namespace SkyClerik.Inventory
 {

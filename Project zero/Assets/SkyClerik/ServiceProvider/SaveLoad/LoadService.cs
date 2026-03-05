@@ -3,7 +3,6 @@ using SkyClerik.Inventory;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine.Toolbox;
-using System.Collections.Generic;
 
 namespace SkyClerik.Utils
 {
@@ -21,7 +20,7 @@ namespace SkyClerik.Utils
         public void LoadAll(GlobalGameProperty globalGameProperty, string slotFolderPath)
         {
             var inventoryStorage = ServiceProvider.Get<InventoryStorage>();
-            var questsContainer = ServiceProvider.Get<QuestsContainer>();
+            var questsContainer = ServiceProvider.Get<Quests>();
 
             // Загружаем инвентарь
             if (inventoryStorage != null)
@@ -139,11 +138,11 @@ namespace SkyClerik.Utils
         }
 
         /// <summary>
-        /// Загружает данные квестов в <see cref="QuestsContainer"/> из указанной папки слота.
+        /// Загружает данные квестов в <see cref="Quests"/> из указанной папки слота.
         /// </summary>
         /// <param name="questsContainer">Контейнер квестов, в который будут загружены данные.</param>
         /// <param name="slotFolderPath">Путь к папке слота сохранения/загрузки.</param>
-        public void LoadQuestsContainer(SkyClerik.QuestsContainer questsContainer, string slotFolderPath)
+        public void LoadQuestsContainer(Quests questsContainer, string slotFolderPath)
         {
             if (questsContainer == null)
             {
@@ -160,29 +159,8 @@ namespace SkyClerik.Utils
                 try
                 {
                     // Используем анонимный тип для десериализации, соответствующий структуре сохранения
-                    var loadedQuestData = JsonConvert.DeserializeAnonymousType(json, new
-                    {
-                        Relations = new List<SkyClerik.PlayerNPCRelation>(),
-                        Quests = new List<SkyClerik.QuestInfo>()
-                    }, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    });
-
-                    if (loadedQuestData != null)
-                    {
-                        questsContainer.relations.Clear();
-                        questsContainer.relations.AddRange(loadedQuestData.Relations);
-
-                        questsContainer.quests.Clear();
-                        questsContainer.quests.AddRange(loadedQuestData.Quests);
-
-                        Debug.Log($"Данные квестов успешно загружены из: {filePath}. Загружено {loadedQuestData.Quests.Count} квестов и {loadedQuestData.Relations.Count} отношений.");
-                    }
-                    else
-                    {
-                        Debug.LogError($"Не удалось десериализовать данные квестов из файла: {filePath}");
-                    }
+                    var serializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                    questsContainer = JsonConvert.DeserializeObject<Quests>(json, serializerSettings);
                 }
                 catch (JsonSerializationException ex)
                 {

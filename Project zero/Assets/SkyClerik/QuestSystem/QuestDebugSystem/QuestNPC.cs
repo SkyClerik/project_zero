@@ -1,37 +1,59 @@
 ﻿using UnityEngine;
+using UnityEngine.Toolbox;
 
 namespace SkyClerik
 {
     public class QuestNPC : MonoBehaviour
     {
-        [SerializeField]
-        private QuestSystem _questSystem;
-        [SerializeField]
-        private ActorsContainer _actorsContainer;
-
-        [SerializeField]
-        private QuestInfo questInfo;
-        [SerializeField]
-        private NPCConfig npcConfig;
+        private NpcBobConfig _bobNpcConfig;
 
         private void OnMouseDown()
         {
-            TryAcceptQuest();
-        }
+            QuestAPI questAPI = ServiceProvider.Get<QuestAPI>();
 
-        private void TryAcceptQuest()
-        {
-            if (_questSystem.TryAcceptQuest(_actorsContainer, npcConfig.npcID, questInfo.questID, questInfo.needTrustLevel) == false)
+            if (_bobNpcConfig == null)
             {
-                Debug.Log($"Что то пошло не так и мы не смогли добавить квест");
+                _bobNpcConfig = questAPI.Npc<NpcBobConfig>();
+                //_bobNpcConfig = questAPI.Npc(NpcID.NPC_ID_BOB) as BobNpcConfig; // Так не делай, хотя можешь!
+                //_bobNpcConfig = (BobNpcConfig)questAPI.Npc(NpcID.NPC_ID_BOB); // Так тем более не делай!
             }
-        }
 
-        [ContextMenu("Set_NPC_01_QUEST_FETCH_SWORD")]
-        private void Set_NPC_01_QUEST_FETCH_SWORD()
-        {
-            npcConfig.npcID = "NPC_01";
-            questInfo.questID = "QUEST_FETCH_SWORD";
+
+            if (_bobNpcConfig != null)
+            {
+                if (_bobNpcConfig.TryAcceptQuest(NpcBobQuest.TradeFirstStep, out QuestAcceptFailedInfo failedInfo) == false)
+                {
+                    Debug.Log("Не удалось принять квест");
+
+                    if (failedInfo.TrustLackToMax > 0)
+                        Debug.Log($"У тебя не хватает еще {failedInfo.TrustLackToMax} доверия");
+
+                    if (failedInfo.CurActiveQuests > 0)
+                        Debug.Log($"Ты уже взял {failedInfo.CurActiveQuests} заданий");
+                }
+            }
+
+
+            // --- 
+
+
+            if (_bobNpcConfig != null)
+            {
+                _bobNpcConfig.CompleteQuest(NpcBobQuest.TradeFirstStep);
+            }
+
+
+            // --- 
+
+
+            if (_bobNpcConfig.IsWillRewardsFit(NpcBobQuest.TradeFirstStep))
+            {
+                Debug.Log($"Все предметы поместятся в инвентарь");
+            }
+            else
+            {
+                Debug.Log($"Предметы НЕ поместятся в инвентарь");
+            }
         }
     }
 }

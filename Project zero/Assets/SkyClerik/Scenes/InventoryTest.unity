@@ -508,6 +508,99 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6456088311198732137, guid: 51774bb6ad080024e98542a6f89c43fe, type: 3}
   m_PrefabInstance: {fileID: 4681849572119537943}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &689659626770805486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433634146520270314}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 39ffcfe28604fc947a27b91a04e4de1a, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 84b8deb5eddc9b740a7a99af7f625204, type: 3}
+  m_SortingOrder: 0
+--- !u!114 &1597179589226974499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883477850013284969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3db0c6d345e4d419e4ec05cee38b35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1939254380073245851
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2600144230703009935}
+  - component: {fileID: 6158229484235225986}
+  - component: {fileID: 5569687902883655624}
+  - component: {fileID: 6279063954104957389}
+  - component: {fileID: 4307041000249003266}
+  m_Layer: 0
+  m_Name: NPC_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2600144230703009935
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939254380073245851}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 1, z: 3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4765352155352623208}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3433634146520270314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8833297720121669838}
+  - component: {fileID: 689659626770805486}
+  - component: {fileID: 6223100035135729898}
+  m_Layer: 0
+  m_Name: Journal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &4307041000249003266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939254380073245851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e11cfc68dd8e0ed4994dc68d9a2e137c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4681849572119537943
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -569,71 +662,341 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6456088311198732137, guid: 51774bb6ad080024e98542a6f89c43fe, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6999095787327797461}
+      addedObject: {fileID: 4765352155352623208}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51774bb6ad080024e98542a6f89c43fe, type: 3}
---- !u!1001 &5719768570551049468
-PrefabInstance:
+--- !u!1 &4703414238718274432
+GameObject:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1671767154}
-    m_Modifications:
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1019310368921663356, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-      propertyPath: m_Name
-      value: Quests
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
---- !u!4 &6999095787327797461 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 955147659160384660, guid: f6ed324d9dcb7874ab5ee25cab9af553, type: 3}
-  m_PrefabInstance: {fileID: 5719768570551049468}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4765352155352623208}
+  m_Layer: 0
+  m_Name: Quests
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4765352155352623208
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4703414238718274432}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8833297720121669838}
+  - {fileID: 6174144673482487812}
+  - {fileID: 2600144230703009935}
+  m_Father: {fileID: 1671767154}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &5569687902883655624
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939254380073245851}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &6158229484235225986
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939254380073245851}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &6174144673482487812
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883477850013284969}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4765352155352623208}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6223100035135729898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433634146520270314}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f3ceaa786d4d814e8dda3c3010b6d7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!136 &6279063954104957389
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939254380073245851}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &8833297720121669838
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433634146520270314}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4765352155352623208}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8883477850013284969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6174144673482487812}
+  - component: {fileID: 1597179589226974499}
+  - component: {fileID: 9012139283416701423}
+  m_Layer: 0
+  m_Name: QuestSystemAndContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &9012139283416701423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883477850013284969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a410389a4ede17046bf5f18a7166f2d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _npcs:
+  - rid: 980829282135965699
+  - rid: 980829282135965697
+  references:
+    version: 2
+    RefIds:
+    - rid: 980829282135965697
+      type: {class: NpcConnorConfig, ns: SkyClerik, asm: Assembly-CSharp}
+      data:
+        _elementName: NPC_ID_CONNOR
+        _isAcquainted: 0
+        _curTrustLevel: 0
+        _maxTrustLevel: 10
+        _curActiveQuests: 0
+        _isJournalVisible: 1
+        _quests:
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+    - rid: 980829282135965699
+      type: {class: NpcBobConfig, ns: SkyClerik, asm: Assembly-CSharp}
+      data:
+        _elementName: NPC_ID_BOB
+        _isAcquainted: 0
+        _curTrustLevel: 0
+        _maxTrustLevel: 10
+        _curActiveQuests: 0
+        _isJournalVisible: 1
+        _quests:
+        - _elementName: OpenMainGate
+          _questKey:
+            _value: 1
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: "\u0428\u0435\u0440\u043B\u0451\u043A \u0433\u043E\u0432\u043E\u0440\u0438\u0442
+              \u0447\u0442\u043E \u0440\u0430\u0441\u043A\u0440\u043E\u0435\u0442
+              \u044D\u0442\u043E \u043F\u0440\u0435\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435
+              \u0437\u0430 \u0441\u0443\u0442\u043A\u0438 \u0438 \u043E\u0447\u0435\u043D\u044C
+              \u043D\u0435 \u0434\u0432\u0443\u0441\u043C\u044B\u0441\u043B\u0435\u043D\u043D\u043E
+              \u0434\u0430\u043B \u043F\u043E\u043D\u044F\u0442\u044C \u0447\u0442\u043E
+              \u043C\u0435\u0448\u0430\u0442\u044C\u0441\u044F \u0443 \u043D\u0435\u0433\u043E
+              \u043F\u043E\u0434 \u043D\u043E\u0433\u0430\u043C\u0438 \u0432\u0441\u044F\u043A\u0438\u043C
+              \u0431\u0435\u0437\u0434\u0430\u0440\u043D\u043E\u0441\u0442\u044F\u043C
+              \u0441\u043E\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u043E \u043D\u0435
+              \u043E\u0431\u0434\u0443\u043C\u0430\u043D\u043D\u043E\u0435 \u0438
+              \u0433\u043B\u0443\u043F\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435.
+              \u0421\u043A\u043E\u0440\u0435\u0435 \u0432\u0441\u0435\u0433\u043E
+              \u043E\u043D \u043F\u0440\u043E\u0441\u0442\u043E \u0445\u043E\u0442\u0435\u043B
+              \u0441\u043A\u0430\u0437\u0430\u0442\u044C \u0447\u0442\u043E \u043D\u0443\u0436\u043D\u043E
+              \u0431\u044B\u0442\u044C \u043E\u0441\u0442\u043E\u0440\u043E\u0436\u043D\u0435\u0435
+              \u043F\u0440\u0438 \u0438\u0437\u0443\u0447\u0435\u043D\u0438\u0438
+              \u0443\u043B\u0438\u043A. "
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
+        - _elementName: 
+          _questKey:
+            _value: 0
+          _needTrustLevel: 0
+          _questInfoState: 0
+          _textKeyDescription:
+            _key: 
+            _debugText: 
+          _addedMoney: 0
+          _rewardItems: []
+          _targetNpcs: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -322,10 +322,10 @@ namespace SkyClerik.Inventory
         /// <returns>True, если удалось удалить все запрошенные предметы; иначе false.</returns>
         internal bool RemoveItem(ItemBaseDefinition startingItem, int count, ItemRemoveReason reason = ItemRemoveReason.Destroy)
         {
-            if (count <= 0) 
+            if (count <= 0)
                 return true;
 
-            if (startingItem == null) 
+            if (startingItem == null)
                 return false;
 
             // Сначала проверяем, достаточно ли вообще предметов этого типа
@@ -747,6 +747,150 @@ namespace SkyClerik.Inventory
             suggestedGridPosition = Vector2Int.zero;
             return false;
         }
+
+        /// <summary>
+        /// Проверяет, поместятся ли все указанные предметы в контейнер,
+        /// не изменяя реальную сетку и список предметов.
+        /// </summary>
+        /// <param name="itemsToTest">Список предметов для проверки.</param>
+        /// <returns>True, если все предметы можно разместить; иначе false.</returns>
+        public bool CanFitItems(List<ItemBaseDefinition> itemsToTest)
+        {
+            if (itemsToTest == null || itemsToTest.Count == 0)
+                return true;
+
+            // Клонируем текущую матрицу занятости
+            bool[,] simulatedGrid = CloneGridOccupancy(_gridOccupancy);
+            Vector2Int gridDims = _gridDimensions;
+
+            // Сортировка по площади как в AddItems,чтобы сначала пытаться разместить большие предметы.
+            var sortedItems = itemsToTest
+                .Where(i => i != null && i.Stack > 0)
+                .OrderByDescending(item => item.Dimensions.Width * item.Dimensions.Height)
+                .ToList();
+
+            // Для каждого предмета — ищем позицию на копии матрицы и "занимаем" ячейки на ней
+            foreach (var item in sortedItems)
+            {
+                if (!TryFindPlacementOnMatrix(simulatedGrid, gridDims, item, out Vector2Int foundPos, out bool rotated))
+                {
+                    // Не поместятся предметы
+                    return false;
+                }
+
+                // Не трогаею реальные размеры и угол предмета, поэтому для поворота использую временный размер.
+                Vector2Int sizeToUse = rotated
+                    ? new Vector2Int(item.Dimensions.Height, item.Dimensions.Width)
+                    : new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
+
+                // Временная "occupation" для матрицы
+                for (int y = 0; y < sizeToUse.y; y++)
+                {
+                    for (int x = 0; x < sizeToUse.x; x++)
+                    {
+                        int gx = foundPos.x + x;
+                        int gy = foundPos.y + y;
+
+                        if (gx >= 0 && gy >= 0 && gx < gridDims.x && gy < gridDims.y)
+                            simulatedGrid[gx, gy] = true;
+                    }
+                }
+            }
+
+            // Все предметы смогли найти место
+            return true;
+
+            bool[,] CloneGridOccupancy(bool[,] source)
+            {
+                if (source == null)
+                    return null;
+
+                int width = source.GetLength(0);
+                int height = source.GetLength(1);
+
+                var clone = new bool[width, height];
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        clone[x, y] = source[x, y];
+                    }
+                }
+
+                return clone;
+            }
+
+            bool TryFindPlacementOnMatrix(bool[,] grid, Vector2Int gridDimensions, ItemBaseDefinition item, out Vector2Int suggestedGridPosition, out bool rotated)
+            {
+                rotated = false;
+
+                // оригинальные размеры
+                Vector2Int originalSize = new Vector2Int(item.Dimensions.Width, item.Dimensions.Height);
+                Vector2Int rotatedSize = new Vector2Int(item.Dimensions.Height, item.Dimensions.Width);
+
+                int minWidth = Math.Min(originalSize.x, rotatedSize.x);
+                int minHeight = Math.Min(originalSize.y, rotatedSize.y);
+
+                int searchGridWidth = gridDimensions.x - minWidth + 1;
+                int searchGridHeight = gridDimensions.y - minHeight + 1;
+
+                if (searchGridWidth <= 0 || searchGridHeight <= 0)
+                {
+                    suggestedGridPosition = Vector2Int.zero;
+                    return false;
+                }
+
+                for (int y = 0; y < searchGridHeight; y++)
+                {
+                    for (int x = 0; x < searchGridWidth; x++)
+                    {
+                        var pos = new Vector2Int(x, y);
+
+                        // сначала пробуем без поворота
+                        if (CheckGridAreaOnMatrix(grid, gridDimensions, pos, originalSize))
+                        {
+                            suggestedGridPosition = pos;
+                            rotated = false;
+                            return true;
+                        }
+
+                        // затем с поворотом, если размер не квадратный
+                        if (originalSize.x != originalSize.y &&
+                            CheckGridAreaOnMatrix(grid, gridDimensions, pos, rotatedSize))
+                        {
+                            suggestedGridPosition = pos;
+                            rotated = true;
+                            return true;
+                        }
+                    }
+                }
+
+                suggestedGridPosition = Vector2Int.zero;
+                return false;
+
+                bool CheckGridAreaOnMatrix(bool[,] grid, Vector2Int gridDimensions, Vector2Int start, Vector2Int size)
+                {
+                    if (start.x < 0 || start.y < 0 ||
+                        start.x + size.x > gridDimensions.x ||
+                        start.y + size.y > gridDimensions.y)
+                    {
+                        return false;
+                    }
+
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        for (int x = 0; x < size.x; x++)
+                        {
+                            if (grid[start.x + x, start.y + y])
+                                return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+
         #endregion
     }
 }
