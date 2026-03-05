@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Toolbox;
 
 namespace SkyClerik
@@ -18,6 +19,7 @@ namespace SkyClerik
                 //_bobNpcConfig = (BobNpcConfig)questAPI.Npc(NpcID.NPC_ID_BOB); // Так тем более не делай!
             }
 
+            // --- 
 
             if (_bobNpcConfig != null)
             {
@@ -29,13 +31,45 @@ namespace SkyClerik
                         Debug.Log($"У тебя не хватает еще {failedInfo.TrustLackToMax} доверия");
 
                     if (failedInfo.CurActiveQuests > 0)
-                        Debug.Log($"Ты уже взял {failedInfo.CurActiveQuests} заданий");
+                        Debug.Log($"Ты уже взял {failedInfo.CurActiveQuests} заданий из доступных {questAPI.MaxActiveQuests}");
                 }
             }
 
 
             // --- 
 
+            if (_bobNpcConfig != null)
+            {
+                if (_bobNpcConfig.TryGetIdleQuests(out List<QuestInfo> quests))
+                {
+                    if (quests.Count >= 0)
+                        Debug.Log("Получен список доступных для принятия заданий");
+                }
+            }
+
+            // --- 
+
+            if (_bobNpcConfig != null)
+            {
+                if (_bobNpcConfig.TryGetAcceptedQuests(out List<QuestInfo> quests))
+                {
+                    if (quests.Count >= 0)
+                        Debug.Log("Получен список заданий активных на данный момент");
+                }
+            }
+
+            // --- 
+
+            if (_bobNpcConfig != null)
+            {
+                if (_bobNpcConfig.TryGetQuestsInState(out List<QuestInfo> quests, QuestInfoState.IsCompleted))
+                {
+                    if (quests.Count >= 0)
+                        Debug.Log("Получен список уже завершенных заданий");
+                }
+            }
+
+            // --- 
 
             if (_bobNpcConfig != null)
             {

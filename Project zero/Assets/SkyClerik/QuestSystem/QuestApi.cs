@@ -45,13 +45,21 @@ namespace SkyClerik
             OnQuestComplate?.Invoke(questInfo, npcConfigBase);
         }
 
-        // базовый доступ
+        /// <summary>
+        /// Системный механизм получения ссылки на NPC
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public NpcConfigBase Npc(NpcID id)
         {
             return _questsContainer != null ? _questsContainer.Npc(id) : null;
         }
 
-        // Получить первый NPC нужного типа
+        /// <summary>
+        /// Получить ссылку на NPC
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T Npc<T>() where T : NpcConfigBase
         {
             if (_questsContainer == null)
@@ -64,5 +72,10 @@ namespace SkyClerik
             }
             return null;
         }
+
+        /// <summary>
+        /// Получить значение максимального числа квестов для любого NPC
+        /// </summary>
+        public int MaxActiveQuests => NpcConfigBase.MaxActiveQuests;
     }
 }

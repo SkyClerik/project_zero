@@ -18,6 +18,11 @@ namespace SkyClerik
         /// Текущее кол-во активных заданий
         /// </summary>
         public int CurActiveQuests;
+        /// <summary>
+        /// Максимум активных заданий
+        /// </summary>
+        public int MaxActiveQuests;
+
     }
 
     [Serializable]
@@ -55,13 +60,19 @@ namespace SkyClerik
 
         public abstract NpcID NpcID { get; }
 
-        protected const int _maxActiveQuests = 5;
+        public const int MaxActiveQuests = 5;
 
         [SerializeField]
         protected List<QuestInfo> _quests = new List<QuestInfo>();
         public IReadOnlyList<QuestInfo> Quests => _quests;
 
         // Попробовать принять задание
+        /// <summary>
+        /// Попробовать принять задание. При неудаче вернет информацию в QuestAcceptFailedInfo
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="failedInfo"></param>
+        /// <returns></returns>
         protected bool TryAcceptQuestInternal(QuestKey key, out QuestAcceptFailedInfo failedInfo)
         {
             failedInfo = new QuestAcceptFailedInfo();
@@ -71,19 +82,24 @@ namespace SkyClerik
                 if (_curTrustLevel < questInfo.needTrustLevel)
                 {
                     failedInfo.TrustLackToMax = IntExt.LackToMax(_curTrustLevel, questInfo.needTrustLevel);
+                    failedInfo.CurActiveQuests = _curActiveQuests;
+                    failedInfo.MaxActiveQuests = MaxActiveQuests;
                     Debug.Log($"[Квест] KEY: {questInfo.QuestKey.Value} : '{questInfo.ElementName}' не принят от {NpcID} по нехватке доверия");
                     return false;
                 }
 
-                if (_curActiveQuests >= _maxActiveQuests)
+                if (_curActiveQuests >= MaxActiveQuests)
                 {
                     failedInfo.CurActiveQuests = _curActiveQuests;
+                    failedInfo.MaxActiveQuests = MaxActiveQuests;
                     Debug.Log($"[Квест] KEY: {questInfo.QuestKey.Value} : '{questInfo.ElementName}' не принят от {NpcID} по лимиту заданий");
                     return false;
                 }
 
                 questInfo.QuestInfoState = QuestInfoState.IsAccepted;
                 _curActiveQuests++;
+                failedInfo.CurActiveQuests = _curActiveQuests;
+                failedInfo.MaxActiveQuests = MaxActiveQuests;
                 ServiceProvider.Get<QuestAPI>()?.RiseQuestAccept(questInfo, this);
                 Debug.Log($"[Квест] KEY: {questInfo.QuestKey.Value} : '{questInfo.ElementName}' принят от {NpcID}.");
                 return true;
@@ -92,7 +108,11 @@ namespace SkyClerik
             return false;
         }
 
-        // Проверить влезает ли список предметов в инвентарь. 
+        /// <summary>
+        /// Проверить влезает ли список предметов в инвентарь. 
+        /// </summary>
+        /// <param name="questKey"></param>
+        /// <returns></returns>
         protected bool IsWillRewardsFitInternal(QuestKey questKey)
         {
             if (QuestExist(questKey, out QuestInfo questInfo))
@@ -120,7 +140,11 @@ namespace SkyClerik
             return false;
         }
 
-        // Получить список квестов которые можно взять на выполнение
+        /// <summary>
+        /// Получить список квестов которые можно взять на выполнение
+        /// </summary>
+        /// <param name="idleQuests"></param>
+        /// <returns></returns>
         public bool TryGetIdleQuests(out List<QuestInfo> idleQuests)
         {
             idleQuests = new List<QuestInfo>();
@@ -132,6 +156,48 @@ namespace SkyClerik
             }
 
             if (idleQuests.Count == 0)
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Получить список квестов сейчас в процессе выполнения
+        /// </summary>
+        /// <param name="acceptQuests"></param>
+        /// <returns></returns>
+        public bool TryGetAcceptedQuests(out List<QuestInfo> acceptQuests)
+        {
+            acceptQuests = new List<QuestInfo>();
+
+            foreach (var quest in _quests)
+            {
+                if (quest.QuestInfoState == QuestInfoState.IsAccepted)
+                    acceptQuests.Add(quest);
+            }
+
+            if (acceptQuests.Count == 0)
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Получить список квестов с конкретным указанием желаемого состояния
+        /// </summary>
+        /// <param name="acceptQuests"></param>
+        /// <returns></returns>
+        public bool TryGetQuestsInState(out List<QuestInfo> acceptQuests, QuestInfoState questInfoState)
+        {
+            acceptQuests = new List<QuestInfo>();
+
+            foreach (var quest in _quests)
+            {
+                if (quest.QuestInfoState == questInfoState)
+                    acceptQuests.Add(quest);
+            }
+
+            if (acceptQuests.Count == 0)
                 return false;
             else
                 return true;
