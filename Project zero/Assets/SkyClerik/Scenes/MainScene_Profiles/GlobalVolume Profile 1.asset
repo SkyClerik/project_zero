@@ -18,25 +18,25 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 40.15
+    value: 68.61
   threshold:
     overrideState: 1
-    value: 0.94
+    value: 1.7
   softKnee:
-    overrideState: 0
-    value: 0.5
+    overrideState: 1
+    value: 0.934
   clamp:
     overrideState: 0
-    value: 65472
+    value: 1
   diffusion:
-    overrideState: 0
-    value: 7
+    overrideState: 1
+    value: 8.345
   anamorphicRatio:
     overrideState: 0
-    value: 0
+    value: -0.15
   color:
     overrideState: 0
-    value: {r: 1, g: 1, b: 1, a: 1}
+    value: {r: 1, g: 0.26566404, b: 0.25943398, a: 1}
   fastMode:
     overrideState: 0
     value: 0
@@ -62,6 +62,36 @@ MonoBehaviour:
   settings:
   - {fileID: -838939970966378552}
   - {fileID: 1496622268078009281}
+  - {fileID: 4498628289373591058}
+  - {fileID: 372167513946846543}
+--- !u!114 &372167513946846543
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d65e486e4de6e5448a8fbb43dc8756a0, type: 3}
+  m_Name: Grain
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  colored:
+    overrideState: 0
+    value: 1
+  intensity:
+    overrideState: 1
+    value: 1
+  size:
+    overrideState: 1
+    value: 0.3
+  lumContrib:
+    overrideState: 0
+    value: 0.8
 --- !u!114 &1496622268078009281
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -83,9 +113,9 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 4
+    value: 0.891
   color:
-    overrideState: 0
+    overrideState: 1
     value: {r: 0, g: 0, b: 0, a: 1}
   ambientOnly:
     overrideState: 0
@@ -101,16 +131,53 @@ MonoBehaviour:
     value: -12
   thicknessModifier:
     overrideState: 1
-    value: 10
+    value: 5.346
   zBias:
-    overrideState: 0
-    value: 0.0001
+    overrideState: 1
+    value: 0.00017
   directLightingStrength:
     overrideState: 0
     value: 0
   radius:
-    overrideState: 0
-    value: 0.25
+    overrideState: 1
+    value: 0.2
   quality:
     overrideState: 0
     value: 2
+--- !u!114 &4498628289373591058
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f6f3f7c722b4544b97e3c75840aa33, type: 3}
+  m_Name: AutoExposure
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  filtering:
+    overrideState: 1
+    value: {x: 28.362043, y: 42.386124}
+  minLuminance:
+    overrideState: 1
+    value: -0.61
+  maxLuminance:
+    overrideState: 1
+    value: 0.45
+  keyValue:
+    overrideState: 1
+    value: 1
+  eyeAdaptation:
+    overrideState: 0
+    value: 0
+  speedUp:
+    overrideState: 0
+    value: 2
+  speedDown:
+    overrideState: 0
+    value: 1
