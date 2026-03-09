@@ -36,6 +36,8 @@
 /Project zero/*.apk
 /Project zero/*.aab
 /Project zero/*.unitypackage
+/Project zero/*.zip
+/Project zero/*.rar
 
 # ==============================================================================
 # FMOD Unity Integration
