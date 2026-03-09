@@ -1,0 +1,172 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SkyClerik/World%20Screens/WorldScreen_002.uss?fileID=7433441132597879392&amp;guid=0235d7c51b7786146af078e572a9d5d5&amp;type=3#WorldScreen_002" />
+    <ui:VisualElement style="flex-grow: 0; width: 100%; -unity-background-scale-mode: scale-to-fit; flex-direction: row;">
+        <ui:VisualElement picking-mode="Ignore" name="line_1" style="align-items: center; justify-content: flex-start; flex-direction: row; position: absolute; top: 152px; left: -290px;">
+            <ui:VisualElement style="flex-grow: 1; height: 400px; width: 1000px;">
+                <ui:VisualElement name="VisualElement" class="line1" style="flex-grow: 0; width: 100%; height: 100px; border-top-width: 10px; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="box" style="flex-grow: 0; flex-direction: row; height: 400px; width: 400px;">
+                <ui:VisualElement class="line1" style="flex-grow: 0; width: 100px; height: 100px; border-top-width: 10px; border-right-width: 10px; border-bottom-width: 0; border-left-width: 0; border-bottom-left-radius: 0; border-top-right-radius: 40%; position: absolute;" />
+                <ui:VisualElement class="line1" style="flex-grow: 0; width: 100px; height: 100px; border-top-width: 0; border-right-width: 0; border-bottom-width: 10px; border-left-width: 10px; border-bottom-left-radius: 40%; border-top-right-radius: 0; border-top-left-radius: 0; position: absolute; left: 90px; top: 100px;" />
+                <ui:VisualElement class="line1" style="flex-grow: 0; width: 100px; height: 110px; border-top-width: 10px; border-right-width: 10px; border-bottom-width: 0; border-left-width: 0; border-bottom-left-radius: 0; border-top-right-radius: 40%; margin-top: -10px; position: absolute; left: 190px; top: 200px;" />
+                <ui:VisualElement class="line1" style="flex-grow: 0; width: 120px; height: 100px; border-top-width: 0; border-right-width: 0; border-bottom-width: 10px; border-left-width: 10px; border-bottom-left-radius: 40%; border-top-right-radius: 0; border-top-left-radius: 0; position: absolute; left: 280px; top: 300px;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; height: 400px; justify-content: flex-end; width: 1000px;">
+                <ui:VisualElement name="VisualElement" class="line1" style="flex-grow: 0; width: 100%; height: 100px; border-bottom-width: 10px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement picking-mode="Ignore" name="line_2" style="align-items: center; justify-content: flex-start; flex-direction: row; position: absolute; top: 78px; left: -184px;">
+            <ui:VisualElement style="flex-grow: 1; height: 400px; width: 848px; justify-content: flex-end;">
+                <ui:VisualElement name="VisualElement" class="line2" style="flex-grow: 0; width: 100%; height: 100px; border-bottom-width: 10px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="box" style="flex-grow: 0; flex-direction: row; height: 400px; width: 400px;">
+                <ui:VisualElement class="line2" style="flex-grow: 0; width: 100px; height: 100px; border-top-width: 0; border-right-width: 10px; border-bottom-width: 10px; border-left-width: 0; border-bottom-left-radius: 0%; border-top-right-radius: 0%; position: absolute; border-bottom-right-radius: 40%; top: 300px; left: 0;" />
+                <ui:VisualElement class="line2" style="flex-grow: 0; width: 100px; height: 100px; border-top-width: 10px; border-right-width: 0; border-bottom-width: 0; border-left-width: 10px; border-bottom-left-radius: 0%; border-top-right-radius: 0; border-top-left-radius: 40px; position: absolute; left: 90px; top: 200px;" />
+                <ui:VisualElement class="line2" style="flex-grow: 0; width: 100px; height: 100px; border-top-width: 0; border-right-width: 10px; border-bottom-width: 10px; border-left-width: 0; border-bottom-left-radius: 0%; border-top-right-radius: 0%; position: absolute; border-bottom-right-radius: 40%; top: 110px; left: 190px;" />
+                <ui:VisualElement class="line2" style="flex-grow: 0; width: 120px; height: 110px; border-top-width: 10px; border-right-width: 0; border-bottom-width: 0; border-left-width: 10px; border-bottom-left-radius: 0%; border-top-right-radius: 0; border-top-left-radius: 40px; position: absolute; left: 280px; top: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; height: 400px; justify-content: flex-start; width: 1228px;">
+                <ui:VisualElement name="VisualElement" class="line2" style="flex-grow: 0; width: 100%; height: 100px; border-top-width: 10px; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="l1" style="width: 100%; -unity-background-scale-mode: scale-to-fit; flex-direction: row; position: absolute; top: 0; left: 0;">
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; position: absolute; top: 120px; left: 50px; justify-content: space-between; width: 642px; align-items: center;">
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; align-items: center; justify-content: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-106677923&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_0&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; align-items: center; justify-content: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-496809146&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_21&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; align-items: center; justify-content: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-496809146&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_21&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0; width: 96px; height: 256px; background-color: rgb(48, 48, 48); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; position: absolute; top: 165px; left: 819px; align-items: center; justify-content: center;">
+                <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-1364332151&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_22&quot;); -unity-background-scale-mode: scale-to-fit; width: 100%; height: 166px;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; position: absolute; top: 508px; left: 1045px; justify-content: space-between; width: 968px; align-items: center;">
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; justify-content: center; align-items: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-1145717576&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_42&quot;); -unity-background-scale-mode: stretch-to-fill; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; justify-content: center; align-items: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-1364332151&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_22&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; justify-content: center; align-items: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-1544106208&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_34&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; align-items: center; justify-content: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=1062199515&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_46&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; position: absolute; top: 439px; left: 158px; justify-content: space-between; width: 182px; align-items: center;">
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; justify-content: center; align-items: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=-1364332151&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_22&quot;); -unity-background-scale-mode: scale-to-fit; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; position: absolute; top: 43px; left: 1296px; justify-content: space-between; width: 440px; align-items: center;">
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; justify-content: center; align-items: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=2058710017&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_10&quot;); -unity-background-scale-mode: stretch-to-fill; width: 80%; height: 80%; align-items: center; justify-content: center; top: -10%;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="circle" style="flex-grow: 0; background-color: rgb(48, 48, 48); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; justify-content: center; align-items: center;">
+                    <ui:VisualElement name="ico" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/SkyClerik/Journal/123image%20rbg.png?fileID=1062199515&amp;guid=8afb512baa2fa434fb53fee541d625c5&amp;type=3#123image rbg_46&quot;); -unity-background-scale-mode: scale-to-fit; rotate: -410deg; width: 80%; height: 80%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement picking-mode="Ignore" name="windows" style="position: absolute; width: 100%;">
+            <ui:VisualElement style="align-items: center; justify-content: space-around; flex-direction: row; position: absolute; top: 618px; left: 5px; width: 100%;">
+                <ui:VisualElement picking-mode="Ignore" class="window" style="flex-direction: row; align-items: center; background-color: rgb(36, 55, 19);">
+                    <ui:VisualElement style="flex-grow: 1; padding-left: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1; align-items: flex-end; padding-right: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                    </ui:VisualElement>
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" style="position: absolute; top: -35px; width: 100%; height: 30px; -unity-text-align: middle-center; -unity-font-style: bold; font-size: 34px; color: rgb(36, 55, 19);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" class="window" style="position: relative; flex-direction: row; align-items: center; background-color: rgb(66, 75, 30);">
+                    <ui:VisualElement style="flex-grow: 1; padding-left: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1; align-items: flex-end; padding-right: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                    </ui:VisualElement>
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" style="position: absolute; top: -35px; width: 100%; height: 30px; -unity-text-align: middle-center; -unity-font-style: bold; font-size: 34px; color: rgb(66, 75, 30);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" class="window" style="position: relative; flex-direction: row; align-items: center; background-color: rgb(75, 49, 33);">
+                    <ui:VisualElement style="flex-grow: 1; padding-left: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1; align-items: flex-end; padding-right: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                    </ui:VisualElement>
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" style="position: absolute; top: -35px; width: 100%; height: 30px; -unity-text-align: middle-center; -unity-font-style: bold; font-size: 34px; color: rgb(75, 49, 33);" />
+                </ui:VisualElement>
+                <ui:VisualElement picking-mode="Ignore" class="window" style="position: relative; flex-direction: row; align-items: center; background-color: rgb(67, 26, 46);">
+                    <ui:VisualElement style="flex-grow: 1; padding-left: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_title" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1; align-items: flex-end; padding-right: 30px;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="window_line_value" />
+                    </ui:VisualElement>
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" style="position: absolute; top: -35px; width: 100%; height: 30px; -unity-text-align: middle-center; -unity-font-style: bold; font-size: 34px; color: rgb(67, 26, 46);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

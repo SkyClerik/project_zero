@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine.UIElements;
 
 namespace UnityEngine.Toolbox
@@ -104,6 +104,20 @@ namespace UnityEngine.Toolbox
                 return;
 
             element.style.backgroundImage = new StyleBackground(value);
+        }
+
+        /// <summary>
+        /// Устанавливает фоновое изображение для `VisualElement` из `Sprite`.
+        /// </summary>
+        /// <typeparam name="T">Тип VisualElement.</typeparam>
+        /// <param name="element">Целевой `VisualElement`.</param>
+        /// <param name="value">Sprite для использования в качестве фонового изображения.</param>
+        public static void SetBackgroundColor<T>(this T element, Color value) where T : VisualElement
+        {
+            if (element == null)
+                return;
+
+            element.style.backgroundColor = new StyleColor(value);
         }
 
         /// <summary>

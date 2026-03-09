@@ -1,0 +1,44 @@
+.line1 {
+    border-left-color: rgb(0, 255, 4);
+    border-right-color: rgb(0, 255, 4);
+    border-top-color: rgb(0, 255, 4);
+    border-bottom-color: rgb(0, 255, 4);
+}
+
+.line2 {
+    border-left-color: rgb(255, 0, 0);
+    border-right-color: rgb(255, 0, 0);
+    border-top-color: rgb(255, 0, 0);
+    border-bottom-color: rgb(255, 0, 0);
+}
+
+.circle {
+    width: 80px;
+    height: 80px;
+}
+
+.window {
+    background-color: rgb(44, 0, 67);
+    border-top-left-radius: 43px;
+    border-top-right-radius: 43px;
+    border-bottom-right-radius: 43px;
+    border-bottom-left-radius: 43px;
+    width: 451px;
+    height: 488px;
+    flex-grow: 0;
+}
+
+.window_line_title {
+    color: rgb(105, 153, 212);
+    font-size: 28px;
+    -unity-font-style: normal;
+    -unity-text-align: middle-left;
+}
+
+.window_line_value {
+    color: rgb(54, 109, 176);
+    font-size: 30px;
+    -unity-font-style: bold;
+    margin-left: 30px;
+    -unity-text-align: middle-left;
+}

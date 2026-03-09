@@ -66,17 +66,17 @@ namespace SkyClerik
         private int _itemId;
         [Tooltip("Только для добавления предметов (это уменшит возможность опечаток)")]
         [SerializeField]
-        private ItemBaseDefinition _items;
+        private ItemBaseDefinition _item;
 
         public int ItemId => _itemId;
-        public ItemBaseDefinition Items => _items;
+        public ItemBaseDefinition Item => _item;
 
         public void ValidateID()
         {
-            if (_items == null)
+            if (_item == null)
                 return;
 
-            _itemId = _items.ID;
+            _itemId = _item.ID;
         }
     }
 

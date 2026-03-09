@@ -33,6 +33,11 @@ namespace SkyClerik
         private string _elementName = "NpcConfigBase";
         public string ElementName { set => _elementName = value; }
 
+        [ReadOnly]
+        [SerializeField]
+        private string _actorName = "Test Name Key";
+        public string ActorName => _actorName;
+
         [Tooltip("Я знаком")]
         [SerializeField]
         protected bool _isAcquainted;

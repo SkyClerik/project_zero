@@ -1,27 +1,103 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Toolbox;
 using System.Collections.Generic;
 
 namespace SkyClerik
 {
-	public class Journal : MonoBehaviour
-	{
+    [RequireComponent(typeof(UIDocument))]
+    public class Journal : MonoBehaviour
+    {
+        private Quests _questsContainer;
+        //private QuestAPI _questAPI;
         private JournalDocument _journalDocument;
+        private VisualElement _root;
+
+        [SerializeField]
+        private VisualTreeAsset _questDescriptionAsset;
+
+        private int _currentNpcView;
+
+        [SerializeField]
+        private KeyCode _key = KeyCode.J;
+        private bool _active;
 
         private void Start()
         {
+            //_questAPI = ServiceProvider.Get<QuestAPI>();
+            _questsContainer = ServiceProvider.Get<Quests>();
             var uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
-            if (uiDocument == null)
-            {
-                Debug.LogError("Journal: UIDocument component not found on this GameObject!", this);
-                return;
-            }
             uiDocument.enabled = true;
             _journalDocument = new JournalDocument();
-            _journalDocument.Initialize(uiDocument.rootVisualElement);
+            _root = uiDocument.rootVisualElement;
+            _journalDocument.Initialize(_root);
 
-            // Теперь вы можете получить доступ к вашим элементам через _journalDocument, например:
-            // _journalDocument.b_close.clicked += () => Debug.Log("Кнопка закрытия нажата!");
+            _journalDocument.bClose.clicked += Hide;
+
+            Hide();
+        }
+
+        public void Show()
+        {
+            _active = true;
+            _currentNpcView = 0;
+            _root.SetVisibility(true);
+            Debug.Log("Кнопка открытия журнала нажата!");
+            UpdatePage();
+
+        }
+
+        public void UpdatePage()
+        {
+            var npc = _questsContainer.Npcs[_currentNpcView];
+            //characterImage
+            _journalDocument.textNameZoneValue.text = $"{npc.ActorName}";
+            _journalDocument.scrollViewContent.Clear();
+
+            if (npc.TryGetQuestsInState(out List<QuestInfo> quests, QuestInfoState.IsAccepted))
+            {
+                for (int i = 0; i < quests.Count; i++)
+                {
+                    var description = new QuestDescription(_questDescriptionAsset);
+                    description.Init(quests[i]);
+                    _journalDocument.scrollViewContent.Add(description);
+                }
+            }
+
+            //TODO не забудь что тут заглушка добавляет закрытые квесты
+            if (npc.TryGetQuestsInState(out List<QuestInfo> quests1, QuestInfoState.IsCompleted))
+            {
+                for (int i = 0; i < quests1.Count; i++)
+                {
+                    var description = new QuestDescription(_questDescriptionAsset);
+                    description.Init(quests1[i]);
+                    _journalDocument.scrollViewContent.Add(description);
+                }
+            }
+        }
+
+        public void UpdatePageStaticText()
+        {
+            var npc = _questsContainer.Npcs[_currentNpcView];
+            _journalDocument.textNameZoneTitle.text = "Имя";
+        }
+
+        public void Hide()
+        {
+            _active = false;
+            _root.SetVisibility(false);
+            Debug.Log("Кнопка закрытия журнала нажата!");
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyUp(_key))
+            {
+                if (!_active)
+                    Show();
+                else
+                    Hide();
+            }
         }
 
         /// <summary>
@@ -30,94 +106,73 @@ namespace SkyClerik
         /// </summary>
         private class JournalDocument
         {
-            // Поля упорядочены так, чтобы отражать иерархию в UXML-файле.
-            
             // Корневые контейнеры
-            public VisualElement window_area;
-            public VisualElement job_area;
+            public VisualElement windowArea;
+            public VisualElement jobArea;
 
             // --- Левые кнопки ---
-            public VisualElement main_insets_area;
-            public Button b_inventory;
-            public Button b_journal;
-            public Button b_settings;
-            public Button b_close;
+            public VisualElement mainInsetsArea;
+            public Button bInventory;
+            public Button bJournal;
+            public Button bSettings;
+            public Button bClose;
 
             // --- Верхняя панель ---
-            public VisualElement top_panel;
-            public VisualElement left_area;
-            public Label player_level;
-            public Label player_money;
-            public VisualElement right_area;
+            public VisualElement topPanel;
+            public VisualElement leftArea;
+            public Label playerLevel;
+            public Label playerMoney;
+            public VisualElement rightArea;
             public VisualElement battery;
             public VisualElement icon;
-            public Label data_time;
-            
+            public Label dataTime;
+
             // --- Главная страница ---
-            public VisualElement up_inserts;
+            public VisualElement upInserts;
             public VisualElement page;
-            public VisualElement down_inserts;
+            public VisualElement downInserts;
 
             // --- Содержимое страницы ---
-            public VisualElement character_area;
-            public VisualElement quests_area;
-            public VisualElement scroll_view_content;
+            public VisualElement characterArea;
+            public VisualElement characterImage;
+            public Label textNameZoneTitle;
+            public Label textNameZoneValue;
+
+            public VisualElement questsArea;
+            public VisualElement scrollViewContent;
             public VisualElement QuestDescription; // Это <Instance> шаблона
-
-            // ПРИМЕЧАНИЕ: Следующие поля являются Списками (List), потому что несколько элементов в UXML
-            // используют одно и то же имя. Запрос по такому имени вернет коллекцию элементов.
-            
-            /// <summary>
-            /// Список всех VisualElement с именем "progress_parent".
-            /// </summary>
-            public List<VisualElement> progress_parent;
-
-            /// <summary>
-            /// Список всех VisualElement с именем "text_wrap".
-            /// </summary>
-            public List<VisualElement> text_wrap;
-
-            /// <summary>
-            /// Список всех Label с именем "title".
-            /// </summary>
-            public List<Label> title;
-
-            /// <summary>
-            /// Список всех Label с именем "value".
-            /// </summary>
-            public List<Label> value;
 
             public void Initialize(VisualElement root)
             {
                 // Запрашиваем уникальные элементы
-                window_area = root.Q<VisualElement>("window_area");
-                job_area = root.Q<VisualElement>("job_area");
-                main_insets_area = root.Q<VisualElement>("main_insets_area");
-                b_inventory = root.Q<Button>("b_inventory");
-                b_journal = root.Q<Button>("b_journal");
-                b_settings = root.Q<Button>("b_settings");
-                b_close = root.Q<Button>("b_close");
-                top_panel = root.Q<VisualElement>("top_panel");
-                left_area = root.Q<VisualElement>("left_area");
-                player_level = root.Q<Label>("player_level");
-                player_money = root.Q<Label>("player_money");
-                right_area = root.Q<VisualElement>("right_area");
+                windowArea = root.Q<VisualElement>("window_area");
+                jobArea = root.Q<VisualElement>("job_area");
+                mainInsetsArea = root.Q<VisualElement>("main_insets_area");
+                bInventory = root.Q<Button>("b_inventory");
+                bJournal = root.Q<Button>("b_journal");
+                bSettings = root.Q<Button>("b_settings");
+                bClose = root.Q<Button>("b_close");
+                topPanel = root.Q<VisualElement>("top_panel");
+                leftArea = root.Q<VisualElement>("left_area");
+                playerLevel = root.Q<Label>("player_level");
+                playerMoney = root.Q<Label>("player_money");
+                rightArea = root.Q<VisualElement>("right_area");
                 battery = root.Q<VisualElement>("battery");
                 icon = root.Q<VisualElement>("icon");
-                data_time = root.Q<Label>("data_time");
-                up_inserts = root.Q<VisualElement>("up_inserts");
+                dataTime = root.Q<Label>("data_time");
+                upInserts = root.Q<VisualElement>("up_inserts");
                 page = root.Q<VisualElement>("page");
-                character_area = root.Q<VisualElement>("character_area");
-                quests_area = root.Q<VisualElement>("quests_area");
-                scroll_view_content = root.Q<VisualElement>("scroll_view_content");
+                characterArea = page.Q<VisualElement>("character_area");
+                var nameZone = characterArea.Q<VisualElement>("name_zone");
+                textNameZoneTitle = nameZone.Q<Label>("title");
+                textNameZoneValue = nameZone.Q<Label>("value");
+                questsArea = page.Q<VisualElement>("quests_area");
+                scrollViewContent = root.Q<VisualElement>("scroll_view_content");
                 QuestDescription = root.Q<VisualElement>("QuestDescription");
-                down_inserts = root.Q<VisualElement>("down_inserts");
+                downInserts = root.Q<VisualElement>("down_inserts");
+                characterImage = root.Query<VisualElement>("character_image");
 
                 // Запрашиваем элементы с дублирующимися именами, собирая их в списки
-                progress_parent = root.Query<VisualElement>("progress_parent").ToList();
-                text_wrap = root.Query<VisualElement>("text_wrap").ToList();
-                title = root.Query<Label>("title").ToList();
-                value = root.Query<Label>("value").ToList();
             }
         }
     }

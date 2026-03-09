@@ -33,6 +33,17 @@ namespace SkyClerik
                     if (failedInfo.CurActiveQuests > 0)
                         Debug.Log($"Ты уже взял {failedInfo.CurActiveQuests} заданий из доступных {questAPI.MaxActiveQuests}");
                 }
+
+                if (_bobNpcConfig.TryAcceptQuest(NpcBobQuest.OpenMainGate, out QuestAcceptFailedInfo failedInfo1) == false)
+                {
+                    Debug.Log("Не удалось принять квест");
+
+                    if (failedInfo1.TrustLackToMax > 0)
+                        Debug.Log($"У тебя не хватает еще {failedInfo1.TrustLackToMax} доверия");
+
+                    if (failedInfo1.CurActiveQuests > 0)
+                        Debug.Log($"Ты уже взял {failedInfo1.CurActiveQuests} заданий из доступных {questAPI.MaxActiveQuests}");
+                }
             }
 
 
