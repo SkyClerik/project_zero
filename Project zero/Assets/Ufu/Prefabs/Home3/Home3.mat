@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HomeCon
+  m_Name: Home3
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
-        m_Texture: {fileID: 2800000, guid: 6b1b5571b5860ba439ca58fb09eb083b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 56cd7890be6ad6a439ec2f2d2d5e3214, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailMask:
@@ -40,11 +40,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
-        m_Texture: {fileID: 2800000, guid: d402c8d1e6e13eb4a9bc42bbba2b38ed, type: 3}
+        m_Texture: {fileID: 2800000, guid: 901263682036ba643872d954a5620be9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
-        m_Texture: {fileID: 2800000, guid: 91220540dfdfdc841a4aae69cad746b8, type: 3}
+        m_Texture: {fileID: 2800000, guid: b9c9aa88138c33741804f710da12f7f1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -52,11 +52,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 497bcd8834902af49aced358f56c0d9c, type: 3}
+        m_Texture: {fileID: 2800000, guid: c8d6a55f6f7cfb349b29e8d977b339af, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 2800000, guid: 49aa5690237ea524f82e29640941f3a2, type: 3}
+        m_Texture: {fileID: 2800000, guid: a43aef755b6cc3141babe8c0bdb4faab, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
@@ -69,7 +69,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _GlossMapScale: 0.408
+    - _GlossMapScale: 0.378
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
@@ -82,6 +82,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.7610062, g: 0.7610062, b: 0.7610062, a: 1}
-    - _EmissionColor: {r: 1, g: 0.27387345, b: 0, a: 1}
+    - _Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
+    - _EmissionColor: {r: 1, g: 0.17898153, b: 0, a: 1}
   m_BuildTextureStacks: []
