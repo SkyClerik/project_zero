@@ -107,8 +107,9 @@ namespace SkyClerik
 
         [Tooltip("Текст задания")]
         [SerializeField]
-        private TextKeyContainer _textKeyDescription = new TextKeyContainer();
-        public string QuestText => _textKeyDescription.GetValue;
+        //private TextKeyContainer _questDescription = new TextKeyContainer();
+        private string _questDescription;
+        public string QuestDescription { get => _questDescription; set => _questDescription = value; }
 
         [Header("RESULT")]
 
@@ -126,6 +127,7 @@ namespace SkyClerik
         [SerializeField]
         private List<TargetNpc> _targetNpcs = new List<TargetNpc>();
         public List<TargetNpc> TargetNpcs => _targetNpcs;
+
 
         public void Validate()
         {

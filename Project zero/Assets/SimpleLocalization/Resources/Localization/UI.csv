@@ -1,0 +1,10 @@
+KEY,Russian,English,Spanish,Germany
+UI.newGame,Новая Игра,New Game,Nueva partida,Neues Spiel
+UI.b_inventory,Инвентарь,Inventory,Inventario,Inventar
+UI.b_journal,Журнал,Journal,Diario,Tagebuch
+UI.b_settings,Настройки,Settings,Configuración,"Einstellungen
+"
+UI.b_close,Закрыть,Close,Cerrar,Schließen
+UI.data_time_martch,Марта,March,de marzo,März
+UI.player_level,УРОВЕНЬ,LEVEL,NIVEL,STUFE
+UI.player_money,R,R,R,R

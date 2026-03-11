@@ -1,30 +1,38 @@
-﻿using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.Toolbox;
+﻿using Assets.SimpleLocalization.Scripts;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Toolbox;
+using UnityEngine.UIElements;
 
 namespace SkyClerik
 {
+    public class JournalQuestButton : Button
+    {
+        public int IndexHash;
+    }
+
     [RequireComponent(typeof(UIDocument))]
     public class Journal : MonoBehaviour
     {
         private Quests _questsContainer;
-        //private QuestAPI _questAPI;
         private JournalDocument _journalDocument;
         private VisualElement _root;
 
         [SerializeField]
         private VisualTreeAsset _questDescriptionAsset;
 
+        private List<NpcConfigBase> _npcs = new List<NpcConfigBase>();
+        private const string _localizationJournalPrefix = "Journal.";
+        private const string _localizationQuestPrefix = "Quest.";
         private int _currentNpcView;
 
-        [SerializeField]
-        private KeyCode _key = KeyCode.J;
-        private bool _active;
+        private void Awake()
+        {
+            ServiceProvider.Register(this);
+        }
 
         private void Start()
         {
-            //_questAPI = ServiceProvider.Get<QuestAPI>();
             _questsContainer = ServiceProvider.Get<Quests>();
             var uiDocument = GetComponentInChildren<UIDocument>(includeInactive: false);
             uiDocument.enabled = true;
@@ -32,26 +40,53 @@ namespace SkyClerik
             _root = uiDocument.rootVisualElement;
             _journalDocument.Initialize(_root);
 
-            _journalDocument.bClose.clicked += Hide;
+            LocalizationChanged();
+            LocalizationManager.OnLocalizationChanged += LocalizationChanged;
 
             Hide();
         }
 
+        private void OnDestroy()
+        {
+            ServiceProvider.Unregister(this);
+            LocalizationManager.OnLocalizationChanged -= LocalizationChanged;
+        }
+
         public void Show()
         {
-            _active = true;
+            //Debug.Log("Кнопка открытия журнала нажата!");
             _currentNpcView = 0;
-            _root.SetVisibility(true);
-            Debug.Log("Кнопка открытия журнала нажата!");
+
+            UpdateUpInsets();
             UpdatePage();
 
+            _root.SetVisibility(true);
+        }
+
+        private void UpdateUpInsets()
+        {
+            _journalDocument.upInsets.Clear();
+            _npcs = _questsContainer.GetCurrentQuestNpc();
+            for (int i = 0; i < _npcs.Count; i++)
+            {
+                JournalQuestButton button = new JournalQuestButton();
+                button.text = string.Empty;
+                button.IndexHash = i;
+                button.SetWidthAndHeight(120, 120);
+                button.clicked += () =>
+                {
+                    _currentNpcView = button.IndexHash;
+                    UpdatePage();
+                };
+                _journalDocument.upInsets.Add(button);
+            }
         }
 
         public void UpdatePage()
         {
-            var npc = _questsContainer.Npcs[_currentNpcView];
+            NpcConfigBase npc = _questsContainer.Npcs[_currentNpcView];
             //characterImage
-            _journalDocument.textNameZoneValue.text = $"{npc.ActorName}";
+            _journalDocument.nameZoneValue.text = $"{npc.ActorName}";
             _journalDocument.scrollViewContent.Clear();
 
             if (npc.TryGetQuestsInState(out List<QuestInfo> quests, QuestInfoState.IsAccepted))
@@ -59,6 +94,10 @@ namespace SkyClerik
                 for (int i = 0; i < quests.Count; i++)
                 {
                     var description = new QuestDescription(_questDescriptionAsset);
+                    var questTitle = LocalizationManager.Localize($"{_localizationQuestPrefix}{npc.ElementName}.id.{quests[i].ElementName}");
+                    quests[i].QuestDescription = LocalizationManager.Localize($"{_localizationQuestPrefix}{npc.ElementName}.desc.{quests[i].ElementName}");
+                    Debug.Log($"ElementName {_localizationQuestPrefix}{quests[i].ElementName} - res: {questTitle}");
+                    Debug.Log($"QuestKey {_localizationQuestPrefix}{quests[i].QuestKey} - res: {quests[i].QuestDescription}");
                     description.Init(quests[i]);
                     _journalDocument.scrollViewContent.Add(description);
                 }
@@ -76,67 +115,34 @@ namespace SkyClerik
             }
         }
 
+        private void LocalizationChanged()
+        {
+            UpdatePageStaticText();
+        }
+
         public void UpdatePageStaticText()
         {
-            var npc = _questsContainer.Npcs[_currentNpcView];
-            _journalDocument.textNameZoneTitle.text = "Имя";
+            _journalDocument.nameZoneTitle.text = LocalizationManager.Localize($"{_localizationJournalPrefix}{_journalDocument.nameZoneTitle.name}");
         }
 
         public void Hide()
         {
-            _active = false;
             _root.SetVisibility(false);
-            Debug.Log("Кнопка закрытия журнала нажата!");
+            //Debug.Log("Кнопка закрытия журнала нажата!");
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyUp(_key))
-            {
-                if (!_active)
-                    Show();
-                else
-                    Hide();
-            }
-        }
-
-        /// <summary>
-        /// Содержит ссылки на именованные элементы из Journal.uxml.
-        /// Этот класс был сгенерирован автоматически.
-        /// </summary>
         private class JournalDocument
         {
-            // Корневые контейнеры
-            public VisualElement windowArea;
-            public VisualElement jobArea;
-
-            // --- Левые кнопки ---
-            public VisualElement mainInsetsArea;
-            public Button bInventory;
-            public Button bJournal;
-            public Button bSettings;
-            public Button bClose;
-
-            // --- Верхняя панель ---
-            public VisualElement topPanel;
-            public VisualElement leftArea;
-            public Label playerLevel;
-            public Label playerMoney;
-            public VisualElement rightArea;
-            public VisualElement battery;
-            public VisualElement icon;
-            public Label dataTime;
-
             // --- Главная страница ---
-            public VisualElement upInserts;
+            public VisualElement upInsets;
             public VisualElement page;
             public VisualElement downInserts;
 
             // --- Содержимое страницы ---
             public VisualElement characterArea;
             public VisualElement characterImage;
-            public Label textNameZoneTitle;
-            public Label textNameZoneValue;
+            public Label nameZoneTitle;
+            public Label nameZoneValue;
 
             public VisualElement questsArea;
             public VisualElement scrollViewContent;
@@ -144,35 +150,17 @@ namespace SkyClerik
 
             public void Initialize(VisualElement root)
             {
-                // Запрашиваем уникальные элементы
-                windowArea = root.Q<VisualElement>("window_area");
-                jobArea = root.Q<VisualElement>("job_area");
-                mainInsetsArea = root.Q<VisualElement>("main_insets_area");
-                bInventory = root.Q<Button>("b_inventory");
-                bJournal = root.Q<Button>("b_journal");
-                bSettings = root.Q<Button>("b_settings");
-                bClose = root.Q<Button>("b_close");
-                topPanel = root.Q<VisualElement>("top_panel");
-                leftArea = root.Q<VisualElement>("left_area");
-                playerLevel = root.Q<Label>("player_level");
-                playerMoney = root.Q<Label>("player_money");
-                rightArea = root.Q<VisualElement>("right_area");
-                battery = root.Q<VisualElement>("battery");
-                icon = root.Q<VisualElement>("icon");
-                dataTime = root.Q<Label>("data_time");
-                upInserts = root.Q<VisualElement>("up_inserts");
+                upInsets = root.Q<VisualElement>("up_insets");
                 page = root.Q<VisualElement>("page");
                 characterArea = page.Q<VisualElement>("character_area");
                 var nameZone = characterArea.Q<VisualElement>("name_zone");
-                textNameZoneTitle = nameZone.Q<Label>("title");
-                textNameZoneValue = nameZone.Q<Label>("value");
+                nameZoneTitle = nameZone.Q<Label>("name_zone_title");
+                nameZoneValue = nameZone.Q<Label>("value");
                 questsArea = page.Q<VisualElement>("quests_area");
                 scrollViewContent = root.Q<VisualElement>("scroll_view_content");
                 QuestDescription = root.Q<VisualElement>("QuestDescription");
                 downInserts = root.Q<VisualElement>("down_inserts");
                 characterImage = root.Query<VisualElement>("character_image");
-
-                // Запрашиваем элементы с дублирующимися именами, собирая их в списки
             }
         }
     }

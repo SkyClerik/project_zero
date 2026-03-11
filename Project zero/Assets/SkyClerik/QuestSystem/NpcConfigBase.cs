@@ -31,7 +31,7 @@ namespace SkyClerik
         [ReadOnly]
         [SerializeField]
         private string _elementName = "NpcConfigBase";
-        public string ElementName { set => _elementName = value; }
+        public string ElementName { get => _elementName;  set => _elementName = value; }
 
         [ReadOnly]
         [SerializeField]

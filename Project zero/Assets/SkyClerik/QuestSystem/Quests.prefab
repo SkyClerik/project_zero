@@ -144,7 +144,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3439877034194444619}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -152,6 +152,7 @@ Transform:
   - {fileID: 5471468557526514306}
   - {fileID: 1794125179516012687}
   - {fileID: 2395198116616716633}
+  - {fileID: 3623744982978500670}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4013540344407306089
@@ -210,11 +211,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4013540344407306089}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f3ceaa786d4d814e8dda3c3010b6d7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _questDescriptionAsset: {fileID: 9197481963319205126, guid: 38be7282a18165946be4f73587d17ec7, type: 3}
 --- !u!1 &5013115091029833588
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,15 +284,16 @@ MonoBehaviour:
       type: {class: NpcConnorConfig, ns: SkyClerik, asm: Assembly-CSharp}
       data:
         _elementName: NPC_ID_CONNOR
+        _actorName: Test Name Key
         _isAcquainted: 0
         _curTrustLevel: 0
         _maxTrustLevel: 10
         _curActiveQuests: 0
         _isJournalVisible: 1
         _quests:
-        - _elementName: 
+        - _elementName: CleanGarage
           _questKey:
-            _value: 0
+            _value: 2
           _needTrustLevel: 0
           _questInfoState: 0
           _textKeyDescription:
@@ -299,42 +302,9 @@ MonoBehaviour:
           _addedMoney: 0
           _rewardItems: []
           _targetNpcs: []
-        - _elementName: 
+        - _elementName: BringBeer
           _questKey:
-            _value: 0
-          _needTrustLevel: 0
-          _questInfoState: 0
-          _textKeyDescription:
-            _key: 
-            _debugText: 
-          _addedMoney: 0
-          _rewardItems: []
-          _targetNpcs: []
-        - _elementName: 
-          _questKey:
-            _value: 0
-          _needTrustLevel: 0
-          _questInfoState: 0
-          _textKeyDescription:
-            _key: 
-            _debugText: 
-          _addedMoney: 0
-          _rewardItems: []
-          _targetNpcs: []
-        - _elementName: 
-          _questKey:
-            _value: 0
-          _needTrustLevel: 0
-          _questInfoState: 0
-          _textKeyDescription:
-            _key: 
-            _debugText: 
-          _addedMoney: 0
-          _rewardItems: []
-          _targetNpcs: []
-        - _elementName: 
-          _questKey:
-            _value: 0
+            _value: 1
           _needTrustLevel: 0
           _questInfoState: 0
           _textKeyDescription:
@@ -347,26 +317,16 @@ MonoBehaviour:
       type: {class: NpcBobConfig, ns: SkyClerik, asm: Assembly-CSharp}
       data:
         _elementName: NPC_ID_BOB
+        _actorName: Test Name Key
         _isAcquainted: 0
         _curTrustLevel: 0
         _maxTrustLevel: 10
         _curActiveQuests: 0
         _isJournalVisible: 1
         _quests:
-        - _elementName: OpenMainGate
+        - _elementName: TradeFirstStep
           _questKey:
-            _value: 1
-          _needTrustLevel: 0
-          _questInfoState: 0
-          _textKeyDescription:
-            _key: 
-            _debugText: 
-          _addedMoney: 0
-          _rewardItems: []
-          _targetNpcs: []
-        - _elementName: 
-          _questKey:
-            _value: 0
+            _value: 2
           _needTrustLevel: 0
           _questInfoState: 0
           _textKeyDescription:
@@ -392,36 +352,136 @@ MonoBehaviour:
           _addedMoney: 0
           _rewardItems: []
           _targetNpcs: []
-        - _elementName: 
+        - _elementName: OpenMainGate
           _questKey:
-            _value: 0
+            _value: 1
           _needTrustLevel: 0
           _questInfoState: 0
           _textKeyDescription:
             _key: 
-            _debugText: 
+            _debugText: "\u0428\u0435\u0440\u043B\u0451\u043A \u043C\u043E\u043B\u0447\u0438\u0442!!!"
           _addedMoney: 0
-          _rewardItems: []
+          _rewardItems:
+          - _itemId: 6
+            _item: {fileID: 11400000, guid: a594ad3892c3e014682063e42529b722, type: 2}
           _targetNpcs: []
-        - _elementName: 
-          _questKey:
-            _value: 0
-          _needTrustLevel: 0
-          _questInfoState: 0
-          _textKeyDescription:
-            _key: 
-            _debugText: 
-          _addedMoney: 0
-          _rewardItems: []
-          _targetNpcs: []
-        - _elementName: 
-          _questKey:
-            _value: 0
-          _needTrustLevel: 0
-          _questInfoState: 0
-          _textKeyDescription:
-            _key: 
-            _debugText: 
-          _addedMoney: 0
-          _rewardItems: []
-          _targetNpcs: []
+--- !u!1 &5962088072981127810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3623744982978500670}
+  - component: {fileID: 7905519750570870101}
+  - component: {fileID: 1311417731620582762}
+  - component: {fileID: 5795538989612954996}
+  - component: {fileID: 5750026282602266886}
+  m_Layer: 0
+  m_Name: NPC_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3623744982978500670
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962088072981127810}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.03, y: 1, z: 5.72}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4780072313643725874}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &7905519750570870101
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962088072981127810}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &1311417731620582762
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962088072981127810}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &5795538989612954996
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962088072981127810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5750026282602266886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962088072981127810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d9dd0032adf8e64db6eb1b15103e201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

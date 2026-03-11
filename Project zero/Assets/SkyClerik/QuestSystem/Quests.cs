@@ -57,6 +57,22 @@ namespace SkyClerik
             return null;
         }
 
+        public List<NpcConfigBase> GetCurrentQuestNpc()
+        {
+            List<NpcConfigBase> result = new List<NpcConfigBase>();
+            foreach (NpcConfigBase npc in _npcs)
+            {
+                foreach (var quest in npc.Quests)
+                {
+                    if (quest.QuestInfoState == QuestInfoState.IsAccepted)
+                    {
+                        result.Add(npc);
+                    }
+                }
+            }
+            return result;
+        }
+
 #if UNITY_EDITOR
         [ContextMenu("Quests / Clear missing SerializeReference NPCs")]
         private void ClearMissingNpcs()

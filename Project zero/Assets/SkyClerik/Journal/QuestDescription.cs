@@ -24,7 +24,7 @@ namespace SkyClerik
 
         public void Init(QuestInfo questInfo)
         {
-            questDescription.text = questInfo.QuestText;
+            questDescription.text = questInfo.QuestDescription;
             revardArea.Clear();
 
             foreach (ItemReward itemReward in questInfo.RewardItems)

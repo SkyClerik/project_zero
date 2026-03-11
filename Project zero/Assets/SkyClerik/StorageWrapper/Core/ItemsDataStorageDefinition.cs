@@ -15,6 +15,9 @@ namespace SkyClerik.Inventory
         [SerializeField]
         private List<ItemBaseDefinition> _baseDefinitions = new List<ItemBaseDefinition>();
 
+        public List<ItemBaseDefinition> BaseDefinitions => _baseDefinitions;
+        //public List<ItemBaseDefinition> BaseDefinitions { get => _baseDefinitions; set => _baseDefinitions = value; }
+
         /// <summary>
         /// Возвращает клонированный <see cref="ItemBaseDefinition"/> по его itemID = (индексу в списке).
         /// </summary>

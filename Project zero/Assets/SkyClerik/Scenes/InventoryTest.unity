@@ -1439,6 +1439,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7229aecaad51fd04dbd9fdb42db545d7, type: 3}
   m_PrefabInstance: {fileID: 223709776}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &232126988
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232126989}
+  - component: {fileID: 232126991}
+  - component: {fileID: 232126990}
+  m_Layer: 0
+  m_Name: InsetsMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &232126989
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232126988}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.8174868, y: 6.127349, z: 33.844265}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1305721773}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &232126990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232126988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f722c05a5cf65a5419890c81e439e47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _key: 97
+--- !u!114 &232126991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232126988}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 39ffcfe28604fc947a27b91a04e4de1a, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: fa65e6a933b8c8747b83a2c18436f694, type: 3}
+  m_SortingOrder: 0
 --- !u!1001 &234965584
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10033,6 +10095,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 104761df298bded41acf6bb37f17be34, type: 3}
   m_PrefabInstance: {fileID: 1305355487}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1305721773 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6456088311198732137, guid: 51774bb6ad080024e98542a6f89c43fe, type: 3}
+  m_PrefabInstance: {fileID: 4681849572119537943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1306039325
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15607,7 +15674,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6456088311198732137, guid: 51774bb6ad080024e98542a6f89c43fe, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 232126989}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51774bb6ad080024e98542a6f89c43fe, type: 3}
 --- !u!1001 &8343182981566872669
@@ -15618,114 +15688,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1845201048635147016, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1845201048635147016, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: _questDescriptionAsset
-      value: 
-      objectReference: {fileID: 9197481963319205126, guid: 38be7282a18165946be4f73587d17ec7, type: 3}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[0]._elementName
-      value: CleanGarage
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[1]._elementName
-      value: BringBeer
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[2]._elementName
-      value: BringBeer
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[3]._elementName
-      value: BringBeer
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[4]._elementName
-      value: BringBeer
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[0]._elementName
-      value: TradeFirstStep
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[1]._elementName
-      value: OpenMainGate
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[0]._questKey._value
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[1]._questKey._value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[2]._questKey._value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[3]._questKey._value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965697]._quests.Array.data[4]._questKey._value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[0]._questKey._value
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[1]._questKey._value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[1]._rewardItems.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[0]._textKeyDescription._debugText
-      value: "\u0428\u0435\u0440\u043B\u0451\u043A \u0433\u043E\u0432\u043E\u0440\u0438\u0442
-        \u0447\u0442\u043E \u0440\u0430\u0441\u043A\u0440\u043E\u0435\u0442 \u044D\u0442\u043E
-        \u043F\u0440\u0435\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435
-        \u0437\u0430 \u0441\u0443\u0442\u043A\u0438 \u0438 \u043E\u0447\u0435\u043D\u044C
-        \u043D\u0435 \u0434\u0432\u0443\u0441\u043C\u044B\u0441\u043B\u0435\u043D\u043D\u043E
-        \u0434\u0430\u043B \u043F\u043E\u043D\u044F\u0442\u044C \u0447\u0442\u043E
-        \u043C\u0435\u0448\u0430\u0442\u044C\u0441\u044F \u0443 \u043D\u0435\u0433\u043E
-        \u043F\u043E\u0434 \u043D\u043E\u0433\u0430\u043C\u0438 \u0432\u0441\u044F\u043A\u0438\u043C
-        \u0431\u0435\u0437\u0434\u0430\u0440\u043D\u043E\u0441\u0442\u044F\u043C
-        \u0441\u043E\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u043E \u043D\u0435
-        \u043E\u0431\u0434\u0443\u043C\u0430\u043D\u043D\u043E\u0435 \u0438 \u0433\u043B\u0443\u043F\u043E\u0435
-        \u0437\u0430\u043D\u044F\u0442\u0438\u0435. \u0421\u043A\u043E\u0440\u0435\u0435
-        \u0432\u0441\u0435\u0433\u043E \u043E\u043D \u043F\u0440\u043E\u0441\u0442\u043E
-        \u0445\u043E\u0442\u0435\u043B \u0441\u043A\u0430\u0437\u0430\u0442\u044C
-        \u0447\u0442\u043E \u043D\u0443\u0436\u043D\u043E \u0431\u044B\u0442\u044C
-        \u043E\u0441\u0442\u043E\u0440\u043E\u0436\u043D\u0435\u0435 \u043F\u0440\u0438
-        \u0438\u0437\u0443\u0447\u0435\u043D\u0438\u0438 \u0443\u043B\u0438\u043A. "
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[1]._textKeyDescription._debugText
-      value: "\u0428\u0435\u0440\u043B\u0451\u043A \u043C\u043E\u043B\u0447\u0438\u0442!!!"
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[1]._rewardItems.Array.data[0]._item
-      value: 
-      objectReference: {fileID: 11400000, guid: a594ad3892c3e014682063e42529b722, type: 2}
-    - target: {fileID: 3187322752203548319, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: managedReferences[980829282135965699]._quests.Array.data[1]._rewardItems.Array.data[0]._itemId
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 3439877034194444619, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
       propertyPath: m_Name
       value: Quests
@@ -15768,10 +15730,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4780072313643725874, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6604994840960116779, guid: c0958266a1b2f024881c4ec915c75436, type: 3}
-      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
