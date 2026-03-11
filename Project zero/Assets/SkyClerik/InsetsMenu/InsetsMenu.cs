@@ -2,6 +2,7 @@
 using SkyClerik.Inventory;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.DataEditor;
 using UnityEngine.Toolbox;
 using UnityEngine.UIElements;
 
@@ -101,6 +102,8 @@ namespace SkyClerik
         {
             if (Input.GetKeyUp(_key))
             {
+                Debug.Log($"_key : {_key}");
+
                 if (!_active)
                     Show();
                 else

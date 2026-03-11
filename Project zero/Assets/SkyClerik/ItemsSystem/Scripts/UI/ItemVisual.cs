@@ -217,7 +217,7 @@ namespace SkyClerik.Inventory
 
         private void OnMouseUp(PointerUpEvent mouseEvent)
         {
-            //Debug.Log($"[ItemVisual OnMouseUp] MouseUp для {ItemDefinition.name}. IsDragging: {_isDragging}. CurrentDraggedItem: {InventoryContainer.CurrentDraggedItem?.ItemDefinition.DefinitionName ?? "NULL"}.");
+            //Debug.Log($"[ItemVisual OnMouseUp] MouseUp для {ItemDefinition.name}. IsDragging: {_isDragging}. CurrentDraggedItem: {InventoryStorage.CurrentDraggedItem?.ItemDefinition.DefinitionName ?? "NULL"}.");
             if (mouseEvent.button == 0 && mouseEvent.clickCount == 1)
             {
                 if (InventoryStorage.CurrentDraggedItem == null)
@@ -323,13 +323,20 @@ namespace SkyClerik.Inventory
 
         private void OnMouseDown(PointerDownEvent mouseEvent)
         {
+            //Debug.Log($"InventoryStorage.CurrentDraggedItem : {InventoryStorage.CurrentDraggedItem}");
             if (InventoryStorage.CurrentDraggedItem != null)
+            {
                 return;
+            }
 
+            //Debug.Log($"mouseEvent.button : {mouseEvent.button}");
             if (mouseEvent.button != 0)
+            {
                 return;
+            }
 
-            if (mouseEvent.pointerId == 0)
+            //Debug.Log($"mouseEvent.pointerId : {mouseEvent.pointerId}");
+            if (mouseEvent.pointerId == 1 || mouseEvent.button == 0)
             {
                 _inventoryStorage.SetItemDescription(_itemDefinition);
 
